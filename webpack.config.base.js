@@ -2,11 +2,11 @@
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 var CopyWebpackPlugin = require('copy-webpack-plugin');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
-//var GitRevisionPlugin = require('git-revision-webpack-plugin');
+var GitRevisionPlugin = require('git-revision-webpack-plugin');
 var packageJson = require('./package.json');
 
 let extractTextPlugin = new ExtractTextPlugin("[name]-[git-revision-version].css");
-//var gitRevisionPlugin = new GitRevisionPlugin();
+var gitRevisionPlugin = new GitRevisionPlugin();
 
 let path = require('path');
 
@@ -55,7 +55,7 @@ function buildWebpackConfig(options) {
         },
 
         plugins: [
-            //gitRevisionPlugin,
+            gitRevisionPlugin,
             extractTextPlugin,
 
             new CopyWebpackPlugin([
@@ -74,7 +74,7 @@ function buildWebpackConfig(options) {
                 },
                 // This is custom flag to pass build version from webpack command line argument to application
                 appInfo: JSON.stringify({
-                    //gitVersion: gitRevisionPlugin.version(),
+                    gitVersion: gitRevisionPlugin.version(),
                     buildVersion: env.buildVersion,
                     name: packageJson.name,
                     description: packageJson.description,

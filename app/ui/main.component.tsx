@@ -132,6 +132,9 @@ export class MainComponent extends React.Component<IMainComponentProps, IMainCom
                             <LinkContainer to={Routes.userProfile}>
                                 <MenuItem>User Profile</MenuItem>
                             </LinkContainer>
+                            <LinkContainer to={Routes.about}>
+                                <MenuItem>About</MenuItem>
+                            </LinkContainer>
                             <MenuItem divider />
                             <MenuItem onClick={this.menuLogOutClick}>Log Out</MenuItem>
                         </NavDropdown>
