@@ -1,0 +1,37 @@
+.ex-navbar-usercard {
+    margin-left: 10px;
+    margin-right: 10px;
+    background-color: transparent;
+    .nav.navbar-nav>li>a {
+        margin: 0;
+        border: 0;
+        padding-left: 0;
+        padding-right: 0;
+        width: 0;
+        text-decoration: none;
+    }
+    .avatar {
+        display: table-cell;
+        font-size: 120%;
+        vertical-align: middle;
+        text-align: center;
+        background-color: #777;
+        color: #f0f0f0;
+        border-radius: 4px;
+        width: 30px;
+        height: 30px;
+    }
+    .userName {
+        padding-left: 10px;
+        padding-right: 10px;
+        font-size: 90%;
+        vertical-align: bottom;
+    }
+    .userRole {
+        padding-left: 10px;
+        padding-right: 10px;
+        font-size: 90%;
+        font-weight: 300;
+        vertical-align: top;
+    }
+}

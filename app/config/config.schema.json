@@ -1,0 +1,24 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "App config schema",
+    "type": "object",
+    "properties": {
+        "services": {
+            "description": "Api endpoint access options",
+            "type": "object",
+            "properties": {
+                "appApiUrl": {
+                    "description": "Url of endpoint",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "appApiUrl"
+            ]
+        }
+    },
+    "required": [
+        "services"
+    ],
+    "definitions": {}
+}

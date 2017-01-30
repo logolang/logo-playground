@@ -1,0 +1,40 @@
+@keyframes spinAround {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(359deg);
+    }
+}
+
+@keyframes spinAroundBackwards {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(-359deg);
+    }
+}
+
+.operation-progress-box {
+    p {}
+    .operation-progress-icon {
+        text-align: center;
+    }
+    .cog-1 {
+        font-size: 300%;
+        animation: spinAround 4000ms infinite linear;
+        position: relative;
+        top: -3px;
+    }
+    .cog-2 {
+        font-size: 350%;
+        animation: spinAroundBackwards 5000ms infinite linear;
+    }
+    .cog-3 {
+        font-size: 250%;
+        animation: spinAround 2500ms infinite linear;
+        position: relative;
+        top: -6px;
+    }
+}

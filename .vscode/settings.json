@@ -1,0 +1,15 @@
+{
+    "editor.wordBasedSuggestions": false,
+    "typescript.tsdk": "./node_modules/typescript/lib",
+    "json.schemas": [],
+    "search.exclude": {
+        "**/node_modules": true,
+        "**/reports": true,
+        "**/dist": true,
+        "**/lib": true
+    },
+    "files.exclude": {
+        "**/.git": true,
+        "**/node_modules": true
+    }
+}

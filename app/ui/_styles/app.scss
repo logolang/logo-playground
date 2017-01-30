@@ -1,0 +1,36 @@
+@import './bootstrap-overrides.scss';
+@import './ux-extensions.scss';
+#menu-user-dropdown {
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+.ex-app-logo {
+    background-image: url(../images/logo.svg);
+    background-repeat: no-repeat;
+    background-position: center;
+    width: 100px;
+}
+
+.dark-navbar {
+    .ex-app-logo {
+        //background-image: url(../images/logo-dark.png);
+    }
+}
+
+.ex-inline-block {
+    display: inline-block;
+}
+
+.ex-width-auto {
+    width: auto;
+}
+
+.ex-cursor-pointer {
+    cursor: pointer;
+}
+
+.ex-cursor-default {
+    cursor: default;
+}

@@ -1,0 +1,56 @@
+
+.ex-page-loading-animation {
+    width: 100px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 140px;
+}
+
+.ex-animated-dot {
+    width: 10px;
+    height: 10px;
+    border: 2px solid gray;
+    border-radius: 50%;
+    float: left;
+    margin: 0 5px;
+    transform: scale(0);
+    animation: fx 1000ms ease infinite 0ms;
+}
+
+.ex-animated-dot:nth-child(2) {
+    animation: fx 1000ms ease infinite 300ms;
+}
+
+.ex-animated-dot:nth-child(3) {
+    animation: fx 1000ms ease infinite 600ms;
+}
+
+@-webkit-keyframes fx {
+    50% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+@keyframes fx {
+    50% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+
+.ex-page-content {
+    opacity: 0
+}
+
+.ex-page-content.is-visible {
+    transition: opacity .25s ease-in-out;
+    opacity: 1
+}

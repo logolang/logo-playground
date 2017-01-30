@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Loading...</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    
+<!-- Default bootstrap from CDN
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+ -->
+
+<!-- Custom Bootstrap theme
+<link href="bootstrap.min.css?1" rel="stylesheet">
+ -->
+</head>
+<%
+    var packageJson = require('../../package.json');
+%>
+<body>
+    <script type="text/javascript">
+        var themeName = "default";
+        try{
+            window.appThemeNameLocalStorageKey = '<%= packageJson.name %>-<%= packageJson.version %>-theme';
+            console.log('storagekey', window.appThemeNameLocalStorageKey);
+            var storedTheme = window.localStorage.getItem(window.appThemeNameLocalStorageKey);
+            if (storedTheme){
+                themeName = JSON.parse(storedTheme);
+            }
+        } 
+        catch(ex){
+        }
+        console.log('applying theme ', themeName);
+        document.write('<link href="bootstrap.' + themeName + '.min.css?1" rel="stylesheet">');
+    </script>
+
+   <div id="app-container">
+   </div>
+
+   <% for (var css in htmlWebpackPlugin.files.css) { %>
+    <link href="<%= htmlWebpackPlugin.files.css[css] %>" rel="stylesheet">
+   <% } %>
+   <% for (var chunk in htmlWebpackPlugin.files.chunks) { %>
+    <script src="<%= htmlWebpackPlugin.files.chunks[chunk].entry %>"></script>
+   <% } %>
+
+   <script>
+     app.run();
+   </script>   
+</body>
+</html>

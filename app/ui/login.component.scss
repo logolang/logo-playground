@@ -1,0 +1,34 @@
+.form-signin {
+    position: relative;
+    top: 40%;
+    transform: translateY(-40%);
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+    border: 1px solid lightgray;
+    border-radius: 3px;
+    padding-left: 30px;
+    padding-right: 30px;
+    padding-bottom: 30px;
+    padding-top: 10px;
+    h2 {
+        text-align: center
+    }
+}
+
+.container-login {
+    background: url(./images/background/4297.jpg) center no-repeat;
+    background-size: cover;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+
+.keepmeloggeincheckbox {
+    text-align: center;
+}
