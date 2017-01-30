@@ -51,9 +51,7 @@ export class LoginComponent extends React.Component<ILoginFormComponentProps, IL
     }
 
     async performSubmitting() {
-        this.state.errorMessage = '';
-        this.state.inProgress = true;
-        this.setState(this.state);
+        this.setState({ errorMessage: '', inProgress: true });
 
         let result = await this.props.onSubmit({
             login: this.state.login,
@@ -62,9 +60,7 @@ export class LoginComponent extends React.Component<ILoginFormComponentProps, IL
         });
 
         if (!result.sussess) {
-            this.state.inProgress = false;
-            this.state.errorMessage = result.errorMessage;
-            this.setState(this.state);
+            this.setState({ errorMessage: result.errorMessage, inProgress: false });
         } else {
             // this is to trigger save passowrd in Chrome
             history.pushState({}, "", window.location.href);
@@ -99,7 +95,7 @@ export class LoginComponent extends React.Component<ILoginFormComponentProps, IL
                                 <div className="col-sm-12">
                                     <input type="text" id="userLogin" className="form-control" placeholder="Username" required
                                         value={this.state.login}
-                                        onChange={translateInputChangeToState(this, (state, value) => state.login = value)}
+                                        onChange={translateInputChangeToState(this, (state, value) => ({ login: value }))}
                                         onKeyDown={this.triggerSubmitOnInputEnterKeyDown}
                                     />
                                 </div>
@@ -111,7 +107,7 @@ export class LoginComponent extends React.Component<ILoginFormComponentProps, IL
                                 <div className="col-sm-12">
                                     <input type="password" id="userPassword" className="form-control" placeholder="Password" required
                                         value={this.state.password}
-                                        onChange={translateInputChangeToState(this, (state, value) => state.password = value)}
+                                        onChange={translateInputChangeToState(this, (state, value) => ({ password: value }))}
                                         onKeyDown={this.triggerSubmitOnInputEnterKeyDown}
                                     />
                                 </div>
@@ -127,7 +123,7 @@ export class LoginComponent extends React.Component<ILoginFormComponentProps, IL
                         <label>
                             <input type="checkbox"
                                 checked={this.state.rememberMe}
-                                onChange={translateCheckBoxChangeToState(this, (state, value) => state.rememberMe = value)}
+                                onChange={translateCheckBoxChangeToState(this, (state, value) => ({ rememberMe: value }))}
                             /> Keep me logged in
                         </label>
                     </div>

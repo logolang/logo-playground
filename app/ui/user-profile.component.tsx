@@ -14,21 +14,21 @@ import { LocalStorageService } from 'app/services/local-storage.service';
 import { DateTimeStampComponent } from 'app/ui/shared/generic/date-time-stamp.component';
 import { PageHeaderComponent } from 'app/ui/shared/generic/page-header.component';
 
-interface IUserProfileComponentState {
+interface IComponentState {
     userInfo: UserInfo;
     themeName: string;
     isSavingInProgress: boolean;
 }
 
-interface IUserProfileComponentProps {
+interface IComponentProps {
 }
 
-export class UserProfileComponent extends React.Component<IUserProfileComponentProps, IUserProfileComponentState> {
+export class UserProfileComponent extends React.Component<IComponentProps, IComponentState> {
     private appConfig = ServiceLocator.resolve(x => x.appConfig);
     private currentUser = ServiceLocator.resolve(x => x.currentUser);
     private localStorageThemeKey = new LocalStorageService<string>((window as any).appThemeNameLocalStorageKey, undefined);
 
-    constructor(props: IUserProfileComponentProps) {
+    constructor(props: IComponentProps) {
         super(props);
         let loginStatus = this.currentUser.getLoginStatus();
 
@@ -57,12 +57,12 @@ export class UserProfileComponent extends React.Component<IUserProfileComponentP
                                         <div className="col-sm-5">
                                             <select className="form-control" id="themeselector"
                                                 value={this.state.themeName} onChange={translateSelectChangeToState(this, (s, v) => {
-                                                    this.state.themeName = v;
-                                                    this.setState(this.state);
-                                                    console.log('set theme ', v);
                                                     this.localStorageThemeKey.setValue(v);
-                                                    // refresh browser window
-                                                    window.location.reload(true);
+                                                    setTimeout(function () {
+                                                        // refresh browser window
+                                                        window.location.reload(true);
+                                                    }, 100);
+                                                    return { themeName: v };
                                                 })}>
                                                 <option value="default">Default</option>
                                                 <option value="yeti">Yeti</option>
@@ -79,8 +79,7 @@ export class UserProfileComponent extends React.Component<IUserProfileComponentP
                                     <div className="btn-toolbar">
                                         <button type="button" className={cn("btn btn-primary", { "is-loading": this.state.isSavingInProgress })}
                                             onClick={async () => {
-                                                this.state.isSavingInProgress = true;
-                                                this.setState(this.state);
+                                                this.setState({ isSavingInProgress: true });
                                                 await stay(1000);
                                                 goBack();
                                             }}>

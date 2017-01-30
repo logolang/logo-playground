@@ -1,11 +1,6 @@
 import * as React from 'react';
 import { hashHistory } from 'react-router';
 
-interface Component<S> {
-    state: S;
-    setState(state: S, callback?: () => any): void;
-}
-
 interface IParamsProps {
     params: any
 }
@@ -14,48 +9,48 @@ interface IsLoadingState {
     isLoading: boolean
 }
 
-interface ComponentWithDynamicDataLoad<S extends IsLoadingState, P extends IParamsProps> extends Component<S> {
+interface ComponentWithDynamicDataLoad<S extends IsLoadingState, P extends IParamsProps> extends React.Component<P, S> {
     loadData: (props: P) => Promise<void>
     props: P
 }
 
-export function translateInputChangeToState<S>(component: Component<S>, stateAction: (state: S, value: string) => void) {
+export function translateInputChangeToState<P, S, K extends keyof S>(component: React.Component<P, S>, stateAction: (state: S, value: string) => Pick<S, K>) {
     return (event: React.ChangeEvent<HTMLInputElement>) => {
         const val = event.currentTarget.value;
-        stateAction(component.state, val);
-        component.setState(component.state);
+        const stateChange = stateAction(component.state, val);
+        component.setState(stateChange);
     }
 }
 
-export function translateCheckBoxChangeToState<S>(component: Component<S>, stateAction: (state: S, value: boolean) => void) {
+export function translateCheckBoxChangeToState<P, S, K extends keyof S>(component: React.Component<P, S>, stateAction: (state: S, value: boolean) => Pick<S, K>) {
     return (event: React.ChangeEvent<HTMLInputElement>) => {
         const val = event.currentTarget.checked;
-        stateAction(component.state, val);
-        component.setState(component.state);
+        const stateChange = stateAction(component.state, val);
+        component.setState(stateChange);
     }
 }
 
-export function translateTextAreaChangeToState<S>(component: Component<S>, stateAction: (state: S, value: string[]) => void) {
+export function translateTextAreaChangeToState<P, S, K extends keyof S>(component: React.Component<P, S>, stateAction: (state: S, value: string[]) => Pick<S, K>) {
     return (event: React.ChangeEvent<HTMLTextAreaElement>) => {
         const val = event.currentTarget.value;
         const lines = val.replace(/\r\n/g, '\r').replace(/\n/g, '\r').split('\r');
-        stateAction(component.state, lines);
-        component.setState(component.state);
+        const stateChange = stateAction(component.state, lines);
+        component.setState(stateChange);
     }
 }
 
-export function translateSelectChangeToState<S>(component: Component<S>, stateAction: (state: S, value: string) => void) {
+export function translateSelectChangeToState<P, S, K extends keyof S>(component: React.Component<P, S>, stateAction: (state: S, value: string) => Pick<S, K>) {
     return (event: React.ChangeEvent<HTMLSelectElement>) => {
         const val = event.currentTarget.value;
-        stateAction(component.state, val);
-        component.setState(component.state);
+        const stateChange = stateAction(component.state, val);
+        component.setState(stateChange as any);
     }
 }
 
-export function alterState<S>(component: Component<S>, action: (oldState: S, value?: any) => void) {
+export function alterState<P, S, K extends keyof S>(component: React.Component<P, S>, action: (oldState: S, value?: any) => Pick<S, K>) {
     return (value?: any) => {
-        action(component.state, value);
-        component.setState(component.state);
+        const stateChange = action(component.state, value);
+        component.setState(stateChange);
     }
 }
 
@@ -67,18 +62,18 @@ export function goBack() {
     hashHistory.goBack();
 }
 
-export async function handleError<S extends { errorMessage: string }, P>(
-    component: Component<S>,
+export async function handleError<P, S extends { errorMessage: string }>(
+    component: React.Component<P, S>,
     action: () => Promise<P>
 ): Promise<P | undefined> {
     try {
-        component.state.errorMessage = '';
+        component.setState({ errorMessage: '' });
         const result = await action();
         return result;
     }
     catch (ex) {
         console.error(ex);
-        component.state.errorMessage = ex.toString();
+        component.setState({ errorMessage: ex.toString() });
         return undefined;
     }
 }

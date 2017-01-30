@@ -52,7 +52,7 @@
     "@types/lodash": "4.14.51",
     "@types/mocha": "2.2.38",
     "@types/moment": "2.13.0",
-    "@types/react": "15.0.1",
+    "@types/react": "15.0.4",
     "@types/react-addons-test-utils": "0.14.17",
     "@types/react-bootstrap": "0.0.43",
     "@types/react-dom": "0.14.21",

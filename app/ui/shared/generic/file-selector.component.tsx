@@ -27,14 +27,12 @@ export class FileUploadComponent extends React.Component<IFileUploadComponentPro
 
         if (acceptedFiles.length > 0) {
             const fileInfo = acceptedFiles[0];
-            this.state.fileInfo = fileInfo;
-            this.setState(this.state);
+            this.setState({ fileInfo: fileInfo });
             if (this.props.onFileSelected) {
-                this.props.onFileSelected(this.state.fileInfo);
+                this.props.onFileSelected(fileInfo);
             }
             if (this.props.onFileContentReady) {
-                this.state.isLoading = true;
-                this.setState(this.state);
+                this.setState({ isLoading: true });
                 let reader = new FileReader();
                 //reader.readAsText(fileInfo, "UTF-8");
                 reader.readAsArrayBuffer(fileInfo);
@@ -43,8 +41,7 @@ export class FileUploadComponent extends React.Component<IFileUploadComponentPro
                     if (fileBody && this.props.onFileContentReady) {
                         this.props.onFileContentReady(fileInfo, fileBody);
                         fileBody = undefined;
-                        this.state.isLoading = false;
-                        this.setState(this.state);
+                        this.setState({ isLoading: false });
                     }
                 }
             }
@@ -67,7 +64,7 @@ export class FileUploadComponent extends React.Component<IFileUploadComponentPro
                 <span className="glyphicon glyphicon-arrow-down"></span>
                 <div className="drag-drop-text">Drag file from your computer here or</div>
                 <div>
-                    <a href="javascript:void(0)" className={cn("btn btn-default", { "is-loading": this.state.isLoading })} onClick={() => { refInstance.open(); } }>Browse</a>
+                    <a href="javascript:void(0)" className={cn("btn btn-default", { "is-loading": this.state.isLoading })} onClick={() => { refInstance.open(); }}>Browse</a>
                 </div>
             </div>);
     }

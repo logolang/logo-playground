@@ -27,8 +27,8 @@ export class CollapsiblePanelComponent extends React.Component<ICollapsiblePanel
         return (
             <div className={`panel panel-${this.props.bsStyle || 'default'}`}>
                 <div className="panel-heading"
-                    onClick={alterState(this, x => x.collapsed = !x.collapsed)}
-                    >
+                    onClick={alterState(this, x => ({ collapsed: !x.collapsed }))}
+                >
                     <span>{this.props.title}</span>
                     <span className="ex-spacer-small" />
                     <small><span className={cn("glyphicon",

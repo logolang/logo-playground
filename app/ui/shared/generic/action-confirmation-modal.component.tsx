@@ -41,18 +41,15 @@ export class ActionConfirmationModalComponent extends React.Component<IComponent
                             <div className="alert alert-danger" role="alert">{this.state.errorMessage}</div>
                         </div>
                     }
-                    <br/>
+                    <br />
                 </Modal.Body>
                 <Modal.Footer>
                     <button type="button" className={cn("btn btn-primary", { "is-loading": this.state.isDeletionConfirmed })} onClick={
                         async () => {
-                            this.state.isDeletionConfirmed = true;
-                            this.setState(this.state);
+                            this.setState({ isDeletionConfirmed: true });
                             let result = await this.props.onConfirm();
                             if (result) {
-                                this.state.errorMessage = result;
-                                this.state.isDeletionConfirmed = false;
-                                this.setState(this.state);
+                                this.setState({ isDeletionConfirmed: false, errorMessage: result });
                             }
                         }
                     }>{this.state.actionButtonText}</button>

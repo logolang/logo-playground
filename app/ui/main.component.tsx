@@ -36,55 +36,42 @@ export class MainComponent extends React.Component<IMainComponentProps, IMainCom
             inProgress: false,
             isDarkBgNavBar: false
         }
-
-        const storedSettings = this.currentUser.getLocalStoredUserSettings();
-        if (storedSettings) {
-            this.state.inProgress = true;
-            this.loginService.loginWithToken(storedSettings.authToken, storedSettings.login)
-                .then(loginStatus => {
-                    this.currentUser.setLoginStatus(loginStatus, true);
-                    try {
-                        this.state.userLogin = loginStatus.userInfo.login;
-                        this.state.loggedIn = loginStatus.sussess;
-                    }
-                    catch (ex) {
-                        this.state.userLogin = '';
-                        this.state.loggedIn = false;
-                    }
-                    this.state.inProgress = false;
-                    this.setState(this.state);
-                });
-        }
     }
 
     onLogin = async (credentials: LoginCredentials): Promise<LoginStatus> => {
         let loginStatus = await this.loginService.login(credentials);
-        this.state.userLogin = credentials.login;
-        this.state.loggedIn = loginStatus.sussess;
         this.currentUser.setLoginStatus(loginStatus, credentials.rememberMe);
-        this.setState(this.state);
+        this.setState({ userLogin: credentials.login, loggedIn: loginStatus.sussess });
         return loginStatus;
     }
 
     menuLogOutClick = async () => {
-        this.state.inProgress = true;
-        this.setState(this.state);
+        this.setState({ inProgress: true });
         await this.loginService.logout();
         this.currentUser.eraseLocalStoredUserSettings();
-        this.state.inProgress = false;
-        this.state.loggedIn = false;
-        this.state.userLogin = '';
-        this.setState(this.state);
+        this.setState({ inProgress: false, userLogin: '', loggedIn: false });
     }
 
     componentDidMount() {
+        const storedSettings = this.currentUser.getLocalStoredUserSettings();
+        if (storedSettings) {
+            this.setState({ inProgress: true });
+            this.loginService.loginWithToken(storedSettings.authToken, storedSettings.login)
+                .then(loginStatus => {
+                    this.currentUser.setLoginStatus(loginStatus, true);
+                    if (loginStatus && loginStatus.userInfo) {
+                        this.setState({ inProgress: false, userLogin: loginStatus.userInfo.login, loggedIn: loginStatus.sussess });
+                    } else {
+                        this.setState({ inProgress: false, userLogin: '', loggedIn: false });
+                    }
+                });
+        }
         setTimeout(() => {
             let mainBar = document.getElementById('main-nav-bar');
             if (mainBar) {
                 const isDarkBgNavBar = Color(window.getComputedStyle(mainBar, undefined).backgroundColor || 'white').luminosity() < 0.3;
                 if (this.state.isDarkBgNavBar !== isDarkBgNavBar) {
-                    this.state.isDarkBgNavBar = isDarkBgNavBar;
-                    this.setState(this.state);
+                    this.setState({ isDarkBgNavBar: isDarkBgNavBar });
                 }
             }
         }, 100);
