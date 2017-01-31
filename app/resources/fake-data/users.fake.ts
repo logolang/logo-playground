@@ -3,9 +3,9 @@ import { UserInfo } from 'app/model/entities/user-info';
 export const fakeUsers: UserInfo[] = [
     {
         id: 'admin',
-        login: 'admin',
+        login: 'guest',
         attributes: {
-            name: 'Admin',
+            name: 'Guest',
             editedBy: '',
             editedOn: new Date(0)
         }

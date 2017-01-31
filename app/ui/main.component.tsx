@@ -114,7 +114,7 @@ export class MainComponent extends React.Component<IMainComponentProps, IMainCom
                             id="menu-user-dropdown" bsClass="dropdown"
                             noCaret
                             title={
-                                <NavbarUsercardComponent userName={userName} role={'User'} caret={true}></NavbarUsercardComponent> as any
+                                <NavbarUsercardComponent userName={userName} role={'~~~~~~~~'} caret={true}></NavbarUsercardComponent> as any
                             }>
                             <LinkContainer to={Routes.userProfile}>
                                 <MenuItem>User Profile</MenuItem>
