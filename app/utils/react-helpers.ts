@@ -62,10 +62,10 @@ export function goBack() {
     hashHistory.goBack();
 }
 
-export async function handleError<P, S extends { errorMessage: string }>(
+export async function handleError<P, S extends { errorMessage: string }, R>(
     component: React.Component<P, S>,
-    action: () => Promise<P>
-): Promise<P | undefined> {
+    action: () => Promise<R>
+): Promise<R | undefined> {
     try {
         component.setState({ errorMessage: '' });
         const result = await action();

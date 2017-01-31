@@ -19,7 +19,8 @@
         "pretty": true,
         "jsx": "react",
         "types": [
-            "mocha"
+            "mocha",
+            "jquery"
         ],
         "importHelpers": true
     },
