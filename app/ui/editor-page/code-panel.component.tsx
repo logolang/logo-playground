@@ -1,3 +1,5 @@
+import { LocalStorageService } from '../../services/local-storage.service';
+import { ServiceLocator } from '../../services/service-locator';
 import { RandomHelper } from '../../utils/random-helper';
 import * as React from 'react';
 import * as codemirror from 'codemirror';
@@ -67,6 +69,7 @@ let stream = {
 };
 
 export class CodePanelComponent extends React.Component<IComponentProps, IComponentState> {
+    currentCodeLocalStorage = new LocalStorageService<string>('temp_code', 'cs\r\nfd 100');
     cm: codemirror.EditorFromTextArea;
 
     constructor(props: IComponentProps) {
@@ -94,7 +97,7 @@ export class CodePanelComponent extends React.Component<IComponentProps, ICompon
             lineWrapping: true
         } as any);
         this.cm.setSize('100%', '100%');
-        this.cm.setValue('fd 50\r\nrt 90\r\nfd 67\r\nlt 50\r\nfd 68');
+        this.cm.setValue(this.currentCodeLocalStorage.getValue());
         setInterval(() => {
             this.cm.focus();
         }, 100);
@@ -145,6 +148,8 @@ export class CodePanelComponent extends React.Component<IComponentProps, ICompon
         }
         console.log(program);
         */
-        logo.run(this.cm.getValue());
+        const code = this.cm.getValue();
+        this.currentCodeLocalStorage.setValue(code);
+        logo.run(code);
     }
 }

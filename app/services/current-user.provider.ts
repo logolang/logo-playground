@@ -16,7 +16,7 @@ export interface ICurrentUserProvider {
 }
 
 export class CurrentUserProvider implements ICurrentUserProvider {
-    private storage = new LocalStorageService<LocalStoredUserSettings>(`${appInfo.name}.v${appInfo.version}:user:settings`, undefined);
+    private storage = new LocalStorageService<LocalStoredUserSettings | undefined>(`${appInfo.name}.v${appInfo.version}:user:settings`, undefined);
     private currentLoginStatus: LoginStatus | undefined;
     private loginStatusSubject = new Subject<LoginStatus>();
 

@@ -26,7 +26,7 @@ interface IComponentProps {
 export class UserProfileComponent extends React.Component<IComponentProps, IComponentState> {
     private appConfig = ServiceLocator.resolve(x => x.appConfig);
     private currentUser = ServiceLocator.resolve(x => x.currentUser);
-    private localStorageThemeKey = new LocalStorageService<string>((window as any).appThemeNameLocalStorageKey, undefined);
+    private localStorageThemeKey = new LocalStorageService<string>((window as any).appThemeNameLocalStorageKey, 'default');
 
     constructor(props: IComponentProps) {
         super(props);
@@ -34,7 +34,7 @@ export class UserProfileComponent extends React.Component<IComponentProps, IComp
 
         this.state = {
             userInfo: loginStatus.userInfo,
-            themeName: this.localStorageThemeKey.getValue() || 'default',
+            themeName: this.localStorageThemeKey.getValue(),
             isSavingInProgress: false,
         };
     }
