@@ -1,23 +1,21 @@
-.code-placeholder {
+.code-panel-container {
     height: 100%;
     position: relative;
-}
-
-.CodeMirror pre {
-    font-family: Inconsolata, Consolas, 'Courier New', monospace;
-    font-size: 18px
-}
-
-.code-controls {
-    position: absolute;
-    right: 0px;
-    top: 0px;
-    z-index: 100;
-    .glyphicon {
-        color: green;
+    .code-controls {
+        padding: 4px;
+        padding-top: 8px;
+        height: 60px;
+        .run-button {
+            .glyphicon {
+                color: seagreen;
+            }
+        }
     }
-    .btn {
-        margin-top: 10px;
-        margin-right: 10px;
+    .code-input-container {
+        position: absolute;
+        top: 60px;
+        bottom: 0px;
+        left: 0px;
+        right: 0px;
     }
 }

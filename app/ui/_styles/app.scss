@@ -7,7 +7,7 @@
 }
 
 .ex-app-logo {
-    background-image: url(../images/logo.svg);
+    background-image: url(../images/logo_black.png);
     background-repeat: no-repeat;
     background-position: center;
     width: 100px;
@@ -15,7 +15,7 @@
 
 .dark-navbar {
     .ex-app-logo {
-        //background-image: url(../images/logo-dark.png);
+        background-image: url(../images/logo_white.png);
     }
 }
 
