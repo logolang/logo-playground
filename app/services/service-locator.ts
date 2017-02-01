@@ -1,3 +1,4 @@
+import { LogoExecutionService } from './logo/logo-execution-service';
 import { IUsersRepository } from './entities/users.repository';
 import { ICurrentUserProvider } from './current-user.provider';
 import { IAppConfigLoader } from './app-config-loader';
@@ -10,6 +11,8 @@ interface ServicesList {
     configLoader: IAppConfigLoader
     loginService: ILoginService
     usersRepository: IUsersRepository
+
+    logo: LogoExecutionService
 }
 
 /**

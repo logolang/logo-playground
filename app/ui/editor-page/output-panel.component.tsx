@@ -1,6 +1,9 @@
 import * as React from 'react';
-
 import * as jquery from 'jquery'
+
+import { LogoExecutionService } from '../../services/logo/logo-execution-service';
+import { ServiceLocator } from '../../services/service-locator';
+
 import './output-panel.component.scss'
 
 interface IComponentState {
@@ -12,6 +15,7 @@ interface IComponentProps {
 export class OutputPanelComponent extends React.Component<IComponentProps, IComponentState> {
     lastWidth: number;
     lastHeight: number;
+    logo: LogoExecutionService;
 
     constructor(props: IComponentProps) {
         super(props);
@@ -28,6 +32,15 @@ export class OutputPanelComponent extends React.Component<IComponentProps, IComp
         setInterval(() => {
             this.resizeCanvas();
         }, 500);
+
+        this.logo = new LogoExecutionService();
+        this.logo.initialize();
+        ServiceLocator.set(x => x.logo = this.logo);
+    }
+
+    componentWillUnmount() {
+        this.logo.destroy();
+        ServiceLocator.set(x => delete x.logo);
     }
 
     resizeCanvas() {
