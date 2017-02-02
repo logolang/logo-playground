@@ -16,7 +16,10 @@ export class PlaygroundEvents {
         }
     }
 
-    stop() {
+    async stop(): Promise<void> {
+        if (this.executor) {
+            this.executor.abort();
+        }
     }
 
     setCode(code: string) {
@@ -31,6 +34,9 @@ export class PlaygroundEvents {
 
     deactivate() {
         this.code = undefined;
+        if (this.executor) {
+            this.executor.abort();
+        }
         this.executor = undefined;
         this.updateState();
     }

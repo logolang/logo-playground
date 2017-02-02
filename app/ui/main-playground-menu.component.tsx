@@ -9,6 +9,7 @@ import './main-playground-menu.component.scss'
 
 interface IComponentState {
     isVisible: boolean
+    isRunning: boolean
 }
 
 interface IComponentProps {
@@ -21,18 +22,27 @@ export class MainPlaygroundMenuComponent extends React.Component<IComponentProps
         super(props);
 
         this.state = {
-            isVisible: false
+            isVisible: false,
+            isRunning: false
         }
     }
 
     componentDidMount() {
-        this.playgroundEvents.subscribeToIsActive((active) => {
+        this.playgroundEvents.subscribeToIsActive(active => {
             this.setState({ isVisible: active });
+        })
+
+        this.playgroundEvents.subscribeToIsRunning(running => {
+            this.setState({ isRunning: running });
         })
     }
 
     runClick = () => {
         this.playgroundEvents.run();
+    }
+
+    stopClick = () => {
+        this.playgroundEvents.stop();
     }
 
     render(): JSX.Element | null {
@@ -41,10 +51,15 @@ export class MainPlaygroundMenuComponent extends React.Component<IComponentProps
         }
 
         return <Nav className="main-playground-menu">
-            <NavItem onClick={this.runClick}><span className="glyphicon glyphicon-play" aria-hidden="true"></span><span> Run</span></NavItem>
-            {/*
-                        <NavItem><span className="glyphicon glyphicon-stop" aria-hidden="true"></span><span> Stop</span></NavItem>
-                        */}
+            <NavItem disabled={this.state.isRunning} onClick={this.runClick}>
+                <span className="glyphicon glyphicon-play" aria-hidden="true"></span>
+                <span> Run</span>
+            </NavItem>
+            <NavItem disabled={!this.state.isRunning} onClick={this.stopClick}>
+                <span className="glyphicon glyphicon-stop" aria-hidden="true"></span>
+                <span> Stop</span>
+            </NavItem>
+
             <NavDropdown id="main-playground-menu-options-dropdown" bsClass="dropdown" noCaret
                 title={
                     <span className="glyphicon glyphicon-option-vertical" aria-hidden="true"></span> as any

@@ -8,7 +8,7 @@ import { LogoConsoleStream } from './logo-console-stream'
 
 function $(s: any) { return document.querySelector(s); }
 
-const ellipsePolyfill = `
+const polyfills = `
 to ellipse :w :h
   localmake "initxcor xcor
   localmake "initycor ycor
@@ -31,15 +31,15 @@ end
 `;
 
 export class LogoExecutionService implements ICodeExecutor {
+    private logo: any;
+
     constructor() {
     }
 
     initialize() {
-
     }
 
     destroy() {
-
     }
 
     async execute(code: string): Promise<void> {
@@ -56,17 +56,21 @@ export class LogoExecutionService implements ICodeExecutor {
             turtle_ctx,
             canvas_element.width, canvas_element.height, $('#overlay'));
 
-        let logo = new LogoInterpreter(
+        this.logo = new LogoInterpreter(
             turtle,
             new LogoConsoleStream('#overlay'),
             function (name: any, def: any) { }
         );
 
         try {
-            await logo.run(ellipsePolyfill + code);
+            await this.logo.run(polyfills + code);
         }
         catch (ex) {
             console.error('error', ex);
         };
+    }
+
+    abort(): void {
+        this.logo.bye();
     }
 }
