@@ -1,19 +1,21 @@
-import { LocalStorageService } from '../../services/local-storage.service';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import * as $ from 'jquery';
+
 //Expose react and react router in order for golden layout work
 (window as any)['React'] = React;
 (window as any)['ReactDOM'] = ReactDOM;
 import * as goldenLayout from 'golden-layout';
-import * as $ from 'jquery';
+import 'node_modules/golden-layout/src/css/goldenlayout-base.css';
+import 'node_modules/golden-layout/src/css/goldenlayout-light-theme.css';
 
 import { ServiceLocator } from 'app/services/service-locator'
+import { LocalStorageService } from 'app/services/local-storage.service';
+
 import { CodePanelComponent } from './code-panel.component'
 import { OutputPanelComponent } from './output-panel.component'
 
-import 'node_modules/golden-layout/src/css/goldenlayout-base.css';
-import 'node_modules/golden-layout/src/css/goldenlayout-light-theme.css';
-import './editor-page.component.scss';
+import './playground-page.component.scss';
 
 interface IComponentState {
 }
@@ -21,7 +23,7 @@ interface IComponentState {
 interface IComponentProps {
 }
 
-export class EditorPageComponent extends React.Component<IComponentProps, IComponentState> {
+export class PlaygroundPageComponent extends React.Component<IComponentProps, IComponentState> {
     layoutLocalStorage = new LocalStorageService<any>('logo-sandbox-layout', undefined);
     private appConfig = ServiceLocator.resolve(x => x.appConfig);
     private layout: goldenLayout;

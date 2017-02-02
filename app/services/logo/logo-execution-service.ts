@@ -3,6 +3,7 @@ import 'app/../lib/logojs/floodfill.js';
 import 'app/../lib/logojs/logo.js';
 import 'app/../lib/logojs/turtle.js';
 
+import { ICodeExecutor } from '../code-executor';
 import { LogoConsoleStream } from './logo-console-stream'
 
 function $(s: any) { return document.querySelector(s); }
@@ -29,13 +30,8 @@ to ellipse :w :h
 end
 `;
 
-export class LogoExecutionService {
-    private codeSubj = new Subject<string>()
-
+export class LogoExecutionService implements ICodeExecutor {
     constructor() {
-        this.codeSubj.subscribe((code) => {
-            this.executeTheCode(code);
-        })
     }
 
     initialize() {
@@ -46,11 +42,7 @@ export class LogoExecutionService {
 
     }
 
-    run(code: string) {
-        this.codeSubj.next(code);
-    }
-
-    private executeTheCode(code: string) {
+    async execute(code: string): Promise<void> {
         let CanvasTurtle: any = (window as any)['CanvasTurtle'];
         let LogoInterpreter: any = (window as any)['LogoInterpreter'];
 
@@ -70,8 +62,11 @@ export class LogoExecutionService {
             function (name: any, def: any) { }
         );
 
-        logo.run(ellipsePolyfill + code).catch(function (e: any) {
-            console.error('error', e);
-        });
+        try {
+            await logo.run(ellipsePolyfill + code);
+        }
+        catch (ex) {
+            console.error('error', ex);
+        };
     }
 }

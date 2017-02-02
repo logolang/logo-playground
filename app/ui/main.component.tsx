@@ -8,14 +8,14 @@ import { LoginStatus, LoginCredentials } from 'app/services/login.service'
 import { LoginComponent } from 'app/ui/login.component'
 import { NavbarUsercardComponent } from 'app/ui/shared/generic/navbar-usercard.component'
 import { PageLoadingIndicatorComponent } from 'app/ui/shared/generic/page-loading-indicator.component';
+import { MainPlaygroundMenuComponent } from './main-playground-menu.component';
 
 import { Routes } from 'app/routes';
 
 interface IMainComponentState {
     userLogin: string
     loggedIn: boolean
-    inProgress: boolean
-
+    isLoading: boolean
     isDarkBgNavBar: boolean
 }
 
@@ -33,7 +33,7 @@ export class MainComponent extends React.Component<IMainComponentProps, IMainCom
         this.state = {
             userLogin: '',
             loggedIn: false,
-            inProgress: false,
+            isLoading: false,
             isDarkBgNavBar: false
         }
     }
@@ -46,23 +46,23 @@ export class MainComponent extends React.Component<IMainComponentProps, IMainCom
     }
 
     menuLogOutClick = async () => {
-        this.setState({ inProgress: true });
+        this.setState({ isLoading: true });
         await this.loginService.logout();
         this.currentUser.eraseLocalStoredUserSettings();
-        this.setState({ inProgress: false, userLogin: '', loggedIn: false });
+        this.setState({ isLoading: false, userLogin: '', loggedIn: false });
     }
 
     componentDidMount() {
         const storedSettings = this.currentUser.getLocalStoredUserSettings();
         if (storedSettings) {
-            this.setState({ inProgress: true });
+            this.setState({ isLoading: true });
             this.loginService.loginWithToken(storedSettings.authToken, storedSettings.login)
                 .then(loginStatus => {
                     this.currentUser.setLoginStatus(loginStatus, true);
                     if (loginStatus && loginStatus.userInfo) {
-                        this.setState({ inProgress: false, userLogin: loginStatus.userInfo.login, loggedIn: loginStatus.sussess });
+                        this.setState({ isLoading: false, userLogin: loginStatus.userInfo.login, loggedIn: loginStatus.sussess });
                     } else {
-                        this.setState({ inProgress: false, userLogin: '', loggedIn: false });
+                        this.setState({ isLoading: false, userLogin: '', loggedIn: false });
                     }
                 });
         }
@@ -79,7 +79,7 @@ export class MainComponent extends React.Component<IMainComponentProps, IMainCom
 
     render(): JSX.Element {
         const isDarkTheme = Color(window.getComputedStyle(document.body, undefined).backgroundColor || 'white').luminosity() < 0.3;
-        return <PageLoadingIndicatorComponent isLoading={this.state.inProgress}
+        return <PageLoadingIndicatorComponent isLoading={this.state.isLoading}
             className={`${isDarkTheme ? 'dark-theme' : 'light-theme'} ${this.state.isDarkBgNavBar ? 'dark-navbar' : 'light-navbar'}`}>
             {
                 this.state.loggedIn
@@ -105,16 +105,25 @@ export class MainComponent extends React.Component<IMainComponentProps, IMainCom
                         <LinkContainer to={Routes.dashboardsRoot}>
                             <NavItem><span>Dashboard</span></NavItem>
                         </LinkContainer>
+                        <LinkContainer to={Routes.docPageRoot}>
+                            <NavItem><span>Documentation</span></NavItem>
+                        </LinkContainer>
+                        <LinkContainer to={Routes.tutorialsPageRoot}>
+                            <NavItem><span>Tutorials</span></NavItem>
+                        </LinkContainer>
                         <LinkContainer to={Routes.editorPageRoot}>
-                            <NavItem><span>Code</span></NavItem>
+                            <NavItem><span>Playground</span></NavItem>
                         </LinkContainer>
                     </Nav>
+
+                    <MainPlaygroundMenuComponent />
+
                     <Nav pullRight>
                         <NavDropdown
                             id="menu-user-dropdown" bsClass="dropdown"
                             noCaret
                             title={
-                                <NavbarUsercardComponent userName={userName} role={'~~~~~~~~'} caret={true}></NavbarUsercardComponent> as any
+                                <NavbarUsercardComponent userName={userName} role={'Contributor'} caret={true}></NavbarUsercardComponent> as any
                             }>
                             <LinkContainer to={Routes.userProfile}>
                                 <MenuItem>User Profile</MenuItem>
@@ -137,7 +146,7 @@ export class MainComponent extends React.Component<IMainComponentProps, IMainCom
     }
 
     renderLoginComponent(): JSX.Element {
-        if (this.state.inProgress) {
+        if (this.state.isLoading) {
             return <div />
         }
         return <LoginComponent login={this.state.userLogin} onSubmit={this.onLogin} />

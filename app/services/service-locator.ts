@@ -1,3 +1,4 @@
+import { PlaygroundEvents } from './playground-events';
 import { LogoExecutionService } from './logo/logo-execution-service';
 import { IUsersRepository } from './entities/users.repository';
 import { ICurrentUserProvider } from './current-user.provider';
@@ -12,7 +13,7 @@ interface ServicesList {
     loginService: ILoginService
     usersRepository: IUsersRepository
 
-    logo: LogoExecutionService
+    playgroundEvents: PlaygroundEvents
 }
 
 /**

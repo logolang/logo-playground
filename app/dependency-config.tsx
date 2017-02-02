@@ -1,4 +1,5 @@
-﻿import { ServiceLocator } from 'app/services/service-locator'
+﻿import { PlaygroundEvents } from './services/playground-events';
+import { ServiceLocator } from 'app/services/service-locator'
 
 import { AjaxService } from 'app/services/infrastructure/ajax-service';
 import { AppConfigLoader } from 'app/services/app-config-loader';
@@ -19,11 +20,15 @@ export class DependencyConfig {
 
         const loginService = new FakeLoginService();
 
+        const playgroundEvents = new PlaygroundEvents();
+
         // Setup the global dependency injection container
         ServiceLocator.set(x => x.configLoader = confLoader);
         ServiceLocator.set(x => x.appConfig = appConfig);
         ServiceLocator.set(x => x.currentUser = currentUser);
         ServiceLocator.set(x => x.usersRepository = usersRepository);
         ServiceLocator.set(x => x.loginService = loginService);
+
+        ServiceLocator.set(x => x.playgroundEvents = playgroundEvents);
     }
 }

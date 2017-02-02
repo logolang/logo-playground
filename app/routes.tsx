@@ -8,7 +8,9 @@ import { DashboardComponent } from 'app/ui/dashboard.component';
 import { UserProfileComponent } from 'app/ui/user-profile.component';
 import { ErrorComponent } from 'app/ui/error.component';
 import { AboutComponent } from 'app/ui/about.component';
-import { EditorPageComponent } from 'app/ui/editor-page/editor-page.component';
+import { DocumentationComponent } from 'app/ui/documentation.component';
+import { TutorialsComponent } from 'app/ui/tutorials.component';
+import { PlaygroundPageComponent } from 'app/ui/playground-page/playground-page.component';
 import { StubComponent } from 'app/ui/stub.component';
 
 export class Routes {
@@ -29,7 +31,15 @@ export class Routes {
                 </Route>
 
                 <Route path='code' component={ProxyComponent}>
-                    <IndexRoute component={EditorPageComponent}></IndexRoute>
+                    <IndexRoute component={PlaygroundPageComponent}></IndexRoute>
+                </Route>
+
+                <Route path='doc' component={ProxyComponent}>
+                    <IndexRoute component={DocumentationComponent}></IndexRoute>
+                </Route>
+
+                <Route path='tutorials' component={ProxyComponent}>
+                    <IndexRoute component={TutorialsComponent}></IndexRoute>
                 </Route>
 
                 <Route path={Routes.userProfile} component={UserProfileComponent}></Route>
@@ -46,6 +56,8 @@ export class Routes {
     static readonly userProfile = "/userprofile";
     static readonly about = "/about";
     static readonly editorPageRoot = "/code";
+    static readonly docPageRoot = "/doc";
+    static readonly tutorialsPageRoot = "/tutorials";
 }
 
 interface Map {

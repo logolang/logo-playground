@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as jquery from 'jquery'
 
-import { LogoExecutionService } from '../../services/logo/logo-execution-service';
-import { ServiceLocator } from '../../services/service-locator';
+import { LogoExecutionService } from 'app/services/logo/logo-execution-service';
+import { ServiceLocator } from 'app/services/service-locator';
 
 import './output-panel.component.scss'
 
@@ -13,6 +13,7 @@ interface IComponentProps {
 }
 
 export class OutputPanelComponent extends React.Component<IComponentProps, IComponentState> {
+    playgroundEvents = ServiceLocator.resolve(x => x.playgroundEvents);
     lastWidth: number;
     lastHeight: number;
     logo: LogoExecutionService;
@@ -35,12 +36,12 @@ export class OutputPanelComponent extends React.Component<IComponentProps, IComp
 
         this.logo = new LogoExecutionService();
         this.logo.initialize();
-        ServiceLocator.set(x => x.logo = this.logo);
+        this.playgroundEvents.setExecutor(this.logo);
     }
 
     componentWillUnmount() {
         this.logo.destroy();
-        ServiceLocator.set(x => delete x.logo);
+        this.playgroundEvents.deactivate();
     }
 
     resizeCanvas() {
