@@ -57,6 +57,7 @@ export class MainPlaygroundMenuComponent extends React.Component<IComponentProps
 
     storeProgramAction = async () => {
         this.setState({ isStoringInProgress: true });
+        let screenshot = this.playgroundEvents.getScreenshot();
 
         await this.programsRepo.add({
             code: this.playgroundEvents.getCode(),
@@ -65,7 +66,7 @@ export class MainPlaygroundMenuComponent extends React.Component<IComponentProps
             dateCreated: '',
             dateLastEdited: '',
             id: '',
-            screenshot: ''
+            screenshot: screenshot
         });
 
         await stay(1000);

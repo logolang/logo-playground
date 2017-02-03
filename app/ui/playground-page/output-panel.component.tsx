@@ -18,6 +18,8 @@ export class OutputPanelComponent extends React.Component<IComponentProps, IComp
     lastHeight: number;
     logo: LogoExecutionService;
 
+    resizeTimer: number;
+
     constructor(props: IComponentProps) {
         super(props);
 
@@ -30,7 +32,7 @@ export class OutputPanelComponent extends React.Component<IComponentProps, IComp
     }
 
     componentDidMount() {
-        setInterval(() => {
+        this.resizeTimer = setInterval(() => {
             this.resizeCanvas();
         }, 500);
 
@@ -42,13 +44,14 @@ export class OutputPanelComponent extends React.Component<IComponentProps, IComp
     componentWillUnmount() {
         this.logo.destroy();
         this.playgroundEvents.deactivate();
+        clearInterval(this.resizeTimer);
     }
 
     resizeCanvas() {
         let container = jquery('.output-container');
         let height = container.height();
         let width = container.width();
-        if (height === this.lastHeight && width === this.lastWidth) {
+        if (!height || !width || (height === this.lastHeight && width === this.lastWidth)) {
             return;
         }
         this.lastWidth = width;

@@ -75,4 +75,43 @@ export class LogoExecutionService implements ICodeExecutor {
             this.logo.bye();
         }
     }
+
+    createScreenshot(): string {
+        const canvasElt = $('#sandbox') as HTMLCanvasElement;
+        if (canvasElt) {
+            return this.prepareScreenshot(canvasElt);
+        }
+        return '';
+    }
+
+    // The crop and resize function
+    private prepareScreenshot(canvas: HTMLCanvasElement): string {
+        const targetRect = {
+            width: 133, height: 100
+        }
+        const clipRect = {
+            width: Math.min(400, canvas.width),
+            height: Math.min(300, canvas.width)
+        };
+        const sourceOffset = {
+            x: (canvas.width - clipRect.width) / 2,
+            y: (canvas.height - clipRect.height) / 2
+        };
+
+        // create an in-memory canvas
+        let buffer = document.createElement('canvas');
+        let b_ctx = buffer.getContext('2d');
+        if (!b_ctx) {
+            return '';
+        }
+        // set its width/height to the required ones
+        buffer.width = targetRect.width;
+        buffer.height = targetRect.height;
+        // draw the main canvas on our buffer one
+        b_ctx.drawImage(canvas, sourceOffset.x, sourceOffset.y, clipRect.width, clipRect.height,
+            0, 0, targetRect.width, targetRect.height);
+        // now call the callback with the dataURL of our buffer canvas
+        return buffer.toDataURL('image/jpeg', 0.7);
+    };
+
 }

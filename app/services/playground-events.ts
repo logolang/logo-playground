@@ -31,6 +31,12 @@ export class PlaygroundEvents {
         this.updateState();
     }
 
+    getScreenshot(): string {
+        return this.executor
+            ? this.executor.createScreenshot()
+            : '';
+    }
+
     setExecutor(executor: ICodeExecutor) {
         this.executor = executor;
         this.updateState();
