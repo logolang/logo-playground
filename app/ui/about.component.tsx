@@ -30,7 +30,6 @@ export class AboutComponent extends React.Component<IComponentProps, IComponentS
                         <p><strong>Package Name:</strong> {appInfo.name}</p>
                         <p><strong>App Version:</strong> {appInfo.version}</p>
                         <p><strong>Code Version:</strong> {appInfo.gitVersion}</p>
-                        <p><strong>Build:</strong> {appInfo.buildVersion}</p>
                     </div>
                 </div>
             </div>

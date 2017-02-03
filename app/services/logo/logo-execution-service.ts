@@ -71,6 +71,8 @@ export class LogoExecutionService implements ICodeExecutor {
     }
 
     abort(): void {
-        this.logo.bye();
+        if (this.logo) {
+            this.logo.bye();
+        }
     }
 }

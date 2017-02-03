@@ -22,6 +22,10 @@ export class PlaygroundEvents {
         }
     }
 
+    getCode(): string {
+        return this.code || '';
+    }
+
     setCode(code: string) {
         this.code = code;
         this.updateState();

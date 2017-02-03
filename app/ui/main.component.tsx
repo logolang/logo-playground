@@ -111,7 +111,7 @@ export class MainComponent extends React.Component<IMainComponentProps, IMainCom
                         <LinkContainer to={Routes.tutorialsPageRoot}>
                             <NavItem><span>Tutorials</span></NavItem>
                         </LinkContainer>
-                        <LinkContainer to={Routes.editorPageRoot}>
+                        <LinkContainer to={Routes.playground}>
                             <NavItem><span>Playground</span></NavItem>
                         </LinkContainer>
                     </Nav>

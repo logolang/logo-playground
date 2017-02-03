@@ -1,4 +1,5 @@
-﻿import { PlaygroundEvents } from './services/playground-events';
+﻿import { ProgramsLocalStorageRepository } from './services/entities/programs-localstorage.repository';
+import { PlaygroundEvents } from './services/playground-events';
 import { ServiceLocator } from 'app/services/service-locator'
 
 import { AjaxService } from 'app/services/infrastructure/ajax-service';
@@ -30,5 +31,6 @@ export class DependencyConfig {
         ServiceLocator.set(x => x.loginService = loginService);
 
         ServiceLocator.set(x => x.playgroundEvents = playgroundEvents);
+        ServiceLocator.set(x => x.programsReporitory = new ProgramsLocalStorageRepository());
     }
 }

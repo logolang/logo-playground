@@ -1,3 +1,4 @@
+import { IProgramsRepository } from './entities/programs-localstorage.repository';
 import { PlaygroundEvents } from './playground-events';
 import { LogoExecutionService } from './logo/logo-execution-service';
 import { IUsersRepository } from './entities/users.repository';
@@ -12,6 +13,7 @@ interface ServicesList {
     configLoader: IAppConfigLoader
     loginService: ILoginService
     usersRepository: IUsersRepository
+    programsReporitory: IProgramsRepository
 
     playgroundEvents: PlaygroundEvents
 }

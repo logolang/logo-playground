@@ -55,7 +55,7 @@ export class CodeInputLogoComponent extends React.Component<IComponentProps, ICo
             this.props.onChanged(newVal);
         });
         setInterval(() => {
-            this.cm.focus();
+            //this.cm.focus();
         }, 500);
     }
 

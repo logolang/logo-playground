@@ -31,6 +31,8 @@ export class Routes {
                 </Route>
 
                 <Route path='code' component={ProxyComponent}>
+                    <Route path='library/:programId' component={PlaygroundPageComponent}></Route>
+                    <Route path='gist/:gistId' component={PlaygroundPageComponent}></Route>
                     <IndexRoute component={PlaygroundPageComponent}></IndexRoute>
                 </Route>
 
@@ -55,7 +57,10 @@ export class Routes {
     static readonly page1Root = "/page1";
     static readonly userProfile = "/userprofile";
     static readonly about = "/about";
-    static readonly editorPageRoot = "/code";
+    static readonly playground = "/code";
+    static playgroundLibrary = (params: { programId: string }) => inject("code/library/:programId", params);
+    static playgroundGist = (params: { gistId: string }) => inject("code/gist/:gistId", params);
+
     static readonly docPageRoot = "/doc";
     static readonly tutorialsPageRoot = "/tutorials";
 }

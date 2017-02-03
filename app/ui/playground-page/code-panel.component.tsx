@@ -13,28 +13,25 @@ interface IComponentState {
 }
 
 interface IComponentProps {
+    code: string
+    codeChanged: (code: string) => void
 }
 
 export class CodePanelComponent extends React.Component<IComponentProps, IComponentState> {
-    playgroundEvents = ServiceLocator.resolve(x => x.playgroundEvents);
-    currentCodeLocalStorage = new LocalStorageService<string>('logo-sandbox-codeplayground', 'cs\r\nfd 100');
-
     constructor(props: IComponentProps) {
         super(props);
 
         this.state = {
-            code: this.currentCodeLocalStorage.getValue()
+            code: this.props.code
         }
     }
 
     componentDidMount() {
-        this.playgroundEvents.setCode(this.state.code);
     }
 
     codeChanged = (code: string) => {
         this.setState({ code: code });
-        this.currentCodeLocalStorage.setValue(code);
-        this.playgroundEvents.setCode(code);
+        this.props.codeChanged(code);
     }
 
     render(): JSX.Element {
