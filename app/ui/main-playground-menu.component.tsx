@@ -69,7 +69,7 @@ export class MainPlaygroundMenuComponent extends React.Component<IComponentProps
             screenshot: screenshot
         });
 
-        await stay(1000);
+        await stay(100);
 
         this.setState({ isStoringInProgress: false, programNameInStoreModal: '' });
         this.setState({ isStoreModalActive: false });

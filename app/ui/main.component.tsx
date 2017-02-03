@@ -103,7 +103,7 @@ export class MainComponent extends React.Component<IMainComponentProps, IMainCom
                 <Navbar.Collapse>
                     <Nav>
                         <LinkContainer to={Routes.dashboardsRoot}>
-                            <NavItem><span>Dashboard</span></NavItem>
+                            <NavItem><span>Gallery</span></NavItem>
                         </LinkContainer>
                         <LinkContainer to={Routes.docPageRoot}>
                             <NavItem><span>Documentation</span></NavItem>

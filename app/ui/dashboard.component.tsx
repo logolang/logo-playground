@@ -8,12 +8,14 @@ import { CollapsiblePanelComponent } from './shared/generic/collapsible-panel.co
 import { ActionConfirmationModalComponent } from './shared/generic/action-confirmation-modal.component';
 
 import { ServiceLocator } from 'app/services/service-locator'
-import { Program } from '../services/entities/programs-localstorage.repository';
+import { ProgramsSamplesRepository } from '../services/entities/programs-samples.repository';
+import { Program, ProgramStorageType } from '../services/entities/programs-localstorage.repository';
 import { Routes } from '../routes';
 
 interface IDashboardComponentState {
     userName: string;
     programs: Program[];
+    samples: Program[];
 
     programToDelete: Program | undefined;
 }
@@ -25,6 +27,7 @@ export class DashboardComponent extends React.Component<IDashboardComponentProps
     private appConfig = ServiceLocator.resolve(x => x.appConfig);
     private currentUser = ServiceLocator.resolve(x => x.currentUser);
     private programsRepo = ServiceLocator.resolve(x => x.programsReporitory);
+    private samplesRepo = new ProgramsSamplesRepository();
     readonly noScreenshot = require('./images/no.image.600x300.png') as string;
 
     constructor(props: IDashboardComponentProps) {
@@ -33,6 +36,7 @@ export class DashboardComponent extends React.Component<IDashboardComponentProps
         this.state = {
             userName: this.currentUser.getLoginStatus().userInfo.attributes.name,
             programs: [],
+            samples: [],
             programToDelete: undefined
         };
     }
@@ -43,7 +47,11 @@ export class DashboardComponent extends React.Component<IDashboardComponentProps
 
     async loadData() {
         const programs = await this.programsRepo.getAll();
-        this.setState({ programs: programs });
+        const samples = await this.samplesRepo.getAll();
+        this.setState({
+            programs: programs,
+            samples: samples
+        });
     }
 
     confirmDelete = async (): Promise<string> => {
@@ -55,22 +63,37 @@ export class DashboardComponent extends React.Component<IDashboardComponentProps
         return '';
     }
 
-    renderProgramCard(p: Program, deleteBox: boolean): JSX.Element {
+    renderProgramCard(p: Program, storageType: ProgramStorageType, deleteBox: boolean): JSX.Element {
+        let link = '';
+        switch (storageType) {
+            case 'library':
+                link = Routes.playgroundLibrary({ programId: p.id });
+                break;
+            case 'samples':
+                link = Routes.playgroundSamples({ sampleId: p.id });
+                break;
+            case 'gist':
+                link = Routes.playgroundGist({ gistId: p.id });
+                break;
+        }
         return <div className="media">
             <div className="media-left">
-                <a href="#">
+                <Link to={link}>
                     <img className="media-object"
                         style={{ width: 133, height: 100 }}
                         src={p.screenshot || this.noScreenshot} />
-                </a>
+                </Link>
             </div>
             <div className="media-body">
                 <h4 className="media-heading">
-                    <Link to={Routes.playgroundLibrary({ programId: p.id })}>
+                    <Link to={link}>
                         <span>{p.name}</span>
                     </Link>
                 </h4>
                 <p><label>Created: </label> {p.dateCreated}</p>
+                {/*
+                <p><label>Size: </label> {p.screenshot.length}</p>
+                */}
             </div>
             {
                 deleteBox && <div className="media-right">
@@ -88,30 +111,41 @@ export class DashboardComponent extends React.Component<IDashboardComponentProps
         return (
             <div className="container">
                 <PageHeaderComponent title={`Welcome, ${this.state.userName}`} />
+                {
+                    this.state.programToDelete && <ActionConfirmationModalComponent
+                        onConfirm={this.confirmDelete}
+                        actionButtonText="Delete"
+                        headerText="Do you want to delete?"
+                        onCancel={() => { this.setState({ programToDelete: undefined }) }}
+                    >
+                        <div>
+                            <h3>Delete program</h3>
+                            <br />
+                            {this.renderProgramCard(this.state.programToDelete, 'library', false)}
+                            <br />
+                        </div>
+                    </ActionConfirmationModalComponent>
+                }
                 <div className="row">
-                    <div className="col-sm-12">
-                        {
-                            this.state.programToDelete && <ActionConfirmationModalComponent
-                                onConfirm={this.confirmDelete}
-                                actionButtonText="Delete"
-                                headerText="Do you want to delete?"
-                                onCancel={() => { this.setState({ programToDelete: undefined }) }}
-                            >
-                                <div>
-                                    <h3>Delete program</h3>
-                                    <br />
-                                    {this.renderProgramCard(this.state.programToDelete, false)}
-                                    <br />
-                                </div>
-                            </ActionConfirmationModalComponent>
-                        }
-
+                    <div className="col-sm-6">
                         <CollapsiblePanelComponent collapsed={false} title="Personal Library ">
                             <div>
                                 {this.state.programs.map((p, i) => {
                                     return <div key={p.id}>
                                         {(i != 0) && <hr />}
-                                        {this.renderProgramCard(p, true)}
+                                        {this.renderProgramCard(p, 'library', true)}
+                                    </div>
+                                })}
+                            </div>
+                        </CollapsiblePanelComponent>
+                    </div>
+                    <div className="col-sm-6">
+                        <CollapsiblePanelComponent collapsed={false} title="Samples ">
+                            <div>
+                                {this.state.samples.map((p, i) => {
+                                    return <div key={p.id}>
+                                        {(i != 0) && <hr />}
+                                        {this.renderProgramCard(p, 'samples', false)}
                                     </div>
                                 })}
                             </div>

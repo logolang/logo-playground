@@ -16,9 +16,9 @@ import { StubComponent } from 'app/ui/stub.component';
 export class Routes {
     static getRouteDefinitions(): JSX.Element {
         return <Router history={hashHistory} >
-            <Redirect from="/" to="dashboard" />
+            <Redirect from="/" to="gallery" />
             <Route path="/" component={MainComponent} >
-                <Route path='dashboard' component={ProxyComponent}>
+                <Route path='gallery' component={ProxyComponent}>
                     <IndexRoute component={DashboardComponent}></IndexRoute>
                 </Route>
 
@@ -31,6 +31,7 @@ export class Routes {
                 </Route>
 
                 <Route path='code' component={ProxyComponent}>
+                    <Route path='samples/:sampleId' component={PlaygroundPageComponent}></Route>
                     <Route path='library/:programId' component={PlaygroundPageComponent}></Route>
                     <Route path='gist/:gistId' component={PlaygroundPageComponent}></Route>
                     <IndexRoute component={PlaygroundPageComponent}></IndexRoute>
@@ -53,11 +54,12 @@ export class Routes {
     }
 
     static readonly appRoot = "/";
-    static readonly dashboardsRoot = "dashboard";
+    static readonly dashboardsRoot = "gallery";
     static readonly page1Root = "/page1";
     static readonly userProfile = "/userprofile";
     static readonly about = "/about";
     static readonly playground = "/code";
+    static playgroundSamples = (params: { sampleId: string }) => inject("code/samples/:sampleId", params);
     static playgroundLibrary = (params: { programId: string }) => inject("code/library/:programId", params);
     static playgroundGist = (params: { gistId: string }) => inject("code/gist/:gistId", params);
 

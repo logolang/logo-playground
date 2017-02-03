@@ -111,7 +111,7 @@ export class LogoExecutionService implements ICodeExecutor {
         b_ctx.drawImage(canvas, sourceOffset.x, sourceOffset.y, clipRect.width, clipRect.height,
             0, 0, targetRect.width, targetRect.height);
         // now call the callback with the dataURL of our buffer canvas
-        return buffer.toDataURL('image/jpeg', 0.7);
+        return buffer.toDataURL('image/jpeg', 0.8);
     };
 
 }

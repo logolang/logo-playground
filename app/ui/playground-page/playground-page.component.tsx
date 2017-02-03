@@ -14,6 +14,7 @@ import 'node_modules/golden-layout/src/css/goldenlayout-light-theme.css';
 
 import { ServiceLocator } from 'app/services/service-locator'
 import { LocalStorageService } from 'app/services/local-storage.service';
+import { ProgramsSamplesRepository } from 'app/services/entities/programs-samples.repository';
 
 import { CodePanelComponent } from './code-panel.component'
 import { OutputPanelComponent } from './output-panel.component'
@@ -30,6 +31,7 @@ interface IComponentProps {
     params: {
         programId: string | undefined
         gistId: string | undefined
+        sampleId: string | undefined
     }
 }
 
@@ -39,6 +41,7 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
     currentCodeLocalStorage = new LocalStorageService<string>('logo-sandbox-codeplayground', 'cs\r\nfd 100');
     playgroundEvents = ServiceLocator.resolve(x => x.playgroundEvents);
     programsRepo = ServiceLocator.resolve(x => x.programsReporitory);
+    programSamples = new ProgramsSamplesRepository();
 
     private layout: goldenLayout;
     readonly config: goldenLayout.Config = {
@@ -98,6 +101,11 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
         let code = '';
         if (this.props.params.programId) {
             const program = await handleError(this, () => this.programsRepo.get(ensure(props.params.programId)));
+            if (program) {
+                code = program.code;
+            }
+        } else if (this.props.params.sampleId) {
+            const program = await handleError(this, () => this.programSamples.get(ensure(props.params.sampleId)));
             if (program) {
                 code = program.code;
             }

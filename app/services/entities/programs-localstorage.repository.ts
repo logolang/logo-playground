@@ -1,6 +1,8 @@
 import { RandomHelper } from '../../utils/random-helper';
 export type lang = "logo";
 
+export type ProgramStorageType = "library" | "samples" | "gist";
+
 export interface Program {
     id: string
     name: string
