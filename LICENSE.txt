@@ -1,8 +1,17 @@
 LICENSE: TBD
 
 CREDITS:
-1. Background picture:
-<a href='http://www.freepik.com/free-vector/technological-background-with-a-circuit_951745.htm'>Designed by Freepik</a>
-2. Logo:
+1. Login background picture.
+Technological background with a circuit Free Vector
+in Background 
+By Harryarts / Freepik 
+http://www.freepik.com/free-vector/technological-background-with-a-circuit_951745.htm
+2. Top menu logo.
 Pin Code By Korhan Eser, TR
 https://thenounproject.com/term/encryption/65513/
+3. Favicon.
+TShirtYarn Turtle
+TshirtYarn.com
+From: Kristy
+License: Creative Commons, no attribution
+http://www.favicon.cc/?action=icon&file_id=520733

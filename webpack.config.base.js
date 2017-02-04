@@ -62,6 +62,7 @@ function buildWebpackConfig(options) {
                 { from: 'lib/bootstrap/bootstrap.*', flatten: true },
                 { from: 'lib/bootstrap/fonts', to: 'fonts' },
                 { from: 'app/config/config.schema.json' },
+                { from: 'app/resources/favicon.ico' },
                 isProduction
                     ? { from: 'app/config/config.prod.json', to: 'config.json' }
                     : { from: 'app/config/config.json', to: 'config.json' },

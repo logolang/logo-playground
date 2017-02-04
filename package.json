@@ -1,8 +1,8 @@
 {
-  "name": "web-app-template",
+  "name": "logo-sandbox",
   "version": "1.0.0",
   "license": "SEE LICENSE IN LICENSE.txt",
-  "description": "Web Application Template",
+  "description": "Logo Sandbox",
   "scripts": {
     "build": "npm install && webpack --config webpack.config.prod.js",
     "postbuild": "npm run build-war",
