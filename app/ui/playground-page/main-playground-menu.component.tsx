@@ -1,17 +1,18 @@
-import { translateInputChangeToState } from '../utils/react-helpers';
-import { stay } from '../utils/async-helpers';
 import * as React from 'react';
 import * as cn from 'classnames';
 import { Button, ButtonGroup, Nav, Navbar, NavDropdown, MenuItem, NavItem, DropdownButton, Modal, OverlayTrigger } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
+import { Subscription } from 'rxjs'
+
+import { translateInputChangeToState } from 'app/utils/react-helpers';
+import { stay } from 'app/utils/async-helpers';
 
 import { ServiceLocator } from 'app/services/service-locator'
-
 import { Routes } from 'app/routes';
+
 import './main-playground-menu.component.scss';
 
 interface IComponentState {
-    isVisible: boolean
     isRunning: boolean
     isStoreModalActive: boolean
     isStoringInProgress: boolean
@@ -22,14 +23,14 @@ interface IComponentProps {
 }
 
 export class MainPlaygroundMenuComponent extends React.Component<IComponentProps, IComponentState> {
-    private playgroundEvents = ServiceLocator.resolve(x => x.playgroundEvents);
+    private subscription: Subscription
+    private playgroundContext = ServiceLocator.resolve(x => x.playgroundContext);
     private programsRepo = ServiceLocator.resolve(x => x.programsReporitory);
 
     constructor(props: IComponentProps) {
         super(props);
 
         this.state = {
-            isVisible: false,
             isRunning: false,
             isStoreModalActive: false,
             isStoringInProgress: false,
@@ -38,29 +39,29 @@ export class MainPlaygroundMenuComponent extends React.Component<IComponentProps
     }
 
     componentDidMount() {
-        this.playgroundEvents.subscribeToIsActive(active => {
-            this.setState({ isVisible: active });
-        })
-
-        this.playgroundEvents.subscribeToIsRunning(running => {
+        this.subscription = this.playgroundContext.subscribeToIsRunning(running => {
             this.setState({ isRunning: running });
         })
     }
 
+    componentWillUnmount() {
+        this.subscription.unsubscribe();
+    }
+
     runClick = () => {
-        this.playgroundEvents.run();
+        this.playgroundContext.run();
     }
 
     stopClick = () => {
-        this.playgroundEvents.stop();
+        this.playgroundContext.stop();
     }
 
     storeProgramAction = async () => {
         this.setState({ isStoringInProgress: true });
-        let screenshot = this.playgroundEvents.getScreenshot();
+        let screenshot = this.playgroundContext.getScreenshot();
 
         await this.programsRepo.add({
-            code: this.playgroundEvents.getCode(),
+            code: this.playgroundContext.getCode(),
             name: this.state.programNameInStoreModal,
             lang: 'logo',
             dateCreated: '',
@@ -76,10 +77,6 @@ export class MainPlaygroundMenuComponent extends React.Component<IComponentProps
     }
 
     render(): JSX.Element | null {
-        if (!this.state.isVisible) {
-            return null;
-        }
-
         return <Nav className="main-playground-menu">
             <NavItem disabled={this.state.isRunning} onClick={this.runClick}>
                 <span className="glyphicon glyphicon-play" aria-hidden="true"></span>

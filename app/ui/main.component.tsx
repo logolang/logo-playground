@@ -6,9 +6,7 @@ import { LinkContainer } from 'react-router-bootstrap';
 import { ServiceLocator } from 'app/services/service-locator'
 import { LoginStatus, LoginCredentials } from 'app/services/login.service'
 import { LoginComponent } from 'app/ui/login.component'
-import { NavbarUsercardComponent } from 'app/ui/shared/generic/navbar-usercard.component'
 import { PageLoadingIndicatorComponent } from 'app/ui/shared/generic/page-loading-indicator.component';
-import { MainPlaygroundMenuComponent } from './main-playground-menu.component';
 
 import { Routes } from 'app/routes';
 
@@ -16,7 +14,6 @@ interface IMainComponentState {
     userLogin: string
     loggedIn: boolean
     isLoading: boolean
-    isDarkBgNavBar: boolean
 }
 
 interface IMainComponentProps {
@@ -33,8 +30,7 @@ export class MainComponent extends React.Component<IMainComponentProps, IMainCom
         this.state = {
             userLogin: '',
             loggedIn: false,
-            isLoading: false,
-            isDarkBgNavBar: false
+            isLoading: false
         }
     }
 
@@ -43,13 +39,6 @@ export class MainComponent extends React.Component<IMainComponentProps, IMainCom
         this.currentUser.setLoginStatus(loginStatus, credentials.rememberMe);
         this.setState({ userLogin: credentials.login, loggedIn: loginStatus.sussess });
         return loginStatus;
-    }
-
-    menuLogOutClick = async () => {
-        this.setState({ isLoading: true });
-        await this.loginService.logout();
-        this.currentUser.eraseLocalStoredUserSettings();
-        this.setState({ isLoading: false, userLogin: '', loggedIn: false });
     }
 
     componentDidMount() {
@@ -66,83 +55,18 @@ export class MainComponent extends React.Component<IMainComponentProps, IMainCom
                     }
                 });
         }
-        setTimeout(() => {
-            let mainBar = document.getElementById('main-nav-bar');
-            if (mainBar) {
-                const isDarkBgNavBar = Color(window.getComputedStyle(mainBar, undefined).backgroundColor || 'white').luminosity() < 0.3;
-                if (this.state.isDarkBgNavBar !== isDarkBgNavBar) {
-                    this.setState({ isDarkBgNavBar: isDarkBgNavBar });
-                }
-            }
-        }, 100);
     }
 
     render(): JSX.Element {
         const isDarkTheme = Color(window.getComputedStyle(document.body, undefined).backgroundColor || 'white').luminosity() < 0.3;
         return <PageLoadingIndicatorComponent isLoading={this.state.isLoading}
-            className={`${isDarkTheme ? 'dark-theme' : 'light-theme'} ${this.state.isDarkBgNavBar ? 'dark-navbar' : 'light-navbar'}`}>
+            className={`${isDarkTheme ? 'dark-theme' : 'light-theme'}`}>
             {
                 this.state.loggedIn
-                    ? this.renderMainMenu()
+                    ? this.props.children
                     : this.renderLoginComponent()
             }
         </PageLoadingIndicatorComponent>
-    }
-
-    renderMainMenu(): JSX.Element {
-        let userName = this.currentUser.getLoginStatus().userInfo.attributes.name;
-
-        return <main>
-            <Navbar collapseOnSelect fixedTop fluid id="main-nav-bar">
-                <Navbar.Header>
-                    <Navbar.Brand>
-                        <a href="#" className="ex-app-logo"></a>
-                    </Navbar.Brand>
-                    <Navbar.Toggle />
-                </Navbar.Header>
-                <Navbar.Collapse>
-                    <Nav>
-                        <LinkContainer to={Routes.dashboardsRoot}>
-                            <NavItem><span>Gallery</span></NavItem>
-                        </LinkContainer>
-                        <LinkContainer to={Routes.docPageRoot}>
-                            <NavItem><span>Documentation</span></NavItem>
-                        </LinkContainer>
-                        <LinkContainer to={Routes.tutorialsPageRoot}>
-                            <NavItem><span>Tutorials</span></NavItem>
-                        </LinkContainer>
-                        <LinkContainer to={Routes.playground}>
-                            <NavItem><span>Playground</span></NavItem>
-                        </LinkContainer>
-                    </Nav>
-
-                    <MainPlaygroundMenuComponent />
-
-                    <Nav pullRight>
-                        <NavDropdown
-                            id="menu-user-dropdown" bsClass="dropdown"
-                            noCaret
-                            title={
-                                <NavbarUsercardComponent userName={userName} role={'Contributor'} caret={true}></NavbarUsercardComponent> as any
-                            }>
-                            <LinkContainer to={Routes.userProfile}>
-                                <MenuItem>User Profile</MenuItem>
-                            </LinkContainer>
-                            <LinkContainer to={Routes.about}>
-                                <MenuItem>About</MenuItem>
-                            </LinkContainer>
-                            <MenuItem divider />
-                            <MenuItem onClick={this.menuLogOutClick}>Log Out</MenuItem>
-                        </NavDropdown>
-                    </Nav>
-                </Navbar.Collapse>
-            </Navbar>
-
-            {/*This dummy navbar is to provide correct top margin for page content*/}
-            <nav className="navbar"></nav>
-
-            {this.props.children}
-        </main>
     }
 
     renderLoginComponent(): JSX.Element {

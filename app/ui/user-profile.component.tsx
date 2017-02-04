@@ -13,6 +13,7 @@ import { LocalStorageService } from 'app/services/local-storage.service';
 
 import { DateTimeStampComponent } from 'app/ui/shared/generic/date-time-stamp.component';
 import { PageHeaderComponent } from 'app/ui/shared/generic/page-header.component';
+import { MainMenuComponent } from 'app/ui/main-menu.component'
 
 interface IComponentState {
     userInfo: UserInfo;
@@ -42,6 +43,7 @@ export class UserProfileComponent extends React.Component<IComponentProps, IComp
     render(): JSX.Element {
         return (
             <div className="container">
+                <MainMenuComponent />
                 <PageHeaderComponent title="User Profile" />
                 <div className="row">
                     <div className="col-sm-12">

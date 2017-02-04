@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Link } from 'react-router'
 
+import { MainMenuComponent } from 'app/ui/main-menu.component'
 import { PageHeaderComponent } from './shared/generic/page-header.component';
 import { Routes } from '../routes';
 
@@ -21,6 +22,7 @@ export class StubComponent extends React.Component<IComponentProps, IComponentSt
     render(): JSX.Element {
         return (
             <div className="container">
+                <MainMenuComponent />
                 <PageHeaderComponent title="Nothing here yet">
                     <Link to={Routes.appRoot} className="btn btn-info">
                         <span>Go to main page</span>

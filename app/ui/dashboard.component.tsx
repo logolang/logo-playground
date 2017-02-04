@@ -3,6 +3,7 @@ import { Link } from 'react-router'
 import { Button, ButtonGroup, Nav, Navbar, NavDropdown, MenuItem, NavItem, DropdownButton, Modal, OverlayTrigger } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 
+import { MainMenuComponent } from 'app/ui/main-menu.component'
 import { PageHeaderComponent } from 'app/ui/shared/generic/page-header.component';
 import { CollapsiblePanelComponent } from './shared/generic/collapsible-panel.component';
 import { ActionConfirmationModalComponent } from './shared/generic/action-confirmation-modal.component';
@@ -110,6 +111,7 @@ export class DashboardComponent extends React.Component<IDashboardComponentProps
     render(): JSX.Element {
         return (
             <div className="container">
+                <MainMenuComponent />
                 <PageHeaderComponent title={`Welcome, ${this.state.userName}`} />
                 {
                     this.state.programToDelete && <ActionConfirmationModalComponent

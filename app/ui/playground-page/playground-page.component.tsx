@@ -1,4 +1,4 @@
-import { ErrorMessageComponent } from '../shared/generic/error-message.component';
+
 import { ensure } from '../../utils/syntax-helpers';
 import { handleError, subscribeLoadDataOnPropsParamsChange } from '../../utils/react-helpers';
 import * as React from 'react';
@@ -16,6 +16,8 @@ import { ServiceLocator } from 'app/services/service-locator'
 import { LocalStorageService } from 'app/services/local-storage.service';
 import { ProgramsSamplesRepository } from 'app/services/entities/programs-samples.repository';
 
+import { MainMenuComponent } from 'app/ui/main-menu.component'
+import { MainPlaygroundMenuComponent } from './main-playground-menu.component';
 import { CodePanelComponent } from './code-panel.component'
 import { OutputPanelComponent } from './output-panel.component'
 
@@ -23,7 +25,6 @@ import './playground-page.component.scss';
 
 interface IComponentState {
     isLoading: boolean
-    code: string
     errorMessage: string
 }
 
@@ -39,7 +40,7 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
     layoutLocalStorage = new LocalStorageService<any>('logo-sandbox-layout', undefined);
     private appConfig = ServiceLocator.resolve(x => x.appConfig);
     currentCodeLocalStorage = new LocalStorageService<string>('logo-sandbox-codeplayground', 'cs\r\nfd 100');
-    playgroundEvents = ServiceLocator.resolve(x => x.playgroundEvents);
+    playgroundEvents = ServiceLocator.resolve(x => x.playgroundContext);
     programsRepo = ServiceLocator.resolve(x => x.programsReporitory);
     programSamples = new ProgramsSamplesRepository();
 
@@ -87,7 +88,6 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
     buildDefaultState(props: IComponentProps): IComponentState {
         const state: IComponentState = {
             isLoading: true,
-            code: '',
             errorMessage: ''
         };
         return state;
@@ -99,19 +99,23 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
 
     async loadData(props: IComponentProps) {
         let code = '';
-        if (this.props.params.programId) {
+        let title = 'Program'
+        if (props.params.programId) {
             const program = await handleError(this, () => this.programsRepo.get(ensure(props.params.programId)));
             if (program) {
                 code = program.code;
+                title = program.name;
             }
-        } else if (this.props.params.sampleId) {
+        } else if (props.params.sampleId) {
             const program = await handleError(this, () => this.programSamples.get(ensure(props.params.sampleId)));
             if (program) {
                 code = program.code;
+                title = program.name;
             }
-        } else if (this.props.params.gistId) {
+        } else if (props.params.gistId) {
         } else {
             code = this.currentCodeLocalStorage.getValue();
+            title = 'Playground';
         }
 
         let config = this.config;
@@ -124,8 +128,9 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
         }
         catch (ex) { console.error('Error while getting stored layout state', ex) }
 
-        const codePanelConfig = this.getContentWithType('code-panel', config.content);
+        const codePanelConfig = this.findGoldenLayoutItem('code-panel', config.content);
         if (codePanelConfig) {
+            codePanelConfig.title = title;
             (codePanelConfig as any).props = {
                 code: code,
                 codeChanged: this.codeChanged
@@ -151,7 +156,6 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
 
         $(document.body).addClass('full-page-body');
 
-        this.setState({ isLoading: false, code: code });
         this.playgroundEvents.setCode(code);
     }
 
@@ -167,21 +171,23 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
     render(): JSX.Element {
         return (
             <div>
-                <ErrorMessageComponent errorMessage={this.state.errorMessage} />
+                <MainMenuComponent>
+                    <MainPlaygroundMenuComponent />
+                </MainMenuComponent>
                 <div className="full-page" ref='container'>
                 </div>
             </div>
         );
     }
 
-    private getContentWithType(type: string, content: goldenLayout.ItemConfigType[]): goldenLayout.ItemConfigType | undefined {
+    private findGoldenLayoutItem(type: string, content: goldenLayout.ItemConfigType[]): goldenLayout.ItemConfigType | undefined {
         if (content) {
             for (let item of content) {
                 if (item.type === type || (item as any).component === type) {
                     return item;
                 }
                 if (item.content) {
-                    let res = this.getContentWithType(type, item.content);
+                    let res = this.findGoldenLayoutItem(type, item.content);
                     if (res) {
                         return res;
                     }

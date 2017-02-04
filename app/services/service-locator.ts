@@ -1,5 +1,5 @@
 import { IProgramsRepository } from './entities/programs-localstorage.repository';
-import { PlaygroundEvents } from './playground-events';
+import { PlaygroundContext } from './playground-context';
 import { LogoExecutionService } from './logo/logo-execution-service';
 import { IUsersRepository } from './entities/users.repository';
 import { ICurrentUserProvider } from './current-user.provider';
@@ -15,7 +15,7 @@ interface ServicesList {
     usersRepository: IUsersRepository
     programsReporitory: IProgramsRepository
 
-    playgroundEvents: PlaygroundEvents
+    playgroundContext: PlaygroundContext
 }
 
 /**

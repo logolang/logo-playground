@@ -2,7 +2,7 @@ import { ICodeExecutor } from './code-executor';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject'
 import { Subscription } from 'rxjs'
 
-export class PlaygroundEvents {
+export class PlaygroundContext {
     private isActiveSubj = new BehaviorSubject<boolean>(false);
     private isRunningSubj = new BehaviorSubject<boolean>(false);
     private code: string | undefined;

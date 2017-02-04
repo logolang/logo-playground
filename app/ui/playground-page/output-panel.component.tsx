@@ -13,7 +13,7 @@ interface IComponentProps {
 }
 
 export class OutputPanelComponent extends React.Component<IComponentProps, IComponentState> {
-    playgroundEvents = ServiceLocator.resolve(x => x.playgroundEvents);
+    playgroundEvents = ServiceLocator.resolve(x => x.playgroundContext);
     lastWidth: number;
     lastHeight: number;
     logo: LogoExecutionService;

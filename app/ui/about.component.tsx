@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Link } from 'react-router'
 
 import { ServiceLocator } from 'app/services/service-locator'
+import { MainMenuComponent } from 'app/ui/main-menu.component'
 import { PageHeaderComponent } from 'app/ui/shared/generic/page-header.component';
 
 interface IComponentState {
@@ -23,6 +24,7 @@ export class AboutComponent extends React.Component<IComponentProps, IComponentS
     render(): JSX.Element {
         return (
             <div className="container">
+                <MainMenuComponent />
                 <PageHeaderComponent title="About" />
                 <div className="row">
                     <div className="col-sm-12">
