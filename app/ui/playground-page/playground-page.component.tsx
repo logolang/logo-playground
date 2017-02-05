@@ -9,8 +9,6 @@ import * as $ from 'jquery';
 (window as any)['React'] = React;
 (window as any)['ReactDOM'] = ReactDOM;
 import * as goldenLayout from 'golden-layout';
-import 'node_modules/golden-layout/src/css/goldenlayout-base.css';
-import 'node_modules/golden-layout/src/css/goldenlayout-light-theme.css';
 
 import { ServiceLocator } from 'app/services/service-locator'
 import { LocalStorageService } from 'app/services/local-storage.service';

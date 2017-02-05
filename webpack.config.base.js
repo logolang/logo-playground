@@ -59,8 +59,7 @@ function buildWebpackConfig(options) {
             extractTextPlugin,
 
             new CopyWebpackPlugin([
-                { from: 'lib/bootstrap/bootstrap.*', flatten: true },
-                { from: 'lib/bootstrap/fonts', to: 'fonts' },
+                { from: 'lib/css', to: 'css' },
                 { from: 'app/config/config.schema.json' },
                 { from: 'app/resources/favicon.ico' },
                 isProduction
