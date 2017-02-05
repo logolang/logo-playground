@@ -7,9 +7,12 @@ import 'node_modules/codemirror/addon/edit/matchbrackets.js';
 import 'node_modules/codemirror/addon/display/placeholder.js';
 
 import 'app/../lib/codemirror-logo/cm-logo.js';
-import 'app/../lib/codemirror-logo/cm-logo.css';
 
 import 'node_modules/codemirror/lib/codemirror.css'
+import 'node_modules/codemirror/theme/eclipse.css'
+import 'node_modules/codemirror/theme/mdn-like.css'
+import 'node_modules/codemirror/theme/icecoder.css'
+import 'node_modules/codemirror/theme/seti.css'
 
 import './code-input-logo.component.scss'
 
@@ -46,7 +49,8 @@ export class CodeInputLogoComponent extends React.Component<IComponentProps, ICo
             matchBrackets: true,
             lineComment: ';',
             lineNumbers: true,
-            lineWrapping: true
+            lineWrapping: true,
+            theme: 'default'
         } as any);
         this.cm.setSize('100%', '100%');
         this.cm.setValue(this.props.code);
