@@ -1,5 +1,5 @@
 export interface ICodeExecutor {
     execute(code: string): Promise<void>
     abort(): void
-    createScreenshot(): string
+    createScreenshot(preview: boolean): string
 }

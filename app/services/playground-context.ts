@@ -39,9 +39,9 @@ export class PlaygroundContext {
         this.updateState();
     }
 
-    getScreenshot(): string {
+    getScreenshot(preview: boolean): string {
         return this.executor
-            ? this.executor.createScreenshot()
+            ? this.executor.createScreenshot(preview)
             : '';
     }
 

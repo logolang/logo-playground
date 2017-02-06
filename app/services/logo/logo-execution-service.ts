@@ -76,10 +76,12 @@ export class LogoExecutionService implements ICodeExecutor {
         }
     }
 
-    createScreenshot(): string {
+    createScreenshot(preview: boolean): string {
         const canvasElt = $('#sandbox') as HTMLCanvasElement;
         if (canvasElt) {
-            return this.prepareScreenshot(canvasElt);
+            return preview
+                ? this.prepareScreenshot(canvasElt)
+                : canvasElt.toDataURL();
         }
         return '';
     }

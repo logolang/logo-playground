@@ -14,9 +14,9 @@ import './main-playground-menu.component.scss';
 
 interface IComponentState {
     isRunning: boolean
-    isStoreModalActive: boolean
-    isStoringInProgress: boolean
-    programNameInStoreModal: string
+    isSaveModalActive: boolean
+    isSavingInProgress: boolean
+    programNameInSaveModal: string
 }
 
 interface IComponentProps {
@@ -32,9 +32,9 @@ export class MainPlaygroundMenuComponent extends React.Component<IComponentProps
 
         this.state = {
             isRunning: false,
-            isStoreModalActive: false,
-            isStoringInProgress: false,
-            programNameInStoreModal: ''
+            isSaveModalActive: false,
+            isSavingInProgress: false,
+            programNameInSaveModal: ''
         }
     }
 
@@ -56,13 +56,13 @@ export class MainPlaygroundMenuComponent extends React.Component<IComponentProps
         this.playgroundContext.stop();
     }
 
-    storeProgramAction = async () => {
-        this.setState({ isStoringInProgress: true });
-        let screenshot = this.playgroundContext.getScreenshot();
+    saveProgramAction = async () => {
+        this.setState({ isSavingInProgress: true });
+        let screenshot = this.playgroundContext.getScreenshot(true);
 
         await this.programsRepo.add({
             code: this.playgroundContext.getCode(),
-            name: this.state.programNameInStoreModal,
+            name: this.state.programNameInSaveModal,
             lang: 'logo',
             dateCreated: '',
             dateLastEdited: '',
@@ -72,8 +72,14 @@ export class MainPlaygroundMenuComponent extends React.Component<IComponentProps
 
         await stay(100);
 
-        this.setState({ isStoringInProgress: false, programNameInStoreModal: '' });
-        this.setState({ isStoreModalActive: false });
+        this.setState({ isSavingInProgress: false, programNameInSaveModal: '' });
+        this.setState({ isSaveModalActive: false });
+    }
+
+    exportAsImage = async () => {
+        const data = this.playgroundContext.getScreenshot(false);
+        const win = window.open(data, '_blank');
+        win.focus();
     }
 
     render(): JSX.Element | null {
@@ -91,40 +97,46 @@ export class MainPlaygroundMenuComponent extends React.Component<IComponentProps
                 title={
                     <span className="glyphicon glyphicon-option-vertical" aria-hidden="true"></span> as any
                 }>
-                <MenuItem onClick={() => { this.setState({ isStoreModalActive: true }) }}>Store to library</MenuItem>
+                <MenuItem onClick={() => { this.setState({ isSaveModalActive: true }) }}>Save to Gallery</MenuItem>
+                <MenuItem divider />
+                <MenuItem onClick={this.exportAsImage}>Export as Image</MenuItem>
             </NavDropdown>
             {this.renderStoreModal()}
         </Nav>
     }
 
     renderStoreModal(): JSX.Element | null {
-        if (this.state.isStoreModalActive) {
-            return <Modal show={true} animation={false} onHide={() => { this.setState({ isStoreModalActive: false }) }} backdrop='static' >
+        if (this.state.isSaveModalActive) {
+            return <Modal show={true} animation={false} onHide={() => { this.setState({ isSaveModalActive: false }) }} backdrop='static' >
                 <Modal.Header closeButton>
-                    <Modal.Title>Store your program to library</Modal.Title>
+                    <Modal.Title>Save your program to Gallery</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <br />
-                    <form className="form-horizontal">
-                        <fieldset>
-                            <div className="form-group ex-margin-bottom-zero">
-                                <label htmlFor="name" className="col-lg-2 control-label">Program name</label>
-                                <div className="col-sm-12">
-                                    <input className="form-control" id="name" placeholder="Please enter name for your program" type="text"
-                                        value={this.state.programNameInStoreModal}
-                                        onChange={translateInputChangeToState(this, (s, v) => ({ programNameInStoreModal: v }))}
-                                    />
+                    <div className="row">
+                        <div className="col-sm-12">
+                            <form>
+                                <div className="form-group">
+                                    <label htmlFor="name">Program name</label>
+                                    <div className="row">
+                                        <div className="col-sm-12">
+                                            <input type="text" className="form-control" id="name" placeholder="Please enter name for your program"
+                                                value={this.state.programNameInSaveModal}
+                                                onChange={translateInputChangeToState(this, (s, v) => ({ programNameInSaveModal: v }))}
+                                            />
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                        </fieldset>
-                    </form>
+                            </form>
+                        </div>
+                    </div>
+                    <br />
                     <br />
                 </Modal.Body>
                 <Modal.Footer>
-                    <button type="button" className={cn("btn btn-primary", { "is-loading": this.state.isStoringInProgress })} onClick={this.storeProgramAction}>
+                    <button type="button" className={cn("btn btn-primary", { "is-loading": this.state.isSavingInProgress })} onClick={this.saveProgramAction}>
                         <span>Save</span>
                     </button>
-                    <button type="button" className="btn btn-link" onClick={() => { this.setState({ isStoreModalActive: false }) }}>
+                    <button type="button" className="btn btn-link" onClick={() => { this.setState({ isSaveModalActive: false }) }}>
                         <span>Cancel</span>
                     </button>
                 </Modal.Footer>
