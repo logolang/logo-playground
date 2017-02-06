@@ -21,6 +21,7 @@ interface IComponentState {
 }
 
 interface IComponentProps {
+    className?: string
     code: string
     requestFocusEvents?: Observable<void>
     onChanged: (code: string) => void
@@ -76,7 +77,7 @@ export class CodeInputLogoComponent extends React.Component<IComponentProps, ICo
 
     render(): JSX.Element {
         return (
-            <div ref="container" className="code-input">
+            <div ref="container" className={`${this.props.className}`}>
                 <textarea ref="text-area">
                 </textarea>
             </div>

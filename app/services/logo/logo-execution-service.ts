@@ -32,6 +32,7 @@ end
 
 export class LogoExecutionService implements ICodeExecutor {
     private logo: any;
+    errorMessages = new Subject<string>();
 
     constructor() {
     }
@@ -67,6 +68,7 @@ export class LogoExecutionService implements ICodeExecutor {
         }
         catch (ex) {
             console.error('error', ex);
+            this.errorMessages.next(ex.message);
         };
     }
 

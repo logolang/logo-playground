@@ -28,9 +28,6 @@ export class CodePanelComponent extends React.Component<IComponentProps, ICompon
         }
     }
 
-    componentDidMount() {
-    }
-
     codeChanged = (code: string) => {
         this.setState({ code: code });
         this.props.codeChanged(code);
@@ -39,13 +36,12 @@ export class CodePanelComponent extends React.Component<IComponentProps, ICompon
     render(): JSX.Element {
         return (
             <div ref="container" className="code-panel-container">
-                <div className="code-input-container">
-                    <CodeInputLogoComponent
-                        code={this.state.code}
-                        onChanged={this.codeChanged}
-                        requestFocusEvents={this.playgroundContext.requestFocusEvents}>
-                    </CodeInputLogoComponent>
-                </div>
+                <CodeInputLogoComponent
+                    className="code-input-container"
+                    code={this.state.code}
+                    onChanged={this.codeChanged}
+                    requestFocusEvents={this.playgroundContext.requestFocusEvents}>
+                </CodeInputLogoComponent>
             </div>
         );
     }

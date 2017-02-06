@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as jquery from 'jquery'
+import { Subscription } from 'rxjs'
 
 import { LogoExecutionService } from 'app/services/logo/logo-execution-service';
 import { ServiceLocator } from 'app/services/service-locator';
@@ -17,6 +18,8 @@ export class OutputPanelComponent extends React.Component<IComponentProps, IComp
     lastWidth: number;
     lastHeight: number;
     logo: LogoExecutionService;
+    errorMessagesSubscription: Subscription | undefined;
+    runEventsSubscription: Subscription | undefined;
 
     resizeTimer: number;
 
@@ -39,9 +42,25 @@ export class OutputPanelComponent extends React.Component<IComponentProps, IComp
         this.logo = new LogoExecutionService();
         this.logo.initialize();
         this.playgroundEvents.setExecutor(this.logo);
+        this.errorMessagesSubscription = this.playgroundEvents.errorMessages.subscribe((error) => {
+            jquery('#errorMessagesContainer').text(error);
+            jquery('#errorMessagesContainer').show();
+        });
+        this.runEventsSubscription = this.playgroundEvents.subscribeToIsRunning((isRunning) => {
+            if (isRunning) {
+                jquery('#errorMessagesContainer').text('');
+                jquery('#errorMessagesContainer').hide();
+            }
+        });
     }
 
     componentWillUnmount() {
+        if (this.errorMessagesSubscription) {
+            this.errorMessagesSubscription.unsubscribe();
+        }
+        if (this.runEventsSubscription) {
+            this.runEventsSubscription.unsubscribe();
+        }
         this.logo.destroy();
         this.playgroundEvents.deactivate();
         clearInterval(this.resizeTimer);
@@ -70,6 +89,7 @@ export class OutputPanelComponent extends React.Component<IComponentProps, IComp
                 <canvas id="sandbox"></canvas>
                 <canvas id="turtle"></canvas>
                 <div id="overlay"></div>
+                <div id="errorMessagesContainer" className="alert alert-danger" role="alert" style={{ display: 'none' }}></div>
             </div>
         );
     }

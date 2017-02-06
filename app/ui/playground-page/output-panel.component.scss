@@ -17,6 +17,13 @@
     top: 0px;
 }
 
+#errorMessagesContainer {
+    left: 10px;
+    top: 10px;
+    position: absolute;
+    z-index: 3;
+}
+
 #overlay {
     left: 0;
     top: 0;

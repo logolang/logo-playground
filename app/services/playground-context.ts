@@ -77,4 +77,11 @@ export class PlaygroundContext {
     get requestFocusEvents(): Observable<void> {
         return this.requestFocusEventsSubject;
     }
+
+    get errorMessages(): Observable<string> {
+        if (!this.executor) {
+            return new Subject<string>();
+        }
+        return this.executor.errorMessages;
+    }
 }
