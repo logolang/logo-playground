@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as codemirror from 'codemirror';
+import { Observable, Subscription } from 'rxjs'
 
 import 'node_modules/codemirror/addon/runmode/runmode.js';
 import 'node_modules/codemirror/addon/edit/closebrackets.js';
@@ -21,11 +22,13 @@ interface IComponentState {
 
 interface IComponentProps {
     code: string
+    requestFocusEvents?: Observable<void>
     onChanged: (code: string) => void
 }
 
 export class CodeInputLogoComponent extends React.Component<IComponentProps, IComponentState> {
     cm: codemirror.EditorFromTextArea;
+    focusEventsSubscription: Subscription | undefined;
 
     constructor(props: IComponentProps) {
         super(props);
@@ -58,12 +61,17 @@ export class CodeInputLogoComponent extends React.Component<IComponentProps, ICo
             let newVal = this.cm.getValue();
             this.props.onChanged(newVal);
         });
-        setInterval(() => {
-            //this.cm.focus();
-        }, 500);
+        if (this.props.requestFocusEvents) {
+            this.focusEventsSubscription = this.props.requestFocusEvents.subscribe(() => {
+                this.cm.focus();
+            });
+        }
     }
 
     componentWillUnmount() {
+        if (this.focusEventsSubscription) {
+            this.focusEventsSubscription.unsubscribe();
+        }
     }
 
     render(): JSX.Element {

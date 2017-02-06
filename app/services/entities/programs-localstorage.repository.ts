@@ -1,4 +1,5 @@
-import { RandomHelper } from '../../utils/random-helper';
+import { RandomHelper } from 'app/utils/random-helper';
+
 export type lang = "logo";
 
 export type ProgramStorageType = "library" | "samples" | "gist";

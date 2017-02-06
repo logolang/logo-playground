@@ -1,10 +1,10 @@
 import { ICodeExecutor } from './code-executor';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject'
-import { Subscription } from 'rxjs'
+import { Subscription, Subject, BehaviorSubject, Observable } from 'rxjs'
 
 export class PlaygroundContext {
     private isActiveSubj = new BehaviorSubject<boolean>(false);
     private isRunningSubj = new BehaviorSubject<boolean>(false);
+    private requestFocusEventsSubject = new Subject<void>();
     private code: string | undefined;
     private executor: ICodeExecutor | undefined;
 
@@ -13,13 +13,21 @@ export class PlaygroundContext {
             this.isRunningSubj.next(true);
             await this.executor.execute(this.code || '');
             this.isRunningSubj.next(false);
+
+            this.focusCode();
         }
     }
 
     async stop(): Promise<void> {
         if (this.executor) {
             this.executor.abort();
+
+            this.focusCode();
         }
+    }
+
+    focusCode() {
+        this.requestFocusEventsSubject.next();
     }
 
     getCode(): string {
@@ -64,5 +72,9 @@ export class PlaygroundContext {
 
     subscribeToIsRunning(delegate: (value: boolean) => void): Subscription {
         return this.isRunningSubj.subscribe(delegate);
+    }
+
+    get requestFocusEvents(): Observable<void> {
+        return this.requestFocusEventsSubject;
     }
 }

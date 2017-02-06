@@ -18,6 +18,8 @@ interface IComponentProps {
 }
 
 export class CodePanelComponent extends React.Component<IComponentProps, IComponentState> {
+    private playgroundContext = ServiceLocator.resolve(x => x.playgroundContext);
+
     constructor(props: IComponentProps) {
         super(props);
 
@@ -38,7 +40,10 @@ export class CodePanelComponent extends React.Component<IComponentProps, ICompon
         return (
             <div ref="container" className="code-panel-container">
                 <div className="code-input-container">
-                    <CodeInputLogoComponent code={this.state.code} onChanged={this.codeChanged}>
+                    <CodeInputLogoComponent
+                        code={this.state.code}
+                        onChanged={this.codeChanged}
+                        requestFocusEvents={this.playgroundContext.requestFocusEvents}>
                     </CodeInputLogoComponent>
                 </div>
             </div>
