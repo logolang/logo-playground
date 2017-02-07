@@ -133,8 +133,8 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
             code: this.playgroundContext.getCode(),
             name: this.state.programNameInSaveModal,
             lang: 'logo',
-            dateCreated: '',
-            dateLastEdited: '',
+            dateCreated: new Date(0),
+            dateLastEdited: new Date(0),
             id: '',
             screenshot: screenshot
         });

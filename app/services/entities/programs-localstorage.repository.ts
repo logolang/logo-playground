@@ -10,8 +10,8 @@ export interface Program {
     lang: lang
     code: string
     screenshot: string
-    dateCreated: string
-    dateLastEdited: string
+    dateCreated: Date
+    dateLastEdited: Date
 }
 
 export interface IProgramsRepository {
@@ -32,41 +32,33 @@ export class ProgramsLocalStorageRepository implements IProgramsRepository {
         for (let keyIndex = 0; keyIndex < this.storage.length; ++keyIndex) {
             const key = this.storage.key(keyIndex);
             if (key !== null && key.startsWith("program")) {
-                const value = this.storage.getItem(key);
-                let program: Program | null = null;
-                if (value !== null) {
-                    try {
-                        program = JSON.parse(value) as Program;
-                        programs.push(program);
-                    }
-                    catch (ex) { }
+                let program = this.getProgramFromStorage(key);
+                if (program) {
+                    programs.push(program);
                 }
             }
         }
+        programs = programs.sort((p1, p2) => { return p1.dateLastEdited > p2.dateLastEdited ? -1 : 1 });
         return programs;
     }
 
     async get(id: string): Promise<Program> {
-        const data = this.storage.getItem(this.getStorageKey(id));
-        if (data !== null) {
-            try {
-                return JSON.parse(data) as Program;
-            }
-            catch (ex) {
-            }
+        let program = this.getProgramFromStorage(this.getStorageKey(id));
+        if (program) {
+            return program;
         }
         throw new Error(`Program with id ${id} is not found`);
     }
 
     async add(program: Program): Promise<void> {
         program.id = RandomHelper.getRandomObjectId(32);
-        program.dateCreated = new Date().toUTCString();
-        program.dateLastEdited = new Date().toUTCString();
+        program.dateCreated = new Date();
+        program.dateLastEdited = new Date();
         this.storage.setItem(this.getStorageKey(program.id), JSON.stringify(program));
     }
 
     async update(program: Program): Promise<void> {
-        program.dateLastEdited = new Date().toUTCString();
+        program.dateLastEdited = new Date();
         this.storage.setItem(this.getStorageKey(program.id), JSON.stringify(program));
     }
 
@@ -76,5 +68,21 @@ export class ProgramsLocalStorageRepository implements IProgramsRepository {
 
     private getStorageKey(id: string) {
         return `program_${id}`;
+    }
+
+    private getProgramFromStorage(storageKey: string): Program | undefined {
+        const data = this.storage.getItem(storageKey);
+        if (data !== null) {
+            try {
+                let program = JSON.parse(data) as Program;
+                program.dateCreated = new Date(program.dateCreated);
+                program.dateLastEdited = new Date(program.dateLastEdited);
+                return program;
+            }
+            catch (ex) {
+                console.error('Error during parsing the program', data, ex);
+            }
+        }
+        return undefined;
     }
 }

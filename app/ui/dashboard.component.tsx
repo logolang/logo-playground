@@ -1,7 +1,8 @@
 import * as React from 'react';
-import { Link } from 'react-router'
+import { Link } from 'react-router';
 import { Button, ButtonGroup, Nav, Navbar, NavDropdown, MenuItem, NavItem, DropdownButton, Modal, OverlayTrigger } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
+import * as moment from 'moment';
 
 import { MainMenuComponent } from 'app/ui/main-menu.component'
 import { PageHeaderComponent } from 'app/ui/shared/generic/page-header.component';
@@ -30,6 +31,7 @@ export class DashboardComponent extends React.Component<IDashboardComponentProps
     private programsRepo = ServiceLocator.resolve(x => x.programsReporitory);
     private samplesRepo = new ProgramsSamplesRepository();
     readonly noScreenshot = require('./images/no.image.600x300.png') as string;
+    readonly yesterdayDate = moment().subtract(1, 'd');
 
     constructor(props: IDashboardComponentProps) {
         super(props);
@@ -77,6 +79,11 @@ export class DashboardComponent extends React.Component<IDashboardComponentProps
                 link = Routes.playgroundGist({ gistId: p.id });
                 break;
         }
+        const createdDate = moment(p.dateCreated);
+        const formattedDate = createdDate.isAfter(this.yesterdayDate)
+            ? createdDate.fromNow()
+            : createdDate.calendar();
+
         return <div className="media">
             <div className="media-left">
                 <Link to={link}>
@@ -91,7 +98,7 @@ export class DashboardComponent extends React.Component<IDashboardComponentProps
                         <span>{p.name}</span>
                     </Link>
                 </h4>
-                <p><label>Created: </label> {p.dateCreated}</p>
+                <p><label>Created: </label> <span>{formattedDate}</span></p>
                 {/*
                 <p><label>Size: </label> {p.screenshot.length}</p>
                 */}

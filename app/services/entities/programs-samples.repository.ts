@@ -2,6 +2,11 @@ import { IProgramsRepository, Program } from './programs-localstorage.repository
 import { RandomHelper } from '../../utils/random-helper';
 
 const data = require('../../resources/samples/programs.json') as Program[];
+data.forEach(p => {
+    p.dateCreated = new Date(p.dateCreated);
+    p.dateLastEdited = new Date(p.dateLastEdited);
+});
+data.sort((p1, p2) => { return p1.dateLastEdited > p2.dateLastEdited ? -1 : 1 });
 
 export class ProgramsSamplesRepository implements IProgramsRepository {
     constructor() {
