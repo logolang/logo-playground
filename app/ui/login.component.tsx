@@ -18,7 +18,6 @@ interface ILoginFormComponentState {
 }
 
 interface ILoginFormComponentProps {
-    login: string
     onSubmit: (credentials: LoginCredentials) => Promise<LoginStatus>
 }
 
@@ -31,7 +30,7 @@ export class LoginComponent extends React.Component<ILoginFormComponentProps, IL
         this.state = {
             errorMessage: '',
             inProgress: false,
-            login: props.login,
+            login: '',
             rememberMe: false,
             password: ''
         };
@@ -59,10 +58,10 @@ export class LoginComponent extends React.Component<ILoginFormComponentProps, IL
             rememberMe: this.state.rememberMe
         });
 
-        if (!result.sussess) {
+        if (!result.isLoggedIn) {
             this.setState({ errorMessage: result.errorMessage, inProgress: false });
         } else {
-            // this is to trigger save passowrd in Chrome
+            // this is to trigger save password in Chrome
             history.pushState({}, "", window.location.href);
         }
     }

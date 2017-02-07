@@ -54,7 +54,7 @@ export class MainMenuComponent extends React.Component<IComponentProps, ICompone
     }
 
     render(): JSX.Element {
-        let userName = this.currentUser.getLoginStatus().userInfo.attributes.name;
+        const loginStatus = this.currentUser.getLoginStatus();
 
         return <div className={`${this.state.isDarkBgNavBar ? 'dark-navbar' : 'light-navbar'}`}>
             <Navbar collapseOnSelect fixedTop fluid id="main-nav-bar">
@@ -87,16 +87,30 @@ export class MainMenuComponent extends React.Component<IComponentProps, ICompone
                             id="menu-user-dropdown" bsClass="dropdown"
                             noCaret
                             title={
-                                <NavbarUsercardComponent userName={userName} role={'Contributor'} caret={true}></NavbarUsercardComponent> as any
+                                <NavbarUsercardComponent userName={loginStatus.userInfo.attributes.name} role={'Contributor'} caret={true}></NavbarUsercardComponent> as any
                             }>
+                            {
+                                !loginStatus.isLoggedIn &&
+                                <MenuItem onClick={() => { this.loginService.requestNewLogin() }}>Log In</MenuItem>
+                            }
+                            {
+                                !loginStatus.isLoggedIn &&
+                                <MenuItem divider />
+                            }
                             <LinkContainer to={Routes.userProfile}>
                                 <MenuItem>User Profile</MenuItem>
                             </LinkContainer>
                             <LinkContainer to={Routes.about}>
                                 <MenuItem>About</MenuItem>
                             </LinkContainer>
-                            <MenuItem divider />
-                            <MenuItem onClick={this.menuLogOutClick}>Log Out</MenuItem>
+                            {
+                                loginStatus.isLoggedIn &&
+                                <MenuItem divider />
+                            }
+                            {
+                                loginStatus.isLoggedIn &&
+                                <MenuItem onClick={this.menuLogOutClick}>Log Out</MenuItem>
+                            }
                         </NavDropdown>
                     </Nav>
 

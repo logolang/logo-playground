@@ -115,7 +115,9 @@ export class PlaygroundPageLayoutComponent extends React.Component<IComponentPro
     }
 
     componentWillUnmount() {
-        this.layout.destroy();
+        if (this.layout) {
+            this.layout.destroy();
+        }
         $(document.body).removeClass('full-page-body');
     }
 

@@ -1,3 +1,4 @@
+import { Subject, Subscription } from 'rxjs'
 import { stay } from 'app/utils/async-helpers';
 
 import { ILoginService, LoginCredentials, LoginServiceHelpers, LoginStatus } from './login.service';
@@ -5,6 +6,8 @@ import { FakeDataProvider } from '../resources/fake-data/fake-data-provider';
 
 
 export class FakeLoginService implements ILoginService {
+    loginRequestsSubj = new Subject<void>();
+
     async loginWithToken(token: string, login: string): Promise<LoginStatus> {
         //await stay(1000);
         return this.doLogin(login);
@@ -23,7 +26,7 @@ export class FakeLoginService implements ILoginService {
             return {
                 userInfo: user,
                 authToken: 'blabla',
-                sussess: true,
+                isLoggedIn: true,
                 errorMessage: ''
             };
         } else {
@@ -33,5 +36,13 @@ export class FakeLoginService implements ILoginService {
 
     async logout(): Promise<void> {
         await stay(1000);
+    }
+
+    requestNewLogin(): void {
+        this.loginRequestsSubj.next();
+    }
+
+    subscribeToLoginRequest(event: () => void): Subscription {
+        return this.loginRequestsSubj.subscribe(event);
     }
 }

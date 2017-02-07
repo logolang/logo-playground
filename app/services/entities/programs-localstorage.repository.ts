@@ -1,3 +1,4 @@
+import { ICurrentUserProvider } from '../current-user.provider';
 import { RandomHelper } from 'app/utils/random-helper';
 
 export type lang = "logo";
@@ -24,14 +25,14 @@ export interface IProgramsRepository {
 
 export class ProgramsLocalStorageRepository implements IProgramsRepository {
     storage: Storage = window.localStorage;
-    constructor() {
+    constructor(private currentUser: ICurrentUserProvider) {
     }
 
     async getAll(): Promise<Program[]> {
         let programs: Program[] = [];
         for (let keyIndex = 0; keyIndex < this.storage.length; ++keyIndex) {
             const key = this.storage.key(keyIndex);
-            if (key !== null && key.startsWith("program")) {
+            if (key !== null && key.startsWith(this.getStorageKeyPrefix())) {
                 let program = this.getProgramFromStorage(key);
                 if (program) {
                     programs.push(program);
@@ -66,8 +67,17 @@ export class ProgramsLocalStorageRepository implements IProgramsRepository {
         this.storage.removeItem(this.getStorageKey(id));
     }
 
+    private getStorageKeyPrefix() {
+        const loginStatus = this.currentUser.getLoginStatus();
+        if (loginStatus.isLoggedIn) {
+            return loginStatus.userInfo.id + ":program:";
+        } else {
+            return 'program_';
+        }
+    }
+
     private getStorageKey(id: string) {
-        return `program_${id}`;
+        return `${this.getStorageKeyPrefix()}${id}`;
     }
 
     private getProgramFromStorage(storageKey: string): Program | undefined {

@@ -39,7 +39,7 @@ export class CurrentUserProvider implements ICurrentUserProvider {
 
     setLoginStatus(loginStatus: LoginStatus, rememberMe: boolean) {
         this.currentLoginStatus = loginStatus;
-        if (loginStatus.sussess && rememberMe) {
+        if (loginStatus.isLoggedIn && rememberMe) {
             this.storage.setValue({
                 authToken: loginStatus.authToken,
                 login: loginStatus.userInfo.login

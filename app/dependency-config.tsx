@@ -31,6 +31,6 @@ export class DependencyConfig {
         ServiceLocator.set(x => x.loginService = loginService);
 
         ServiceLocator.set(x => x.playgroundContext = playgroundEvents);
-        ServiceLocator.set(x => x.programsReporitory = new ProgramsLocalStorageRepository());
+        ServiceLocator.set(x => x.programsReporitory = new ProgramsLocalStorageRepository(currentUser));
     }
 }
