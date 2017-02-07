@@ -1,29 +1,31 @@
-
-import { ensure } from '../../utils/syntax-helpers';
-import { handleError, subscribeLoadDataOnPropsParamsChange } from '../../utils/react-helpers';
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-import * as $ from 'jquery';
+import * as cn from 'classnames';
+import { Button, ButtonGroup, Nav, Navbar, NavDropdown, MenuItem, NavItem, DropdownButton, Modal, OverlayTrigger } from 'react-bootstrap';
+import { LinkContainer } from 'react-router-bootstrap';
+import { Subscription } from 'rxjs'
 
-//Expose react and react router in order for golden layout work
-(window as any)['React'] = React;
-(window as any)['ReactDOM'] = ReactDOM;
-import * as goldenLayout from 'golden-layout';
+import { stay } from 'app/utils/async-helpers';
+import { ensure } from 'app/utils/syntax-helpers';
+import { handleError, subscribeLoadDataOnPropsParamsChange, translateInputChangeToState } from 'app/utils/react-helpers';
 
 import { ServiceLocator } from 'app/services/service-locator'
 import { LocalStorageService } from 'app/services/local-storage.service';
 import { ProgramsSamplesRepository } from 'app/services/entities/programs-samples.repository';
 
 import { MainMenuComponent } from 'app/ui/main-menu.component'
-import { MainPlaygroundMenuComponent } from './main-playground-menu.component';
-import { CodePanelComponent } from './code-panel.component'
-import { OutputPanelComponent } from './output-panel.component'
+import { PlaygroundPageLayoutComponent } from './playground-page-layout.component';
 
 import './playground-page.component.scss';
 
 interface IComponentState {
+    code: string
+    programTitle: string
     isLoading: boolean
     errorMessage: string
+    isRunning: boolean
+    isSaveModalActive: boolean
+    isSavingInProgress: boolean
+    programNameInSaveModal: string
 }
 
 interface IComponentProps {
@@ -35,39 +37,12 @@ interface IComponentProps {
 }
 
 export class PlaygroundPageComponent extends React.Component<IComponentProps, IComponentState> {
-    layoutLocalStorage = new LocalStorageService<any>('logo-sandbox-layout', undefined);
     private appConfig = ServiceLocator.resolve(x => x.appConfig);
     currentCodeLocalStorage = new LocalStorageService<string>('logo-sandbox-codeplayground', 'cs\r\nfd 100');
-    playgroundEvents = ServiceLocator.resolve(x => x.playgroundContext);
+    playgroundContext = ServiceLocator.resolve(x => x.playgroundContext);
     programsRepo = ServiceLocator.resolve(x => x.programsReporitory);
     programSamples = new ProgramsSamplesRepository();
-
-    private layout: goldenLayout;
-    readonly config: goldenLayout.Config = {
-        settings: {
-            showMaximiseIcon: false,
-            showPopoutIcon: false,
-            showCloseIcon: false,
-        },
-        content: [{
-            type: 'row',
-            content: [
-                {
-                    title: 'Source Code',
-                    type: 'react-component',
-                    component: 'code-panel',
-                    width: 30,
-                    isClosable: false,
-                },
-                {
-                    title: 'Output',
-                    type: 'react-component',
-                    component: 'output-panel',
-                    isClosable: false
-                }
-            ]
-        }]
-    };
+    private isRunningSubscription: Subscription | undefined;
 
     constructor(props: IComponentProps) {
         super(props);
@@ -80,19 +55,34 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
 
     codeChanged = (code: string): void => {
         this.currentCodeLocalStorage.setValue(code);
-        this.playgroundEvents.setCode(code);
+        this.playgroundContext.setCode(code);
     }
 
     buildDefaultState(props: IComponentProps): IComponentState {
         const state: IComponentState = {
             isLoading: true,
-            errorMessage: ''
+            errorMessage: '',
+            code: '',
+            programTitle: '',
+            isRunning: false,
+            isSaveModalActive: false,
+            isSavingInProgress: false,
+            programNameInSaveModal: ''
         };
         return state;
     }
 
     componentDidMount() {
-        this.loadData(this.props)
+        this.loadData(this.props);
+        this.isRunningSubscription = this.playgroundContext.subscribeToIsRunning(running => {
+            this.setState({ isRunning: running });
+        });
+    }
+
+    componentWillUnmount() {
+        if (this.isRunningSubscription) {
+            this.isRunningSubscription.unsubscribe();
+        }
     }
 
     async loadData(props: IComponentProps) {
@@ -116,82 +106,118 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
             title = 'Playground';
         }
 
-        let config = this.config;
-        try {
-            const storedState = this.layoutLocalStorage.getValue();
-            console.log('state restored!', storedState);
-            if (storedState) {
-                config = storedState;
-            }
-        }
-        catch (ex) { console.error('Error while getting stored layout state', ex) }
+        this.setState({ code: code, programTitle: title });
+        this.playgroundContext.setCode(code);
+    }
 
-        const codePanelConfig = this.findGoldenLayoutItem('code-panel', config.content);
-        if (codePanelConfig) {
-            codePanelConfig.title = title;
-            (codePanelConfig as any).props = {
-                code: code,
-                codeChanged: this.codeChanged
-            }
-        } else {
-            throw new Error('Cannot find code panel conponent in config');
-        }
+    runClick = () => {
+        this.playgroundContext.run();
+    }
 
-        const element = this.refs['container'] as any;
-        if (this.layout) {
-            this.layout.destroy();
-        }
-        this.layout = new goldenLayout(config, element);
-        this.layout.registerComponent('code-panel', CodePanelComponent);
-        this.layout.registerComponent('output-panel', OutputPanelComponent);
-        this.layout.init();
-        const layoutUnsafe: any = this.layout;
-        layoutUnsafe.on('stateChanged', () => {
-            const state = this.layout.toConfig();
-            this.layoutLocalStorage.setValue(state);
-            console.log('state saved!', state);
+    stopClick = () => {
+        this.playgroundContext.stop();
+    }
+
+    saveProgramAction = async () => {
+        this.setState({ isSavingInProgress: true });
+        let screenshot = this.playgroundContext.getScreenshot(true);
+
+        await this.programsRepo.add({
+            code: this.playgroundContext.getCode(),
+            name: this.state.programNameInSaveModal,
+            lang: 'logo',
+            dateCreated: '',
+            dateLastEdited: '',
+            id: '',
+            screenshot: screenshot
         });
 
-        $(document.body).addClass('full-page-body');
-
-        this.playgroundEvents.setCode(code);
+        this.setState({ isSavingInProgress: false, programNameInSaveModal: '' });
+        this.setState({ isSaveModalActive: false });
     }
 
-    componentWillUnmount() {
-        this.layout.destroy();
-        $(document.body).removeClass('full-page-body');
-    }
-
-    shouldComponentUpdate() {
-        return false;
+    exportAsImage = async () => {
+        const data = this.playgroundContext.getScreenshot(false);
+        const win = window.open(data, '_blank');
+        win.focus();
     }
 
     render(): JSX.Element {
+        document.title = appInfo.description + ": " + this.state.programTitle;
         return (
             <div>
-                <MainMenuComponent>
-                    <MainPlaygroundMenuComponent />
-                </MainMenuComponent>
-                <div className="full-page" ref='container'>
-                </div>
-            </div>
+                <MainMenuComponent pullRightChildren={
+                    <Nav className="main-playground-menu">
+                        <NavItem disabled={this.state.isRunning} onClick={this.runClick}>
+                            <span className="glyphicon glyphicon-play" aria-hidden="true"></span>
+                            <span> Run</span>
+                        </NavItem>
+                        <NavItem disabled={!this.state.isRunning} onClick={this.stopClick}>
+                            <span className="glyphicon glyphicon-stop" aria-hidden="true"></span>
+                            <span> Stop</span>
+                        </NavItem>
+
+                        <NavDropdown id="main-playground-menu-options-dropdown" bsClass="dropdown" noCaret
+                            title={
+                                <span className="glyphicon glyphicon-option-vertical" aria-hidden="true"></span> as any
+                            }>
+                            <MenuItem onClick={() => {
+                                this.setState({ isSaveModalActive: true });
+                                setTimeout(() => {
+                                    (this.refs['programNameSaveInput'] as HTMLInputElement).focus();
+                                }, 300);
+                            }}>Save to Gallery</MenuItem>
+                            <MenuItem divider />
+                            <MenuItem onClick={this.exportAsImage}>Export as Image</MenuItem>
+                        </NavDropdown>
+                    </Nav>
+                } />
+
+                {this.renderSaveModal()}
+
+                <PlaygroundPageLayoutComponent code={this.state.code} programName={this.state.programTitle} onCodeChanged={this.codeChanged} >
+                </PlaygroundPageLayoutComponent>
+            </div >
         );
     }
 
-    private findGoldenLayoutItem(type: string, content: goldenLayout.ItemConfigType[]): goldenLayout.ItemConfigType | undefined {
-        if (content) {
-            for (let item of content) {
-                if (item.type === type || (item as any).component === type) {
-                    return item;
-                }
-                if (item.content) {
-                    let res = this.findGoldenLayoutItem(type, item.content);
-                    if (res) {
-                        return res;
-                    }
-                }
-            }
+    renderSaveModal(): JSX.Element | null {
+        if (this.state.isSaveModalActive) {
+            return <Modal show={true} animation={false} onHide={() => { this.setState({ isSaveModalActive: false }) }} backdrop='static' >
+                <Modal.Header closeButton>
+                    <Modal.Title>Save your program to Gallery</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <div className="row">
+                        <div className="col-sm-12">
+                            <form>
+                                <div className="form-group">
+                                    <label htmlFor="name">Program name</label>
+                                    <div className="row">
+                                        <div className="col-sm-12">
+                                            <input ref="programNameSaveInput" type="text" className="form-control" id="name" placeholder="Please enter name for your program"
+                                                value={this.state.programNameInSaveModal}
+                                                onChange={translateInputChangeToState(this, (s, v) => ({ programNameInSaveModal: v }))}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <br />
+                    <br />
+                </Modal.Body>
+                <Modal.Footer>
+                    <button type="button" className={cn("btn btn-primary", { "is-loading": this.state.isSavingInProgress })} onClick={this.saveProgramAction}>
+                        <span>Save</span>
+                    </button>
+                    <button type="button" className="btn btn-link" onClick={() => { this.setState({ isSaveModalActive: false }) }}>
+                        <span>Cancel</span>
+                    </button>
+                </Modal.Footer>
+            </Modal>
         }
-        return undefined;
+        return null;
     }
 }

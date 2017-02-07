@@ -16,6 +16,7 @@ interface IComponentState {
 }
 
 interface IComponentProps {
+    pullRightChildren?: JSX.Element
 }
 
 export class MainMenuComponent extends React.Component<IComponentProps, IComponentState> {
@@ -98,6 +99,8 @@ export class MainMenuComponent extends React.Component<IComponentProps, ICompone
                             <MenuItem onClick={this.menuLogOutClick}>Log Out</MenuItem>
                         </NavDropdown>
                     </Nav>
+
+                    {this.props.pullRightChildren}
                 </Navbar.Collapse>
             </Navbar>
 
