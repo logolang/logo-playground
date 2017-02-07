@@ -33,6 +33,10 @@ export class CodePanelComponent extends React.Component<IComponentProps, ICompon
         this.props.codeChanged(code);
     }
 
+    onHotkey = (key: string) => {
+        this.playgroundContext.run();
+    }
+
     render(): JSX.Element {
         return (
             <div ref="container" className="code-panel-container">
@@ -40,6 +44,7 @@ export class CodePanelComponent extends React.Component<IComponentProps, ICompon
                     className="code-input-container"
                     code={this.state.code}
                     onChanged={this.codeChanged}
+                    onHotkey={this.onHotkey}
                     requestFocusEvents={this.playgroundContext.requestFocusEvents}>
                 </CodeInputLogoComponent>
             </div>

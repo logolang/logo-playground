@@ -18,6 +18,7 @@
     "build-war": "node app/resources/build/make-war.js"
   },
   "dependencies": {
+    "@types/keymaster": "1.6.28",
     "classnames": "2.2.5",
     "codemirror": "5.23.0",
     "color": "1.0.3",
@@ -27,6 +28,7 @@
     "golden-layout": "1.5.7",
     "isomorphic-fetch": "2.2.1",
     "jquery": "3.1.1",
+    "keymaster": "1.6.2",
     "lodash": "4.17.4",
     "moment": "2.17.1",
     "react": "15.4.2",

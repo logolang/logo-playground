@@ -10,11 +10,13 @@ export class PlaygroundContext {
 
     async run(): Promise<void> {
         if (this.executor) {
-            this.isRunningSubj.next(true);
-            await this.executor.execute(this.code || '');
-            this.isRunningSubj.next(false);
+            if (!this.isRunningSubj.getValue()) {
+                this.isRunningSubj.next(true);
+                await this.executor.execute(this.code || '');
+                this.isRunningSubj.next(false);
 
-            this.focusCode();
+                this.focusCode();
+            }
         }
     }
 

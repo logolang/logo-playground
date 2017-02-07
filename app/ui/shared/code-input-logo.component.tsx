@@ -1,6 +1,8 @@
 import * as React from 'react';
 import * as codemirror from 'codemirror';
-import { Observable, Subscription } from 'rxjs'
+import { Observable, Subscription, Subject } from 'rxjs'
+
+import { ensure } from 'app/utils/syntax-helpers';
 
 import 'node_modules/codemirror/addon/runmode/runmode.js';
 import 'node_modules/codemirror/addon/edit/closebrackets.js';
@@ -9,13 +11,13 @@ import 'node_modules/codemirror/addon/display/placeholder.js';
 
 import 'app/../lib/codemirror-logo/cm-logo.js';
 
-import 'node_modules/codemirror/lib/codemirror.css'
-import 'node_modules/codemirror/theme/eclipse.css'
-import 'node_modules/codemirror/theme/mdn-like.css'
-import 'node_modules/codemirror/theme/icecoder.css'
-import 'node_modules/codemirror/theme/seti.css'
+import 'node_modules/codemirror/lib/codemirror.css';
+import 'node_modules/codemirror/theme/eclipse.css';
+import 'node_modules/codemirror/theme/mdn-like.css';
+import 'node_modules/codemirror/theme/icecoder.css';
+import 'node_modules/codemirror/theme/seti.css';
 
-import './code-input-logo.component.scss'
+import './code-input-logo.component.scss';
 
 interface IComponentState {
 }
@@ -24,6 +26,7 @@ interface IComponentProps {
     className?: string
     code: string
     requestFocusEvents?: Observable<void>
+    onHotkey?: (key: string) => void
     onChanged: (code: string) => void
 }
 
@@ -62,6 +65,14 @@ export class CodeInputLogoComponent extends React.Component<IComponentProps, ICo
             let newVal = this.cm.getValue();
             this.props.onChanged(newVal);
         });
+        if (this.props.onHotkey) {
+            const map = {
+                "F8": () => { ensure(this.props.onHotkey)('f8') },
+                "F9": () => { ensure(this.props.onHotkey)('f9') }
+            };
+            this.cm.addKeyMap(map);
+        }
+
         if (this.props.requestFocusEvents) {
             this.focusEventsSubscription = this.props.requestFocusEvents.subscribe(() => {
                 this.cm.focus();

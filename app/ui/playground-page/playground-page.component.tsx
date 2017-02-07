@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as cn from 'classnames';
+import * as keymaster from 'keymaster';
 import { Button, ButtonGroup, Nav, Navbar, NavDropdown, MenuItem, NavItem, DropdownButton, Modal, OverlayTrigger } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import { Subscription } from 'rxjs'
@@ -77,12 +78,18 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
         this.isRunningSubscription = this.playgroundContext.subscribeToIsRunning(running => {
             this.setState({ isRunning: running });
         });
+
+        keymaster('f8, f9', () => {
+            this.playgroundContext.run();
+            return false;
+        });
     }
 
     componentWillUnmount() {
         if (this.isRunningSubscription) {
             this.isRunningSubscription.unsubscribe();
         }
+        keymaster.unbind('f8, f9');
     }
 
     async loadData(props: IComponentProps) {
