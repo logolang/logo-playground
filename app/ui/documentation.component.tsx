@@ -25,9 +25,9 @@ export class DocumentationComponent extends React.Component<IComponentProps, ICo
 
     render(): JSX.Element {
         return (
-            <div className="container-fluid doc-section">
+            <div className="container-fluid">
                 <MainMenuComponent />
-                <div dangerouslySetInnerHTML={{ __html: text as any }}></div>
+                <div className="doc-section" dangerouslySetInnerHTML={{ __html: text as any }}></div>
             </div>
         );
     }
