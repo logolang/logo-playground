@@ -23,3 +23,24 @@
         vertical-align: text-bottom;
     }
 }
+
+.ex-inline-block {
+    display: inline-block;
+}
+
+.ex-width-auto {
+    width: auto;
+}
+
+.ex-cursor-pointer {
+    cursor: pointer;
+}
+
+.ex-cursor-default {
+    cursor: default;
+}
+
+.ex-break-word {
+    word-break: break-word;
+    overflow-wrap: break-word;
+}

@@ -27,6 +27,7 @@ interface IComponentState {
     isSaveModalActive: boolean
     isSavingInProgress: boolean
     programNameInSaveModal: string
+    hasProgramBeenExecutedOnce: boolean
 }
 
 interface IComponentProps {
@@ -68,7 +69,8 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
             isRunning: false,
             isSaveModalActive: false,
             isSavingInProgress: false,
-            programNameInSaveModal: ''
+            programNameInSaveModal: '',
+            hasProgramBeenExecutedOnce: false
         };
         return state;
     }
@@ -77,6 +79,9 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
         this.loadData(this.props);
         this.isRunningSubscription = this.playgroundContext.subscribeToIsRunning(running => {
             this.setState({ isRunning: running });
+            if (running) {
+                this.setState({ hasProgramBeenExecutedOnce: true });
+            };
         });
 
         keymaster('f8, f9', () => {
@@ -125,12 +130,30 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
         this.playgroundContext.stop();
     }
 
+    showSaveDialog = () => {
+        this.setState({ isSaveModalActive: true });
+        setTimeout(() => {
+            (this.refs['programNameSaveInput'] as HTMLInputElement).focus();
+        }, 300);
+    }
+
+    saveCurrentProgram = async () => {
+        const prog = await this.programsRepo.get(ensure(this.props.params.programId));
+        if (this.state.hasProgramBeenExecutedOnce) {
+            prog.screenshot = this.playgroundContext.getScreenshot(true);
+        }
+        prog.code = this.playgroundContext.getCode();
+        await this.programsRepo.update(prog);
+    }
+
     saveProgramAction = async () => {
         if (this.state.isSavingInProgress) {
             return;
         }
         this.setState({ isSavingInProgress: true });
-        let screenshot = this.playgroundContext.getScreenshot(true);
+        let screenshot = this.state.hasProgramBeenExecutedOnce
+            ? this.playgroundContext.getScreenshot(true)
+            : '';
 
         await this.programsRepo.add({
             code: this.playgroundContext.getCode(),
@@ -167,16 +190,21 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
                             <span> Stop</span>
                         </NavItem>
 
-                        <NavDropdown id="main-playground-menu-options-dropdown" bsClass="dropdown" noCaret
+                        <NavDropdown id="main-playground-menu-options-dropdown" bsClass="dropdown" noCaret pullRight
                             title={
                                 <span className="glyphicon glyphicon-option-vertical" aria-hidden="true"></span> as any
                             }>
-                            <MenuItem onClick={() => {
-                                this.setState({ isSaveModalActive: true });
-                                setTimeout(() => {
-                                    (this.refs['programNameSaveInput'] as HTMLInputElement).focus();
-                                }, 300);
-                            }}>Save to Gallery</MenuItem>
+                            {
+                                this.props.params.programId &&
+                                <MenuItem onClick={this.saveCurrentProgram}>Save program '{this.state.programTitle}'</MenuItem>
+                            }
+                            <MenuItem onClick={this.showSaveDialog}>
+                                {
+                                    this.props.params.programId
+                                        ? <span>Save as new...</span>
+                                        : <span>Save to Gallery...</span>
+                                }
+                            </MenuItem>
                             <MenuItem divider />
                             <MenuItem onClick={this.exportAsImage}>Export as Image</MenuItem>
                         </NavDropdown>

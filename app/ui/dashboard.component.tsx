@@ -66,6 +66,14 @@ export class DashboardComponent extends React.Component<IDashboardComponentProps
         return '';
     }
 
+    private formatDate(date: Date) {
+        const momDate = moment(date);
+        const formattedDate = momDate.isAfter(this.yesterdayDate)
+            ? momDate.fromNow()
+            : momDate.calendar();
+        return formattedDate;
+    }
+
     renderProgramCard(p: Program, storageType: ProgramStorageType, deleteBox: boolean): JSX.Element {
         let link = '';
         switch (storageType) {
@@ -79,10 +87,6 @@ export class DashboardComponent extends React.Component<IDashboardComponentProps
                 link = Routes.playgroundGist({ gistId: p.id });
                 break;
         }
-        const createdDate = moment(p.dateCreated);
-        const formattedDate = createdDate.isAfter(this.yesterdayDate)
-            ? createdDate.fromNow()
-            : createdDate.calendar();
 
         return <div className="media">
             <div className="media-left">
@@ -93,25 +97,39 @@ export class DashboardComponent extends React.Component<IDashboardComponentProps
                 </Link>
             </div>
             <div className="media-body">
-                <h4 className="media-heading">
+                {
+                    deleteBox && <div className="pull-right">
+                        <button type="button" className="btn btn-xs btn-link"
+                            onClick={() => { this.setState({ programToDelete: p }) }}
+                        >
+                            <span>Delete</span>
+                        </button>
+                    </div>
+                }
+                <h4 className="media-heading ex-break-word">
+                    <span>&nbsp;</span>
                     <Link to={link}>
-                        <span>{p.name}</span>
+                        <span className="ex-break-word">{p.name || 'Program'}</span>
                     </Link>
                 </h4>
-                <p><label>Created: </label> <span>{formattedDate}</span></p>
-                {/*
-                <p><label>Size: </label> {p.screenshot.length}</p>
-                */}
+                <br />
+                <table className="table table-condensed">
+                    <tbody>
+                        {
+                            p.dateLastEdited.getTime() !== p.dateCreated.getTime() &&
+                            <tr>
+                                <th style={{ width: '10%' }}>Edited</th>
+                                <td style={{ width: '90%' }}>{this.formatDate(p.dateLastEdited)}</td>
+                            </tr>
+                        }
+                        <tr>
+                            <th style={{ width: '10%' }}>Created</th>
+                            <td style={{ width: '90%' }}>{this.formatDate(p.dateCreated)}</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
-            {
-                deleteBox && <div className="media-right">
-                    <button type="button" className="btn btn-xs btn-link"
-                        onClick={() => { this.setState({ programToDelete: p }) }}
-                    >
-                        <span>Delete</span>
-                    </button>
-                </div>
-            }
+
         </div>
     }
 
