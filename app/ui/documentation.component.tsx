@@ -5,6 +5,9 @@ import { ServiceLocator } from 'app/services/service-locator'
 import { MainMenuComponent } from 'app/ui/main-menu.component'
 import { PageHeaderComponent } from 'app/ui/shared/generic/page-header.component';
 
+import './documentation.component.scss'
+
+const text = require('../resources/text/doc.html')
 
 interface IComponentState {
 }
@@ -22,13 +25,9 @@ export class DocumentationComponent extends React.Component<IComponentProps, ICo
 
     render(): JSX.Element {
         return (
-            <div className="container">
+            <div className="container-fluid doc-section">
                 <MainMenuComponent />
-                <PageHeaderComponent title="Documentation" />
-                <div className="row">
-                    <div className="col-sm-12">
-                    </div>
-                </div>
+                <div dangerouslySetInnerHTML={{ __html: text as any }}></div>
             </div>
         );
     }
