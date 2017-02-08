@@ -34,7 +34,7 @@ export class LogoExecutionService implements ICodeExecutor {
     private logo: any;
     errorMessages = new Subject<string>();
 
-    constructor() {
+    constructor(private initCode: string) {
     }
 
     initialize() {
@@ -64,7 +64,7 @@ export class LogoExecutionService implements ICodeExecutor {
         );
 
         try {
-            await this.logo.run(polyfills + code);
+            await this.logo.run(polyfills + '\r\n' + this.initCode + '\r\n' + code);
         }
         catch (ex) {
             console.error('error', ex);

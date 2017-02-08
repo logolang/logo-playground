@@ -3,6 +3,7 @@ import * as codemirror from 'codemirror';
 import { Observable, Subscription, Subject } from 'rxjs'
 
 import { ensure } from 'app/utils/syntax-helpers';
+import { ThemeService } from 'app/services/theme.service';
 
 import 'node_modules/codemirror/addon/runmode/runmode.js';
 import 'node_modules/codemirror/addon/edit/closebrackets.js';
@@ -10,12 +11,6 @@ import 'node_modules/codemirror/addon/edit/matchbrackets.js';
 import 'node_modules/codemirror/addon/display/placeholder.js';
 
 import 'app/../lib/codemirror-logo/cm-logo.js';
-
-import 'node_modules/codemirror/lib/codemirror.css';
-import 'node_modules/codemirror/theme/eclipse.css';
-import 'node_modules/codemirror/theme/mdn-like.css';
-import 'node_modules/codemirror/theme/icecoder.css';
-import 'node_modules/codemirror/theme/seti.css';
 
 import './code-input-logo.component.scss';
 
@@ -31,6 +26,7 @@ interface IComponentProps {
 }
 
 export class CodeInputLogoComponent extends React.Component<IComponentProps, IComponentState> {
+    themeService = new ThemeService();
     cm: codemirror.EditorFromTextArea;
     focusEventsSubscription: Subscription | undefined;
 
@@ -57,7 +53,7 @@ export class CodeInputLogoComponent extends React.Component<IComponentProps, ICo
             lineComment: ';',
             lineNumbers: true,
             lineWrapping: true,
-            theme: 'default'
+            theme: this.themeService.getCurrentTheme().codemirror
         } as any);
         this.cm.setSize('100%', '100%');
         this.cm.setValue(this.props.code);

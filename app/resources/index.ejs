@@ -15,27 +15,37 @@
     var packageJson = require('../../package.json');
 %>
 <body>
+    <link href="css/codemirror/codemirror.css" rel="stylesheet">
+    <link href="css/golden-layout/goldenlayout-base.css" rel="stylesheet">
+
     <script type="text/javascript">
-        var themeName = "default";
+        var bootstrapThemeName = "default";
+        var codemirrorThemeName = "light";
+        var goldenlayoutThemeName = "light";
         try{
-            window.appThemeNameLocalStorageKey = '<%= packageJson.name %>-<%= packageJson.version %>-theme';
+            window.appThemeNameLocalStorageKey = '<%= packageJson.name %>-<%= packageJson.version %>-theme-storage';
             console.log('storagekey', window.appThemeNameLocalStorageKey);
             var storedTheme = window.localStorage.getItem(window.appThemeNameLocalStorageKey);
             if (storedTheme){
-                themeName = JSON.parse(storedTheme);
+                var theme = JSON.parse(storedTheme);
+                bootstrapThemeName = theme.bootstrap;
+                codemirrorThemeName = theme.codemirror;
+                goldenlayoutThemeName = theme.goldenlayout;
+
+                if (theme.isDark){
+                    document.body.className = document.body.className + "is-dark";
+                }
             }
         } 
         catch(ex){
         }
-        console.log('applying theme ', themeName);
-        document.write('<link href="css/bootstrap/bootstrap.' + themeName + '.min.css?1" rel="stylesheet">');
+        document.write('<link href="css/bootstrap/bootstrap.' + bootstrapThemeName + '.min.css?1" rel="stylesheet">');
+        document.write('<link href="css/codemirror/themes/' + codemirrorThemeName + '.css?1" rel="stylesheet">');
+        document.write('<link href="css/golden-layout/goldenlayout-' + goldenlayoutThemeName + '-theme.css?1" rel="stylesheet">');
     </script>
 
    <div id="app-container">
    </div>
-
-   <link href="css/golden-layout/goldenlayout-base.css" rel="stylesheet">
-   <link href="css/golden-layout/goldenlayout-light-theme.css" rel="stylesheet">
 
    <% for (var css in htmlWebpackPlugin.files.css) { %>
     <link href="<%= htmlWebpackPlugin.files.css[css] %>" rel="stylesheet">

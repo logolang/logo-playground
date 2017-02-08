@@ -27,15 +27,10 @@ interface IComponentProps {
 }
 
 export class PlaygroundPageLayoutComponent extends React.Component<IComponentProps, IComponentState> {
-    layoutLocalStorage = new LocalStorageService<any>('logo-sandbox-layout', undefined);
+    layoutLocalStorage = new LocalStorageService<any>('logo-sandbox:golden-layout', undefined);
 
     private layout: goldenLayout;
     private config: goldenLayout.Config = {
-        settings: {
-            showMaximiseIcon: false,
-            showPopoutIcon: false,
-            showCloseIcon: false,
-        },
         content: [{
             type: 'row',
             content: [
@@ -95,6 +90,12 @@ export class PlaygroundPageLayoutComponent extends React.Component<IComponentPro
         } else {
             throw new Error('Cannot find code panel conponent in config');
         }
+
+        this.config.settings = {
+            showMaximiseIcon: false,
+            showPopoutIcon: false,
+            showCloseIcon: false,
+        };
 
         const element = this.refs['container'] as any;
         if (this.layout) {

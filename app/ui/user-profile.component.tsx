@@ -9,7 +9,7 @@ import { Routes } from 'app/routes';
 import { ServiceLocator } from 'app/services/service-locator'
 
 import { UserInfo } from 'app/model/entities/user-info';
-import { LocalStorageService } from 'app/services/local-storage.service';
+import { ThemeService, Theme } from 'app/services/theme.service';
 
 import { DateTimeStampComponent } from 'app/ui/shared/generic/date-time-stamp.component';
 import { PageHeaderComponent } from 'app/ui/shared/generic/page-header.component';
@@ -17,7 +17,7 @@ import { MainMenuComponent } from 'app/ui/main-menu.component'
 
 interface IComponentState {
     userInfo: UserInfo;
-    themeName: string;
+    theme: Theme;
     isSavingInProgress: boolean;
 }
 
@@ -27,7 +27,7 @@ interface IComponentProps {
 export class UserProfileComponent extends React.Component<IComponentProps, IComponentState> {
     private appConfig = ServiceLocator.resolve(x => x.appConfig);
     private currentUser = ServiceLocator.resolve(x => x.currentUser);
-    private localStorageThemeKey = new LocalStorageService<string>((window as any).appThemeNameLocalStorageKey, 'default');
+    private themeService = new ThemeService();
 
     constructor(props: IComponentProps) {
         super(props);
@@ -35,7 +35,7 @@ export class UserProfileComponent extends React.Component<IComponentProps, IComp
 
         this.state = {
             userInfo: loginStatus.userInfo,
-            themeName: this.localStorageThemeKey.getValue(),
+            theme: this.themeService.getCurrentTheme(),
             isSavingInProgress: false,
         };
     }
@@ -58,19 +58,22 @@ export class UserProfileComponent extends React.Component<IComponentProps, IComp
                                     <div className="row">
                                         <div className="col-sm-5">
                                             <select className="form-control" id="themeselector"
-                                                value={this.state.themeName} onChange={translateSelectChangeToState(this, (s, v) => {
-                                                    this.localStorageThemeKey.setValue(v);
-                                                    setTimeout(function () {
-                                                        // refresh browser window
-                                                        window.location.reload(true);
-                                                    }, 100);
-                                                    return { themeName: v };
+                                                value={this.state.theme.name} onChange={translateSelectChangeToState(this, (s, v) => {
+                                                    const selectedTheme = this.themeService.getAllThemes().find(t => t.name === v);
+                                                    if (selectedTheme) {
+                                                        this.themeService.setTheme(selectedTheme);
+                                                        setTimeout(function () {
+                                                            // refresh browser window
+                                                            window.location.reload(true);
+                                                        }, 0);
+                                                    }
+                                                    return {};
                                                 })}>
-                                                <option value="default">Default</option>
-                                                <option value="yeti">Yeti</option>
-                                                <option value="darkly">Darkly</option>
-                                                <option value="cerulean">Cerulean</option>
-                                                <option value="slate">Slate</option>
+                                                {
+                                                    this.themeService.getAllThemes().map(t => {
+                                                        return <option key={t.name} value={t.name}>{t.name}</option>
+                                                    })
+                                                }
                                             </select>
                                         </div>
                                     </div>
@@ -81,8 +84,6 @@ export class UserProfileComponent extends React.Component<IComponentProps, IComp
                                     <div className="btn-toolbar">
                                         <button type="button" className={cn("btn btn-primary", { "is-loading": this.state.isSavingInProgress })}
                                             onClick={async () => {
-                                                this.setState({ isSavingInProgress: true });
-                                                await stay(1000);
                                                 goBack();
                                             }}>
                                             <span>Save</span>

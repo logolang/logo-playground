@@ -3,6 +3,7 @@ import * as jquery from 'jquery'
 import { Subscription } from 'rxjs'
 
 import { LogoExecutionService } from 'app/services/logo/logo-execution-service';
+import { ThemeService } from 'app/services/theme.service';
 import { ServiceLocator } from 'app/services/service-locator';
 
 import './output-panel.component.scss'
@@ -20,6 +21,7 @@ export class OutputPanelComponent extends React.Component<IComponentProps, IComp
     logo: LogoExecutionService;
     errorMessagesSubscription: Subscription | undefined;
     runEventsSubscription: Subscription | undefined;
+    theme = new ThemeService();
 
     resizeTimer: number;
 
@@ -39,7 +41,11 @@ export class OutputPanelComponent extends React.Component<IComponentProps, IComp
             this.resizeCanvas();
         }, 500);
 
-        this.logo = new LogoExecutionService();
+        const lightThemeInit = `setbg 7 setpencolor 0 cs`;
+        const darkThemeInit = `setbg 0 setpencolor 7 cs`;
+        const initCode = this.theme.getCurrentTheme().isDark ? darkThemeInit : lightThemeInit;
+        
+        this.logo = new LogoExecutionService(initCode);
         this.logo.initialize();
         this.playgroundEvents.setExecutor(this.logo);
         this.errorMessagesSubscription = this.playgroundEvents.errorMessages.subscribe((error) => {
