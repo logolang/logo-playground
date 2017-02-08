@@ -87,7 +87,13 @@ export class MainMenuComponent extends React.Component<IComponentProps, ICompone
                             id="menu-user-dropdown" bsClass="dropdown"
                             noCaret
                             title={
-                                <NavbarUsercardComponent userName={loginStatus.userInfo.attributes.name} role={'Contributor'} caret={true}></NavbarUsercardComponent> as any
+                                <NavbarUsercardComponent
+                                    userName={loginStatus.userInfo.attributes.name}
+                                    role={'Contributor'}
+                                    caret={true}
+                                    loggedIn={loginStatus.isLoggedIn}
+                                >
+                                </NavbarUsercardComponent> as any
                             }>
                             {
                                 !loginStatus.isLoggedIn &&
@@ -101,7 +107,7 @@ export class MainMenuComponent extends React.Component<IComponentProps, ICompone
                                 <MenuItem>User Profile</MenuItem>
                             </LinkContainer>
                             <LinkContainer to={Routes.about}>
-                                <MenuItem>About</MenuItem>
+                                <MenuItem>About...</MenuItem>
                             </LinkContainer>
                             {
                                 loginStatus.isLoggedIn &&

@@ -10,6 +10,13 @@
         width: 0;
         text-decoration: none;
     }
+    .guest-pic {
+        display: table-cell;
+        width: 32px;
+        height: 32px;
+        background: url('../../images/user-32-pic.png');
+        background-position: center;
+    }
     .avatar {
         display: table-cell;
         font-size: 120%;

@@ -30,7 +30,7 @@ export class DashboardComponent extends React.Component<IDashboardComponentProps
     private currentUser = ServiceLocator.resolve(x => x.currentUser);
     private programsRepo = ServiceLocator.resolve(x => x.programsReporitory);
     private samplesRepo = new ProgramsSamplesRepository();
-    readonly noScreenshot = require('./images/no.image.600x300.png') as string;
+    readonly noScreenshot = require('./images/no.image.png') as string;
     readonly yesterdayDate = moment().subtract(1, 'd');
 
     constructor(props: IDashboardComponentProps) {
@@ -137,7 +137,7 @@ export class DashboardComponent extends React.Component<IDashboardComponentProps
         return (
             <div className="container">
                 <MainMenuComponent />
-                <PageHeaderComponent title={`Welcome, ${this.state.userName}`} />
+                <PageHeaderComponent title={`Gallery`} />
                 {
                     this.state.programToDelete && <ActionConfirmationModalComponent
                         onConfirm={this.confirmDelete}

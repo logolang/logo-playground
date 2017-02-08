@@ -1,7 +1,5 @@
 import * as React from 'react';
 
-import { ServiceLocator } from 'app/services/service-locator'
-
 import './navbar-usercard.component.scss'
 
 interface IUserCardComponentState {
@@ -11,11 +9,10 @@ interface IUserCardComponentProps {
     userName: string
     role: string
     caret: boolean
+    loggedIn: boolean
 }
 
 export class NavbarUsercardComponent extends React.Component<IUserCardComponentProps, IUserCardComponentState> {
-    private loginService = ServiceLocator.resolve(x => x.loginService);
-
     constructor(props: IUserCardComponentProps) {
         super(props);
 
@@ -40,11 +37,21 @@ export class NavbarUsercardComponent extends React.Component<IUserCardComponentP
                             </ul>
                         </td>
                         <td rowSpan={2}>
-                            <div className="avatar">
-                                {firstLetter}
-                            </div>
+                            {
+                                this.props.loggedIn
+                                    ? <div className="avatar">
+                                        <span>
+                                            {firstLetter}
+                                        </span>
+                                    </div>
+                                    : <div className="guest-pic">
+                                    </div>
+                            }
                         </td>
-                        <td className="userName"><span>{nameToDisplay}</span></td>
+                        {
+                            this.props.loggedIn &&
+                            <td className="userName"><span>{nameToDisplay}</span></td>
+                        }
                         {
                             this.props.caret && <td rowSpan={2}>
                                 <span className="caret">
@@ -52,9 +59,12 @@ export class NavbarUsercardComponent extends React.Component<IUserCardComponentP
                             </td>
                         }
                     </tr>
-                    <tr>
-                        <td className="userRole"><small>{this.props.role}</small></td>
-                    </tr>
+                    {
+                        this.props.loggedIn &&
+                        <tr>
+                            <td className="userRole"><small>{this.props.role}</small></td>
+                        </tr>
+                    }
                 </tbody>
             </table>
         );

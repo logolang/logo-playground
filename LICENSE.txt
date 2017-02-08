@@ -1,15 +1,10 @@
 LICENSE: TBD
 
 CREDITS:
-1. Login background picture.
-Technological background with a circuit Free Vector
-in Background 
-By Harryarts / Freepik 
-http://www.freepik.com/free-vector/technological-background-with-a-circuit_951745.htm
-2. Top menu logo.
+1. Top menu logo.
 Pin Code By Korhan Eser, TR
 https://thenounproject.com/term/encryption/65513/
-3. Favicon.
+2. Favicon.
 TShirtYarn Turtle
 TshirtYarn.com
 From: Kristy

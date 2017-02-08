@@ -28,7 +28,7 @@ export class AboutComponent extends React.Component<IComponentProps, IComponentS
                 <PageHeaderComponent title="About" />
                 <div className="row">
                     <div className="col-sm-12">
-                        <p>This is a simple template application</p>
+                        <p>{appInfo.description}</p>
                         <p><strong>Package Name:</strong> {appInfo.name}</p>
                         <p><strong>App Version:</strong> {appInfo.version}</p>
                         <p><strong>Code Version:</strong> {appInfo.gitVersion}</p>
