@@ -126,6 +126,9 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
     }
 
     saveProgramAction = async () => {
+        if (this.state.isSavingInProgress) {
+            return;
+        }
         this.setState({ isSavingInProgress: true });
         let screenshot = this.playgroundContext.getScreenshot(true);
 
@@ -205,6 +208,11 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
                                             <input ref="programNameSaveInput" type="text" className="form-control" id="name" placeholder="Please enter name for your program"
                                                 value={this.state.programNameInSaveModal}
                                                 onChange={translateInputChangeToState(this, (s, v) => ({ programNameInSaveModal: v }))}
+                                                onKeyDown={event => {
+                                                    if (event.which == 13) {
+                                                        this.saveProgramAction();
+                                                    }
+                                                }}
                                             />
                                         </div>
                                     </div>
