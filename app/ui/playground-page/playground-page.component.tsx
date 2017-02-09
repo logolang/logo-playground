@@ -156,12 +156,12 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
             : '';
 
         await this.programsRepo.add({
-            code: this.playgroundContext.getCode(),
             name: this.state.programNameInSaveModal,
-            lang: 'logo',
+            id: '',
             dateCreated: new Date(0),
             dateLastEdited: new Date(0),
-            id: '',
+            lang: 'logo',
+            code: this.playgroundContext.getCode(),
             screenshot: screenshot
         });
 
@@ -196,17 +196,24 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
                             }>
                             {
                                 this.props.params.programId &&
-                                <MenuItem onClick={this.saveCurrentProgram}>Save program '{this.state.programTitle}'</MenuItem>
+                                <MenuItem onClick={this.saveCurrentProgram}>
+                                    <span className="glyphicon glyphicon-save" aria-hidden="true"></span>
+                                    <span>&nbsp;&nbsp;Save program '{this.state.programTitle}'</span>
+                                </MenuItem>
                             }
                             <MenuItem onClick={this.showSaveDialog}>
+                                <span className="glyphicon glyphicon-file" aria-hidden="true"></span>
                                 {
                                     this.props.params.programId
-                                        ? <span>Save as new...</span>
-                                        : <span>Save to Gallery...</span>
+                                        ? <span>&nbsp;&nbsp;Save as new...</span>
+                                        : <span>&nbsp;&nbsp;Save to Gallery...</span>
                                 }
                             </MenuItem>
                             <MenuItem divider />
-                            <MenuItem onClick={this.exportAsImage}>Export as Image</MenuItem>
+                            <MenuItem onClick={this.exportAsImage}>
+                                <span className="glyphicon glyphicon-camera" aria-hidden="true"></span>
+                                <span>&nbsp;&nbsp;Take Screenshot</span>
+                            </MenuItem>
                         </NavDropdown>
                     </Nav>
                 } />

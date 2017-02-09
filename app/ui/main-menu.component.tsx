@@ -97,17 +97,26 @@ export class MainMenuComponent extends React.Component<IComponentProps, ICompone
                             }>
                             {
                                 !loginStatus.isLoggedIn &&
-                                <MenuItem onClick={() => { this.loginService.requestNewLogin() }}>Log In</MenuItem>
+                                <MenuItem onClick={() => { this.loginService.requestNewLogin() }}>
+                                    <span className="glyphicon glyphicon-log-in" aria-hidden="true"></span>
+                                    <span>&nbsp;&nbsp;Log In</span>
+                                </MenuItem>
                             }
                             {
                                 !loginStatus.isLoggedIn &&
                                 <MenuItem divider />
                             }
                             <LinkContainer to={Routes.userProfile}>
-                                <MenuItem>User Profile</MenuItem>
+                                <MenuItem>
+                                    <span className="glyphicon glyphicon-user" aria-hidden="true"></span>
+                                    <span>&nbsp;&nbsp;User Profile</span>
+                                </MenuItem>
                             </LinkContainer>
                             <LinkContainer to={Routes.about}>
-                                <MenuItem>About...</MenuItem>
+                                <MenuItem>
+                                    <span className="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+                                    <span>&nbsp;&nbsp;About...</span>
+                                </MenuItem>
                             </LinkContainer>
                             {
                                 loginStatus.isLoggedIn &&
@@ -115,7 +124,10 @@ export class MainMenuComponent extends React.Component<IComponentProps, ICompone
                             }
                             {
                                 loginStatus.isLoggedIn &&
-                                <MenuItem onClick={this.menuLogOutClick}>Log Out</MenuItem>
+                                <MenuItem onClick={this.menuLogOutClick}>
+                                    <span className="glyphicon glyphicon-log-out" aria-hidden="true"></span>
+                                    <span>&nbsp;&nbsp;Log Out</span>
+                                </MenuItem>
                             }
                         </NavDropdown>
                     </Nav>

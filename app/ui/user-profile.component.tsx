@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as cn from 'classnames';
+import * as FileSaver from 'file-saver'
 import { Link } from 'react-router'
 
 import { goBack, translateSelectChangeToState } from 'app/utils/react-helpers';
@@ -19,6 +20,7 @@ interface IComponentState {
     userInfo: UserInfo;
     theme: Theme;
     isSavingInProgress: boolean;
+    programCount: number;
 }
 
 interface IComponentProps {
@@ -27,6 +29,7 @@ interface IComponentProps {
 export class UserProfileComponent extends React.Component<IComponentProps, IComponentState> {
     private appConfig = ServiceLocator.resolve(x => x.appConfig);
     private currentUser = ServiceLocator.resolve(x => x.currentUser);
+    private programsReporitory = ServiceLocator.resolve(x => x.programsReporitory);
     private themeService = new ThemeService();
 
     constructor(props: IComponentProps) {
@@ -37,7 +40,24 @@ export class UserProfileComponent extends React.Component<IComponentProps, IComp
             userInfo: loginStatus.userInfo,
             theme: this.themeService.getCurrentTheme(),
             isSavingInProgress: false,
+            programCount: 0
         };
+    }
+
+    componentDidMount() {
+        this.loadData();
+    }
+
+    private async loadData() {
+        let programs = await this.programsReporitory.getAll();
+        this.setState({ programCount: programs.length });
+    }
+
+    private doExport = async () => {
+        let programs = await this.programsReporitory.getAll();
+        let data = JSON.stringify(programs, null, 2);
+        const blob = new Blob([data], { type: "text/plain;charset=utf-8" });
+        FileSaver.saveAs(blob, `logo-sandbox-personal-gallery.json`);
     }
 
     render(): JSX.Element {
@@ -79,21 +99,28 @@ export class UserProfileComponent extends React.Component<IComponentProps, IComp
                                     </div>
                                 </div>
                                 <br />
-                                <br />
                                 <div className="form-group">
-                                    <div className="btn-toolbar">
-                                        <button type="button" className={cn("btn btn-primary", { "is-loading": this.state.isSavingInProgress })}
-                                            onClick={async () => {
-                                                goBack();
-                                            }}>
-                                            <span>Save</span>
-                                        </button>
-                                        <button type="button" className="btn btn-link"
-                                            onClick={goBack}>
-                                            <span>Cancel</span>
-                                        </button>
+                                    <label>Personal Gallery</label>
+                                    <div className="row">
+                                        <div className="col-sm-5">
+                                            <blockquote className="ex-font-size-normal">
+                                                <p>Programs count: {this.state.programCount}</p>
+                                                <div className="btn-toolbar">
+                                                    <button type="button" className="btn btn-default"
+                                                        onClick={this.doExport}>
+                                                        <span>Export</span>
+                                                    </button>
+                                                    <button type="button" className="btn btn-default"
+                                                    >
+                                                        <span>Import</span>
+                                                    </button>
+                                                </div>
+                                            </blockquote>
+                                        </div>
                                     </div>
                                 </div>
+                                <br />
+                                <br />
                             </fieldset>
                         </form >
                     </div >
