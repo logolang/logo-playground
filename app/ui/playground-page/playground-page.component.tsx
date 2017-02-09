@@ -55,11 +55,6 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
         subscribeLoadDataOnPropsParamsChange(this);
     }
 
-    codeChanged = (code: string): void => {
-        this.currentCodeLocalStorage.setValue(code);
-        this.playgroundContext.setCode(code);
-    }
-
     buildDefaultState(props: IComponentProps): IComponentState {
         const state: IComponentState = {
             isLoading: true,
@@ -77,17 +72,6 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
 
     componentDidMount() {
         this.loadData(this.props);
-        this.isRunningSubscription = this.playgroundContext.subscribeToIsRunning(running => {
-            this.setState({ isRunning: running });
-            if (running) {
-                this.setState({ hasProgramBeenExecutedOnce: true });
-            };
-        });
-
-        keymaster('f8, f9', () => {
-            this.playgroundContext.run();
-            return false;
-        });
     }
 
     componentWillUnmount() {
@@ -95,6 +79,11 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
             this.isRunningSubscription.unsubscribe();
         }
         keymaster.unbind('f8, f9');
+    }
+
+    codeChanged = (code: string): void => {
+        this.currentCodeLocalStorage.setValue(code);
+        this.playgroundContext.setCode(code);
     }
 
     async loadData(props: IComponentProps) {
@@ -118,8 +107,25 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
             title = 'Playground';
         }
 
-        this.setState({ code: code, programTitle: title });
+        this.setState({ isLoading: false, code: code, programTitle: title });
         this.playgroundContext.setCode(code);
+
+        if (this.isRunningSubscription) {
+            this.isRunningSubscription.unsubscribe();
+        }
+
+        this.isRunningSubscription = this.playgroundContext.subscribeToIsRunning(running => {
+            this.setState({ isRunning: running });
+            if (running) {
+                this.setState({ hasProgramBeenExecutedOnce: true });
+            };
+        });
+
+        keymaster.unbind('f8, f9');
+        keymaster('f8, f9', () => {
+            this.playgroundContext.run();
+            return false;
+        });
     }
 
     runClick = () => {
@@ -220,8 +226,22 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
 
                 {this.renderSaveModal()}
 
-                <PlaygroundPageLayoutComponent code={this.state.code} programName={this.state.programTitle} onCodeChanged={this.codeChanged} >
-                </PlaygroundPageLayoutComponent>
+                {
+                    !this.state.isLoading &&
+                    <PlaygroundPageLayoutComponent
+                        programName={this.state.programTitle}
+                        codePanelProps={{
+                            code: this.state.code,
+                            codeChanged: this.codeChanged,
+                            focusEvents: this.playgroundContext.requestFocusEvents,
+                            onHotkey: (k) => {
+                                console.log('received hotkey', k);
+                                this.playgroundContext.run()
+                            }
+                        }}
+                    >
+                    </PlaygroundPageLayoutComponent>
+                }
             </div >
         );
     }

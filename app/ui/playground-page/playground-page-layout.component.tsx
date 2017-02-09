@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import * as $ from 'jquery';
+import { Observable } from 'rxjs';
 
 //Expose react and react router in order for golden layout work
 (window as any)['React'] = React;
@@ -12,7 +13,7 @@ import { handleError, subscribeLoadDataOnPropsParamsChange } from 'app/utils/rea
 
 import { LocalStorageService } from 'app/services/local-storage.service';
 
-import { CodePanelComponent } from './code-panel.component'
+import { CodePanelComponent, ICodePanelComponentProps } from './code-panel.component'
 import { OutputPanelComponent } from './output-panel.component'
 
 import './playground-page-layout.component.scss';
@@ -21,9 +22,8 @@ interface IComponentState {
 }
 
 interface IComponentProps {
-    code: string
     programName: string
-    onCodeChanged: (code: string) => void
+    codePanelProps: ICodePanelComponentProps
 }
 
 export class PlaygroundPageLayoutComponent extends React.Component<IComponentProps, IComponentState> {
@@ -55,16 +55,12 @@ export class PlaygroundPageLayoutComponent extends React.Component<IComponentPro
         super(props);
     }
 
-    codeChanged = (code: string): void => {
-        this.props.onCodeChanged(code);
-    }
-
     componentDidMount() {
+        this.initLayout(this.props);
     }
 
     componentWillReceiveProps = (newProps: IComponentProps) => {
-        if (newProps.code != this.props.code
-            || newProps.programName != this.props.programName) {
+        if (newProps.programName != this.props.programName) {
             console.log('new props', newProps);
             this.initLayout(newProps);
         }
@@ -80,13 +76,11 @@ export class PlaygroundPageLayoutComponent extends React.Component<IComponentPro
         }
         catch (ex) { console.error('Error while getting stored layout state', ex) }
 
+        // Set props for components in Golden-Layout
         const codePanelConfig = this.findGoldenLayoutItem('code-panel', this.config.content);
         if (codePanelConfig) {
             codePanelConfig.title = props.programName;
-            (codePanelConfig as any).props = {
-                code: props.code,
-                codeChanged: this.codeChanged
-            }
+            (codePanelConfig as any).props = this.props.codePanelProps;
         } else {
             throw new Error('Cannot find code panel conponent in config');
         }
@@ -106,13 +100,21 @@ export class PlaygroundPageLayoutComponent extends React.Component<IComponentPro
         this.layout.registerComponent('output-panel', OutputPanelComponent);
         this.layout.init();
         const layoutUnsafe: any = this.layout;
-        layoutUnsafe.on('stateChanged', () => {
-            const state = this.layout.toConfig();
-            this.layoutLocalStorage.setValue(state);
-            //console.log('state saved!', state);
-        });
+        layoutUnsafe.on('stateChanged', this.saveState);
 
         $(document.body).addClass('full-page-body');
+    }
+
+    saveState = () => {
+        const state = this.layout.toConfig();
+        const codePanelConfig = this.findGoldenLayoutItem('code-panel', state.content);
+        if (codePanelConfig) {
+            (codePanelConfig as any).props = {};
+        } else {
+            throw new Error('Cannot find code panel conponent in config');
+        }
+        this.layoutLocalStorage.setValue(state);
+        //console.log('state saved!', state);
     }
 
     componentWillUnmount() {

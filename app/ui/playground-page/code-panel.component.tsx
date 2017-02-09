@@ -1,40 +1,21 @@
 import * as React from 'react';
-
-import { ServiceLocator } from 'app/services/service-locator';
-import { LocalStorageService } from 'app/services/local-storage.service';
-import { LogoExecutionService } from 'app/services/logo/logo-execution-service'
+import { Observable } from 'rxjs';
 
 import { CodeInputLogoComponent } from 'app/ui/shared/code-input-logo.component';
 
 import './code-panel.component.scss'
 
-interface IComponentState {
-    code: string
-}
-
-interface IComponentProps {
+export interface ICodePanelComponentProps {
     code: string
     codeChanged: (code: string) => void
+    onHotkey: (key: string) => void
+    focusEvents: Observable<void>
 }
 
-export class CodePanelComponent extends React.Component<IComponentProps, IComponentState> {
-    private playgroundContext = ServiceLocator.resolve(x => x.playgroundContext);
+export class CodePanelComponent extends React.Component<ICodePanelComponentProps, void> {
 
-    constructor(props: IComponentProps) {
+    constructor(props: ICodePanelComponentProps) {
         super(props);
-
-        this.state = {
-            code: this.props.code
-        }
-    }
-
-    codeChanged = (code: string) => {
-        this.setState({ code: code });
-        this.props.codeChanged(code);
-    }
-
-    onHotkey = (key: string) => {
-        this.playgroundContext.run();
     }
 
     render(): JSX.Element {
@@ -42,10 +23,10 @@ export class CodePanelComponent extends React.Component<IComponentProps, ICompon
             <div ref="container" className="code-panel-container">
                 <CodeInputLogoComponent
                     className="code-input-container"
-                    code={this.state.code}
-                    onChanged={this.codeChanged}
-                    onHotkey={this.onHotkey}
-                    requestFocusEvents={this.playgroundContext.requestFocusEvents}>
+                    code={this.props.code}
+                    onChanged={this.props.codeChanged}
+                    onHotkey={this.props.onHotkey}
+                    requestFocusEvents={this.props.focusEvents}>
                 </CodeInputLogoComponent>
             </div>
         );
