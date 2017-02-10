@@ -32,10 +32,6 @@ function buildWebpackConfig(options) {
         // Turn on sourcemaps
         devtool: 'source-map',
 
-        devServer: {
-            contentBase: "dist/"
-        },
-
         resolve: {
             modules: [
                 __dirname,

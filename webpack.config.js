@@ -29,6 +29,11 @@ module.exports = function (env) {
 
     config.output.pathinfo = true;
 
+    config.devServer = {
+        contentBase: "dist/",
+        port: 8085,
+    };
+
     config.plugins.push(
         new WebpackNotifierPlugin(),
 
