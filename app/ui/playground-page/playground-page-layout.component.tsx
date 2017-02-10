@@ -14,7 +14,7 @@ import { handleError, subscribeLoadDataOnPropsParamsChange } from 'app/utils/rea
 import { LocalStorageService } from 'app/services/local-storage.service';
 
 import { CodePanelComponent, ICodePanelComponentProps } from './code-panel.component'
-import { OutputPanelComponent } from './output-panel.component'
+import { OutputPanelComponent, IOutputPanelComponentProps } from './output-panel.component'
 
 import './playground-page-layout.component.scss';
 
@@ -24,6 +24,7 @@ interface IComponentState {
 interface IComponentProps {
     programName: string
     codePanelProps: ICodePanelComponentProps
+    outputPanelProps: IOutputPanelComponentProps
 }
 
 export class PlaygroundPageLayoutComponent extends React.Component<IComponentProps, IComponentState> {
@@ -82,7 +83,14 @@ export class PlaygroundPageLayoutComponent extends React.Component<IComponentPro
             codePanelConfig.title = props.programName;
             (codePanelConfig as any).props = this.props.codePanelProps;
         } else {
-            throw new Error('Cannot find code panel conponent in config');
+            throw new Error('Cannot find code panel component in config');
+        }
+
+        const outputPanelConfig = this.findGoldenLayoutItem('output-panel', this.config.content);
+        if (outputPanelConfig) {
+            (outputPanelConfig as any).props = this.props.outputPanelProps;
+        } else {
+            throw new Error('Cannot find output panel component in config');
         }
 
         this.config.settings = {
@@ -111,7 +119,14 @@ export class PlaygroundPageLayoutComponent extends React.Component<IComponentPro
         if (codePanelConfig) {
             (codePanelConfig as any).props = {};
         } else {
-            throw new Error('Cannot find code panel conponent in config');
+            throw new Error('Cannot find code panel component in config');
+        }
+
+        const outputPanelConfig = this.findGoldenLayoutItem('output-panel', state.content);
+        if (outputPanelConfig) {
+            (outputPanelConfig as any).props = {};
+        } else {
+            throw new Error('Cannot find output panel component in config');
         }
         this.layoutLocalStorage.setValue(state);
         //console.log('state saved!', state);

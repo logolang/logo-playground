@@ -1,7 +1,7 @@
 
 function $(s: any) { return document.querySelector(s); }
 
-export class LogoConsoleStream {
+export class LogoOutputConsole {
     constructor(private overlaySelector: string) {
     }
 

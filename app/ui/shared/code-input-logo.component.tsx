@@ -17,20 +17,20 @@ import './code-input-logo.component.scss';
 interface IComponentState {
 }
 
-interface IComponentProps {
+export interface ICodeInputComponentProps {
     className?: string
     code: string
-    requestFocusEvents?: Observable<void>
+    focusCommands?: Observable<void>
     onHotkey?: (key: string) => void
     onChanged: (code: string) => void
 }
 
-export class CodeInputLogoComponent extends React.Component<IComponentProps, IComponentState> {
+export class CodeInputLogoComponent extends React.Component<ICodeInputComponentProps, IComponentState> {
     themeService = new ThemeService();
     cm: codemirror.EditorFromTextArea;
-    focusEventsSubscription: Subscription | undefined;
+    focusCommandsSubscription: Subscription | undefined;
 
-    constructor(props: IComponentProps) {
+    constructor(props: ICodeInputComponentProps) {
         super(props);
 
         this.state = {
@@ -69,16 +69,16 @@ export class CodeInputLogoComponent extends React.Component<IComponentProps, ICo
             this.cm.addKeyMap(map);
         }
 
-        if (this.props.requestFocusEvents) {
-            this.focusEventsSubscription = this.props.requestFocusEvents.subscribe(() => {
+        if (this.props.focusCommands) {
+            this.focusCommandsSubscription = this.props.focusCommands.subscribe(() => {
                 this.cm.focus();
             });
         }
     }
 
     componentWillUnmount() {
-        if (this.focusEventsSubscription) {
-            this.focusEventsSubscription.unsubscribe();
+        if (this.focusCommandsSubscription) {
+            this.focusCommandsSubscription.unsubscribe();
         }
     }
 

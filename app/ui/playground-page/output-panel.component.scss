@@ -1,40 +1,4 @@
 .output-container {
-    background-color: transparent;
     width: 100%;
     height: 100%;
-}
-
-#sandbox {
-    position: absolute;
-    left: 0px;
-    top: 0px;
-}
-
-#turtle {
-    position: absolute;
-    z-index: 1;
-    left: 0px;
-    top: 0px;
-}
-
-#errorMessagesContainer {
-    left: 10px;
-    top: 10px;
-    position: absolute;
-    z-index: 3;
-}
-
-#overlay {
-    left: 0;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    padding: 10px;
-    margin: 0;
-    position: absolute;
-    z-index: 2;
-    background-color: transparent;
-    overflow: hidden;
-    white-space: pre-wrap;
-    font-family: Monospace;
 }

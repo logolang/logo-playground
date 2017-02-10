@@ -3,7 +3,7 @@ import * as cn from 'classnames';
 import * as keymaster from 'keymaster';
 import { Button, ButtonGroup, Nav, Navbar, NavDropdown, MenuItem, NavItem, DropdownButton, Modal, OverlayTrigger } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
-import { Subscription } from 'rxjs'
+import { Subscription, Subject } from 'rxjs'
 
 import { stay } from 'app/utils/async-helpers';
 import { ensure } from 'app/utils/syntax-helpers';
@@ -19,7 +19,6 @@ import { PlaygroundPageLayoutComponent } from './playground-page-layout.componen
 import './playground-page.component.scss';
 
 interface IComponentState {
-    code: string
     programTitle: string
     isLoading: boolean
     errorMessage: string
@@ -41,10 +40,14 @@ interface IComponentProps {
 export class PlaygroundPageComponent extends React.Component<IComponentProps, IComponentState> {
     private appConfig = ServiceLocator.resolve(x => x.appConfig);
     currentCodeLocalStorage = new LocalStorageService<string>('logo-sandbox-codeplayground', 'cs\r\nfd 100');
-    playgroundContext = ServiceLocator.resolve(x => x.playgroundContext);
     programsRepo = ServiceLocator.resolve(x => x.programsReporitory);
     programSamples = new ProgramsSamplesRepository();
-    private isRunningSubscription: Subscription | undefined;
+
+    private code: string;
+    private runCommands = new Subject<string>();
+    private stopCommands = new Subject<void>();
+    private focusCommands = new Subject<void>();
+    private makeScreenshotCommands = new Subject<{ small: boolean, result: (data: string) => void }>();
 
     constructor(props: IComponentProps) {
         super(props);
@@ -59,7 +62,6 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
         const state: IComponentState = {
             isLoading: true,
             errorMessage: '',
-            code: '',
             programTitle: '',
             isRunning: false,
             isSaveModalActive: false,
@@ -75,15 +77,12 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
     }
 
     componentWillUnmount() {
-        if (this.isRunningSubscription) {
-            this.isRunningSubscription.unsubscribe();
-        }
         keymaster.unbind('f8, f9');
     }
 
     codeChanged = (code: string): void => {
         this.currentCodeLocalStorage.setValue(code);
-        this.playgroundContext.setCode(code);
+        this.code = code;
     }
 
     async loadData(props: IComponentProps) {
@@ -107,33 +106,32 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
             title = 'Playground';
         }
 
-        this.setState({ isLoading: false, code: code, programTitle: title });
-        this.playgroundContext.setCode(code);
-
-        if (this.isRunningSubscription) {
-            this.isRunningSubscription.unsubscribe();
-        }
-
-        this.isRunningSubscription = this.playgroundContext.subscribeToIsRunning(running => {
-            this.setState({ isRunning: running });
-            if (running) {
-                this.setState({ hasProgramBeenExecutedOnce: true });
-            };
-        });
+        this.code = code;
+        this.setState({ isLoading: false, programTitle: title });
 
         keymaster.unbind('f8, f9');
         keymaster('f8, f9', () => {
-            this.playgroundContext.run();
+            this.runCommands.next(this.code);
+            this.focusCommands.next();
             return false;
         });
     }
 
+    onIsRunningChanged = (isRunning: boolean) => {
+        this.setState({ isRunning: isRunning });
+        if (isRunning) {
+            this.setState({ hasProgramBeenExecutedOnce: true });
+        }
+    }
+
     runClick = () => {
-        this.playgroundContext.run();
+        this.runCommands.next(this.code);
+        this.focusCommands.next();
     }
 
     stopClick = () => {
-        this.playgroundContext.stop();
+        this.stopCommands.next();
+        this.focusCommands.next();
     }
 
     showSaveDialog = () => {
@@ -146,10 +144,11 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
     saveCurrentProgram = async () => {
         const prog = await this.programsRepo.get(ensure(this.props.params.programId));
         if (this.state.hasProgramBeenExecutedOnce) {
-            prog.screenshot = this.playgroundContext.getScreenshot(true);
+            prog.screenshot = await this.getScreenshot(true);
         }
-        prog.code = this.playgroundContext.getCode();
+        prog.code = this.code;
         await this.programsRepo.update(prog);
+        this.focusCommands.next();
     }
 
     saveProgramAction = async () => {
@@ -158,7 +157,7 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
         }
         this.setState({ isSavingInProgress: true });
         let screenshot = this.state.hasProgramBeenExecutedOnce
-            ? this.playgroundContext.getScreenshot(true)
+            ? await this.getScreenshot(true)
             : '';
 
         await this.programsRepo.add({
@@ -167,18 +166,30 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
             dateCreated: new Date(0),
             dateLastEdited: new Date(0),
             lang: 'logo',
-            code: this.playgroundContext.getCode(),
+            code: this.code,
             screenshot: screenshot
         });
 
         this.setState({ isSavingInProgress: false, programNameInSaveModal: '' });
         this.setState({ isSaveModalActive: false });
+        this.focusCommands.next();
     }
 
-    exportAsImage = async () => {
-        const data = this.playgroundContext.getScreenshot(false);
+    exportAsImageClick = async () => {
+        const data = await this.getScreenshot(false);
         const win = window.open(data, '_blank');
         win.focus();
+        this.focusCommands.next();
+    }
+
+    private getScreenshot(small: boolean): Promise<string> {
+        return new Promise<string>(resolve => {
+            this.makeScreenshotCommands.next({
+                small: small, result: (data: string) => {
+                    resolve(data);
+                }
+            });
+        });
     }
 
     render(): JSX.Element {
@@ -216,7 +227,7 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
                                 }
                             </MenuItem>
                             <MenuItem divider />
-                            <MenuItem onClick={this.exportAsImage}>
+                            <MenuItem onClick={this.exportAsImageClick}>
                                 <span className="glyphicon glyphicon-camera" aria-hidden="true"></span>
                                 <span>&nbsp;&nbsp;Take Screenshot</span>
                             </MenuItem>
@@ -231,12 +242,23 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
                     <PlaygroundPageLayoutComponent
                         programName={this.state.programTitle}
                         codePanelProps={{
-                            code: this.state.code,
-                            codeChanged: this.codeChanged,
-                            focusEvents: this.playgroundContext.requestFocusEvents,
-                            onHotkey: (k) => {
-                                console.log('received hotkey', k);
-                                this.playgroundContext.run()
+                            codeInputProps: {
+                                code: this.code,
+                                onChanged: this.codeChanged,
+                                focusCommands: this.focusCommands,
+                                onHotkey: (k) => {
+                                    console.log('received hotkey', k);
+                                    this.runCommands.next(this.code);
+                                }
+                            }
+                        }}
+                        outputPanelProps={{
+                            logoExecutorProps: {
+                                runCommands: this.runCommands,
+                                stopCommands: this.stopCommands,
+                                makeScreenshotCommands: this.makeScreenshotCommands,
+                                onIsRunningChanged: this.onIsRunningChanged,
+                                onError: () => { },
                             }
                         }}
                     >

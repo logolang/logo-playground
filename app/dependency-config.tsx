@@ -1,5 +1,4 @@
 ﻿import { ProgramsLocalStorageRepository } from './services/entities/programs-localstorage.repository';
-import { PlaygroundContext } from './services/playground-context';
 import { ServiceLocator } from 'app/services/service-locator'
 
 import { AjaxService } from 'app/services/infrastructure/ajax-service';
@@ -21,8 +20,6 @@ export class DependencyConfig {
 
         const loginService = new FakeLoginService();
 
-        const playgroundEvents = new PlaygroundContext();
-
         // Setup the global dependency injection container
         ServiceLocator.set(x => x.configLoader = confLoader);
         ServiceLocator.set(x => x.appConfig = appConfig);
@@ -30,7 +27,6 @@ export class DependencyConfig {
         ServiceLocator.set(x => x.usersRepository = usersRepository);
         ServiceLocator.set(x => x.loginService = loginService);
 
-        ServiceLocator.set(x => x.playgroundContext = playgroundEvents);
         ServiceLocator.set(x => x.programsReporitory = new ProgramsLocalStorageRepository(currentUser));
     }
 }

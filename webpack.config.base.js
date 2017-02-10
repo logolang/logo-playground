@@ -93,6 +93,7 @@ function buildWebpackConfig(options) {
                 { test: /\.woff$/, loader: "url-loader", options: { limit: 200000 } },
                 { test: /\.json$/, loader: "json-loader" },
                 { test: /\.html$/, loader: "raw-loader" },
+                { test: /\.txt$/, loader: "raw-loader" },
             ]
         }
     }
