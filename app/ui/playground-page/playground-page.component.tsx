@@ -15,18 +15,23 @@ import { ProgramsSamplesRepository } from 'app/services/entities/programs-sample
 
 import { MainMenuComponent } from 'app/ui/main-menu.component'
 import { PlaygroundPageLayoutComponent } from './playground-page-layout.component';
+import { ErrorMessageComponent } from 'app/ui/shared/generic/error-message.component';
 
 import './playground-page.component.scss';
 
 interface IComponentState {
-    programTitle: string
     isLoading: boolean
     errorMessage: string
+
+    programTitle: string
+
     isRunning: boolean
+    hasProgramBeenExecutedOnce: boolean
+
     isSaveModalActive: boolean
     isSavingInProgress: boolean
     programNameInSaveModal: string
-    hasProgramBeenExecutedOnce: boolean
+    errorInSaveModal: string
 }
 
 interface IComponentProps {
@@ -62,12 +67,16 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
         const state: IComponentState = {
             isLoading: true,
             errorMessage: '',
+
             programTitle: '',
+
             isRunning: false,
+            hasProgramBeenExecutedOnce: false,
+
             isSaveModalActive: false,
             isSavingInProgress: false,
             programNameInSaveModal: '',
-            hasProgramBeenExecutedOnce: false
+            errorInSaveModal: ''
         };
         return state;
     }
@@ -135,7 +144,7 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
     }
 
     showSaveDialog = () => {
-        this.setState({ isSaveModalActive: true });
+        this.setState({ isSaveModalActive: true, errorInSaveModal: '' });
         setTimeout(() => {
             (this.refs['programNameSaveInput'] as HTMLInputElement).focus();
         }, 300);
@@ -155,6 +164,18 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
         if (this.state.isSavingInProgress) {
             return;
         }
+
+        if (!this.state.programNameInSaveModal || !this.state.programNameInSaveModal.trim()) {
+            this.setState({ errorInSaveModal: 'Program name is required.' })
+            return;
+        }
+        const allProgs = await this.programsRepo.getAll();
+        const progWithSameName = allProgs.find(p => p.name.trim().toLowerCase() === this.state.programNameInSaveModal.trim().toLowerCase());
+        if (progWithSameName) {
+            this.setState({ errorInSaveModal: 'Program with this name is already stored in library. Please enter different name.' })
+            return;
+        }
+
         this.setState({ isSavingInProgress: true });
         let screenshot = this.state.hasProgramBeenExecutedOnce
             ? await this.getScreenshot(true)
@@ -287,6 +308,7 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
                                                 onChange={translateInputChangeToState(this, (s, v) => ({ programNameInSaveModal: v }))}
                                                 onKeyDown={event => {
                                                     if (event.which == 13) {
+                                                        event.preventDefault();
                                                         this.saveProgramAction();
                                                     }
                                                 }}
@@ -298,6 +320,7 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
                         </div>
                     </div>
                     <br />
+                    <ErrorMessageComponent errorMessage={this.state.errorInSaveModal} />
                     <br />
                 </Modal.Body>
                 <Modal.Footer>
