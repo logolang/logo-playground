@@ -275,6 +275,7 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
                         }}
                         outputPanelProps={{
                             logoExecutorProps: {
+                                height: 300,
                                 runCommands: this.runCommands,
                                 stopCommands: this.stopCommands,
                                 makeScreenshotCommands: this.makeScreenshotCommands,

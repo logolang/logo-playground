@@ -15,9 +15,10 @@ interface IComponentState {
 }
 
 export interface ILogoExecutorComponentProps {
+    height: number
     runCommands: Observable<string>
     stopCommands: Observable<void>
-    makeScreenshotCommands: Observable<{ small: boolean, result: (data: string) => void }>
+    makeScreenshotCommands?: Observable<{ small: boolean, result: (data: string) => void }>
     onError: (error: string) => void
     onIsRunningChanged: (isRunning: boolean) => void
 }
@@ -48,7 +49,9 @@ export class LogoExecutorComponent extends React.Component<ILogoExecutorComponen
         this.graphics = new LogoOutputGraphics('#sandbox', '#turtle', '#overlay', turtleCustomizations.getCurrentTurtleImage(), turtleCustomizations.getCurrentTurtleSize());
         this.runSubscription = this.props.runCommands.subscribe(this.execute);
         this.stopSubscription = this.props.stopCommands.subscribe(this.abort);
-        this.makeScreenshotSubscription = this.props.makeScreenshotCommands.subscribe(this.makeScreenShot);
+        if (this.props.makeScreenshotCommands) {
+            this.makeScreenshotSubscription = this.props.makeScreenshotCommands.subscribe(this.makeScreenShot);
+        }
         this.resizeTimer = setInterval(() => {
             this.resizeCanvas();
         }, 500);
@@ -73,8 +76,8 @@ export class LogoExecutorComponent extends React.Component<ILogoExecutorComponen
     render(): JSX.Element {
         return (
             <div className="logo-executor-container">
-                <canvas id="sandbox"></canvas>
-                <canvas id="turtle"></canvas>
+                <canvas id="sandbox" height={this.props.height}></canvas>
+                <canvas id="turtle" height={this.props.height}></canvas>
                 <div id="overlay"></div>
                 <div id="errorMessagesContainer" className="alert alert-danger" role="alert" style={{ display: 'none' }}></div>
             </div>

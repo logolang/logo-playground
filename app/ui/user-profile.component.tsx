@@ -1,10 +1,12 @@
 import * as React from 'react';
 import * as cn from 'classnames';
-import * as FileSaver from 'file-saver'
+import * as FileSaver from 'file-saver';
 import { Link } from 'react-router'
+import { Subject, BehaviorSubject } from 'rxjs'
 
 import { goBack, translateSelectChangeToState } from 'app/utils/react-helpers';
 import { stay } from 'app/utils/async-helpers';
+import { RandomHelper } from 'app/utils/random-helper';
 
 import { Routes } from 'app/routes';
 import { ServiceLocator } from 'app/services/service-locator'
@@ -16,6 +18,7 @@ import { TurtleCustomizationsService } from 'app/services/turtle-customizations.
 import { DateTimeStampComponent } from 'app/ui/shared/generic/date-time-stamp.component';
 import { PageHeaderComponent } from 'app/ui/shared/generic/page-header.component';
 import { MainMenuComponent } from 'app/ui/main-menu.component'
+import { LogoExecutorComponent } from './shared/logo-executor.component';
 
 interface IComponentState {
     userInfo: UserInfo;
@@ -36,6 +39,7 @@ export class UserProfileComponent extends React.Component<IComponentProps, IComp
     private programsReporitory = ServiceLocator.resolve(x => x.programsReporitory);
     private themeService = new ThemeService();
     private turtleCustomService = new TurtleCustomizationsService();
+    private runCode = new BehaviorSubject<string>('repeat 10 [fd 10 rt 90 fd 10 lt 90]');
 
     constructor(props: IComponentProps) {
         super(props);
@@ -73,7 +77,7 @@ export class UserProfileComponent extends React.Component<IComponentProps, IComp
                 <MainMenuComponent />
                 <PageHeaderComponent title="User Profile" />
                 <div className="row">
-                    <div className="col-sm-12">
+                    <div className="col-sm-6">
                         <p><strong>Login:</strong> {this.state.userInfo.login}</p>
                         <p><strong>Name:</strong> {this.state.userInfo.attributes.name}</p>
                         <br />
@@ -83,7 +87,7 @@ export class UserProfileComponent extends React.Component<IComponentProps, IComp
                                 <div className="form-group">
                                     <label htmlFor="themeselector">User Interface Theme</label>
                                     <div className="row">
-                                        <div className="col-sm-5">
+                                        <div className="col-sm-12">
                                             <select className="form-control" id="themeselector"
                                                 value={this.state.theme.name} onChange={translateSelectChangeToState(this, (s, v) => {
                                                     const selectedTheme = this.themeService.getAllThemes().find(t => t.name === v);
@@ -109,7 +113,7 @@ export class UserProfileComponent extends React.Component<IComponentProps, IComp
                                 <div className="form-group">
                                     <label htmlFor="turtleSelector">Turtle</label>
                                     <div className="row">
-                                        <div className="col-sm-4">
+                                        <div className="col-sm-8">
                                             <select className="form-control" id="turtleSelector"
                                                 value={this.state.turtleName} onChange={translateSelectChangeToState(this, (s, v) => {
                                                     this.turtleCustomService.setCurrentTurtle(v, s.turtleSize);
@@ -122,7 +126,7 @@ export class UserProfileComponent extends React.Component<IComponentProps, IComp
                                                 }
                                             </select>
                                         </div>
-                                        <div className="col-sm-3">
+                                        <div className="col-sm-4">
                                             <select className="form-control" id="turtleSelector"
                                                 value={this.state.turtleSize} onChange={translateSelectChangeToState(this, (s, v) => {
                                                     this.turtleCustomService.setCurrentTurtle(s.turtleName, v as any);
@@ -141,7 +145,7 @@ export class UserProfileComponent extends React.Component<IComponentProps, IComp
                                 <div className="form-group">
                                     <label>Personal Gallery</label>
                                     <div className="row">
-                                        <div className="col-sm-5">
+                                        <div className="col-sm-12">
                                             <blockquote className="ex-font-size-normal">
                                                 <p>Programs count: {this.state.programCount}</p>
                                                 <div className="btn-toolbar">
@@ -158,7 +162,21 @@ export class UserProfileComponent extends React.Component<IComponentProps, IComp
                                 <br />
                             </fieldset>
                         </form >
-                    </div >
+                    </div>
+                    <div className="col-sm-4">
+                        {[
+                            <LogoExecutorComponent
+                                key={RandomHelper.getRandomObjectId(6)}
+                                height={400}
+                                onError={() => { }}
+                                onIsRunningChanged={() => { }}
+                                runCommands={this.runCode}
+                                stopCommands={new Subject<void>()}
+                            />
+                        ]}
+                    </div>
+                    <div className="col-sm-2">
+                    </div>
                 </div >
             </div >
         );

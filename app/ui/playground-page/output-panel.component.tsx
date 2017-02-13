@@ -31,6 +31,7 @@ export class OutputPanelComponent extends React.Component<IOutputPanelComponentP
         return (
             <div className="output-container">
                 <LogoExecutorComponent
+                    height={this.props.logoExecutorProps.height}
                     onError={this.props.logoExecutorProps.onError}
                     runCommands={this.props.logoExecutorProps.runCommands}
                     stopCommands={this.props.logoExecutorProps.stopCommands}
