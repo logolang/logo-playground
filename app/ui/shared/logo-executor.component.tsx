@@ -5,6 +5,7 @@ import 'app/../lib/logojs/logo.js';
 const polyfills = require('app/../lib/logojs/polyfills.logo.txt') as any;
 
 import { ThemeService } from 'app/services/theme.service';
+import { TurtleCustomizationsService } from 'app/services/turtle-customizations.service';
 import { LogoOutputGraphics } from './logo-output-graphics';
 import { LogoOutputConsole } from './logo-output-console';
 
@@ -43,7 +44,8 @@ export class LogoExecutorComponent extends React.Component<ILogoExecutorComponen
     }
 
     componentDidMount() {
-        this.graphics = new LogoOutputGraphics('#sandbox', '#turtle', '#overlay');
+        const turtleCustomizations = new TurtleCustomizationsService();
+        this.graphics = new LogoOutputGraphics('#sandbox', '#turtle', '#overlay', turtleCustomizations.getCurrentTurtleImage(), turtleCustomizations.getCurrentTurtleSize());
         this.runSubscription = this.props.runCommands.subscribe(this.execute);
         this.stopSubscription = this.props.stopCommands.subscribe(this.abort);
         this.makeScreenshotSubscription = this.props.makeScreenshotCommands.subscribe(this.makeScreenShot);

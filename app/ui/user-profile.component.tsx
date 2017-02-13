@@ -11,6 +11,7 @@ import { ServiceLocator } from 'app/services/service-locator'
 
 import { UserInfo } from 'app/model/entities/user-info';
 import { ThemeService, Theme } from 'app/services/theme.service';
+import { TurtleCustomizationsService } from 'app/services/turtle-customizations.service';
 
 import { DateTimeStampComponent } from 'app/ui/shared/generic/date-time-stamp.component';
 import { PageHeaderComponent } from 'app/ui/shared/generic/page-header.component';
@@ -21,6 +22,9 @@ interface IComponentState {
     theme: Theme;
     isSavingInProgress: boolean;
     programCount: number;
+
+    turtleName: string;
+    turtleSize: number;
 }
 
 interface IComponentProps {
@@ -31,6 +35,7 @@ export class UserProfileComponent extends React.Component<IComponentProps, IComp
     private currentUser = ServiceLocator.resolve(x => x.currentUser);
     private programsReporitory = ServiceLocator.resolve(x => x.programsReporitory);
     private themeService = new ThemeService();
+    private turtleCustomService = new TurtleCustomizationsService();
 
     constructor(props: IComponentProps) {
         super(props);
@@ -40,7 +45,9 @@ export class UserProfileComponent extends React.Component<IComponentProps, IComp
             userInfo: loginStatus.userInfo,
             theme: this.themeService.getCurrentTheme(),
             isSavingInProgress: false,
-            programCount: 0
+            programCount: 0,
+            turtleName: this.turtleCustomService.getCurrentTurtleInfo().name,
+            turtleSize: this.turtleCustomService.getCurrentTurtleSize()
         };
     }
 
@@ -100,6 +107,38 @@ export class UserProfileComponent extends React.Component<IComponentProps, IComp
                                 </div>
                                 <br />
                                 <div className="form-group">
+                                    <label htmlFor="turtleSelector">Turtle</label>
+                                    <div className="row">
+                                        <div className="col-sm-4">
+                                            <select className="form-control" id="turtleSelector"
+                                                value={this.state.turtleName} onChange={translateSelectChangeToState(this, (s, v) => {
+                                                    this.turtleCustomService.setCurrentTurtle(v, s.turtleSize);
+                                                    return { turtleName: v };
+                                                })}>
+                                                {
+                                                    this.turtleCustomService.getAllTurtles().map(t => {
+                                                        return <option key={t.name} value={t.name}>{t.name}</option>
+                                                    })
+                                                }
+                                            </select>
+                                        </div>
+                                        <div className="col-sm-3">
+                                            <select className="form-control" id="turtleSelector"
+                                                value={this.state.turtleSize} onChange={translateSelectChangeToState(this, (s, v) => {
+                                                    this.turtleCustomService.setCurrentTurtle(s.turtleName, v as any);
+                                                    return { turtleSize: v as any };
+                                                })}>
+                                                <option value={20}>Extra Small</option>
+                                                <option value={32}>Small</option>
+                                                <option value={40}>Medium</option>
+                                                <option value={52}>Large</option>
+                                                <option value={72}>Huge</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <br />
+                                <div className="form-group">
                                     <label>Personal Gallery</label>
                                     <div className="row">
                                         <div className="col-sm-5">
@@ -109,10 +148,6 @@ export class UserProfileComponent extends React.Component<IComponentProps, IComp
                                                     <button type="button" className="btn btn-default"
                                                         onClick={this.doExport}>
                                                         <span>Export</span>
-                                                    </button>
-                                                    <button type="button" className="btn btn-default"
-                                                    >
-                                                        <span>Import</span>
                                                     </button>
                                                 </div>
                                             </blockquote>
