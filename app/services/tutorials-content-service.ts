@@ -5,10 +5,12 @@ export interface ITutorialInfo {
     id: string
     name: string
     steps: number
+    description: string
 }
 
 export interface ITutorialStep {
     name: string
+    index: number
     content: string
     initialCode: string
     resultCode: string
@@ -62,7 +64,8 @@ export class TutorialsContentService {
                 name: 'Step ' + (index + 1),
                 content: stepContent,
                 initialCode: '',
-                resultCode: ''
+                resultCode: '',
+                index: index
             }
             return tutorialStep;
         });

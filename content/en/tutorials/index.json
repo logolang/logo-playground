@@ -2,10 +2,12 @@
     "tutorials": [
         {
             "name": "Basics",
+            "description": "LOGO language basics",
             "steps": 3
         },
         {
             "name": "Graphics",
+            "description": "Working with graphic, drawing and animations",
             "steps": 2
         }
     ]
