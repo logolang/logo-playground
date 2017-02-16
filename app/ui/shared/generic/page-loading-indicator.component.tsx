@@ -1,6 +1,8 @@
 import * as React from 'react';
 import * as cn from 'classnames'
 
+import './page-loading-indicator.component.scss'
+
 interface IComponentProps {
     isLoading: boolean
     className?: string

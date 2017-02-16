@@ -1,33 +1,58 @@
 import * as React from 'react';
-import { Link } from 'react-router'
+import { Link } from 'react-router';
+
+import { handleError } from '../utils/react-helpers';
 
 import { ServiceLocator } from 'app/services/service-locator'
 import { MainMenuComponent } from 'app/ui/main-menu.component'
 import { PageHeaderComponent } from 'app/ui/shared/generic/page-header.component';
+import { PageLoadingIndicatorComponent } from 'app/ui/shared/generic/page-loading-indicator.component';
+import { ErrorMessageComponent } from 'app/ui/shared/generic/error-message.component';
 
 import './documentation.component.scss'
 
-const text = require('../resources/text/doc.html')
-
 interface IComponentState {
+    isLoading: boolean
+    errorMessage: string
+    content: string
 }
 
 interface IComponentProps {
 }
 
 export class DocumentationComponent extends React.Component<IComponentProps, IComponentState> {
+    contentLoader = ServiceLocator.resolve(x => x.contentLoader);
+
     constructor(props: IComponentProps) {
         super(props);
 
         this.state = {
+            isLoading: true,
+            errorMessage: '',
+            content: ''
         };
+    }
+
+    componentDidMount() {
+        this.loadData();
+    }
+
+    private async loadData() {
+        const content = await handleError(this, () => this.contentLoader.getFileContent('reference.html'));
+        if (content) {
+            this.setState({ content: content });
+        }
+        this.setState({ isLoading: false });
     }
 
     render(): JSX.Element {
         return (
             <div className="container-fluid">
                 <MainMenuComponent />
-                <div className="doc-section" dangerouslySetInnerHTML={{ __html: text as any }}></div>
+                <PageLoadingIndicatorComponent isLoading={this.state.isLoading}>
+                    <ErrorMessageComponent errorMessage={this.state.errorMessage} />
+                    <div className="doc-section" dangerouslySetInnerHTML={{ __html: this.state.content }}></div>
+                </PageLoadingIndicatorComponent>
             </div>
         );
     }

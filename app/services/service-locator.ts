@@ -1,3 +1,5 @@
+import { ITutorialsContentService } from './tutorials-content-service';
+import { ILocalizedContentLoader } from './localized-content-loader';
 import { IProgramsRepository } from './entities/programs-localstorage.repository';
 import { IUsersRepository } from './entities/users.repository';
 import { ICurrentUserProvider } from './current-user.provider';
@@ -12,6 +14,8 @@ interface ServicesList {
     loginService: ILoginService
     usersRepository: IUsersRepository
     programsReporitory: IProgramsRepository
+    contentLoader: ILocalizedContentLoader
+    tutorialsService: ITutorialsContentService
 }
 
 /**

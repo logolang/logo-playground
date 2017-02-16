@@ -1,4 +1,6 @@
-﻿import { ProgramsLocalStorageRepository } from './services/entities/programs-localstorage.repository';
+﻿import { TutorialsContentService } from './services/tutorials-content-service';
+import { LocalizedContentLoader } from './services/localized-content-loader';
+import { ProgramsLocalStorageRepository } from './services/entities/programs-localstorage.repository';
 import { ServiceLocator } from 'app/services/service-locator'
 
 import { AjaxService } from 'app/services/infrastructure/ajax-service';
@@ -19,6 +21,8 @@ export class DependencyConfig {
         const usersRepository = new FakeUsersRepository(currentUser);
 
         const loginService = new FakeLoginService();
+        const contentLoader = new LocalizedContentLoader(ajaxService);
+        const tutorialsService = new TutorialsContentService(contentLoader);
 
         // Setup the global dependency injection container
         ServiceLocator.set(x => x.configLoader = confLoader);
@@ -27,6 +31,8 @@ export class DependencyConfig {
         ServiceLocator.set(x => x.usersRepository = usersRepository);
         ServiceLocator.set(x => x.loginService = loginService);
 
+        ServiceLocator.set(x => x.contentLoader = contentLoader);
         ServiceLocator.set(x => x.programsReporitory = new ProgramsLocalStorageRepository(currentUser));
+        ServiceLocator.set(x => x.tutorialsService = tutorialsService);
     }
 }

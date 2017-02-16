@@ -58,6 +58,7 @@ function buildWebpackConfig(options) {
                 { from: 'lib/css', to: 'css' },
                 { from: 'app/config/config.schema.json' },
                 { from: 'app/resources/favicon.ico' },
+                { from: 'content', to: 'content' },
                 isProduction
                     ? { from: 'app/config/config.prod.json', to: 'config.json' }
                     : { from: 'app/config/config.json', to: 'config.json' },

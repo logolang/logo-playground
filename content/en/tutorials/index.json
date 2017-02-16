@@ -1,0 +1,12 @@
+{
+    "tutorials": [
+        {
+            "name": "Basics",
+            "steps": 3
+        },
+        {
+            "name": "Graphics",
+            "steps": 2
+        }
+    ]
+}
