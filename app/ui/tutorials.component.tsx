@@ -90,46 +90,55 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
                         (this.state.tutorials.length > 0 && this.state.currentTutorial) &&
                         <div>
                             <div className="row">
-                                <div className="col-sm-4">
-                                </div>
-                                <div className="col-sm-4 tutorials-selector-container">
-                                    <DropdownButton className="btn btn-primary btn-lg" title={`Tutorial: ${this.state.currentTutorial.name}  `} id="tutorials-selector">
-                                        {
-                                            this.state.tutorials.map(t => <MenuItem
-                                                key={t.id}
-                                                onClick={() => {
-                                                    this.setState({ currentTutorial: t });
-                                                    this.loadData(t.id, 0);
-                                                }}
-                                            >
-                                                <div className="tutorial-drop-menu-item">
-                                                    <h4>{t.name}</h4>
-                                                    <div>{t.description} ({t.steps} steps)</div>
-                                                    <hr />
-                                                </div>
-                                            </MenuItem>)
-                                        }
-                                    </DropdownButton>
-                                </div>
-                                <div className="col-sm-4">
-                                </div>
-                            </div>
-                            <br />
-                            <div className="row">
                                 <div className="col-sm-6">
                                     {
                                         this.state.currentStep &&
                                         <div className="panel panel-default">
-                                            <button type="button" className="btn btn-default pull-left step-nav-btn" disabled={prevStepButtonDisabled}
-                                                onClick={() => { this.setState({ currentStep: this.state.steps[this.state.currentStep!.index - 1] }) }}>
-                                                <span className="glyphicon glyphicon-triangle-left" aria-hidden="true"></span>
-                                            </button>
-                                            <button type="button" className="btn btn-default pull-right step-nav-btn" disabled={nextStepButtonDisabled}
-                                                onClick={() => { this.setState({ currentStep: this.state.steps[this.state.currentStep!.index + 1] }) }}>
-                                                <span className="glyphicon glyphicon-triangle-right" aria-hidden="true"></span>
-                                            </button>
                                             <div className="panel-heading current-step-panel-header-container">
-                                                <span>Step {this.state.currentStep.index + 1} of {this.state.currentTutorial.steps}</span>
+                                                <table className="ex-background-transparent">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>
+                                                                <div className="tutorials-selector-container">
+                                                                    <DropdownButton className="btn btn-primary btn"
+                                                                        title={<span>Tutorial: {this.state.currentTutorial.name}&nbsp;&nbsp;</span> as any}
+                                                                        id="tutorials-selector">
+                                                                        {
+                                                                            this.state.tutorials.map(t => <MenuItem
+                                                                                key={t.id}
+                                                                                onClick={() => {
+                                                                                    this.setState({ currentTutorial: t });
+                                                                                    this.loadData(t.id, 0);
+                                                                                }}
+                                                                            >
+                                                                                <div className="tutorial-drop-menu-item">
+                                                                                    <h4>{t.name}</h4>
+                                                                                    <div>{t.description} ({t.steps} steps)</div>
+                                                                                    <hr />
+                                                                                </div>
+                                                                            </MenuItem>)
+                                                                        }
+                                                                    </DropdownButton>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <button type="button" className="btn btn-default step-nav-btn" disabled={prevStepButtonDisabled}
+                                                                    onClick={() => { this.setState({ currentStep: this.state.steps[this.state.currentStep!.index - 1] }) }}>
+                                                                    <span className="glyphicon glyphicon-triangle-left" aria-hidden="true"></span>
+                                                                </button>
+                                                            </td>
+                                                            <td style={{ width: '70%' }}>
+                                                                <span>Step {this.state.currentStep.index + 1} of {this.state.currentTutorial.steps}</span>
+                                                            </td>
+                                                            <td>
+                                                                <button type="button" className="btn btn-default step-nav-btn" disabled={nextStepButtonDisabled}
+                                                                    onClick={() => { this.setState({ currentStep: this.state.steps[this.state.currentStep!.index + 1] }) }}>
+                                                                    <span className="glyphicon glyphicon-triangle-right" aria-hidden="true"></span>
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
                                             </div>
                                             <div className="panel-body">
                                                 {
@@ -144,24 +153,6 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
                                         </div>
                                     }
                                     <div className="panel panel-default">
-                                        {
-                                            !this.state.isRunning &&
-                                            <button type="button" className="btn btn-default pull-right step-nav-btn"
-                                                onClick={() => { this.runCode.next(this.state.currentCode) }}
-                                            >
-                                                Run <span className="glyphicon glyphicon-play" aria-hidden="true"> <small>(F9)</small></span>
-                                            </button>
-                                        }
-                                        {
-                                            this.state.isRunning &&
-                                            <button type="button" className="btn btn-default pull-right step-nav-btn"
-                                                onClick={() => { this.stopCode.next() }}
-                                            >
-                                                Stop <span className="glyphicon glyphicon-stop" aria-hidden="true"></span>
-                                            </button>
-                                        }
-
-                                        <div className="panel-heading">Output</div>
                                         <div className="panel-body logo-output-panel">
                                             <LogoExecutorComponent
                                                 height={200}
@@ -175,7 +166,24 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
                                 </div>
                                 <div className="col-sm-6">
                                     <div className="panel panel-default">
-                                        <div className="panel-heading">Source Code</div>
+                                        <div className="panel-heading">
+                                            {
+                                                !this.state.isRunning &&
+                                                <button type="button" className="btn btn-success"
+                                                    onClick={() => { this.runCode.next(this.state.currentCode) }}
+                                                >
+                                                    Run <span className="glyphicon glyphicon-play" aria-hidden="true"> <small>(F9)</small></span>
+                                                </button>
+                                            }
+                                            {
+                                                this.state.isRunning &&
+                                                <button type="button" className="btn btn-default"
+                                                    onClick={() => { this.stopCode.next() }}
+                                                >
+                                                    Stop <span className="glyphicon glyphicon-stop" aria-hidden="true"></span>
+                                                </button>
+                                            }
+                                        </div>
                                         <div className="panel-body source-input-panel">
                                             <CodeInputLogoComponent
                                                 className="codemirror-input-logo"
