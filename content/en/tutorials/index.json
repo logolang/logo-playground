@@ -1,14 +1,14 @@
 {
     "tutorials": [
         {
-            "name": "Basics",
-            "description": "LOGO language basics",
-            "steps": 3
+            "name": "Turtle Basics",
+            "description": "Introduction and LOGO language basics",
+            "steps": 7
         },
         {
-            "name": "Graphics",
-            "description": "Working with graphic, drawing and animations",
-            "steps": 2
+            "name": "Controlling the Turtle and Pen",
+            "description": "Basic turtle commands, working with graphics",
+            "steps": 8
         }
     ]
 }
