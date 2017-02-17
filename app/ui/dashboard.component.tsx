@@ -135,48 +135,52 @@ export class DashboardComponent extends React.Component<IDashboardComponentProps
 
     render(): JSX.Element {
         return (
-            <div className="container">
+            <div className="ex-page-container">
                 <MainMenuComponent />
-                <PageHeaderComponent title={`Gallery`} />
-                {
-                    this.state.programToDelete && <ActionConfirmationModalComponent
-                        onConfirm={this.confirmDelete}
-                        actionButtonText="Delete"
-                        headerText="Do you want to delete?"
-                        onCancel={() => { this.setState({ programToDelete: undefined }) }}
-                    >
-                        <div>
-                            <h3>Delete program</h3>
-                            <br />
-                            {this.renderProgramCard(this.state.programToDelete, 'library', false)}
-                            <br />
+                <div className="ex-scroll-outer">
+                    <div className="container-fluid">
+                        <PageHeaderComponent title={`Gallery`} />
+                        {
+                            this.state.programToDelete && <ActionConfirmationModalComponent
+                                onConfirm={this.confirmDelete}
+                                actionButtonText="Delete"
+                                headerText="Do you want to delete?"
+                                onCancel={() => { this.setState({ programToDelete: undefined }) }}
+                            >
+                                <div>
+                                    <h3>Delete program</h3>
+                                    <br />
+                                    {this.renderProgramCard(this.state.programToDelete, 'library', false)}
+                                    <br />
+                                </div>
+                            </ActionConfirmationModalComponent>
+                        }
+                        <div className="row">
+                            <div className="col-sm-6">
+                                <CollapsiblePanelComponent collapsed={false} title="Personal Library ">
+                                    <div>
+                                        {this.state.programs.map((p, i) => {
+                                            return <div key={p.id}>
+                                                {(i != 0) && <hr />}
+                                                {this.renderProgramCard(p, 'library', true)}
+                                            </div>
+                                        })}
+                                    </div>
+                                </CollapsiblePanelComponent>
+                            </div>
+                            <div className="col-sm-6">
+                                <CollapsiblePanelComponent collapsed={false} title="Samples ">
+                                    <div>
+                                        {this.state.samples.map((p, i) => {
+                                            return <div key={p.id}>
+                                                {(i != 0) && <hr />}
+                                                {this.renderProgramCard(p, 'samples', false)}
+                                            </div>
+                                        })}
+                                    </div>
+                                </CollapsiblePanelComponent>
+                            </div>
                         </div>
-                    </ActionConfirmationModalComponent>
-                }
-                <div className="row">
-                    <div className="col-sm-6">
-                        <CollapsiblePanelComponent collapsed={false} title="Personal Library ">
-                            <div>
-                                {this.state.programs.map((p, i) => {
-                                    return <div key={p.id}>
-                                        {(i != 0) && <hr />}
-                                        {this.renderProgramCard(p, 'library', true)}
-                                    </div>
-                                })}
-                            </div>
-                        </CollapsiblePanelComponent>
-                    </div>
-                    <div className="col-sm-6">
-                        <CollapsiblePanelComponent collapsed={false} title="Samples ">
-                            <div>
-                                {this.state.samples.map((p, i) => {
-                                    return <div key={p.id}>
-                                        {(i != 0) && <hr />}
-                                        {this.renderProgramCard(p, 'samples', false)}
-                                    </div>
-                                })}
-                            </div>
-                        </CollapsiblePanelComponent>
                     </div>
                 </div>
             </div>

@@ -18,3 +18,34 @@
         background-image: url(../images/logo_white.png);
     }
 }
+
+.ex-page-container {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.ex-scroll-outer {
+    display: flex;
+    overflow-y: auto;
+}
+
+.ex-flex-direction-column {
+    flex-direction: column;
+}
+
+.ex-flex-direction-row {
+    flex-direction: row;
+}
+
+.ex-display-flex {
+    display: flex;
+}
+
+.ex-flex-block {
+    flex: 0 1 100%
+}
+
+.ex-overflow-hidden {
+    overflow: hidden;
+}

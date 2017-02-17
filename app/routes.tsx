@@ -9,7 +9,7 @@ import { UserProfileComponent } from 'app/ui/user-profile.component';
 import { ErrorComponent } from 'app/ui/error.component';
 import { AboutComponent } from 'app/ui/about.component';
 import { DocumentationComponent } from 'app/ui/documentation.component';
-import { TutorialsComponent } from 'app/ui/tutorials.component';
+import { TutorialsComponent } from 'app/ui/tutorials-page/tutorials.component';
 import { PlaygroundPageComponent } from 'app/ui/playground-page/playground-page.component';
 import { StubComponent } from 'app/ui/stub.component';
 

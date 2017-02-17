@@ -137,7 +137,7 @@ export class MainMenuComponent extends React.Component<IComponentProps, ICompone
             </Navbar>
 
             {/*This dummy navbar is to provide correct top margin for page content*/}
-            <nav className="navbar"></nav>
+            <nav className="navbar ex-margin-bottom-zero"></nav>
         </div>
     }
 }

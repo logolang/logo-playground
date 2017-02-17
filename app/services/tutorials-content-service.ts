@@ -1,3 +1,4 @@
+import { stay } from '../utils/async-helpers';
 import { getFileExtension } from '../utils/formatter-helper';
 import { ILocalizedContentLoader } from './localized-content-loader';
 
