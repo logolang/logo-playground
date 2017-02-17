@@ -89,7 +89,7 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
                         ? <PageLoadingIndicatorComponent isLoading={true} />
                         : <div className="ex-display-flex ex-flex-direction-row ex-flex-block ">
                             <div className="ex-display-flex ex-flex-direction-column ex-flex-block">
-                                <div className="ex-display-flex ex-flex-block ex-overflow-hidden">
+                                <div className="ex-display-flex ex-flex-block">
                                     {
                                         (this.state.currentStep && this.state.currentTutorial) &&
                                         <div className="current-step-panel-container">
@@ -160,7 +160,7 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
                             </div>
                             <div className="ex-display-flex ex-flex-block">
                                 <div className="source-input-panel panel panel-default">
-                                    <div className="panel-heading">
+                                    <div className="source-input-panel-heading panel-heading">
                                         {
                                             !this.state.isRunning &&
                                             <button type="button" className="btn btn-success"
@@ -178,7 +178,7 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
                                             </button>
                                         }
                                     </div>
-                                    <div className="panel-body">
+                                    <div className="source-input-panel-body panel-body">
                                         <CodeInputLogoComponent
                                             className="codemirror-input-logo"
                                             code={this.state.currentCode}
