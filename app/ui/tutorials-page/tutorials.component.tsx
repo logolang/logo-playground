@@ -89,7 +89,7 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
                         ? <PageLoadingIndicatorComponent isLoading={true} />
                         : <div className="ex-display-flex ex-flex-direction-row ex-flex-block ">
                             <div className="ex-display-flex ex-flex-direction-column ex-flex-block">
-                                <div className="ex-display-flex ex-flex-block">
+                                <div className="ex-display-flex ex-flex-block ex-overflow-hidden">
                                     {
                                         (this.state.currentStep && this.state.currentTutorial) &&
                                         <div className="current-step-panel-container">
@@ -135,10 +135,7 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
                                                 <div className="current-step-panel-body">
                                                     {
                                                         <div>
-                                                            <h3>{this.state.currentStep.name}</h3>
-                                                            <p>
-                                                                {this.state.currentStep.content}
-                                                            </p>
+                                                            <div dangerouslySetInnerHTML={{ __html: this.state.currentStep.content }}></div>
                                                         </div>
                                                     }
                                                 </div>

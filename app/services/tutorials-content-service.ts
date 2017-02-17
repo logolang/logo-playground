@@ -1,6 +1,7 @@
 import { stay } from '../utils/async-helpers';
 import { getFileExtension } from '../utils/formatter-helper';
 import { ILocalizedContentLoader } from './localized-content-loader';
+import * as markdown from 'markdown-it'
 
 export interface ITutorialInfo {
     id: string
@@ -59,11 +60,12 @@ export class TutorialsContentService {
         for (let stepIndex = 0; stepIndex < tutorial.steps; ++stepIndex) {
             stepContentPromises.push(this.contentLoader.getFileContent(`tutorials/t${tutorialId}s${this.getIdFromIndex(stepIndex)}.md`));
         }
+        const md = new markdown();
         const allStepsContent = await Promise.all(stepContentPromises);
         const steps = allStepsContent.map((stepContent, index) => {
             let tutorialStep: ITutorialStep = {
                 name: 'Step ' + (index + 1),
-                content: stepContent,
+                content: md.render(stepContent),
                 initialCode: '',
                 resultCode: '',
                 index: index
