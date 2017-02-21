@@ -44,7 +44,10 @@ export class TutorialsContentService {
                 let result = await this.contentLoader.getFileContent('tutorials/index.json');
                 let data = JSON.parse(result);
                 this.tutorialInfos = data.tutorials;
-                this.tutorialInfos.forEach((t, index) => t.id = this.getIdFromIndex(index));
+                this.tutorialInfos.forEach((t, index) => {
+                    t.id = this.getIdFromIndex(index);
+                });
+
             }
             catch (ex) {
                 throw ex;
@@ -63,11 +66,28 @@ export class TutorialsContentService {
         const md = new markdown();
         const allStepsContent = await Promise.all(stepContentPromises);
         const steps = allStepsContent.map((stepContent, index) => {
+            const resultCodeRegex = /```result[\s\S]*```/g;
+            let matches = stepContent.match(resultCodeRegex);
+            let resultCode = ''
+            if (matches && matches.length > 0) {
+                resultCode = matches[0].replace(/```result|```/g, '');
+                stepContent = stepContent.replace(resultCodeRegex, '');
+            }
+
+            const initCodeRegex = /```init[\s\S]*```/g;
+            matches = stepContent.match(resultCodeRegex);
+            let initCode = ''
+            if (matches && matches.length > 0) {
+                initCode = matches[0].replace(/```init|```/g, '');
+                stepContent = stepContent.replace(initCodeRegex, '');
+            }
+            console.log(matches);
+
             let tutorialStep: ITutorialStep = {
                 name: 'Step ' + (index + 1),
                 content: md.render(stepContent),
-                initialCode: '',
-                resultCode: '',
+                initialCode: initCode,
+                resultCode: resultCode,
                 index: index
             }
             return tutorialStep;

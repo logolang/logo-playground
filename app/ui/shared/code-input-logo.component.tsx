@@ -41,6 +41,14 @@ export class CodeInputLogoComponent extends React.Component<ICodeInputComponentP
         return false;
     }
 
+    componentWillReceiveProps(nextProps: ICodeInputComponentProps) {
+        if (this.props.code != nextProps.code) {
+            if (this.cm) {
+                this.cm.setValue(nextProps.code);
+            }
+        }
+    }
+
     componentDidMount() {
         const containerElement = this.refs['container'] as HTMLElement;
         const textArea = this.refs['text-area'] as HTMLTextAreaElement;

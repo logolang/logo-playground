@@ -136,6 +136,23 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
                                                     {
                                                         <div>
                                                             <div dangerouslySetInnerHTML={{ __html: this.state.currentStep.content }}></div>
+                                                            <br />
+                                                            <div className="pull-right">
+                                                                <button type="button" className="btn btn-warning"
+                                                                    onClick={() => {
+                                                                        //alert(this.state.currentStep!.resultCode)
+                                                                        this.setState({ currentCode: this.state.currentStep!.resultCode });
+                                                                    }}>
+                                                                    <span>Help – it's not working!</span>
+                                                                </button>
+                                                                <span> </span>
+                                                                <button type="button" className="btn btn-info">
+                                                                    <span>Continue&nbsp;&nbsp;</span>
+                                                                    <span className="glyphicon glyphicon-arrow-right" aria-hidden="true"></span>
+                                                                </button>
+                                                                <br />
+                                                                <br />
+                                                            </div>
                                                         </div>
                                                     }
                                                 </div>
