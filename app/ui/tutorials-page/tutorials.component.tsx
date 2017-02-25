@@ -12,6 +12,7 @@ import { ErrorMessageComponent } from 'app/ui//shared/generic/error-message.comp
 import { PageLoadingIndicatorComponent } from 'app/ui//shared/generic/page-loading-indicator.component';
 import { CodeInputLogoComponent } from 'app/ui/shared/code-input-logo.component';
 import { LogoExecutorComponent } from 'app/ui/shared/logo-executor.component';
+import { TutorialSelectModalComponent } from './tutorial-select-modal.component';
 
 import { ITutorialInfo, ITutorialStep } from 'app/services/tutorials-content-service';
 
@@ -25,6 +26,8 @@ interface IComponentState {
     steps: ITutorialStep[]
     currentStep: ITutorialStep | undefined
 
+    showSelectionTutorials: boolean
+    showFixTheCode: boolean
     isRunning: boolean
     currentCode: string
 }
@@ -49,6 +52,8 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
             steps: [],
             currentStep: undefined,
 
+            showSelectionTutorials: false,
+            showFixTheCode: false,
             isRunning: false,
             currentCode: ''
         };
@@ -92,6 +97,23 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
             <div className="ex-page-container">
                 <MainMenuComponent />
                 {
+                    this.renderFixTheCodeModal()
+                }
+                {
+                    this.state.showSelectionTutorials &&
+                    <TutorialSelectModalComponent
+                        tutorials={this.state.tutorials}
+                        onCancel={() => { this.setState({ showSelectionTutorials: false }) }}
+                        onSelect={(tutorialId) => {
+                            this.setState({
+                                currentTutorial: this.state.tutorials.find(t => t.id === tutorialId),
+                                showSelectionTutorials: false
+                            });
+                            this.loadData(tutorialId, 0);
+                        }}
+                    />
+                }
+                {
                     this.state.isLoading
                         ? <PageLoadingIndicatorComponent isLoading={true} />
                         : <div className="ex-display-flex ex-flex-direction-row ex-flex-block ">
@@ -103,25 +125,10 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
                                             <div className="current-step-panel panel-default">
                                                 <div className="current-step-panel-heading">
                                                     <div className="tutorials-selector-container">
-                                                        <DropdownButton className="btn btn-primary btn"
-                                                            title={<span>Tutorial: {this.state.currentTutorial.name}&nbsp;&nbsp;</span> as any}
-                                                            id="tutorials-selector">
-                                                            {
-                                                                this.state.tutorials.map(t => <MenuItem
-                                                                    key={t.id}
-                                                                    onClick={() => {
-                                                                        this.setState({ currentTutorial: t });
-                                                                        this.loadData(t.id, 0);
-                                                                    }}
-                                                                >
-                                                                    <div className="tutorial-drop-menu-item">
-                                                                        <h4>{t.name}</h4>
-                                                                        <div>{t.description} ({t.steps} steps)</div>
-                                                                        <hr />
-                                                                    </div>
-                                                                </MenuItem>)
-                                                            }
-                                                        </DropdownButton>
+                                                        <button className="btn btn-info" onClick={() => { this.setState({ showSelectionTutorials: true }) }}>
+                                                            <span>Tutorial: {this.state.currentTutorial.name}&nbsp;&nbsp;</span>
+                                                            <span className="caret"></span>
+                                                        </button>
                                                     </div>
                                                     <div className="prev-btn-container">
                                                         <button type="button" className="btn btn-default step-nav-btn" disabled={prevStepButtonDisabled}
@@ -147,16 +154,27 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
                                                             <div className="pull-right">
                                                                 <button type="button" className="btn btn-warning"
                                                                     onClick={() => {
-                                                                        this.setState({ currentCode: this.state.currentStep!.resultCode });
+                                                                        this.setState({ showFixTheCode: true })
                                                                     }}>
                                                                     <span>Help – it's not working!</span>
                                                                 </button>
                                                                 <span> </span>
-                                                                <button type="button" className="btn btn-info" disabled={nextStepButtonDisabled}
-                                                                    onClick={this.goNextStep}>
-                                                                    <span>Continue&nbsp;&nbsp;</span>
-                                                                    <span className="glyphicon glyphicon-arrow-right" aria-hidden="true"></span>
-                                                                </button>
+                                                                {
+                                                                    !nextStepButtonDisabled &&
+                                                                    <button type="button" className="btn btn-primary"
+                                                                        onClick={this.goNextStep}>
+                                                                        <span>Continue&nbsp;&nbsp;</span>
+                                                                        <span className="glyphicon glyphicon-arrow-right" aria-hidden="true"></span>
+                                                                    </button>
+                                                                }
+                                                                {
+                                                                    nextStepButtonDisabled &&
+                                                                    <button type="button" className="btn btn-primary"
+                                                                        onClick={() => { this.setState({ showSelectionTutorials: true }) }}>
+                                                                        <span>Choose another tutorial&nbsp;&nbsp;</span>
+                                                                        <span className="glyphicon glyphicon-arrow-right" aria-hidden="true"></span>
+                                                                    </button>
+                                                                }
                                                                 <br />
                                                                 <br />
                                                             </div>
@@ -214,5 +232,39 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
                 }
             </div>
         );
+    }
+
+    renderFixTheCodeModal(): JSX.Element | null {
+        if (!this.state.showFixTheCode) {
+            return null;
+        }
+        return <Modal show={true} onHide={() => { this.setState({ showFixTheCode: false }) }} animation={false} backdrop='static' >
+            <Modal.Header closeButton>
+                <Modal.Title>Fix the code?</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <p>
+                    If your code isn't working as the tutorial describes, you can replace it with a working version.
+                    <strong>This will overwrite your code entirely.</strong>
+                </p>
+                <br />
+            </Modal.Body>
+            <Modal.Footer>
+                <button type="button" className="btn btn-primary"
+                    onClick={() => {
+                        this.setState({
+                            showFixTheCode: false,
+                            currentCode: this.state.currentStep!.resultCode
+                        });
+                    }}>
+                    <strong>Yes</strong>
+                    <span>, fix my code</span>
+                </button>
+                <button type="button" className="btn btn-default" onClick={() => { this.setState({ showFixTheCode: false }) }}>
+                    <strong>No</strong>
+                    <span>, keep my code as is</span>
+                </button>
+            </Modal.Footer>
+        </Modal>
     }
 }
