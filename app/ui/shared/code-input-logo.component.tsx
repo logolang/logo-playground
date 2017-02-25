@@ -28,6 +28,7 @@ export interface ICodeInputComponentProps {
 export class CodeInputLogoComponent extends React.Component<ICodeInputComponentProps, IComponentState> {
     themeService = new ThemeService();
     cm: codemirror.EditorFromTextArea;
+    currentCode: string;
     focusCommandsSubscription: Subscription | undefined;
 
     constructor(props: ICodeInputComponentProps) {
@@ -42,8 +43,8 @@ export class CodeInputLogoComponent extends React.Component<ICodeInputComponentP
     }
 
     componentWillReceiveProps(nextProps: ICodeInputComponentProps) {
-        if (this.props.code != nextProps.code) {
-            if (this.cm) {
+        if (this.cm) {
+            if (nextProps.code != this.currentCode) {
                 this.cm.setValue(nextProps.code);
             }
         }
@@ -64,11 +65,12 @@ export class CodeInputLogoComponent extends React.Component<ICodeInputComponentP
             theme: this.themeService.getCurrentTheme().codemirror
         } as any);
         this.cm.setSize('100%', '100%');
-        this.cm.setValue(this.props.code);
         this.cm.on("change", () => {
             let newVal = this.cm.getValue();
+            this.currentCode = newVal;
             this.props.onChanged(newVal);
         });
+        this.cm.setValue(this.props.code);
         if (this.props.onHotkey) {
             const map = {
                 "F8": () => { ensure(this.props.onHotkey)('f8') },

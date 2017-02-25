@@ -73,6 +73,13 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
         this.setState({ isLoading: false });
     }
 
+    goNextStep = () => {
+        this.setState({ currentStep: this.state.steps[this.state.currentStep!.index + 1] });
+    }
+    goPrevStep = () => {
+        this.setState({ currentStep: this.state.steps[this.state.currentStep!.index - 1] });
+    }
+
     render(): JSX.Element {
         let nextStepButtonDisabled = true;
         let prevStepButtonDisabled = true;
@@ -118,7 +125,7 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
                                                     </div>
                                                     <div className="prev-btn-container">
                                                         <button type="button" className="btn btn-default step-nav-btn" disabled={prevStepButtonDisabled}
-                                                            onClick={() => { this.setState({ currentStep: this.state.steps[this.state.currentStep!.index - 1] }) }}>
+                                                            onClick={this.goPrevStep}>
                                                             <span className="glyphicon glyphicon-triangle-left" aria-hidden="true"></span>
                                                         </button>
                                                     </div>
@@ -127,7 +134,7 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
                                                     </div>
                                                     <div className="next-btn-container">
                                                         <button type="button" className="btn btn-default step-nav-btn" disabled={nextStepButtonDisabled}
-                                                            onClick={() => { this.setState({ currentStep: this.state.steps[this.state.currentStep!.index + 1] }) }}>
+                                                            onClick={this.goNextStep}>
                                                             <span className="glyphicon glyphicon-triangle-right" aria-hidden="true"></span>
                                                         </button>
                                                     </div>
@@ -140,13 +147,13 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
                                                             <div className="pull-right">
                                                                 <button type="button" className="btn btn-warning"
                                                                     onClick={() => {
-                                                                        //alert(this.state.currentStep!.resultCode)
                                                                         this.setState({ currentCode: this.state.currentStep!.resultCode });
                                                                     }}>
                                                                     <span>Help – it's not working!</span>
                                                                 </button>
                                                                 <span> </span>
-                                                                <button type="button" className="btn btn-info">
+                                                                <button type="button" className="btn btn-info" disabled={nextStepButtonDisabled}
+                                                                    onClick={this.goNextStep}>
                                                                     <span>Continue&nbsp;&nbsp;</span>
                                                                     <span className="glyphicon glyphicon-arrow-right" aria-hidden="true"></span>
                                                                 </button>
