@@ -33,13 +33,22 @@ interface IComponentState {
 interface IComponentProps {
 }
 
+const codeSamples = [
+    'pu setxy -40 -20 pd repeat 8 [fd 40 rt 360/8]',
+    'repeat 10 [repeat 8 [fd 20 rt 360/8] rt 360/10]',
+    'repeat 14 [fd repcount*8 rt 90]',
+    'window repeat 10 [fd 5 * repcount repeat 3 [fd 18 rt 360/3] rt 360/10]',
+    'pu setxy -20 -20 pd repeat 8 [rt 45 repeat 4 [repeat 90 [fd 1 rt 2] rt 90]]',
+    'repeat 10 [fd 10 rt 90 fd 10 lt 90]'
+]
+
 export class UserProfileComponent extends React.Component<IComponentProps, IComponentState> {
     private appConfig = ServiceLocator.resolve(x => x.appConfig);
     private currentUser = ServiceLocator.resolve(x => x.currentUser);
     private programsReporitory = ServiceLocator.resolve(x => x.programsReporitory);
     private themeService = new ThemeService();
     private turtleCustomService = new TurtleCustomizationsService();
-    private runCode = new BehaviorSubject<string>('repeat 10 [fd 10 rt 90 fd 10 lt 90]');
+    private runCode = new BehaviorSubject<string>('');
 
     constructor(props: IComponentProps) {
         super(props);
@@ -53,10 +62,15 @@ export class UserProfileComponent extends React.Component<IComponentProps, IComp
             turtleName: this.turtleCustomService.getCurrentTurtleInfo().name,
             turtleSize: this.turtleCustomService.getCurrentTurtleSize()
         };
+        this.setRandomCode();
     }
 
     componentDidMount() {
         this.loadData();
+    }
+
+    private setRandomCode() {
+        this.runCode.next(codeSamples[RandomHelper.getRandomInt(0, 5)]);
     }
 
     private async loadData() {
@@ -117,6 +131,7 @@ export class UserProfileComponent extends React.Component<IComponentProps, IComp
                                             <select className="form-control" id="turtleSelector"
                                                 value={this.state.turtleName} onChange={translateSelectChangeToState(this, (s, v) => {
                                                     this.turtleCustomService.setCurrentTurtle(v, s.turtleSize);
+                                                    this.setRandomCode();
                                                     return { turtleName: v };
                                                 })}>
                                                 {
@@ -130,6 +145,7 @@ export class UserProfileComponent extends React.Component<IComponentProps, IComp
                                             <select className="form-control" id="turtleSelector"
                                                 value={this.state.turtleSize} onChange={translateSelectChangeToState(this, (s, v) => {
                                                     this.turtleCustomService.setCurrentTurtle(s.turtleName, v as any);
+                                                    this.setRandomCode();
                                                     return { turtleSize: v as any };
                                                 })}>
                                                 <option value={20}>Extra Small</option>
