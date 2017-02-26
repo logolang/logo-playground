@@ -9,6 +9,7 @@
         width: 50vw;
         display: flex;
         flex-direction: column;
+        position: relative;
         .current-step-panel-heading {
             margin-bottom: 16px;
             display: flex;
@@ -42,6 +43,14 @@
             overflow-y: auto;
             overflow-x: hidden;
             padding-right: 20px;
+        }
+        .bottom-opacity-gradient {
+            position: absolute;
+            bottom: 0px;
+            left: 0px;
+            right: 0px;
+            margin-bottom: 16px;
+            margin-right: 40px;
         }
     }
 }

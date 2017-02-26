@@ -9,6 +9,7 @@ import { ServiceLocator } from 'app/services/service-locator'
 import { MainMenuComponent } from 'app/ui/main-menu.component'
 import { PageHeaderComponent } from 'app/ui/shared/generic/page-header.component';
 import { ErrorMessageComponent } from 'app/ui//shared/generic/error-message.component';
+import { OpacityGradientComponent } from 'app/ui//shared/generic/opacity-gradient.component';
 import { PageLoadingIndicatorComponent } from 'app/ui//shared/generic/page-loading-indicator.component';
 import { CodeInputLogoComponent } from 'app/ui/shared/code-input-logo.component';
 import { LogoExecutorComponent } from 'app/ui/shared/logo-executor.component';
@@ -181,6 +182,7 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
                                                         </div>
                                                     }
                                                 </div>
+                                                <OpacityGradientComponent className="bottom-opacity-gradient" />
                                             </div>
                                         </div>
                                     }

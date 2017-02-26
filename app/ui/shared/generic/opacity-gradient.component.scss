@@ -1,0 +1,35 @@
+.opacity-gradient {
+    .cover-row {
+        height: 2px;
+        &.r0 {
+            opacity: 0.05
+        }
+        &.r1 {
+            opacity: 0.1
+        }
+        &.r2 {
+            opacity: 0.2
+        }
+        &.r3 {
+            opacity: 0.3
+        }
+        &.r4 {
+            opacity: 0.4
+        }
+        &.r5 {
+            opacity: 0.5
+        }
+        &.r6 {
+            opacity: 0.6
+        }
+        &.r7 {
+            opacity: 0.7
+        }
+        &.r8 {
+            opacity: 0.8
+        }
+        &.r9 {
+            opacity: 0.9
+        }
+    }
+}
