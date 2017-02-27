@@ -42,15 +42,26 @@
             flex: 1 1 100%;
             overflow-y: auto;
             overflow-x: hidden;
-            padding-right: 20px;
+            .current-step-panel-inner {
+                padding-right: 20px;
+                .step-content {
+                    margin-bottom: 16px;
+                    table {
+                        margin-bottom: 8px;
+                        td,
+                        th {
+                            border: 1px solid gray;
+                            padding: 4px;
+                        }
+                    }
+                }
+            }
         }
         .bottom-opacity-gradient {
             position: absolute;
-            bottom: 0px;
+            bottom: 15px;
             left: 0px;
-            right: 0px;
-            margin-bottom: 16px;
-            margin-right: 40px;
+            right: 38px;
         }
     }
 }

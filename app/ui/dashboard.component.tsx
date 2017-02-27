@@ -78,13 +78,13 @@ export class DashboardComponent extends React.Component<IDashboardComponentProps
         let link = '';
         switch (storageType) {
             case 'library':
-                link = Routes.playgroundLibrary({ programId: p.id });
+                link = Routes.playgroundLoadFromLibrary.buildWithParams({ programId: p.id });
                 break;
             case 'samples':
-                link = Routes.playgroundSamples({ sampleId: p.id });
+                link = Routes.playgroundLoadSample.buildWithParams({ sampleId: p.id });
                 break;
             case 'gist':
-                link = Routes.playgroundGist({ gistId: p.id });
+                link = Routes.playgroundLoadFromGist.buildWithParams({ gistId: p.id });
                 break;
         }
 

@@ -18,17 +18,9 @@ export class OpacityGradientComponent extends React.Component<IComponentProps, v
 
     render(): JSX.Element {
         return (
-            <div className={`opacity-gradient ${this.props.className}`} >
-                <div className="cover-row r0" style={{ backgroundColor: bodyBackColor }} />
-                <div className="cover-row r1" style={{ backgroundColor: bodyBackColor }} />
-                <div className="cover-row r2" style={{ backgroundColor: bodyBackColor }} />
-                <div className="cover-row r3" style={{ backgroundColor: bodyBackColor }} />
-                <div className="cover-row r4" style={{ backgroundColor: bodyBackColor }} />
-                <div className="cover-row r5" style={{ backgroundColor: bodyBackColor }} />
-                <div className="cover-row r6" style={{ backgroundColor: bodyBackColor }} />
-                <div className="cover-row r7" style={{ backgroundColor: bodyBackColor }} />
-                <div className="cover-row r8" style={{ backgroundColor: bodyBackColor }} />
-                <div className="cover-row r9" style={{ backgroundColor: bodyBackColor }} />
+            <div className={`opacity-gradient ${this.props.className}`}
+                style={{ 'boxShadow': `inset 0px -20px 20px -10px ${bodyBackColor}` }}
+            >
             </div>
         );
     }

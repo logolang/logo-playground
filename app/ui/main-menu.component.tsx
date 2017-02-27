@@ -66,16 +66,16 @@ export class MainMenuComponent extends React.Component<IComponentProps, ICompone
                 </Navbar.Header>
                 <Navbar.Collapse>
                     <Nav>
-                        <LinkContainer to={Routes.dashboardsRoot}>
+                        <LinkContainer to={Routes.galleryRoot.build()}>
                             <NavItem><span>Gallery</span></NavItem>
                         </LinkContainer>
-                        <LinkContainer to={Routes.docPageRoot}>
+                        <LinkContainer to={Routes.documentationRoot.build()}>
                             <NavItem><span>Documentation</span></NavItem>
                         </LinkContainer>
-                        <LinkContainer to={Routes.tutorialsPageRoot}>
+                        <LinkContainer to={Routes.tutorialsRoot.build()}>
                             <NavItem><span>Tutorials</span></NavItem>
                         </LinkContainer>
-                        <LinkContainer to={Routes.playground}>
+                        <LinkContainer to={Routes.playgroundRoot.build()}>
                             <NavItem><span>Playground</span></NavItem>
                         </LinkContainer>
                     </Nav>
@@ -106,13 +106,13 @@ export class MainMenuComponent extends React.Component<IComponentProps, ICompone
                                 !loginStatus.isLoggedIn &&
                                 <MenuItem divider />
                             }
-                            <LinkContainer to={Routes.userProfile}>
+                            <LinkContainer to={Routes.settingsRoot.build()}>
                                 <MenuItem>
                                     <span className="glyphicon glyphicon-user" aria-hidden="true"></span>
                                     <span>&nbsp;&nbsp;User Profile</span>
                                 </MenuItem>
                             </LinkContainer>
-                            <LinkContainer to={Routes.about}>
+                            <LinkContainer to={Routes.aboutRoot.build()}>
                                 <MenuItem>
                                     <span className="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
                                     <span>&nbsp;&nbsp;About...</span>

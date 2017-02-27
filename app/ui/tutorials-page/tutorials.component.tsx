@@ -3,7 +3,7 @@ import { Link } from 'react-router'
 import { Button, ButtonGroup, Nav, Navbar, NavDropdown, MenuItem, NavItem, DropdownButton, Modal, OverlayTrigger } from 'react-bootstrap';
 import { Subject, BehaviorSubject } from 'rxjs'
 
-import { handleError } from 'app/utils/react-helpers';
+import { goTo, handleError, subscribeLoadDataOnPropsParamsChange } from 'app/utils/react-helpers';
 
 import { ServiceLocator } from 'app/services/service-locator'
 import { MainMenuComponent } from 'app/ui/main-menu.component'
@@ -15,6 +15,7 @@ import { CodeInputLogoComponent } from 'app/ui/shared/code-input-logo.component'
 import { LogoExecutorComponent } from 'app/ui/shared/logo-executor.component';
 import { TutorialSelectModalComponent } from './tutorial-select-modal.component';
 
+import { Routes } from 'app/routes';
 import { ITutorialInfo, ITutorialStep } from 'app/services/tutorials-content-service';
 
 import './tutorials.component.scss';
@@ -34,6 +35,12 @@ interface IComponentState {
 }
 
 interface IComponentProps {
+    params: ITutorialPageRouteParams
+}
+
+export interface ITutorialPageRouteParams {
+    tutorialId: string,
+    stepIndex: string
 }
 
 export class TutorialsComponent extends React.Component<IComponentProps, IComponentState> {
@@ -43,8 +50,12 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
 
     constructor(props: IComponentProps) {
         super(props);
+        this.state = this.buildDefaultState(this.props);
+        subscribeLoadDataOnPropsParamsChange(this);
+    }
 
-        this.state = {
+    buildDefaultState(props: IComponentProps): IComponentState {
+        const state: IComponentState = {
             isLoading: true,
             errorMessage: '',
             tutorials: [],
@@ -58,13 +69,22 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
             isRunning: false,
             currentCode: ''
         };
+        return state;
     }
 
     componentDidMount() {
-        this.loadData('01', 0);
+        this.loadData(this.props);
     }
 
-    private async loadData(tutorialIdToLoad: string, stepIndexToLoad: number) {
+    async loadData(props: IComponentProps) {
+        const tutorialIdToLoad = props.params.tutorialId || '01';
+        const stepIndexToLoad = props.params.stepIndex || '01';
+
+        let stepIndex = parseInt(stepIndexToLoad, 10);
+        if (isNaN(stepIndex)) {
+            throw new Error('Fail to parse step index. Should be valid integer');
+        }
+        stepIndex--;
         this.setState({ isLoading: true });
         const tutorialInfos = await handleError(this, () => this.tutorialsLoader.getTutorialsList());
         if (tutorialInfos) {
@@ -73,17 +93,25 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
 
             const steps = await handleError(this, () => this.tutorialsLoader.getSteps(currentTutorial.id));
             if (steps) {
-                this.setState({ steps: steps, currentStep: steps[stepIndexToLoad] });
+                this.setState({ steps: steps, currentStep: steps[stepIndex] });
             }
         }
         this.setState({ isLoading: false });
     }
 
     goNextStep = () => {
-        this.setState({ currentStep: this.state.steps[this.state.currentStep!.index + 1] });
+        let newStepIndex = this.state.currentStep!.index + 1;
+        goTo(Routes.tutorialSpecified.buildWithParams({
+            tutorialId: this.state.currentTutorial!.id,
+            stepIndex: (newStepIndex + 1).toString()
+        }));
     }
     goPrevStep = () => {
-        this.setState({ currentStep: this.state.steps[this.state.currentStep!.index - 1] });
+        let newStepIndex = this.state.currentStep!.index - 1;
+        goTo(Routes.tutorialSpecified.buildWithParams({
+            tutorialId: this.state.currentTutorial!.id,
+            stepIndex: (newStepIndex + 1).toString()
+        }));
     }
 
     render(): JSX.Element {
@@ -110,7 +138,7 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
                                 currentTutorial: this.state.tutorials.find(t => t.id === tutorialId),
                                 showSelectionTutorials: false
                             });
-                            this.loadData(tutorialId, 0);
+                            goTo(Routes.tutorialSpecified.buildWithParams({ tutorialId: tutorialId, stepIndex: '01' }));
                         }}
                     />
                 }
@@ -149,19 +177,23 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
                                                 </div>
                                                 <div className="current-step-panel-body">
                                                     {
-                                                        <div>
-                                                            <div dangerouslySetInnerHTML={{ __html: this.state.currentStep.content }}></div>
-                                                            <br />
+                                                        <div className="current-step-panel-inner">
+                                                            <div className="step-content"
+                                                                dangerouslySetInnerHTML={{ __html: this.state.currentStep.content }}>
+                                                            </div>
                                                             <div className="pull-right">
-                                                                <button type="button" className="btn btn-warning"
-                                                                    onClick={() => {
-                                                                        this.setState({ showFixTheCode: true })
-                                                                    }}>
-                                                                    <span>Help – it's not working!</span>
-                                                                </button>
+                                                                {
+                                                                    this.state.currentStep.resultCode &&
+                                                                    <button type="button" className="btn btn-warning"
+                                                                        onClick={() => {
+                                                                            this.setState({ showFixTheCode: true })
+                                                                        }}>
+                                                                        <span>Help – it's not working!</span>
+                                                                    </button>
+                                                                }
                                                                 <span> </span>
                                                                 {
-                                                                    !nextStepButtonDisabled &&
+                                                                    (!nextStepButtonDisabled) &&
                                                                     <button type="button" className="btn btn-primary"
                                                                         onClick={this.goNextStep}>
                                                                         <span>Continue&nbsp;&nbsp;</span>
@@ -252,7 +284,7 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
                 <br />
             </Modal.Body>
             <Modal.Footer>
-                <button type="button" className="btn btn-primary"
+                <button type="button" className="btn btn-default"
                     onClick={() => {
                         this.setState({
                             showFixTheCode: false,
@@ -262,7 +294,7 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
                     <strong>Yes</strong>
                     <span>, fix my code</span>
                 </button>
-                <button type="button" className="btn btn-default" onClick={() => { this.setState({ showFixTheCode: false }) }}>
+                <button type="button" className="btn btn-primary" onClick={() => { this.setState({ showFixTheCode: false }) }}>
                     <strong>No</strong>
                     <span>, keep my code as is</span>
                 </button>
