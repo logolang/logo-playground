@@ -47,7 +47,10 @@ module.exports = function (config) {
         */
         reporters: ['mocha', 'bamboo', 'coverage'],
 
-        files: ["./app/resources/build/tests/tests-entry-point.spec.ts"],
+        files: [
+            "./dist/vendor.js",
+            "./app/resources/build/tests/tests-entry-point.spec.ts"
+        ],
 
         // list of files to exclude
         exclude: [],
@@ -62,7 +65,7 @@ module.exports = function (config) {
         webpack: (() => {
             // Here we load our base webpack config and override some settings.
             // This is because we want to reuse configuration and avoid duplication
-            let webpackConf = require('./webpack.config.base.js').buildWebpackConfig({ production: false, env: {} });
+            let webpackConf = require('./webpack.config.js')({});
             delete webpackConf.entry; // should be empty for karma
             delete webpackConf.output; // should be empty for karma
 

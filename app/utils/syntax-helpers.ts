@@ -30,3 +30,5 @@ export class Lazy<T>{
         return this._value;
     }
 }
+
+export type DictionaryLike<V> = { [name: string]: V };

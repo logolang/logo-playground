@@ -1,11 +1,26 @@
 import * as fetch from 'isomorphic-fetch';
+import { handleAsyncError } from "app/utils/async-helpers";
 
 export interface IAjaxService {
-    ajax<T>(url: string, method: "post" | "get", body?: string, istext?: boolean): Promise<T>;
+    getText(url: string): Promise<string>
+    ajax<T>(url: string, method: "post" | "get", body?: string): Promise<T>
 }
 
 export class AjaxService {
-    async ajax<T>(url: string, method: "post" | "get", body?: string, istext?: boolean): Promise<T> {
+    async getText(url: string): Promise<string> {
+        const result = await fetch(url, {
+            credentials: 'same-origin',
+            method: 'get'
+        });
+
+        if (result.ok) {
+            return result.text()
+        }
+        console.error('ajax request failed', result.statusText);
+        throw await handleAsyncError(result);
+    }
+
+    async ajax<T>(url: string, method: "post" | "get", body?: string): Promise<T> {
         const result = await fetch(url, {
             credentials: 'same-origin',
             method: method,
@@ -13,11 +28,9 @@ export class AjaxService {
         });
 
         if (result.ok) {
-            return istext
-                ? result.text()
-                : result.json()
+            return result.json()
         }
         console.error('ajax request failed', result.statusText);
-        throw new Error(result.statusText);
+        throw await handleAsyncError(result);
     }
 }

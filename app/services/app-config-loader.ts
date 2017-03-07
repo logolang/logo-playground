@@ -22,7 +22,7 @@ export class AppConfigLoader implements IAppConfigLoader {
         if (this.cache.has(name)) {
             return this.cache.get(name);
         } else {
-            const res = await this.ajaxService.ajax<string>(`${name.substring(4)}?${RandomHelper.getRandomObjectId(20)}`, 'get', undefined, true);
+            const res = await this.ajaxService.getText(`${name.substring(4)}?${RandomHelper.getRandomObjectId(20)}`);
             this.cache.set(name, res);
             return res;
         }

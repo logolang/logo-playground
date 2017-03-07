@@ -39,19 +39,29 @@
         } 
         catch(ex){
         }
-        document.write('<link href="css/bootstrap/bootstrap.' + bootstrapThemeName + '.min.css?1" rel="stylesheet">');
-        document.write('<link href="css/codemirror/themes/' + codemirrorThemeName + '.css?1" rel="stylesheet">');
-        document.write('<link href="css/golden-layout/goldenlayout-' + goldenlayoutThemeName + '-theme.css?1" rel="stylesheet">');
+
+        function injectCssLink(linkUrl){
+            var link = document.createElement('link');
+            link.setAttribute('rel', 'stylesheet');
+            link.setAttribute('type', 'text/css');
+            link.setAttribute('href', linkUrl + '?<%= global.appGitVersion%>');
+            document.getElementsByTagName('head')[0].appendChild(link);
+        }
+        injectCssLink('css/bootstrap/bootstrap.' + bootstrapThemeName + '.min.css');
+        injectCssLink('css/codemirror/themes/' + codemirrorThemeName + '.css');
+        injectCssLink('css/golden-layout/goldenlayout-' + goldenlayoutThemeName + '-theme.css');
     </script>
 
    <div id="app-container">
    </div>
 
+   <script src="vendor.js?<%= global.appGitVersion%>"></script>
+
    <% for (var css in htmlWebpackPlugin.files.css) { %>
-    <link href="<%= htmlWebpackPlugin.files.css[css] %>" rel="stylesheet">
+    <link href="<%= htmlWebpackPlugin.files.css[css]+'?'+global.appGitVersion %>" rel="stylesheet">
    <% } %>
    <% for (var chunk in htmlWebpackPlugin.files.chunks) { %>
-    <script src="<%= htmlWebpackPlugin.files.chunks[chunk].entry %>"></script>
+    <script src="<%= htmlWebpackPlugin.files.chunks[chunk].entry+'?'+global.appGitVersion %>"></script>
    <% } %>
 
    <script>

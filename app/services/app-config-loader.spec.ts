@@ -8,7 +8,9 @@ describe('AppConfigLoader', () => {
     describe('should load config', () => {
         let config: AppConfig;
         beforeEach(() => {
-            let fakeService = new FakeAjaxService(FakeDataProvider.getFakeAppConfig());
+            let fakeService = new FakeAjaxService({
+                'config.json': FakeDataProvider.getFakeAppConfig()
+            });
             let appConfigLoader = new AppConfigLoader(fakeService);
             return appConfigLoader.loadData().then(appConfig => {
                 config = appConfig;
@@ -28,7 +30,9 @@ describe('AppConfigLoader', () => {
         function expectFail(setup: (conf: AppConfig) => void, assert: (err: Error) => void): any {
             let fakeConfig = FakeDataProvider.getFakeAppConfig();
             setup(fakeConfig);
-            let fakeService = new FakeAjaxService(fakeConfig);
+            let fakeService = new FakeAjaxService({
+                'config.json': fakeConfig
+            });
             let appConfigLoader = new AppConfigLoader(fakeService);
             return appConfigLoader.loadData().should.eventually.rejected.satisfy((err: Error) => {
                 assert(err);

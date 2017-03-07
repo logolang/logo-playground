@@ -21,7 +21,7 @@ export class LocalizedContentLoader implements ILocalizedContentLoader {
             return fromCache;
         }
         try {
-            let result = await this.ajax.ajax<string>('content/en/' + relativePath, "get", undefined, true);
+            let result = await this.ajax.getText('content/en/' + relativePath);
             this.cache[relativePath] = result;
             return result;
         }

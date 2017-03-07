@@ -44,7 +44,7 @@ interface IComponentProps {
 
 export class PlaygroundPageComponent extends React.Component<IComponentProps, IComponentState> {
     private appConfig = ServiceLocator.resolve(x => x.appConfig);
-    currentCodeLocalStorage = new LocalStorageService<string>('logo-sandbox-codeplayground', 'cs\r\nfd 100');
+    currentCodeLocalStorage = new LocalStorageService<string>('logo-sandbox-codeplayground', 'fd 100\r\nlt 90\r\nfd 80');
     programsRepo = ServiceLocator.resolve(x => x.programsReporitory);
     programSamples = new ProgramsSamplesRepository();
 
