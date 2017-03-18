@@ -39,6 +39,7 @@ export class TutorialsContentService {
     }
 
     async getTutorialsList(): Promise<ITutorialInfo[]> {
+        await stay(800);
         if (this.tutorialInfos.length == 0) {
             try {
                 let result = await this.contentLoader.getFileContent('tutorials/index.json');
@@ -81,7 +82,6 @@ export class TutorialsContentService {
                 initCode = matches[0].replace(/```init|```/g, '');
                 stepContent = stepContent.replace(initCodeRegex, '');
             }
-            console.log(matches);
 
             let tutorialStep: ITutorialStep = {
                 name: 'Step ' + (index + 1),

@@ -85,18 +85,24 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
             throw new Error('Fail to parse step index. Should be valid integer');
         }
         stepIndex--;
-        this.setState({ isLoading: true });
-        const tutorialInfos = await handleError(this, () => this.tutorialsLoader.getTutorialsList());
-        if (tutorialInfos) {
-            const currentTutorial = tutorialInfos.find(t => t.id === tutorialIdToLoad);
-            this.setState({ tutorials: tutorialInfos, currentTutorial: currentTutorial });
 
-            const steps = await handleError(this, () => this.tutorialsLoader.getSteps(currentTutorial.id));
-            if (steps) {
-                this.setState({ steps: steps, currentStep: steps[stepIndex] });
+        if (!this.state.currentTutorial || this.state.currentTutorial.id !== tutorialIdToLoad) {
+            this.setState({ isLoading: true });
+            const tutorialInfos = await handleError(this, () => this.tutorialsLoader.getTutorialsList());
+            if (tutorialInfos) {
+                const currentTutorial = tutorialInfos.find(t => t.id === tutorialIdToLoad);
+                const steps = await handleError(this, () => this.tutorialsLoader.getSteps(currentTutorial.id));
+                if (steps) {
+                    this.setState({
+                        tutorials: tutorialInfos,
+                        currentTutorial: currentTutorial,
+                        steps: steps
+                    });
+                }
             }
+            this.setState({ isLoading: false });
         }
-        this.setState({ isLoading: false });
+        this.setState(s => ({ currentStep: s.steps[stepIndex] }));
     }
 
     goNextStep = () => {
@@ -142,128 +148,130 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
                         }}
                     />
                 }
-                {
-                    this.state.isLoading
-                        ? <PageLoadingIndicatorComponent isLoading={true} />
-                        : <div className="ex-display-flex ex-flex-direction-row ex-flex-block ">
-                            <div className="ex-display-flex ex-flex-direction-column ex-flex-block">
-                                <div className="ex-display-flex ex-flex-block ex-overflow-hidden">
-                                    {
-                                        (this.state.currentStep && this.state.currentTutorial) &&
-                                        <div className="current-step-panel-container">
-                                            <div className="current-step-panel panel-default">
-                                                <div className="current-step-panel-heading">
-                                                    <div className="tutorials-selector-container">
-                                                        <button className="btn btn-info" onClick={() => { this.setState({ showSelectionTutorials: true }) }}>
-                                                            <span>Tutorial: {this.state.currentTutorial.name}&nbsp;&nbsp;</span>
-                                                            <span className="caret"></span>
-                                                        </button>
-                                                    </div>
-                                                    <div className="prev-btn-container">
-                                                        <button type="button" className="btn btn-default step-nav-btn" disabled={prevStepButtonDisabled}
-                                                            onClick={this.goPrevStep}>
-                                                            <span className="glyphicon glyphicon-triangle-left" aria-hidden="true"></span>
-                                                        </button>
-                                                    </div>
-                                                    <div className="step-title-container">
-                                                        <span>Step {this.state.currentStep.index + 1} of {this.state.currentTutorial.steps}</span>
-                                                    </div>
-                                                    <div className="next-btn-container">
-                                                        <button type="button" className="btn btn-default step-nav-btn" disabled={nextStepButtonDisabled}
-                                                            onClick={this.goNextStep}>
-                                                            <span className="glyphicon glyphicon-triangle-right" aria-hidden="true"></span>
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                                <div className="current-step-panel-body">
-                                                    {
-                                                        <div className="current-step-panel-inner">
-                                                            <div className="step-content"
-                                                                dangerouslySetInnerHTML={{ __html: this.state.currentStep.content }}>
-                                                            </div>
-                                                            <div className="pull-right">
-                                                                {
-                                                                    this.state.currentStep.resultCode &&
-                                                                    <button type="button" className="btn btn-warning"
-                                                                        onClick={() => {
-                                                                            this.setState({ showFixTheCode: true })
-                                                                        }}>
-                                                                        <span>Help – it's not working!</span>
-                                                                    </button>
-                                                                }
-                                                                <span> </span>
-                                                                {
-                                                                    (!nextStepButtonDisabled) &&
-                                                                    <button type="button" className="btn btn-primary"
-                                                                        onClick={this.goNextStep}>
-                                                                        <span>Continue&nbsp;&nbsp;</span>
-                                                                        <span className="glyphicon glyphicon-arrow-right" aria-hidden="true"></span>
-                                                                    </button>
-                                                                }
-                                                                {
-                                                                    nextStepButtonDisabled &&
-                                                                    <button type="button" className="btn btn-primary"
-                                                                        onClick={() => { this.setState({ showSelectionTutorials: true }) }}>
-                                                                        <span>Choose another tutorial&nbsp;&nbsp;</span>
-                                                                        <span className="glyphicon glyphicon-arrow-right" aria-hidden="true"></span>
-                                                                    </button>
-                                                                }
-                                                                <br />
-                                                                <br />
-                                                            </div>
-                                                        </div>
-                                                    }
-                                                </div>
-                                                <OpacityGradientComponent className="bottom-opacity-gradient" />
+                <ErrorMessageComponent errorMessage={this.state.errorMessage} />
+
+                <div className="ex-display-flex ex-flex-direction-row ex-flex-block ">
+                    <div className="ex-display-flex ex-flex-direction-column ex-flex-block">
+                        <div className="ex-display-flex ex-flex-block ex-overflow-hidden">
+                            {
+                                this.state.isLoading &&
+                                <PageLoadingIndicatorComponent isLoading={true} className="ex-display-flex ex-flex-block ex-overflow-hidden" />
+                            }
+                            {
+                                (!this.state.isLoading && this.state.currentStep && this.state.currentTutorial) &&
+                                <div className="current-step-panel-container">
+                                    <div className="current-step-panel panel-default">
+                                        <div className="current-step-panel-heading">
+                                            <div className="tutorials-selector-container">
+                                                <button className="btn btn-info" onClick={() => { this.setState({ showSelectionTutorials: true }) }}>
+                                                    <span>Tutorial: {this.state.currentTutorial.name}&nbsp;&nbsp;</span>
+                                                    <span className="caret"></span>
+                                                </button>
+                                            </div>
+                                            <div className="prev-btn-container">
+                                                <button type="button" className="btn btn-default step-nav-btn" disabled={prevStepButtonDisabled}
+                                                    onClick={this.goPrevStep}>
+                                                    <span className="glyphicon glyphicon-triangle-left" aria-hidden="true"></span>
+                                                </button>
+                                            </div>
+                                            <div className="step-title-container">
+                                                <span>Step {this.state.currentStep.index + 1} of {this.state.currentTutorial.steps}</span>
+                                            </div>
+                                            <div className="next-btn-container">
+                                                <button type="button" className="btn btn-default step-nav-btn" disabled={nextStepButtonDisabled}
+                                                    onClick={this.goNextStep}>
+                                                    <span className="glyphicon glyphicon-triangle-right" aria-hidden="true"></span>
+                                                </button>
                                             </div>
                                         </div>
-                                    }
-                                </div>
-                                <div className="ex-display-flex ex-flex-block">
-                                    <div className="panel-body logo-output-panel">
-                                        <LogoExecutorComponent
-                                            height={200}
-                                            onError={() => { }}
-                                            onIsRunningChanged={(running) => { this.setState({ isRunning: running }) }}
-                                            runCommands={this.runCode}
-                                            stopCommands={this.stopCode}
-                                        />
+                                        <div className="current-step-panel-body">
+                                            {
+                                                <div className="current-step-panel-inner">
+                                                    <div className="step-content"
+                                                        dangerouslySetInnerHTML={{ __html: this.state.currentStep.content }}>
+                                                    </div>
+                                                    <div className="pull-right">
+                                                        {
+                                                            this.state.currentStep.resultCode &&
+                                                            <button type="button" className="btn btn-warning"
+                                                                onClick={() => {
+                                                                    this.setState({ showFixTheCode: true })
+                                                                }}>
+                                                                <span>Help – it's not working!</span>
+                                                            </button>
+                                                        }
+                                                        <span> </span>
+                                                        {
+                                                            (!nextStepButtonDisabled) &&
+                                                            <button type="button" className="btn btn-primary"
+                                                                onClick={this.goNextStep}>
+                                                                <span>Continue&nbsp;&nbsp;</span>
+                                                                <span className="glyphicon glyphicon-arrow-right" aria-hidden="true"></span>
+                                                            </button>
+                                                        }
+                                                        {
+                                                            nextStepButtonDisabled &&
+                                                            <button type="button" className="btn btn-primary"
+                                                                onClick={() => { this.setState({ showSelectionTutorials: true }) }}>
+                                                                <span>Choose another tutorial&nbsp;&nbsp;</span>
+                                                                <span className="glyphicon glyphicon-arrow-right" aria-hidden="true"></span>
+                                                            </button>
+                                                        }
+                                                        <br />
+                                                        <br />
+                                                    </div>
+                                                </div>
+                                            }
+                                        </div>
+                                        <OpacityGradientComponent className="bottom-opacity-gradient" />
                                     </div>
                                 </div>
-                            </div>
-                            <div className="ex-display-flex ex-flex-block">
-                                <div className="source-input-panel panel panel-default">
-                                    <div className="source-input-panel-heading panel-heading">
-                                        {
-                                            !this.state.isRunning &&
-                                            <button type="button" className="btn btn-success"
-                                                onClick={() => { this.runCode.next(this.state.currentCode) }}
-                                            >
-                                                Run <span className="glyphicon glyphicon-play" aria-hidden="true"> <small>(F9)</small></span>
-                                            </button>
-                                        }
-                                        {
-                                            this.state.isRunning &&
-                                            <button type="button" className="btn btn-default"
-                                                onClick={() => { this.stopCode.next() }}
-                                            >
-                                                Stop <span className="glyphicon glyphicon-stop" aria-hidden="true"></span>
-                                            </button>
-                                        }
-                                    </div>
-                                    <div className="source-input-panel-body panel-body">
-                                        <CodeInputLogoComponent
-                                            className="codemirror-input-logo"
-                                            code={this.state.currentCode}
-                                            onChanged={(code) => { this.setState({ currentCode: code }) }}
-                                            focusCommands={new Subject<void>()}
-                                            onHotkey={() => { }}
-                                        />
-                                    </div>
-                                </div>
+                            }
+                        </div>
+                        <div className="ex-display-flex ex-flex-block">
+                            <div className="panel-body logo-output-panel">
+                                <LogoExecutorComponent
+                                    height={200}
+                                    onError={() => { }}
+                                    onIsRunningChanged={(running) => { this.setState({ isRunning: running }) }}
+                                    runCommands={this.runCode}
+                                    stopCommands={this.stopCode}
+                                />
                             </div>
                         </div>
-                }
+                    </div>
+                    <div className="ex-display-flex ex-flex-block">
+                        <div className="source-input-panel panel panel-default">
+                            <div className="source-input-panel-heading panel-heading">
+                                {
+                                    !this.state.isRunning &&
+                                    <button type="button" className="btn btn-success"
+                                        onClick={() => { this.runCode.next(this.state.currentCode) }}
+                                    >
+                                        Run <span className="glyphicon glyphicon-play" aria-hidden="true"> <small>(F9)</small></span>
+                                    </button>
+                                }
+                                {
+                                    this.state.isRunning &&
+                                    <button type="button" className="btn btn-default"
+                                        onClick={() => { this.stopCode.next() }}
+                                    >
+                                        Stop <span className="glyphicon glyphicon-stop" aria-hidden="true"></span>
+                                    </button>
+                                }
+                            </div>
+                            <div className="source-input-panel-body panel-body">
+                                <CodeInputLogoComponent
+                                    className="codemirror-input-logo"
+                                    code={this.state.currentCode}
+                                    onChanged={(code) => { this.setState({ currentCode: code }) }}
+                                    focusCommands={new Subject<void>()}
+                                    onHotkey={() => { }}
+                                />
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         );
     }
@@ -279,7 +287,7 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
             <Modal.Body>
                 <p>
                     If your code isn't working as the tutorial describes, you can replace it with a working version.
-                    <strong>This will overwrite your code entirely.</strong>
+                    <strong> This will overwrite your code entirely.</strong>
                 </p>
                 <br />
             </Modal.Body>

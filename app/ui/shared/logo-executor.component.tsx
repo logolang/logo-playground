@@ -24,7 +24,6 @@ export interface ILogoExecutorComponentProps {
 }
 
 export class LogoExecutorComponent extends React.Component<ILogoExecutorComponentProps, IComponentState> {
-    resizeTimer: number | undefined = undefined;
     runSubscription: Subscription;
     stopSubscription: Subscription;
     makeScreenshotSubscription: Subscription;
@@ -52,16 +51,10 @@ export class LogoExecutorComponent extends React.Component<ILogoExecutorComponen
         if (this.props.makeScreenshotCommands) {
             this.makeScreenshotSubscription = this.props.makeScreenshotCommands.subscribe(this.makeScreenShot);
         }
-        this.resizeTimer = setInterval(() => {
-            this.resizeCanvas();
-        }, 500);
     }
 
     componentWillUnmount() {
         this.abort();
-        if (this.resizeTimer !== undefined) {
-            clearInterval(this.resizeTimer);
-        }
         if (this.runSubscription) {
             this.runSubscription.unsubscribe();
         }
@@ -103,6 +96,8 @@ export class LogoExecutorComponent extends React.Component<ILogoExecutorComponen
         const lightThemeInit = `setbg 7 setpencolor 0 cs`;
         const darkThemeInit = `setbg 0 setpencolor 7 cs`;
         const initCode = this.theme.getCurrentTheme().isDark ? darkThemeInit : lightThemeInit;
+
+        this.resizeCanvas();
 
         let LogoInterpreter: any = (window as any)['LogoInterpreter'];
 

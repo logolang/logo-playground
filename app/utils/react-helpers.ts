@@ -86,8 +86,6 @@ export function subscribeLoadDataOnPropsParamsChange<S extends IsLoadingState, P
     (component as any).componentWillReceiveProps = (newProps: P) => {
         //console.log('componentWillReceiveProps params', component.props.params, newProps.params);
         if (JSON.stringify(component.props.params) != JSON.stringify(newProps.params)) {
-            const state: IsLoadingState = { isLoading: true };
-            component.setState(state as S);
             component.loadData(newProps);
         }
     }
