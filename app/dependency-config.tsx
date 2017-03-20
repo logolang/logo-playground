@@ -1,14 +1,12 @@
-﻿import { TutorialsContentService } from './services/tutorials-content-service';
-import { LocalizedContentLoader } from './services/localized-content-loader';
-import { ProgramsLocalStorageRepository } from './services/entities/programs-localstorage.repository';
-import { ServiceLocator } from 'app/services/service-locator'
-
+﻿import { ServiceLocator } from 'app/services/service-locator'
 import { AjaxService } from 'app/services/infrastructure/ajax-service';
-import { AppConfigLoader } from 'app/services/app-config-loader';
-import { CurrentUserProvider } from './services/current-user.provider';
-
-import { FakeLoginService } from 'app/services/login.service.fake';
-import { FakeUsersRepository } from 'app/services/entities/users.repository.fake';
+import { AppConfigLoader } from "app/services/config/app-config-loader";
+import { CurrentUserProvider } from "app/services/login/current-user.provider";
+import { LocalizedContentLoader } from "app/services/infrastructure/localized-content-loader";
+import { TutorialsContentService } from "app/services/tutorials/tutorials-content-service";
+import { ProgramsLocalStorageRepository } from "app/services/gallery/personal-gallery-localstorage.repository";
+import { FakeLoginService } from "app/services/login/login.service.fake";
+import { FakeUsersRepository } from "app/services/login/users.repository.fake";
 
 export class DependencyConfig {
     static async init() {

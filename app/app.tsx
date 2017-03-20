@@ -26,7 +26,7 @@ async function runApp() {
     catch (ex) {
         ReactDOM.render(
             <ErrorComponent
-                headerText="Application failed because of error."
+                headerText="Application failed because of error"
                 error={ex}
             />,
             appHostDomElement

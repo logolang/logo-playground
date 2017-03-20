@@ -1,5 +1,3 @@
-import { LoginServiceHelpers } from '../services/login.service';
-import { FakeLoginService } from '../services/login.service.fake';
 import * as React from 'react';
 import * as Color from 'color';
 import { Button, Nav, Navbar, NavDropdown, MenuItem, NavItem, DropdownButton } from 'react-bootstrap';
@@ -7,12 +5,12 @@ import { LinkContainer } from 'react-router-bootstrap';
 
 import { stay } from 'app/utils/async-helpers';
 
-import { ServiceLocator } from 'app/services/service-locator'
-import { LoginStatus, LoginCredentials } from 'app/services/login.service'
 import { LoginComponent } from 'app/ui/login.component'
-import { PageLoadingIndicatorComponent } from 'app/ui/shared/generic/page-loading-indicator.component';
+import { PageLoadingIndicatorComponent } from 'app/ui/_generic/page-loading-indicator.component';
 
+import { ServiceLocator } from 'app/services/service-locator'
 import { Routes } from 'app/routes';
+import { LoginServiceHelpers, LoginCredentials, LoginStatus } from "app/services/login/login.service";
 
 interface IMainComponentState {
     isLoading: boolean

@@ -4,15 +4,14 @@ import { Router, Route, IndexRoute, hashHistory, Redirect } from 'react-router'
 import { inject, RouteInfo } from 'app/utils/route-info';
 
 import { MainComponent } from 'app/ui/main.component'
-import { ProxyComponent } from 'app/ui/shared/generic/proxy.component'
-import { DashboardComponent } from 'app/ui/dashboard.component';
+import { ProxyComponent } from 'app/ui/_generic/proxy.component'
+import { GalleryComponent } from 'app/ui/gallery.component';
 import { UserProfileComponent } from 'app/ui/user-profile.component';
 import { ErrorComponent } from 'app/ui/error.component';
 import { AboutComponent } from 'app/ui/about.component';
 import { DocumentationComponent } from 'app/ui/documentation.component';
-import { TutorialsComponent, ITutorialPageRouteParams } from 'app/ui/tutorials-page/tutorials.component';
-import { PlaygroundPageComponent } from 'app/ui/playground-page/playground-page.component';
-import { StubComponent } from 'app/ui/stub.component';
+import { TutorialsComponent, ITutorialPageRouteParams } from 'app/ui/tutorials/tutorials.component';
+import { PlaygroundPageComponent } from 'app/ui/playground/playground-page.component';
 
 export class Routes {
     static getRouteDefinitions(): JSX.Element {
@@ -20,7 +19,7 @@ export class Routes {
             <Redirect from="/" to={Routes.galleryRoot.relativePath} />
             <Route path="/" component={MainComponent} >
                 <Route path={Routes.galleryRoot.relativePath} component={ProxyComponent}>
-                    <IndexRoute component={DashboardComponent}></IndexRoute>
+                    <IndexRoute component={GalleryComponent}></IndexRoute>
                 </Route>
 
                 <Route path={Routes.aboutRoot.relativePath} component={ProxyComponent}>
@@ -46,7 +45,7 @@ export class Routes {
                 <Route path={Routes.settingsRoot.relativePath} component={UserProfileComponent}></Route>
 
                 {/* Default route will be used in case of nothing matches */}
-                <Route path="*" component={DashboardComponent} />
+                <Route path="*" component={GalleryComponent} />
             </Route>
         </Router >
     }

@@ -5,9 +5,9 @@ import { handleError } from '../utils/react-helpers';
 
 import { ServiceLocator } from 'app/services/service-locator'
 import { MainMenuComponent } from 'app/ui/main-menu.component'
-import { PageHeaderComponent } from 'app/ui/shared/generic/page-header.component';
-import { PageLoadingIndicatorComponent } from 'app/ui/shared/generic/page-loading-indicator.component';
-import { ErrorMessageComponent } from 'app/ui/shared/generic/error-message.component';
+import { PageHeaderComponent } from 'app/ui/_generic/page-header.component';
+import { PageLoadingIndicatorComponent } from 'app/ui/_generic/page-loading-indicator.component';
+import { ErrorMessageComponent } from 'app/ui/_generic/error-message.component';
 
 import './documentation.component.scss'
 

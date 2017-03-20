@@ -1,4 +1,4 @@
-import { UserInfo } from 'app/model/entities/user-info';
+import { UserInfo } from "app/services/login/user-info";
 
 export const fakeUsers: UserInfo[] = [
     {

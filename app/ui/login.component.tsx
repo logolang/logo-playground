@@ -5,7 +5,7 @@ import * as cn from 'classnames';
 import { translateCheckBoxChangeToState, translateInputChangeToState } from 'app/utils/react-helpers';
 
 import { ServiceLocator } from 'app/services/service-locator'
-import { LoginCredentials, LoginStatus } from 'app/services/login.service';
+import { LoginCredentials, LoginStatus } from "app/services/login/login.service";
 
 import './login.component.scss'
 

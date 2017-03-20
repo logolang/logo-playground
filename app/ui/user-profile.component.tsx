@@ -8,17 +8,16 @@ import { goBack, translateSelectChangeToState } from 'app/utils/react-helpers';
 import { stay } from 'app/utils/async-helpers';
 import { RandomHelper } from 'app/utils/random-helper';
 
+import { DateTimeStampComponent } from 'app/ui/_generic/date-time-stamp.component';
+import { PageHeaderComponent } from 'app/ui/_generic/page-header.component';
+import { MainMenuComponent } from 'app/ui/main-menu.component'
+import { LogoExecutorComponent } from 'app/ui/_shared/logo-executor.component';
+
 import { Routes } from 'app/routes';
 import { ServiceLocator } from 'app/services/service-locator'
-
-import { UserInfo } from 'app/model/entities/user-info';
-import { ThemeService, Theme } from 'app/services/theme.service';
-import { TurtleCustomizationsService } from 'app/services/turtle-customizations.service';
-
-import { DateTimeStampComponent } from 'app/ui/shared/generic/date-time-stamp.component';
-import { PageHeaderComponent } from 'app/ui/shared/generic/page-header.component';
-import { MainMenuComponent } from 'app/ui/main-menu.component'
-import { LogoExecutorComponent } from './shared/logo-executor.component';
+import { UserInfo } from "app/services/login/user-info";
+import { Theme, ThemeService } from "app/services/customizations/theme.service";
+import { TurtleCustomizationsService } from "app/services/customizations/turtle-customizations.service";
 
 interface IComponentState {
     userInfo: UserInfo;

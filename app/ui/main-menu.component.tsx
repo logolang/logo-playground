@@ -4,8 +4,7 @@ import { Button, Nav, Navbar, NavDropdown, MenuItem, NavItem, DropdownButton } f
 import { LinkContainer } from 'react-router-bootstrap';
 
 import { ServiceLocator } from 'app/services/service-locator'
-import { LoginStatus, LoginCredentials } from 'app/services/login.service'
-import { NavbarUsercardComponent } from 'app/ui/shared/generic/navbar-usercard.component'
+import { NavbarUsercardComponent } from 'app/ui/_generic/navbar-usercard.component'
 
 import { Routes } from 'app/routes';
 

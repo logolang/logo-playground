@@ -1,9 +1,9 @@
 import * as lodash from 'lodash';
 
 import { RandomHelper } from 'app/utils/random-helper';
-import { AppConfig } from 'app/model/config/app-config';
 
 import { fakeUsers } from './users.fake';
+import { AppConfig } from "app/services/config/app-config";
 
 export class FakeDataProvider {
     public static getFakeAppConfig = () =>

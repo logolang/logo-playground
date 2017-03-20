@@ -3,7 +3,7 @@ import { Link } from 'react-router'
 
 import { ServiceLocator } from 'app/services/service-locator'
 import { MainMenuComponent } from 'app/ui/main-menu.component'
-import { PageHeaderComponent } from 'app/ui/shared/generic/page-header.component';
+import { PageHeaderComponent } from 'app/ui/_generic/page-header.component';
 
 interface IComponentState {
 }
