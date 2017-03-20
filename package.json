@@ -17,7 +17,7 @@
     "coverage-report-html": "istanbul report --include reports/coverage/coverage.json --dir reports/coverage html",
     "coverage-report-clover": "istanbul report --include reports/coverage/coverage.json --dir reports/coverage clover",
     "start": "npm run build-vendor-dev && webpack-dev-server",
-    "build-war": "node app/resources/build/make-war.js"
+    "build-war": "node build/make-war.js"
   },
   "dependencies": {
     "classnames": "2.2.5",

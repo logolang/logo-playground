@@ -7,16 +7,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-    <link href="favicon.ico" rel="icon" type="image/x-icon" />
+    <link href="content/favicon.ico" rel="icon" type="image/x-icon" />
 
     <link href="https://fonts.googleapis.com/css?family=Inconsolata:400,700&amp;subset=latin-ext" rel="stylesheet"> 
 </head>
 <%
-    var packageJson = require('../../package.json');
+    var packageJson = require('../package.json');
 %>
 <body>
-    <link href="css/codemirror/codemirror.css" rel="stylesheet">
-    <link href="css/golden-layout/goldenlayout-base.css" rel="stylesheet">
+    <link href="content/css/codemirror/codemirror.css" rel="stylesheet">
+    <link href="content/css/golden-layout/goldenlayout-base.css" rel="stylesheet">
 
     <script type="text/javascript">
         var bootstrapThemeName = "default";
@@ -47,9 +47,9 @@
             link.setAttribute('href', linkUrl + '?<%= global.appGitVersion%>');
             document.getElementsByTagName('head')[0].appendChild(link);
         }
-        injectCssLink('css/bootstrap/bootstrap.' + bootstrapThemeName + '.min.css');
-        injectCssLink('css/codemirror/themes/' + codemirrorThemeName + '.css');
-        injectCssLink('css/golden-layout/goldenlayout-' + goldenlayoutThemeName + '-theme.css');
+        injectCssLink('content/css/bootstrap/bootstrap.' + bootstrapThemeName + '.min.css');
+        injectCssLink('content/css/codemirror/themes/' + codemirrorThemeName + '.css');
+        injectCssLink('content/css/golden-layout/goldenlayout-' + goldenlayoutThemeName + '-theme.css');
     </script>
 
    <div id="app-container">

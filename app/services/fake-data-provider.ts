@@ -1,13 +1,12 @@
 import * as lodash from 'lodash';
 
 import { RandomHelper } from 'app/utils/random-helper';
-
-import { fakeUsers } from './users.fake';
 import { AppConfig } from "app/services/config/app-config";
+import { fakeUsers } from "app/services/login/users.fake";
 
 export class FakeDataProvider {
     public static getFakeAppConfig = () =>
-        lodash.cloneDeep(require<AppConfig>('app/config/config.json'));
+        lodash.cloneDeep(require<AppConfig>('app/../content/config/config.json'));
 
     public static getFakeUsers = () =>
         lodash.cloneDeep(fakeUsers);

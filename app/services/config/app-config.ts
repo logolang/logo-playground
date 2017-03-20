@@ -1,5 +1,5 @@
 import * as tv4 from 'tv4';
-const appConfigSchema = require('app/config/config.schema.json');
+const appConfigSchema = require('app/../content/config/config.schema.json');
 
 /**
  * This classes are describing configuration schema

@@ -2,14 +2,14 @@ import { AppConfig } from "app/services/config/app-config";
 import { AppConfigLoader } from "app/services/config/app-config-loader";
 
 import { FakeAjaxService } from "app/services/infrastructure/ajax-service.fake";
-import { FakeDataProvider } from "app/resources/fake-data/fake-data-provider";
+import { FakeDataProvider } from "app/services/fake-data-provider";
 
 describe('AppConfigLoader', () => {
     describe('should load config', () => {
         let config: AppConfig;
         beforeEach(() => {
             let fakeService = new FakeAjaxService({
-                'config.json': FakeDataProvider.getFakeAppConfig()
+                'content/config/config.json': FakeDataProvider.getFakeAppConfig()
             });
             let appConfigLoader = new AppConfigLoader(fakeService);
             return appConfigLoader.loadData().then(appConfig => {
@@ -31,7 +31,7 @@ describe('AppConfigLoader', () => {
             let fakeConfig = FakeDataProvider.getFakeAppConfig();
             setup(fakeConfig);
             let fakeService = new FakeAjaxService({
-                'config.json': fakeConfig
+                'content/config/config.json': fakeConfig
             });
             let appConfigLoader = new AppConfigLoader(fakeService);
             return appConfigLoader.loadData().should.eventually.rejected.satisfy((err: Error) => {

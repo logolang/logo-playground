@@ -1,6 +1,6 @@
 import { Program, IProgramsRepository } from "app/services/gallery/personal-gallery-localstorage.repository";
 
-const data = require<Program[]>('app/resources/samples/programs.json');
+const data = require<Program[]>('./gallery-samples.json');
 data.forEach(p => {
     p.dateCreated = new Date(p.dateCreated);
     p.dateLastEdited = new Date(p.dateLastEdited);

@@ -13,7 +13,7 @@ export class AppConfigLoader implements IAppConfigLoader {
     }
 
     async loadData(): Promise<AppConfig> {
-        const configData = await this.ajaxService.ajax(`config.json?${RandomHelper.getRandomObjectId(20)}`, 'get');
+        const configData = await this.ajaxService.ajax(`content/config/config.json?${RandomHelper.getRandomObjectId(20)}`, 'get');
         const config = AppConfig.buildFromConfigData(configData);
         return config;
     }

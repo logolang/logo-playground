@@ -23,11 +23,11 @@ module.exports = function (env) {
     const webpackConfig = {
         entry: isDevBuild
             ? {
-                app: './app/app.tsx',
-                tests: './app/resources/build/tests/tests-entry-point.spec.ts'
+                app: './app/app-entry-point.tsx',
+                tests: './build/tests-entry-point.spec.ts'
             }
             : {
-                app: './app/app.tsx',
+                app: './app/app-entry-point.tsx'
             },
 
         resolve: {
@@ -67,13 +67,7 @@ module.exports = function (env) {
             extractTextPlugin,
 
             new CopyWebpackPlugin([
-                { from: 'lib/css', to: 'css' },
-                { from: 'app/config/config.schema.json' },
-                { from: 'app/resources/favicon.ico' },
-                { from: 'content', to: 'content' },
-                isProduction
-                    ? { from: 'app/config/config.prod.json', to: 'config.json' }
-                    : { from: 'app/config/config.json', to: 'config.json' },
+                { from: 'content', to: 'content' }
             ]),
 
             new webpack.DefinePlugin({
@@ -87,7 +81,7 @@ module.exports = function (env) {
                 })
             }),
             new HtmlWebpackPlugin({
-                template: 'app/resources/index.ejs',
+                template: 'app/app-index.ejs',
                 filename: 'index.html',
                 chunks: ['app'],
                 inject: false
@@ -95,7 +89,7 @@ module.exports = function (env) {
         ].concat(isDevBuild
             ? [
                 new HtmlWebpackPlugin({
-                    template: 'app/resources/build/tests/index.ejs',
+                    template: 'build/tests-index.ejs',
                     filename: 'tests.html',
                     chunks: ['tests']
                 }),

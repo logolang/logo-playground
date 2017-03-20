@@ -1,4 +1,4 @@
-var pjson = require('../../../package.json');
+var pjson = require('../package.json');
 console.log('building WAR package: ' + pjson.name);
 let currentDir = process.cwd();
 console.log('current dir is ' + currentDir);

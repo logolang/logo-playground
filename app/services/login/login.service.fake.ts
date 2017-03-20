@@ -2,7 +2,7 @@ import { Subject, Subscription } from 'rxjs'
 import { stay } from 'app/utils/async-helpers';
 
 import { ILoginService, LoginCredentials, LoginServiceHelpers, LoginStatus } from './login.service';
-import { FakeDataProvider } from "app/resources/fake-data/fake-data-provider";
+import { FakeDataProvider } from "app/services/fake-data-provider";
 
 export class FakeLoginService implements ILoginService {
     loginRequestsSubj = new Subject<void>();
