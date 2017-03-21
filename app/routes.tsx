@@ -51,20 +51,20 @@ export class Routes {
     }
 
     static readonly appRoot = "/";
-    static readonly galleryRoot = RouteInfo.root("gallery");
-    static readonly settingsRoot = RouteInfo.root("settings");
-    static readonly aboutRoot = RouteInfo.root("about");
+    static readonly galleryRoot = new RouteInfo(null, "gallery");
+    static readonly settingsRoot = new RouteInfo(null, "settings");
+    static readonly aboutRoot = new RouteInfo(null, "about");
 
-    static readonly playgroundRoot = RouteInfo.root("code");
-    static readonly playgroundLoadSample = RouteInfo.childWithParams<{ sampleId: string }>(
+    static readonly playgroundRoot = new RouteInfo(null, "code");
+    static readonly playgroundLoadSample = new RouteInfo<{ sampleId: string }>(
         Routes.playgroundRoot, "samples/:sampleId");
-    static readonly playgroundLoadFromLibrary = RouteInfo.childWithParams<{ programId: string }>(
+    static readonly playgroundLoadFromLibrary = new RouteInfo<{ programId: string }>(
         Routes.playgroundRoot, "library/:programId");
-    static readonly playgroundLoadFromGist = RouteInfo.childWithParams<{ gistId: string }>(
+    static readonly playgroundLoadFromGist = new RouteInfo<{ gistId: string }>(
         Routes.playgroundRoot, "gist/:gistId");
 
-    static readonly documentationRoot = RouteInfo.root("doc");
-    static readonly tutorialsRoot = RouteInfo.root("tutorials");
-    static readonly tutorialSpecified = RouteInfo.childWithParams<ITutorialPageRouteParams>(
+    static readonly documentationRoot = new RouteInfo(null, "doc");
+    static readonly tutorialsRoot = new RouteInfo(null, "tutorials");
+    static readonly tutorialSpecified = new RouteInfo<ITutorialPageRouteParams>(
         Routes.tutorialsRoot, ":tutorialId/:stepIndex");
 }

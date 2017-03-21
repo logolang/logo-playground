@@ -107,14 +107,14 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
 
     goNextStep = () => {
         let newStepIndex = this.state.currentStep!.index + 1;
-        goTo(Routes.tutorialSpecified.buildWithParams({
+        goTo(Routes.tutorialSpecified.build({
             tutorialId: this.state.currentTutorial!.id,
             stepIndex: (newStepIndex + 1).toString()
         }));
     }
     goPrevStep = () => {
         let newStepIndex = this.state.currentStep!.index - 1;
-        goTo(Routes.tutorialSpecified.buildWithParams({
+        goTo(Routes.tutorialSpecified.build({
             tutorialId: this.state.currentTutorial!.id,
             stepIndex: (newStepIndex + 1).toString()
         }));
@@ -144,7 +144,7 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
                                 currentTutorial: this.state.tutorials.find(t => t.id === tutorialId),
                                 showSelectionTutorials: false
                             });
-                            goTo(Routes.tutorialSpecified.buildWithParams({ tutorialId: tutorialId, stepIndex: '01' }));
+                            goTo(Routes.tutorialSpecified.build({ tutorialId: tutorialId, stepIndex: '01' }));
                         }}
                     />
                 }

@@ -78,13 +78,13 @@ export class GalleryComponent extends React.Component<IComponentProps, IComponen
         let link = '';
         switch (storageType) {
             case 'library':
-                link = Routes.playgroundLoadFromLibrary.buildWithParams({ programId: p.id });
+                link = Routes.playgroundLoadFromLibrary.build({ programId: p.id });
                 break;
             case 'samples':
-                link = Routes.playgroundLoadSample.buildWithParams({ sampleId: p.id });
+                link = Routes.playgroundLoadSample.build({ sampleId: p.id });
                 break;
             case 'gist':
-                link = Routes.playgroundLoadFromGist.buildWithParams({ gistId: p.id });
+                link = Routes.playgroundLoadFromGist.build({ gistId: p.id });
                 break;
         }
 
