@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as cn from 'classnames'
 
 import './page-loading-indicator.component.scss'
+import { ProgressIndicatorComponent } from "app/ui/_generic/progress-indicator.component";
 
 interface IComponentProps {
     isLoading: boolean
@@ -11,11 +12,7 @@ interface IComponentProps {
 export class PageLoadingIndicatorComponent extends React.Component<IComponentProps, void> {
     render(): JSX.Element | null {
         return <div className={this.props.className}>
-            {this.props.isLoading && <div className="ex-page-loading-animation">
-                <div className="ex-animated-dot"></div>
-                <div className="ex-animated-dot"></div>
-                <div className="ex-animated-dot"></div>
-            </div>}
+            <ProgressIndicatorComponent isLoading={this.props.isLoading} className="ex-page-loading-indicator" />
             <div className={cn("ex-page-content", { "is-visible": !this.props.isLoading })}>
                 {this.props.children}
             </div>

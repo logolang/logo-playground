@@ -7,7 +7,7 @@ import { ServiceLocator } from 'app/services/service-locator'
 import { MainMenuComponent } from 'app/ui/main-menu.component'
 import { PageHeaderComponent } from 'app/ui/_generic/page-header.component';
 import { PageLoadingIndicatorComponent } from 'app/ui/_generic/page-loading-indicator.component';
-import { ErrorMessageComponent } from 'app/ui/_generic/error-message.component';
+import { AlertMessageComponent } from 'app/ui/_generic/alert-message.component';
 
 import './documentation.component.scss'
 
@@ -51,7 +51,7 @@ export class DocumentationComponent extends React.Component<IComponentProps, ICo
                 <MainMenuComponent />
                 <div className="ex-scroll-outer container-fluid">
                     <PageLoadingIndicatorComponent isLoading={this.state.isLoading}>
-                        <ErrorMessageComponent errorMessage={this.state.errorMessage} />
+                        <AlertMessageComponent message={this.state.errorMessage} />
                         <div className="doc-section" dangerouslySetInnerHTML={{ __html: this.state.content }}></div>
                         <br />
                     </PageLoadingIndicatorComponent>

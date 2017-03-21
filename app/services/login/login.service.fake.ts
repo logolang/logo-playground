@@ -8,7 +8,7 @@ export class FakeLoginService implements ILoginService {
     loginRequestsSubj = new Subject<void>();
 
     async loginWithToken(token: string, login: string): Promise<LoginStatus> {
-        //await stay(1000);
+        //await stay(2000);
         return this.doLogin(login);
     }
 

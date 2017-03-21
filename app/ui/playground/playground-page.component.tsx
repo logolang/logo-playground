@@ -15,7 +15,7 @@ import { ProgramsSamplesRepository } from "app/services/gallery/gallery-samples.
 
 import { MainMenuComponent } from 'app/ui/main-menu.component'
 import { PlaygroundPageLayoutComponent } from './playground-page-layout.component';
-import { ErrorMessageComponent } from 'app/ui/_generic/error-message.component';
+import { AlertMessageComponent } from 'app/ui/_generic/alert-message.component';
 
 import './playground-page.component.scss';
 
@@ -321,7 +321,7 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
                         </div>
                     </div>
                     <br />
-                    <ErrorMessageComponent errorMessage={this.state.errorInSaveModal} />
+                    <AlertMessageComponent message={this.state.errorInSaveModal} />
                     <br />
                 </Modal.Body>
                 <Modal.Footer>

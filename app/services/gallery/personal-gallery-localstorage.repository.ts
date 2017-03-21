@@ -1,5 +1,6 @@
 import { RandomHelper } from 'app/utils/random-helper';
 import { ICurrentUserProvider } from "app/services/login/current-user.provider";
+import { stay } from "app/utils/async-helpers";
 
 export type lang = "logo";
 
@@ -29,6 +30,7 @@ export class ProgramsLocalStorageRepository implements IProgramsRepository {
     }
 
     async getAll(): Promise<Program[]> {
+        //await stay(2000);
         let programs: Program[] = [];
         for (let keyIndex = 0; keyIndex < this.storage.length; ++keyIndex) {
             const key = this.storage.key(keyIndex);

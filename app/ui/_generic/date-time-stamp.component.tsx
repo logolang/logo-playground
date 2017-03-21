@@ -1,6 +1,8 @@
 import * as React from 'react';
 import * as moment from 'moment'
 
+const yesterdayDate = moment().subtract(1, 'd');
+
 interface IDateTimeStampComponentProps {
     datetime: Date
 }
@@ -10,9 +12,16 @@ export class DateTimeStampComponent extends React.Component<IDateTimeStampCompon
         super(props);
     }
 
+    private formatDate(date: Date) {
+        const momDate = moment(date);
+        const formattedDate = momDate.isAfter(yesterdayDate)
+            ? momDate.fromNow()
+            : momDate.calendar();
+        return formattedDate;
+    }
+
     render(): JSX.Element {
-        //const formatted = moment(this.props.datetime).fromNow();
-        const formatted = moment(this.props.datetime).format('MMM D, YYYY h:mm a');
+        const formatted = this.formatDate(this.props.datetime);
         return (
             <span>{formatted}</span>
         );

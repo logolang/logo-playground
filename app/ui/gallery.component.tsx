@@ -2,22 +2,28 @@ import * as React from 'react';
 import { Link } from 'react-router';
 import { Button, ButtonGroup, Nav, Navbar, NavDropdown, MenuItem, NavItem, DropdownButton, Modal, OverlayTrigger } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
-import * as moment from 'moment';
 
 import { MainMenuComponent } from 'app/ui/main-menu.component'
 import { PageHeaderComponent } from 'app/ui/_generic/page-header.component';
 import { CollapsiblePanelComponent } from 'app/ui/_generic/collapsible-panel.component';
 import { ActionConfirmationModalComponent } from 'app/ui/_generic/action-confirmation-modal.component';
+import { DateTimeStampComponent } from "app/ui/_generic/date-time-stamp.component";
+import { ProgressIndicatorComponent } from "app/ui/_generic/progress-indicator.component";
+import { NoDataComponent } from "app/ui/_generic/no-data.component";
 
 import { ServiceLocator } from 'app/services/service-locator'
 import { Routes } from '../routes';
 import { Program, ProgramStorageType } from "app/services/gallery/personal-gallery-localstorage.repository";
 import { ProgramsSamplesRepository } from "app/services/gallery/gallery-samples.repository";
 
+import './gallery.component.scss'
+
 interface IComponentState {
     userName: string;
     programs: Program[];
     samples: Program[];
+    isLoading?: boolean;
+    errorMessge?: string;
 
     programToDelete: Program | undefined;
 }
@@ -31,7 +37,6 @@ export class GalleryComponent extends React.Component<IComponentProps, IComponen
     private programsRepo = ServiceLocator.resolve(x => x.programsReporitory);
     private samplesRepo = new ProgramsSamplesRepository();
     readonly noScreenshot = require('./images/no.image.png') as string;
-    readonly yesterdayDate = moment().subtract(1, 'd');
 
     constructor(props: IComponentProps) {
         super(props);
@@ -40,7 +45,8 @@ export class GalleryComponent extends React.Component<IComponentProps, IComponen
             userName: this.currentUser.getLoginStatus().userInfo.attributes.name,
             programs: [],
             samples: [],
-            programToDelete: undefined
+            programToDelete: undefined,
+            isLoading: true,
         };
     }
 
@@ -49,29 +55,24 @@ export class GalleryComponent extends React.Component<IComponentProps, IComponen
     }
 
     async loadData() {
+        this.setState({ isLoading: true });
         const programs = await this.programsRepo.getAll();
         const samples = await this.samplesRepo.getAll();
         this.setState({
             programs: programs,
-            samples: samples
+            samples: samples,
+            isLoading: false
         });
     }
 
     confirmDelete = async (): Promise<string> => {
         if (this.state.programToDelete) {
+            this.setState({ isLoading: true });
             await this.programsRepo.remove(this.state.programToDelete.id);
         }
         await this.loadData();
         this.setState({ programToDelete: undefined });
         return '';
-    }
-
-    private formatDate(date: Date) {
-        const momDate = moment(date);
-        const formattedDate = momDate.isAfter(this.yesterdayDate)
-            ? momDate.fromNow()
-            : momDate.calendar();
-        return formattedDate;
     }
 
     renderProgramCard(p: Program, storageType: ProgramStorageType, deleteBox: boolean): JSX.Element {
@@ -119,12 +120,12 @@ export class GalleryComponent extends React.Component<IComponentProps, IComponen
                             p.dateLastEdited.getTime() !== p.dateCreated.getTime() &&
                             <tr>
                                 <th style={{ width: '10%' }}>Edited</th>
-                                <td style={{ width: '90%' }}>{this.formatDate(p.dateLastEdited)}</td>
+                                <td style={{ width: '90%' }}>{<DateTimeStampComponent datetime={p.dateLastEdited} />}</td>
                             </tr>
                         }
                         <tr>
                             <th style={{ width: '10%' }}>Created</th>
-                            <td style={{ width: '90%' }}>{this.formatDate(p.dateCreated)}</td>
+                            <td style={{ width: '90%' }}>{<DateTimeStampComponent datetime={p.dateCreated} />}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -138,10 +139,11 @@ export class GalleryComponent extends React.Component<IComponentProps, IComponen
             <div className="ex-page-container">
                 <MainMenuComponent />
                 <div className="ex-scroll-outer">
-                    <div className="container-fluid">
+                    <div className="container-fluid ex-gallery-container">
                         <PageHeaderComponent title={`Gallery`} />
                         {
-                            this.state.programToDelete && <ActionConfirmationModalComponent
+                            this.state.programToDelete &&
+                            <ActionConfirmationModalComponent
                                 onConfirm={this.confirmDelete}
                                 actionButtonText="Delete"
                                 headerText="Do you want to delete?"
@@ -159,24 +161,50 @@ export class GalleryComponent extends React.Component<IComponentProps, IComponen
                             <div className="col-sm-6">
                                 <CollapsiblePanelComponent collapsed={false} title="Personal Library ">
                                     <div>
-                                        {this.state.programs.map((p, i) => {
-                                            return <div key={p.id}>
-                                                {(i != 0) && <hr />}
-                                                {this.renderProgramCard(p, 'library', true)}
-                                            </div>
-                                        })}
+                                        {
+                                            this.state.isLoading
+                                                ? <div>
+                                                    <br />
+                                                    <br />
+                                                    <br />
+                                                    <ProgressIndicatorComponent isLoading />
+                                                    <br />
+                                                    <br />
+                                                    <br />
+                                                </div>
+                                                : (this.state.programs.length > 0)
+                                                    ? this.state.programs.map((p, i) => {
+                                                        return <div key={p.id}>
+                                                            {(i != 0) && <hr />}
+                                                            {this.renderProgramCard(p, 'library', true)}
+                                                        </div>
+                                                    })
+                                                    : <NoDataComponent noBorder title="Space for you personal programs" description="You do not have programs in your personal library yet. To add a program you need to go to Playground or open one from Samples section." />
+                                        }
                                     </div>
                                 </CollapsiblePanelComponent>
                             </div>
                             <div className="col-sm-6">
                                 <CollapsiblePanelComponent collapsed={false} title="Samples ">
                                     <div>
-                                        {this.state.samples.map((p, i) => {
-                                            return <div key={p.id}>
-                                                {(i != 0) && <hr />}
-                                                {this.renderProgramCard(p, 'samples', false)}
-                                            </div>
-                                        })}
+                                        {
+                                            this.state.isLoading
+                                                ? <div>
+                                                    <br />
+                                                    <br />
+                                                    <br />
+                                                    <ProgressIndicatorComponent isLoading />
+                                                    <br />
+                                                    <br />
+                                                    <br />
+                                                </div>
+                                                : this.state.samples.map((p, i) => {
+                                                    return <div key={p.id}>
+                                                        {(i != 0) && <hr />}
+                                                        {this.renderProgramCard(p, 'samples', false)}
+                                                    </div>
+                                                })
+                                        }
                                     </div>
                                 </CollapsiblePanelComponent>
                             </div>

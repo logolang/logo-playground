@@ -7,7 +7,7 @@ import { goTo, handleError, subscribeLoadDataOnPropsParamsChange } from 'app/uti
 
 import { MainMenuComponent } from 'app/ui/main-menu.component'
 import { PageHeaderComponent } from 'app/ui/_generic/page-header.component';
-import { ErrorMessageComponent } from 'app/ui/_generic/error-message.component';
+import { AlertMessageComponent } from 'app/ui/_generic/alert-message.component';
 import { OpacityGradientComponent } from 'app/ui/_generic/opacity-gradient.component';
 import { PageLoadingIndicatorComponent } from 'app/ui/_generic/page-loading-indicator.component';
 import { CodeInputLogoComponent } from 'app/ui/_shared/code-input-logo.component';
@@ -148,7 +148,7 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
                         }}
                     />
                 }
-                <ErrorMessageComponent errorMessage={this.state.errorMessage} />
+                <AlertMessageComponent message={this.state.errorMessage} />
 
                 <div className="ex-display-flex ex-flex-direction-row ex-flex-block ">
                     <div className="ex-display-flex ex-flex-direction-column ex-flex-block">

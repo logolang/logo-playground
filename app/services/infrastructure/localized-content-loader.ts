@@ -1,4 +1,5 @@
 import { IAjaxService } from "app/services/infrastructure/ajax-service";
+import { stay } from "app/utils/async-helpers";
 
 type DictionaryLike<V> = { [name: string]: V };
 
@@ -16,6 +17,7 @@ export class LocalizedContentLoader implements ILocalizedContentLoader {
     }
 
     async getFileContent(relativePath: string): Promise<string> {
+        //await stay(2000);
         const fromCache = this.cache[relativePath];
         if (fromCache) {
             return fromCache;
