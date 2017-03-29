@@ -50,6 +50,7 @@ export interface ITutorialPageRouteParams {
 export class TutorialsComponent extends React.Component<IComponentProps, IComponentState> {
     private notificationService = ServiceLocator.resolve(x => x.notificationService);
     private tutorialsLoader = ServiceLocator.resolve(x => x.tutorialsService);
+    private userDataService = ServiceLocator.resolve(x => x.userDataService);
     private userCustomizationsProvider = new UserCustomizationsProvider();
     private runCode = new Subject<string>();
     private stopCode = new Subject<void>();
@@ -101,8 +102,24 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
         const userCustomizations = await callAction(errorHandler, () => this.userCustomizationsProvider.getCustomizationsData());
         if (!userCustomizations) { return }
 
-        const tutorialIdToLoad = props.params.tutorialId || '01';
-        const stepIndex = this.parseStepIndexFromParam(props.params.stepIndex);
+        const lastTutorialInfo = await callAction(errorHandler, () => this.userDataService.getCurrentTutorialInfo());
+        if (!lastTutorialInfo) { return }
+        let initialCode = lastTutorialInfo.code;
+
+        let tutorialIdToLoad = props.params.tutorialId;
+        let stepIndex = this.parseStepIndexFromParam(props.params.stepIndex);
+        if (!tutorialIdToLoad) {
+            if (lastTutorialInfo.tutorialName) {
+                goTo(Routes.tutorialSpecified.build({
+                    tutorialId: lastTutorialInfo.tutorialName,
+                    stepIndex: this.formatStepIndexToParam(lastTutorialInfo.step)
+                }));
+                return;
+            }
+            else {
+                tutorialIdToLoad = '01';
+            }
+        }
 
         if (!this.state.currentTutorial || this.state.currentTutorial.id !== tutorialIdToLoad) {
             this.setState({ isLoading: true });
@@ -119,7 +136,8 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
                 tutorials: tutorialInfos,
                 currentTutorial: currentTutorial,
                 steps: steps,
-                userCustomizations: userCustomizations
+                userCustomizations: userCustomizations,
+                currentCode: initialCode
             });
         }
         this.setState(s => ({
@@ -169,10 +187,7 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
                         tutorials={this.state.tutorials}
                         onCancel={() => { this.setState({ showSelectionTutorials: false }) }}
                         onSelect={(tutorialId) => {
-                            this.setState({
-                                currentTutorial: this.state.tutorials.find(t => t.id === tutorialId),
-                                showSelectionTutorials: false
-                            });
+                            this.setState({ showSelectionTutorials: false });
                             goTo(Routes.tutorialSpecified.build({ tutorialId: tutorialId, stepIndex: '01' }));
                         }}
                     />
@@ -298,11 +313,18 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
                             </div>
                             <div className="source-input-panel-body panel-body">
                                 {
-                                    this.state.userCustomizations &&
+                                    this.state.userCustomizations && this.state.currentTutorial && this.state.currentStep &&
                                     <CodeInputLogoComponent
                                         className="codemirror-input-logo"
                                         code={this.state.currentCode}
-                                        onChanged={(code) => { this.setState({ currentCode: code }) }}
+                                        onChanged={(code) => {
+                                            this.setState({ currentCode: code })
+                                            this.userDataService.setCurrentTutorialInfo({
+                                                tutorialName: this.state.currentTutorial!.id,
+                                                step: this.state.currentStep!.index,
+                                                code: this.state.currentCode,
+                                            });
+                                        }}
                                         focusCommands={this.focusCommands}
                                         onHotkey={(k) => {
                                             this.runCode.next(this.state.currentCode);

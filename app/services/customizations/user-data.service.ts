@@ -11,11 +11,21 @@ export interface IUserDataService {
 
     getPlaygroundLayoutJSON(): Promise<string>
     setPlaygroundLayoutJSON(value: string): Promise<void>
+
+    getCurrentTutorialInfo(): Promise<ICurrentTutorialInfo>
+    setCurrentTutorialInfo(value: ICurrentTutorialInfo): Promise<void>
+}
+
+interface ICurrentTutorialInfo {
+    tutorialName: string,
+    step: number,
+    code: string
 }
 
 interface ILocalStorageData {
     playgroundCode?: string
     playgroundLayoutJSON?: string
+    currentTutorialInfo?: ICurrentTutorialInfo
 }
 
 const defaultPlaygroundProgram = `
@@ -54,6 +64,19 @@ export class UserDataBrowserLocalStorageService implements IUserDataService {
 
     async setPlaygroundLayoutJSON(value: string): Promise<void> {
         this.currentData.playgroundLayoutJSON = value;
+        return this.saveDataToStorage();
+    }
+
+    async getCurrentTutorialInfo(): Promise<ICurrentTutorialInfo> {
+        return this.currentData.currentTutorialInfo || {
+            code: '',
+            step: 0,
+            tutorialName: ''
+        };
+    }
+
+    async setCurrentTutorialInfo(value: ICurrentTutorialInfo): Promise<void> {
+        this.currentData.currentTutorialInfo = value;
         return this.saveDataToStorage();
     }
 }
