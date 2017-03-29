@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Link } from 'react-router'
 import { Button, ButtonGroup, Nav, Navbar, NavDropdown, MenuItem, NavItem, DropdownButton, Modal, OverlayTrigger } from 'react-bootstrap';
 import { Subject, BehaviorSubject } from 'rxjs'
+import * as keymaster from 'keymaster';
 
 import { goTo, handleError, subscribeLoadDataOnPropsParamsChange } from 'app/utils/react-helpers';
 
@@ -47,6 +48,7 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
     private tutorialsLoader = ServiceLocator.resolve(x => x.tutorialsService);
     private runCode = new Subject<string>();
     private stopCode = new Subject<void>();
+    private focusCommands = new Subject<void>();
 
     constructor(props: IComponentProps) {
         super(props);
@@ -73,7 +75,17 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
     }
 
     componentDidMount() {
+        keymaster('f8, f9', () => {
+            this.runCode.next(this.state.currentCode);
+            this.focusCommands.next();
+            return false;
+        });
+
         this.loadData(this.props);
+    }
+
+    componentWillUnmount() {
+        keymaster.unbind('f8, f9');
     }
 
     async loadData(props: IComponentProps) {
@@ -248,7 +260,10 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
                                 {
                                     !this.state.isRunning &&
                                     <button type="button" className="btn btn-success"
-                                        onClick={() => { this.runCode.next(this.state.currentCode) }}
+                                        onClick={() => {
+                                            this.runCode.next(this.state.currentCode);
+                                            this.focusCommands.next();
+                                        }}
                                     >
                                         Run <span className="glyphicon glyphicon-play" aria-hidden="true"> <small>(F9)</small></span>
                                     </button>
@@ -267,8 +282,10 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
                                     className="codemirror-input-logo"
                                     code={this.state.currentCode}
                                     onChanged={(code) => { this.setState({ currentCode: code }) }}
-                                    focusCommands={new Subject<void>()}
-                                    onHotkey={() => { }}
+                                    focusCommands={this.focusCommands}
+                                    onHotkey={(k) => {
+                                        this.runCode.next(this.state.currentCode);
+                                    }}
                                 />
                             </div>
                         </div>

@@ -82,6 +82,12 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
     }
 
     componentDidMount() {
+        keymaster('f8, f9', () => {
+            this.runCommands.next(this.code);
+            this.focusCommands.next();
+            return false;
+        });
+
         this.loadData(this.props);
     }
 
@@ -117,13 +123,6 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
 
         this.code = code;
         this.setState({ isLoading: false, programTitle: title });
-
-        keymaster.unbind('f8, f9');
-        keymaster('f8, f9', () => {
-            this.runCommands.next(this.code);
-            this.focusCommands.next();
-            return false;
-        });
     }
 
     onIsRunningChanged = (isRunning: boolean) => {
@@ -268,7 +267,6 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
                                 onChanged: this.codeChanged,
                                 focusCommands: this.focusCommands,
                                 onHotkey: (k) => {
-                                    console.log('received hotkey', k);
                                     this.runCommands.next(this.code);
                                 }
                             }
