@@ -7,6 +7,7 @@ import { stay } from 'app/utils/async-helpers';
 
 import { LoginComponent } from 'app/ui/login.component'
 import { PageLoadingIndicatorComponent } from 'app/ui/_generic/page-loading-indicator.component';
+import { MessageTosterComponent } from "app/ui/_generic/message-toster.component";
 
 import { ServiceLocator } from 'app/services/service-locator'
 import { Routes } from 'app/routes';
@@ -24,13 +25,14 @@ export class MainComponent extends React.Component<IMainComponentProps, IMainCom
     private appConfig = ServiceLocator.resolve(x => x.appConfig);
     private currentUser = ServiceLocator.resolve(x => x.currentUser);
     private loginService = ServiceLocator.resolve(x => x.loginService);
+    private notificationService = ServiceLocator.resolve(x => x.notificationService);
 
     constructor(props: IMainComponentProps) {
         super(props);
 
         this.state = {
             showLoginPage: false,
-            isLoading: false
+            isLoading: true
         }
 
         let loginStatus = LoginServiceHelpers.getInvalidLoginStatus('guest', '');
@@ -49,10 +51,10 @@ export class MainComponent extends React.Component<IMainComponentProps, IMainCom
     }
 
     componentDidMount() {
-        this.loginWithToken();
         this.loginService.subscribeToLoginRequest(() => {
             this.setState({ showLoginPage: true });
         })
+        this.loginWithToken();
     }
 
     async loginWithToken() {
@@ -68,6 +70,7 @@ export class MainComponent extends React.Component<IMainComponentProps, IMainCom
     render(): JSX.Element {
         const isDarkTheme = Color(window.getComputedStyle(document.body, undefined).backgroundColor || 'white').luminosity() < 0.3;
         return <PageLoadingIndicatorComponent isLoading={this.state.isLoading} className={`${isDarkTheme ? 'dark-theme' : 'light-theme'}`}>
+            <MessageTosterComponent events={this.notificationService.getObservable()} />
             {
                 this.state.isLoading
                     ? <div />

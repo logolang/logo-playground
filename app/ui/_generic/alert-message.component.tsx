@@ -1,7 +1,8 @@
 import * as React from 'react';
 import * as cn from 'classnames'
+import { Alert } from "react-bootstrap";
 
-import './alert-message.component.scss'
+import './alert-message.component.scss';
 
 type messageType = "info" | "danger" | "warning" | "success";
 
@@ -10,6 +11,7 @@ interface IComponentProps {
     title?: JSX.Element | string
     message?: JSX.Element | string
     doNotDetectPreformatted?: boolean
+    onDismiss?: () => void
 }
 
 export class AlertMessageComponent extends React.Component<IComponentProps, void> {
@@ -40,11 +42,11 @@ export class AlertMessageComponent extends React.Component<IComponentProps, void
         }
 
         if (message || title) {
-            return <div className={`alert ex-customized-alert alert-${type}`} role="alert">
-                <div className="media">
+            return <Alert className={`ex-customized-alert`} bsStyle={type} onDismiss={this.props.onDismiss}>
+                <div className="media ex-margin-top-zero">
                     <div className="media-left">
                         <span className="text-nowrap">
-                            <span className={`text-${type} ex-middle-icon-container glyphicon ${this.getIconClass(type)}`} aria-hidden="true"></span>
+                            <span className={`ex-icon-container glyphicon ${this.getIconClass(type)}`} aria-hidden="true"></span>
                             <span>&nbsp;</span>
                         </span>
                     </div>
@@ -69,7 +71,7 @@ export class AlertMessageComponent extends React.Component<IComponentProps, void
                         }
                     </div>
                 </div>
-            </div>
+            </Alert>
         }
         return null;
     }

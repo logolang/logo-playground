@@ -4,7 +4,8 @@ import { Button, ButtonGroup, Nav, Navbar, NavDropdown, MenuItem, NavItem, Dropd
 import { Subject, BehaviorSubject } from 'rxjs'
 import * as keymaster from 'keymaster';
 
-import { goTo, handleError, subscribeLoadDataOnPropsParamsChange } from 'app/utils/react-helpers';
+import { goTo, subscribeLoadDataOnPropsParamsChange } from 'app/utils/react-helpers';
+import { setupActionErrorHandler, callAction } from 'app/utils/async-helpers';
 
 import { MainMenuComponent } from 'app/ui/main-menu.component'
 import { PageHeaderComponent } from 'app/ui/_generic/page-header.component';
@@ -24,7 +25,6 @@ import './tutorials.component.scss';
 
 interface IComponentState {
     isLoading: boolean
-    errorMessage: string
     tutorials: ITutorialInfo[]
     currentTutorial: ITutorialInfo | undefined
     steps: ITutorialStep[]
@@ -48,6 +48,7 @@ export interface ITutorialPageRouteParams {
 }
 
 export class TutorialsComponent extends React.Component<IComponentProps, IComponentState> {
+    private notificationService = ServiceLocator.resolve(x => x.notificationService);
     private tutorialsLoader = ServiceLocator.resolve(x => x.tutorialsService);
     private userCustomizationsProvider = new UserCustomizationsProvider();
     private runCode = new Subject<string>();
@@ -63,7 +64,6 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
     buildDefaultState(props: IComponentProps): IComponentState {
         const state: IComponentState = {
             isLoading: true,
-            errorMessage: '',
             tutorials: [],
             currentTutorial: undefined,
 
@@ -93,53 +93,60 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
     }
 
     async loadData(props: IComponentProps) {
-        const userCustomizations = await this.userCustomizationsProvider.getCustomizationsData();
-        console.log('yo!', userCustomizations);
+        const errorHandler = setupActionErrorHandler((error) => {
+            this.notificationService.push({ type: 'danger', message: error });
+            this.setState({ isLoading: false });
+        })
+
+        const userCustomizations = await callAction(errorHandler, () => this.userCustomizationsProvider.getCustomizationsData());
+        if (!userCustomizations) { return }
 
         const tutorialIdToLoad = props.params.tutorialId || '01';
-        const stepIndexToLoad = props.params.stepIndex || '01';
-
-        let stepIndex = parseInt(stepIndexToLoad, 10);
-        if (isNaN(stepIndex)) {
-            throw new Error('Fail to parse step index. Should be valid integer');
-        }
-        stepIndex--;
+        const stepIndex = this.parseStepIndexFromParam(props.params.stepIndex);
 
         if (!this.state.currentTutorial || this.state.currentTutorial.id !== tutorialIdToLoad) {
             this.setState({ isLoading: true });
-            const tutorialInfos = await handleError(this, () => this.tutorialsLoader.getTutorialsList());
-            if (tutorialInfos) {
-                const currentTutorial = tutorialInfos.find(t => t.id === tutorialIdToLoad);
-                if (currentTutorial) {
-                    const steps = await handleError(this, () => this.tutorialsLoader.getSteps(currentTutorial.id));
-                    if (steps) {
-                        this.setState({
-                            tutorials: tutorialInfos,
-                            currentTutorial: currentTutorial,
-                            steps: steps,
-                            userCustomizations: userCustomizations
-                        });
-                    }
-                }
+            const tutorialInfos = await callAction(errorHandler, () => this.tutorialsLoader.getTutorialsList());
+            if (!tutorialInfos) { return }
+            const currentTutorial = tutorialInfos.find(t => t.id === tutorialIdToLoad);
+            if (!currentTutorial) {
+                await callAction(errorHandler, () => { throw new Error(`Can't find tutorial with id ${tutorialIdToLoad}`) });
+                return;
             }
-            this.setState({ isLoading: false });
+            const steps = await callAction(errorHandler, () => this.tutorialsLoader.getSteps(currentTutorial.id));
+            if (!steps) { return }
+            this.setState({
+                tutorials: tutorialInfos,
+                currentTutorial: currentTutorial,
+                steps: steps,
+                userCustomizations: userCustomizations
+            });
         }
-        this.setState(s => ({ currentStep: s.steps[stepIndex] }));
+        this.setState(s => ({
+            isLoading: false,
+            currentStep: s.steps[stepIndex]
+        }));
     }
 
-    goNextStep = () => {
-        let newStepIndex = this.state.currentStep!.index + 1;
-        goTo(Routes.tutorialSpecified.build({
-            tutorialId: this.state.currentTutorial!.id,
-            stepIndex: (newStepIndex + 1).toString()
-        }));
+    private parseStepIndexFromParam(stepIndexFromParam: string) {
+        let stepIndex = parseInt(stepIndexFromParam, 10);
+        if (isNaN(stepIndex)) { return 0; }
+        return stepIndex - 1;
     }
-    goPrevStep = () => {
-        let newStepIndex = this.state.currentStep!.index - 1;
-        goTo(Routes.tutorialSpecified.build({
-            tutorialId: this.state.currentTutorial!.id,
-            stepIndex: (newStepIndex + 1).toString()
-        }));
+    private formatStepIndexToParam(stepIndex: number): string {
+        return (stepIndex + 1).toString();
+    }
+
+    navigateToNextStep = (direction: number) => {
+        return () => {
+            if (this.state.currentStep && this.state.currentTutorial) {
+                let newStepIndex = this.state.currentStep.index + direction;
+                goTo(Routes.tutorialSpecified.build({
+                    tutorialId: this.state.currentTutorial.id,
+                    stepIndex: this.formatStepIndexToParam(newStepIndex)
+                }));
+            }
+        }
     }
 
     render(): JSX.Element {
@@ -170,8 +177,6 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
                         }}
                     />
                 }
-                <AlertMessageComponent message={this.state.errorMessage} />
-
                 <div className="ex-display-flex ex-flex-direction-row ex-flex-block ">
                     <div className="ex-display-flex ex-flex-direction-column ex-flex-block">
                         <div className="ex-display-flex ex-flex-block ex-overflow-hidden">
@@ -192,7 +197,7 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
                                             </div>
                                             <div className="prev-btn-container">
                                                 <button type="button" className="btn btn-default step-nav-btn" disabled={prevStepButtonDisabled}
-                                                    onClick={this.goPrevStep}>
+                                                    onClick={this.navigateToNextStep(-1)}>
                                                     <span className="glyphicon glyphicon-triangle-left" aria-hidden="true"></span>
                                                 </button>
                                             </div>
@@ -201,7 +206,7 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
                                             </div>
                                             <div className="next-btn-container">
                                                 <button type="button" className="btn btn-default step-nav-btn" disabled={nextStepButtonDisabled}
-                                                    onClick={this.goNextStep}>
+                                                    onClick={this.navigateToNextStep(1)}>
                                                     <span className="glyphicon glyphicon-triangle-right" aria-hidden="true"></span>
                                                 </button>
                                             </div>
@@ -226,7 +231,7 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
                                                         {
                                                             (!nextStepButtonDisabled) &&
                                                             <button type="button" className="btn btn-primary"
-                                                                onClick={this.goNextStep}>
+                                                                onClick={this.navigateToNextStep(1)}>
                                                                 <span>Continue&nbsp;&nbsp;</span>
                                                                 <span className="glyphicon glyphicon-arrow-right" aria-hidden="true"></span>
                                                             </button>

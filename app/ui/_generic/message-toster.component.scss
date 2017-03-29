@@ -1,0 +1,11 @@
+.message-toster {
+    position: absolute;
+    left: 40px;
+    margin-right: 40px;
+    top: 100px;
+    z-index: 5;
+    .alert {
+        box-shadow: 0 2px 3px 0 rgba(149, 149, 149, 0.4);
+        max-width: 600px;
+    }
+}

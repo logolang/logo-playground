@@ -41,3 +41,24 @@ export async function handleAsyncError(ex: any): Promise<ErrorDef> {
 
     return new Error(ex);
 }
+
+export function setupActionErrorHandler(errorHandler: (errorMessage: string) => void) {
+    return async (action: () => Promise<any>) => {
+        try {
+            return await action();
+        }
+        catch (ex) {
+            console.error(ex);
+            const errorMessage = ex.toString();
+            errorHandler(errorMessage);
+            return undefined;
+        }
+    }
+}
+
+export async function callAction<R>(
+    actionExecutor: Function,
+    action: () => Promise<R>,
+): Promise<R | undefined> {
+    return actionExecutor(action);
+}

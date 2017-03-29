@@ -8,6 +8,7 @@ import { ILocalizedContentLoader } from "app/services/infrastructure/localized-c
 import { ITutorialsContentService } from "app/services/tutorials/tutorials-content-service";
 import { IUserDataService } from "app/services/customizations/user-data.service";
 import { IUserSettingsService } from "app/services/customizations/user-settings.service";
+import { INotificationService } from "app/services/infrastructure/notification.service";
 
 interface ServicesList {
     currentUser: ICurrentUserProvider
@@ -16,6 +17,7 @@ interface ServicesList {
     loginService: ILoginService
     userDataService: IUserDataService
     userSettingsService: IUserSettingsService
+    notificationService: INotificationService
     usersRepository: IUsersRepository
     programsReporitory: IProgramsRepository
     contentLoader: ILocalizedContentLoader
