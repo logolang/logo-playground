@@ -91,13 +91,15 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
             const tutorialInfos = await handleError(this, () => this.tutorialsLoader.getTutorialsList());
             if (tutorialInfos) {
                 const currentTutorial = tutorialInfos.find(t => t.id === tutorialIdToLoad);
-                const steps = await handleError(this, () => this.tutorialsLoader.getSteps(currentTutorial.id));
-                if (steps) {
-                    this.setState({
-                        tutorials: tutorialInfos,
-                        currentTutorial: currentTutorial,
-                        steps: steps
-                    });
+                if (currentTutorial) {
+                    const steps = await handleError(this, () => this.tutorialsLoader.getSteps(currentTutorial.id));
+                    if (steps) {
+                        this.setState({
+                            tutorials: tutorialInfos,
+                            currentTutorial: currentTutorial,
+                            steps: steps
+                        });
+                    }
                 }
             }
             this.setState({ isLoading: false });

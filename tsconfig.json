@@ -22,7 +22,11 @@
             "mocha",
             "jquery"
         ],
-        "importHelpers": true
+        "importHelpers": true,
+        "lib": [
+            "dom",
+            "es7"
+        ]
     },
     "exclude": [
         "node_modules"
