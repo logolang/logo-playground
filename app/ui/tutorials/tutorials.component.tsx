@@ -17,6 +17,7 @@ import { TutorialSelectModalComponent } from './tutorial-select-modal.component'
 
 import { ServiceLocator } from 'app/services/service-locator'
 import { Routes } from 'app/routes';
+import { UserCustomizationsProvider, IUserCustomizationsData } from "app/services/customizations/user-customizations-provider";
 import { ITutorialInfo, ITutorialStep } from "app/services/tutorials/tutorials-content-service";
 
 import './tutorials.component.scss';
@@ -33,6 +34,8 @@ interface IComponentState {
     showFixTheCode: boolean
     isRunning: boolean
     currentCode: string
+
+    userCustomizations?: IUserCustomizationsData
 }
 
 interface IComponentProps {
@@ -46,6 +49,7 @@ export interface ITutorialPageRouteParams {
 
 export class TutorialsComponent extends React.Component<IComponentProps, IComponentState> {
     private tutorialsLoader = ServiceLocator.resolve(x => x.tutorialsService);
+    private userCustomizationsProvider = new UserCustomizationsProvider();
     private runCode = new Subject<string>();
     private stopCode = new Subject<void>();
     private focusCommands = new Subject<void>();
@@ -69,7 +73,7 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
             showSelectionTutorials: false,
             showFixTheCode: false,
             isRunning: false,
-            currentCode: ''
+            currentCode: '',
         };
         return state;
     }
@@ -89,6 +93,9 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
     }
 
     async loadData(props: IComponentProps) {
+        const userCustomizations = await this.userCustomizationsProvider.getCustomizationsData();
+        console.log('yo!', userCustomizations);
+
         const tutorialIdToLoad = props.params.tutorialId || '01';
         const stepIndexToLoad = props.params.stepIndex || '01';
 
@@ -109,7 +116,8 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
                         this.setState({
                             tutorials: tutorialInfos,
                             currentTutorial: currentTutorial,
-                            steps: steps
+                            steps: steps,
+                            userCustomizations: userCustomizations
                         });
                     }
                 }
@@ -244,13 +252,19 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
                         </div>
                         <div className="ex-display-flex ex-flex-block">
                             <div className="panel-body logo-output-panel">
-                                <LogoExecutorComponent
-                                    height={200}
-                                    onError={() => { }}
-                                    onIsRunningChanged={(running) => { this.setState({ isRunning: running }) }}
-                                    runCommands={this.runCode}
-                                    stopCommands={this.stopCode}
-                                />
+                                {
+                                    this.state.userCustomizations &&
+                                    <LogoExecutorComponent
+                                        height={200}
+                                        onError={() => { }}
+                                        onIsRunningChanged={(running) => { this.setState({ isRunning: running }) }}
+                                        runCommands={this.runCode}
+                                        stopCommands={this.stopCode}
+                                        customTurtleImage={this.state.userCustomizations.customTurtle}
+                                        customTurtleSize={this.state.userCustomizations.customTurtleSize}
+                                        isDarkTheme={this.state.userCustomizations.isDark}
+                                    />
+                                }
                             </div>
                         </div>
                     </div>
@@ -278,15 +292,19 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
                                 }
                             </div>
                             <div className="source-input-panel-body panel-body">
-                                <CodeInputLogoComponent
-                                    className="codemirror-input-logo"
-                                    code={this.state.currentCode}
-                                    onChanged={(code) => { this.setState({ currentCode: code }) }}
-                                    focusCommands={this.focusCommands}
-                                    onHotkey={(k) => {
-                                        this.runCode.next(this.state.currentCode);
-                                    }}
-                                />
+                                {
+                                    this.state.userCustomizations &&
+                                    <CodeInputLogoComponent
+                                        className="codemirror-input-logo"
+                                        code={this.state.currentCode}
+                                        onChanged={(code) => { this.setState({ currentCode: code }) }}
+                                        focusCommands={this.focusCommands}
+                                        onHotkey={(k) => {
+                                            this.runCode.next(this.state.currentCode);
+                                        }}
+                                        editorTheme={this.state.userCustomizations.codeEditorTheme}
+                                    />
+                                }
                             </div>
                         </div>
                     </div>

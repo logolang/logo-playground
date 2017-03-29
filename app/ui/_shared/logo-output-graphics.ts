@@ -14,8 +14,8 @@ export class LogoOutputGraphics {
         private sandBoxSelector: string,
         private turtleSelector: string,
         private overlaySelector: string,
-        private turtleCustomImage: HTMLImageElement,
-        private turtleSize: number,
+        private turtleCustomImage?: HTMLImageElement,
+        private turtleSize?: number,
     ) {
     }
 

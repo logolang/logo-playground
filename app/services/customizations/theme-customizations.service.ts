@@ -8,8 +8,7 @@ export interface Theme {
     isDark: boolean
 }
 
-export class ThemeService {
-    private localStorageThemeStorage = new LocalStorageService<Theme | undefined>((window as any).appThemeNameLocalStorageKey, undefined);
+export class ThemeCustomizationsService {
     private readonly themes: Theme[] = [
         {
             name: 'Default',
@@ -52,12 +51,8 @@ export class ThemeService {
         return this.themes;
     }
 
-    setTheme(theme: Theme): void {
-        this.localStorageThemeStorage.setValue(theme);
-    }
-
-    getCurrentTheme(): Theme {
-        const selectedTheme = this.localStorageThemeStorage.getValue();
+    getTheme(themeName: string): Theme {
+        const selectedTheme = this.themes.find(t => t.name === themeName);
         if (selectedTheme) {
             return selectedTheme;
         }

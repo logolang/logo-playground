@@ -21,23 +21,10 @@ export class OutputPanelComponent extends React.Component<IOutputPanelComponentP
         }
     }
 
-    componentDidMount() {
-    }
-
-    componentWillUnmount() {
-    }
-
     render(): JSX.Element {
         return (
             <div className="output-container">
-                <LogoExecutorComponent
-                    height={this.props.logoExecutorProps.height}
-                    onError={this.props.logoExecutorProps.onError}
-                    runCommands={this.props.logoExecutorProps.runCommands}
-                    stopCommands={this.props.logoExecutorProps.stopCommands}
-                    onIsRunningChanged={this.props.logoExecutorProps.onIsRunningChanged}
-                    makeScreenshotCommands={this.props.logoExecutorProps.makeScreenshotCommands}
-                />
+                {React.createElement(LogoExecutorComponent, this.props.logoExecutorProps)}
             </div>
         );
     }

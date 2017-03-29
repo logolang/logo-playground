@@ -6,8 +6,6 @@ const polyfills = require('app/../lib/logojs/polyfills.logo.txt') as any;
 
 import { LogoOutputGraphics } from './logo-output-graphics';
 import { LogoOutputConsole } from './logo-output-console';
-import { ThemeService } from "app/services/customizations/theme.service";
-import { TurtleCustomizationsService } from "app/services/customizations/turtle-customizations.service";
 
 import './logo-executor.component.scss'
 
@@ -21,13 +19,15 @@ export interface ILogoExecutorComponentProps {
     makeScreenshotCommands?: Observable<{ small: boolean, result: (data: string) => void }>
     onError: (error: string) => void
     onIsRunningChanged: (isRunning: boolean) => void
+    isDarkTheme: boolean
+    customTurtleImage?: HTMLImageElement
+    customTurtleSize?: number
 }
 
 export class LogoExecutorComponent extends React.Component<ILogoExecutorComponentProps, IComponentState> {
     runSubscription: Subscription;
     stopSubscription: Subscription;
     makeScreenshotSubscription: Subscription;
-    theme = new ThemeService();
     private logo: any;
     private graphics: LogoOutputGraphics;
     private isRunning: boolean;
@@ -44,8 +44,7 @@ export class LogoExecutorComponent extends React.Component<ILogoExecutorComponen
     }
 
     componentDidMount() {
-        const turtleCustomizations = new TurtleCustomizationsService();
-        this.graphics = new LogoOutputGraphics('#sandbox', '#turtle', '#overlay', turtleCustomizations.getCurrentTurtleImage(), turtleCustomizations.getCurrentTurtleSize());
+        this.graphics = new LogoOutputGraphics('#sandbox', '#turtle', '#overlay', this.props.customTurtleImage, this.props.customTurtleSize);
         this.runSubscription = this.props.runCommands.subscribe(this.execute);
         this.stopSubscription = this.props.stopCommands.subscribe(this.abort);
         if (this.props.makeScreenshotCommands) {
@@ -95,7 +94,7 @@ export class LogoExecutorComponent extends React.Component<ILogoExecutorComponen
         this.props.onIsRunningChanged(this.isRunning);
         const lightThemeInit = `setbg 7 setpencolor 0 cs`;
         const darkThemeInit = `setbg 0 setpencolor 7 cs`;
-        const initCode = this.theme.getCurrentTheme().isDark ? darkThemeInit : lightThemeInit;
+        const initCode = this.props.isDarkTheme ? darkThemeInit : lightThemeInit;
 
         this.resizeCanvas();
 

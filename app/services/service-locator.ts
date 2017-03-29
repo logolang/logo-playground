@@ -6,12 +6,16 @@ import { IUsersRepository } from "app/services/login/users.repository";
 import { IProgramsRepository } from "app/services/gallery/personal-gallery-localstorage.repository";
 import { ILocalizedContentLoader } from "app/services/infrastructure/localized-content-loader";
 import { ITutorialsContentService } from "app/services/tutorials/tutorials-content-service";
+import { IUserDataService } from "app/services/customizations/user-data.service";
+import { IUserSettingsService } from "app/services/customizations/user-settings.service";
 
 interface ServicesList {
     currentUser: ICurrentUserProvider
     appConfig: AppConfig
     configLoader: IAppConfigLoader
     loginService: ILoginService
+    userDataService: IUserDataService
+    userSettingsService: IUserSettingsService
     usersRepository: IUsersRepository
     programsReporitory: IProgramsRepository
     contentLoader: ILocalizedContentLoader

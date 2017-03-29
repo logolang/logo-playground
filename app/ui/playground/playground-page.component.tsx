@@ -9,13 +9,13 @@ import { stay } from 'app/utils/async-helpers';
 import { ensure } from 'app/utils/syntax-helpers';
 import { handleError, subscribeLoadDataOnPropsParamsChange, translateInputChangeToState } from 'app/utils/react-helpers';
 
-import { ServiceLocator } from 'app/services/service-locator'
-import { LocalStorageService } from "app/services/infrastructure/local-storage.service";
-import { ProgramsSamplesRepository } from "app/services/gallery/gallery-samples.repository";
-
 import { MainMenuComponent } from 'app/ui/main-menu.component'
 import { PlaygroundPageLayoutComponent } from './playground-page-layout.component';
 import { AlertMessageComponent } from 'app/ui/_generic/alert-message.component';
+
+import { ServiceLocator } from 'app/services/service-locator'
+import { ProgramsSamplesRepository } from "app/services/gallery/gallery-samples.repository";
+import { UserCustomizationsProvider, IUserCustomizationsData } from "app/services/customizations/user-customizations-provider";
 
 import './playground-page.component.scss';
 
@@ -24,7 +24,7 @@ interface IComponentState {
     errorMessage: string
 
     programTitle: string
-
+    code: string
     isRunning: boolean
     hasProgramBeenExecutedOnce: boolean
 
@@ -32,6 +32,8 @@ interface IComponentState {
     isSavingInProgress: boolean
     programNameInSaveModal: string
     errorInSaveModal: string
+
+    userCustomizations?: IUserCustomizationsData
 }
 
 interface IComponentProps {
@@ -44,11 +46,11 @@ interface IComponentProps {
 
 export class PlaygroundPageComponent extends React.Component<IComponentProps, IComponentState> {
     private appConfig = ServiceLocator.resolve(x => x.appConfig);
-    currentCodeLocalStorage = new LocalStorageService<string>('logo-sandbox-codeplayground', 'fd 100\r\nlt 90\r\nfd 80');
-    programsRepo = ServiceLocator.resolve(x => x.programsReporitory);
-    programSamples = new ProgramsSamplesRepository();
+    private programsRepo = ServiceLocator.resolve(x => x.programsReporitory);
+    private programSamples = new ProgramsSamplesRepository();
+    private userCustomizationsProvider = new UserCustomizationsProvider();
+    private userDataService = ServiceLocator.resolve(x => x.userDataService);
 
-    private code: string;
     private runCommands = new Subject<string>();
     private stopCommands = new Subject<void>();
     private focusCommands = new Subject<void>();
@@ -56,9 +58,6 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
 
     constructor(props: IComponentProps) {
         super(props);
-
-        let code = this.currentCodeLocalStorage.getValue()
-
         this.state = this.buildDefaultState(this.props);
         subscribeLoadDataOnPropsParamsChange(this);
     }
@@ -69,6 +68,7 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
             errorMessage: '',
 
             programTitle: '',
+            code: '',
 
             isRunning: false,
             hasProgramBeenExecutedOnce: false,
@@ -83,7 +83,7 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
 
     componentDidMount() {
         keymaster('f8, f9', () => {
-            this.runCommands.next(this.code);
+            this.runCommands.next(this.state.code);
             this.focusCommands.next();
             return false;
         });
@@ -96,11 +96,13 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
     }
 
     codeChanged = (code: string): void => {
-        this.currentCodeLocalStorage.setValue(code);
-        this.code = code;
+        this.setState({ code: code });
+        this.userDataService.setPlaygroundCode(code);
     }
 
     async loadData(props: IComponentProps) {
+        const userCustomizations = await this.userCustomizationsProvider.getCustomizationsData();
+
         let code = '';
         let title = 'Program'
         if (props.params.programId) {
@@ -117,12 +119,16 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
             }
         } else if (props.params.gistId) {
         } else {
-            code = this.currentCodeLocalStorage.getValue();
+            code = await this.userDataService.getPlaygroundCode()
             title = 'Playground';
         }
 
-        this.code = code;
-        this.setState({ isLoading: false, programTitle: title });
+        this.codeChanged(code);
+        this.setState({
+            isLoading: false,
+            programTitle: title,
+            userCustomizations: userCustomizations
+        });
     }
 
     onIsRunningChanged = (isRunning: boolean) => {
@@ -133,7 +139,7 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
     }
 
     runClick = () => {
-        this.runCommands.next(this.code);
+        this.runCommands.next(this.state.code);
         this.focusCommands.next();
     }
 
@@ -154,7 +160,7 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
         if (this.state.hasProgramBeenExecutedOnce) {
             prog.screenshot = await this.getScreenshot(true);
         }
-        prog.code = this.code;
+        prog.code = this.state.code;
         await this.programsRepo.update(prog);
         this.focusCommands.next();
     }
@@ -186,7 +192,7 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
             dateCreated: new Date(0),
             dateLastEdited: new Date(0),
             lang: 'logo',
-            code: this.code,
+            code: this.state.code,
             screenshot: screenshot
         });
 
@@ -263,12 +269,13 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
                         programName={this.state.programTitle}
                         codePanelProps={{
                             codeInputProps: {
-                                code: this.code,
+                                code: this.state.code,
                                 onChanged: this.codeChanged,
                                 focusCommands: this.focusCommands,
                                 onHotkey: (k) => {
-                                    this.runCommands.next(this.code);
-                                }
+                                    this.runCommands.next(this.state.code);
+                                },
+                                editorTheme: this.state.userCustomizations!.codeEditorTheme
                             }
                         }}
                         outputPanelProps={{
@@ -279,6 +286,9 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
                                 makeScreenshotCommands: this.makeScreenshotCommands,
                                 onIsRunningChanged: this.onIsRunningChanged,
                                 onError: () => { },
+                                isDarkTheme: this.state.userCustomizations!.isDark,
+                                customTurtleImage: this.state.userCustomizations!.customTurtle,
+                                customTurtleSize: this.state.userCustomizations!.customTurtleSize
                             }
                         }}
                     >

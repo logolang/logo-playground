@@ -3,7 +3,6 @@ import * as codemirror from 'codemirror';
 import { Observable, Subscription, Subject } from 'rxjs'
 
 import { ensure } from 'app/utils/syntax-helpers';
-import { ThemeService } from "app/services/customizations/theme.service";
 
 import 'node_modules/codemirror/addon/runmode/runmode.js';
 import 'node_modules/codemirror/addon/edit/closebrackets.js';
@@ -23,10 +22,10 @@ export interface ICodeInputComponentProps {
     focusCommands?: Observable<void>
     onHotkey?: (key: string) => void
     onChanged: (code: string) => void
+    editorTheme: string
 }
 
 export class CodeInputLogoComponent extends React.Component<ICodeInputComponentProps, IComponentState> {
-    themeService = new ThemeService();
     cm: codemirror.EditorFromTextArea;
     currentCode: string;
     focusCommandsSubscription: Subscription | undefined;
@@ -62,7 +61,7 @@ export class CodeInputLogoComponent extends React.Component<ICodeInputComponentP
             lineComment: ';',
             lineNumbers: true,
             lineWrapping: true,
-            theme: this.themeService.getCurrentTheme().codemirror
+            theme: this.props.editorTheme
         } as any);
         this.cm.setSize('100%', '100%');
         this.cm.on("change", () => {

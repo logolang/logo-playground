@@ -29,39 +29,23 @@ const allTurtles: TurtleInfo[] = [
 ]
 
 export class TurtleCustomizationsService {
-    private localStorageTurtleName = new LocalStorageService<string>(appInfo.name + ":" + appInfo.version + ":turtleName", 'T9');
-    private localStorageTurtleSize = new LocalStorageService<number>(appInfo.name + ":" + appInfo.version + ":turtleSize", 40);
-
     getAllTurtles(): TurtleInfo[] {
         return allTurtles;
     }
 
-    getCurrentTurtleSize() {
-        return this.localStorageTurtleSize.getValue();
-    }
-
-    getCurrentTurtleInfo(): TurtleInfo {
-        const name = this.localStorageTurtleName.getValue();
-        let turtleData = allTurtles.find(t => t.name === name);
+    getTurtleInfo(turtleName: string): TurtleInfo {
+        let turtleData = allTurtles.find(t => t.name === turtleName);
         if (!turtleData) {
             turtleData = allTurtles[0];
-            this.localStorageTurtleName.setValue(turtleData.name);
         }
         return turtleData;
     }
 
-    getCurrentTurtleImage(): HTMLImageElement {
-        let turtleData = this.getCurrentTurtleInfo();
-
+    getTurtleImage(turtleInfo: TurtleInfo): HTMLImageElement {
         const img = new Image();
         img.width = 512;
         img.height = 512;
-        img.src = turtleData.imageData;
+        img.src = turtleInfo.imageData;
         return img;
-    }
-
-    setCurrentTurtle(name: string, size: number) {
-        this.localStorageTurtleName.setValue(name);
-        this.localStorageTurtleSize.setValue(size);
     }
 }

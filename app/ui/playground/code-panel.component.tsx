@@ -17,14 +17,8 @@ export class CodePanelComponent extends React.Component<ICodePanelComponentProps
 
     render(): JSX.Element {
         return (
-            <div ref="container" className="code-panel-container">
-                <CodeInputLogoComponent
-                    className="code-input-container"
-                    code={this.props.codeInputProps.code}
-                    onChanged={this.props.codeInputProps.onChanged}
-                    onHotkey={this.props.codeInputProps.onHotkey}
-                    focusCommands={this.props.codeInputProps.focusCommands}>
-                </CodeInputLogoComponent>
+            <div className="code-panel-container">
+                {React.createElement(CodeInputLogoComponent, { ...this.props.codeInputProps, className: "code-input-container" })}
             </div>
         );
     }

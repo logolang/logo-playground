@@ -136,7 +136,7 @@ module.exports = function (env) {
             contentBase: "dist/",
             port: 8085,
         },
-        devtool: isDevBuild ? 'eval' : 'source-map', // Turn on sourcemaps
+        devtool: isDevBuild ? 'source-map' : 'source-map', // Turn on sourcemaps
     }
 
     return webpackConfig;
