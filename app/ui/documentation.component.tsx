@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Link } from 'react-router';
 
-import { handleError } from '../utils/react-helpers';
+import { setupActionErrorHandler, callAction } from "app/utils/async-helpers";
 
 import { ServiceLocator } from 'app/services/service-locator'
 import { MainMenuComponent } from 'app/ui/main-menu.component'
@@ -13,7 +13,6 @@ import './documentation.component.scss'
 
 interface IComponentState {
     isLoading: boolean
-    errorMessage: string
     content: string
 }
 
@@ -21,14 +20,14 @@ interface IComponentProps {
 }
 
 export class DocumentationComponent extends React.Component<IComponentProps, IComponentState> {
-    contentLoader = ServiceLocator.resolve(x => x.contentLoader);
+    private notificationService = ServiceLocator.resolve(x => x.notificationService);
+    private contentLoader = ServiceLocator.resolve(x => x.contentLoader);
 
     constructor(props: IComponentProps) {
         super(props);
 
         this.state = {
             isLoading: true,
-            errorMessage: '',
             content: ''
         };
     }
@@ -38,7 +37,12 @@ export class DocumentationComponent extends React.Component<IComponentProps, ICo
     }
 
     private async loadData() {
-        const content = await handleError(this, () => this.contentLoader.getFileContent('reference.html'));
+        const errorHandler = setupActionErrorHandler((error) => {
+            this.notificationService.push({ type: 'danger', message: error });
+            this.setState({ isLoading: false });
+        })
+
+        const content = await callAction(errorHandler, () => this.contentLoader.getFileContent('reference.html'));
         if (content) {
             this.setState({ content: content });
         }
@@ -51,7 +55,6 @@ export class DocumentationComponent extends React.Component<IComponentProps, ICo
                 <MainMenuComponent />
                 <div className="ex-scroll-outer container-fluid">
                     <PageLoadingIndicatorComponent isLoading={this.state.isLoading}>
-                        <AlertMessageComponent message={this.state.errorMessage} />
                         <div className="doc-section" dangerouslySetInnerHTML={{ __html: this.state.content }}></div>
                         <br />
                     </PageLoadingIndicatorComponent>

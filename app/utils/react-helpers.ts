@@ -62,22 +62,6 @@ export function goBack() {
     hashHistory.goBack();
 }
 
-export async function handleError<P, S extends { errorMessage: string }, R>(
-    component: React.Component<P, S>,
-    action: () => Promise<R>
-): Promise<R | undefined> {
-    try {
-        component.setState({ errorMessage: '' });
-        const result = await action();
-        return result;
-    }
-    catch (ex) {
-        console.error(ex);
-        component.setState({ errorMessage: ex.toString() });
-        return undefined;
-    }
-}
-
 /**
  * Adds componentWillReceiveProps handler to component. If props params will be different it will execute loadData function.
  * This happens if URL in browser is changed and the same component receives new route, for instance history navigation event.

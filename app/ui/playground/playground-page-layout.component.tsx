@@ -8,16 +8,12 @@ import { Observable } from 'rxjs';
 (window as any)['ReactDOM'] = ReactDOM;
 import * as goldenLayout from 'golden-layout';
 
-import { ensure } from 'app/utils/syntax-helpers';
-import { handleError, subscribeLoadDataOnPropsParamsChange } from 'app/utils/react-helpers';
-
 import { LocalStorageService } from "app/services/infrastructure/local-storage.service";
 
 import { CodePanelComponent, ICodePanelComponentProps } from './code-panel.component'
 import { OutputPanelComponent, IOutputPanelComponentProps } from './output-panel.component'
 
 import './playground-page-layout.component.scss';
-
 
 interface IComponentState {
 }

@@ -5,23 +5,23 @@ import { Button, ButtonGroup, Nav, Navbar, NavDropdown, MenuItem, NavItem, Dropd
 import { LinkContainer } from 'react-router-bootstrap';
 import { Subscription, Subject } from 'rxjs'
 
-import { stay } from 'app/utils/async-helpers';
+import { stay, setupActionErrorHandler, callAction } from 'app/utils/async-helpers';
 import { ensure } from 'app/utils/syntax-helpers';
-import { handleError, subscribeLoadDataOnPropsParamsChange, translateInputChangeToState } from 'app/utils/react-helpers';
+import { subscribeLoadDataOnPropsParamsChange, translateInputChangeToState } from 'app/utils/react-helpers';
 
 import { MainMenuComponent } from 'app/ui/main-menu.component'
 import { PlaygroundPageLayoutComponent } from './playground-page-layout.component';
 import { AlertMessageComponent } from 'app/ui/_generic/alert-message.component';
 
 import { ServiceLocator } from 'app/services/service-locator'
-import { ProgramsSamplesRepository } from "app/services/gallery/gallery-samples.repository";
 import { UserCustomizationsProvider, IUserCustomizationsData } from "app/services/customizations/user-customizations-provider";
+import { Program } from "app/services/gallery/personal-gallery-localstorage.repository";
+import { ProgramsSamplesRepository } from "app/services/gallery/gallery-samples.repository";
 
 import './playground-page.component.scss';
 
 interface IComponentState {
     isLoading: boolean
-    errorMessage: string
 
     programTitle: string
     code: string
@@ -31,7 +31,7 @@ interface IComponentState {
     isSaveModalActive: boolean
     isSavingInProgress: boolean
     programNameInSaveModal: string
-    errorInSaveModal: string
+    errorInSaveModal?: string
 
     userCustomizations?: IUserCustomizationsData
 }
@@ -45,6 +45,7 @@ interface IComponentProps {
 }
 
 export class PlaygroundPageComponent extends React.Component<IComponentProps, IComponentState> {
+    private notificationService = ServiceLocator.resolve(x => x.notificationService);
     private appConfig = ServiceLocator.resolve(x => x.appConfig);
     private programsRepo = ServiceLocator.resolve(x => x.programsReporitory);
     private programSamples = new ProgramsSamplesRepository();
@@ -56,6 +57,10 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
     private focusCommands = new Subject<void>();
     private makeScreenshotCommands = new Subject<{ small: boolean, result: (data: string) => void }>();
 
+    private errorHandler = setupActionErrorHandler((error) => {
+        this.notificationService.push({ type: 'danger', message: error });
+    })
+
     constructor(props: IComponentProps) {
         super(props);
         this.state = this.buildDefaultState(this.props);
@@ -65,7 +70,6 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
     buildDefaultState(props: IComponentProps): IComponentState {
         const state: IComponentState = {
             isLoading: true,
-            errorMessage: '',
 
             programTitle: '',
             code: '',
@@ -76,7 +80,6 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
             isSaveModalActive: false,
             isSavingInProgress: false,
             programNameInSaveModal: '',
-            errorInSaveModal: ''
         };
         return state;
     }
@@ -101,32 +104,39 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
     }
 
     async loadData(props: IComponentProps) {
-        const userCustomizations = await this.userCustomizationsProvider.getCustomizationsData();
+        this.setState({ isLoading: true });
 
-        let code = '';
-        let title = 'Program'
+        const userCustomizations = await callAction(this.errorHandler, () => this.userCustomizationsProvider.getCustomizationsData());
+        if (!userCustomizations) { return }
+
+        let program: Program | undefined;
         if (props.params.programId) {
-            const program = await handleError(this, () => this.programsRepo.get(ensure(props.params.programId)));
-            if (program) {
-                code = program.code;
-                title = program.name;
-            }
+            program = await callAction(this.errorHandler, () => this.programsRepo.get(ensure(props.params.programId)));
         } else if (props.params.sampleId) {
-            const program = await handleError(this, () => this.programSamples.get(ensure(props.params.sampleId)));
-            if (program) {
-                code = program.code;
-                title = program.name;
-            }
+            program = await callAction(this.errorHandler, () => this.programSamples.get(ensure(props.params.sampleId)));
         } else if (props.params.gistId) {
-        } else {
-            code = await this.userDataService.getPlaygroundCode()
-            title = 'Playground';
+            //TODO: load program from Gist
         }
 
-        this.codeChanged(code);
+        if (!program) {
+            const code = await callAction(this.errorHandler, () => this.userDataService.getPlaygroundCode()) || '';
+            program = {
+                code: code,
+                name: 'Playground',
+                dateCreated: new Date(),
+                dateLastEdited: new Date(),
+                id: '',
+                lang: 'logo',
+                screenshot: ''
+            };
+
+            //TODO: put program info to state, it will be useful when saving it back
+        }
+
+        this.codeChanged(program.code);
         this.setState({
             isLoading: false,
-            programTitle: title,
+            programTitle: program.name,
             userCustomizations: userCustomizations
         });
     }
@@ -264,7 +274,7 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
                 {this.renderSaveModal()}
 
                 {
-                    !this.state.isLoading &&
+                    !this.state.isLoading && this.state.userCustomizations &&
                     <PlaygroundPageLayoutComponent
                         programName={this.state.programTitle}
                         codePanelProps={{
@@ -275,7 +285,7 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
                                 onHotkey: (k) => {
                                     this.runCommands.next(this.state.code);
                                 },
-                                editorTheme: this.state.userCustomizations!.codeEditorTheme
+                                editorTheme: this.state.userCustomizations.codeEditorTheme
                             }
                         }}
                         outputPanelProps={{
@@ -286,9 +296,9 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
                                 makeScreenshotCommands: this.makeScreenshotCommands,
                                 onIsRunningChanged: this.onIsRunningChanged,
                                 onError: () => { },
-                                isDarkTheme: this.state.userCustomizations!.isDark,
-                                customTurtleImage: this.state.userCustomizations!.customTurtle,
-                                customTurtleSize: this.state.userCustomizations!.customTurtleSize
+                                isDarkTheme: this.state.userCustomizations.isDark,
+                                customTurtleImage: this.state.userCustomizations.customTurtle,
+                                customTurtleSize: this.state.userCustomizations.customTurtleSize
                             }
                         }}
                     >
