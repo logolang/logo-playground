@@ -7,11 +7,15 @@ import { LocalStorageService } from "app/services/infrastructure/local-storage.s
 
 export interface IUserDataService {
     getPlaygroundCode(): Promise<string>
-    setPlaygroundCode(code: string): Promise<void>
+    setPlaygroundCode(value: string): Promise<void>
+
+    getPlaygroundLayoutJSON(): Promise<string>
+    setPlaygroundLayoutJSON(value: string): Promise<void>
 }
 
 interface ILocalStorageData {
     playgroundCode?: string
+    playgroundLayoutJSON?: string
 }
 
 const defaultPlaygroundProgram = `
@@ -41,6 +45,15 @@ export class UserDataBrowserLocalStorageService implements IUserDataService {
 
     async setPlaygroundCode(code: string): Promise<void> {
         this.currentData.playgroundCode = code;
+        return this.saveDataToStorage();
+    }
+
+    async getPlaygroundLayoutJSON(): Promise<string> {
+        return this.currentData.playgroundLayoutJSON || defaultPlaygroundProgram;
+    }
+
+    async setPlaygroundLayoutJSON(value: string): Promise<void> {
+        this.currentData.playgroundLayoutJSON = value;
         return this.saveDataToStorage();
     }
 }

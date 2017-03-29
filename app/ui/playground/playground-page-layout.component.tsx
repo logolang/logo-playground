@@ -8,10 +8,10 @@ import { Observable } from 'rxjs';
 (window as any)['ReactDOM'] = ReactDOM;
 import * as goldenLayout from 'golden-layout';
 
-import { LocalStorageService } from "app/services/infrastructure/local-storage.service";
-
 import { CodePanelComponent, ICodePanelComponentProps } from './code-panel.component'
 import { OutputPanelComponent, IOutputPanelComponentProps } from './output-panel.component'
+
+import { ServiceLocator } from "app/services/service-locator";
 
 import './playground-page-layout.component.scss';
 
@@ -25,10 +25,10 @@ interface IComponentProps {
 }
 
 export class PlaygroundPageLayoutComponent extends React.Component<IComponentProps, IComponentState> {
-    layoutLocalStorage = new LocalStorageService<any>('logo-sandbox:golden-layout', undefined);
+    private userDataService = ServiceLocator.resolve(x => x.userDataService);
 
     private layout: goldenLayout;
-    private config: goldenLayout.Config = {
+    private readonly defaultConfig: goldenLayout.Config = {
         content: [{
             type: 'row',
             content: [
@@ -48,6 +48,7 @@ export class PlaygroundPageLayoutComponent extends React.Component<IComponentPro
             ]
         }]
     };
+    private config: goldenLayout.Config = this.defaultConfig;
 
     constructor(props: IComponentProps) {
         super(props);
@@ -64,31 +65,22 @@ export class PlaygroundPageLayoutComponent extends React.Component<IComponentPro
         }
     }
 
-    initLayout(props: IComponentProps) {
+    async initLayout(props: IComponentProps) {
         try {
-            const storedState = this.layoutLocalStorage.getValue();
-            console.log('state restored!', storedState);
+            const storedState = await this.userDataService.getPlaygroundLayoutJSON();
             if (storedState) {
-                this.config = storedState;
+                this.config = JSON.parse(storedState);
             }
         }
         catch (ex) { console.error('Error while getting stored layout state', ex) }
 
         // Set props for components in Golden-Layout
-        const codePanelConfig = this.findGoldenLayoutItem('code-panel', this.config.content);
-        if (codePanelConfig) {
-            codePanelConfig.title = props.programName;
-            (codePanelConfig as any).props = this.props.codePanelProps;
-        } else {
-            throw new Error('Cannot find code panel component in config');
-        }
+        const codePanelConfig = this.getGoldenLayoutConfigItem('code-panel', this.config);
+        codePanelConfig.title = props.programName;
+        (codePanelConfig as any).props = this.props.codePanelProps;
 
-        const outputPanelConfig = this.findGoldenLayoutItem('output-panel', this.config.content);
-        if (outputPanelConfig) {
-            (outputPanelConfig as any).props = this.props.outputPanelProps;
-        } else {
-            throw new Error('Cannot find output panel component in config');
-        }
+        const outputPanelConfig = this.getGoldenLayoutConfigItem('output-panel', this.config);
+        (outputPanelConfig as any).props = this.props.outputPanelProps;
 
         this.config.settings = {
             showMaximiseIcon: false,
@@ -111,22 +103,14 @@ export class PlaygroundPageLayoutComponent extends React.Component<IComponentPro
     }
 
     saveState = () => {
-        const state = this.layout.toConfig();
-        const codePanelConfig = this.findGoldenLayoutItem('code-panel', state.content);
-        if (codePanelConfig) {
-            (codePanelConfig as any).props = {};
-        } else {
-            throw new Error('Cannot find code panel component in config');
-        }
+        const config = this.layout.toConfig();
+        const codePanelConfig = this.getGoldenLayoutConfigItem('code-panel', config);
+        (codePanelConfig as any).props = {};
 
-        const outputPanelConfig = this.findGoldenLayoutItem('output-panel', state.content);
-        if (outputPanelConfig) {
-            (outputPanelConfig as any).props = {};
-        } else {
-            throw new Error('Cannot find output panel component in config');
-        }
-        this.layoutLocalStorage.setValue(state);
-        //console.log('state saved!', state);
+        const outputPanelConfig = this.getGoldenLayoutConfigItem('output-panel', config);
+        (outputPanelConfig as any).props = {};
+
+        this.userDataService.setPlaygroundLayoutJSON(JSON.stringify(config));
     }
 
     componentWillUnmount() {
@@ -145,6 +129,15 @@ export class PlaygroundPageLayoutComponent extends React.Component<IComponentPro
             <div className="full-page" ref='container'>
             </div>
         );
+    }
+
+    private getGoldenLayoutConfigItem(type: string, config: goldenLayout.Config): goldenLayout.ItemConfigType {
+        let item = this.findGoldenLayoutItem(type, config.content);
+        if (item) {
+            return item;
+        } else {
+            throw new Error(`Cannot find element ${type} in golden layout config`);
+        }
     }
 
     private findGoldenLayoutItem(type: string, content: goldenLayout.ItemConfigType[]): goldenLayout.ItemConfigType | undefined {
