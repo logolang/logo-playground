@@ -120,6 +120,12 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
                 tutorialIdToLoad = '01';
             }
         }
+        if (!this.state.currentTutorial) {
+            // Run code automatically if page is just opened
+            setTimeout(() => {
+                this.runCode.next(initialCode);
+            }, 100);
+        }
 
         if (!this.state.currentTutorial || this.state.currentTutorial.id !== tutorialIdToLoad) {
             this.setState({ isLoading: true });
