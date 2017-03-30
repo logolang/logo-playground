@@ -23,7 +23,7 @@ export class ProgramsSamplesRepository implements IProgramsRepository {
         return p;
     }
 
-    async add(program: Program): Promise<void> {
+    async add(program: Program): Promise<Program> {
         throw new Error();
     }
 

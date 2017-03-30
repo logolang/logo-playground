@@ -24,7 +24,7 @@ interface ICurrentTutorialInfo {
 
 interface ILocalStorageData {
     playgroundCode?: string
-    playgroundLayoutJSON?: string
+    playgroundLayoutSerialized?: string
     currentTutorialInfo?: ICurrentTutorialInfo
 }
 
@@ -59,11 +59,11 @@ export class UserDataBrowserLocalStorageService implements IUserDataService {
     }
 
     async getPlaygroundLayoutJSON(): Promise<string> {
-        return this.currentData.playgroundLayoutJSON || defaultPlaygroundProgram;
+        return this.currentData.playgroundLayoutSerialized || defaultPlaygroundProgram;
     }
 
     async setPlaygroundLayoutJSON(value: string): Promise<void> {
-        this.currentData.playgroundLayoutJSON = value;
+        this.currentData.playgroundLayoutSerialized = value;
         return this.saveDataToStorage();
     }
 

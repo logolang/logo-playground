@@ -19,7 +19,7 @@ export interface Program {
 export interface IProgramsRepository {
     getAll(): Promise<Program[]>
     get(id: string): Promise<Program>
-    add(program: Program): Promise<void>
+    add(program: Program): Promise<Program>
     update(program: Program): Promise<void>
     remove(id: string): Promise<void>
 }
@@ -53,11 +53,12 @@ export class ProgramsLocalStorageRepository implements IProgramsRepository {
         throw new Error(`Program with id ${id} is not found`);
     }
 
-    async add(program: Program): Promise<void> {
+    async add(program: Program): Promise<Program> {
         program.id = RandomHelper.getRandomObjectId(32);
         program.dateCreated = new Date();
         program.dateLastEdited = new Date();
         this.storage.setItem(this.getStorageKey(program.id), JSON.stringify(program));
+        return program;
     }
 
     async update(program: Program): Promise<void> {

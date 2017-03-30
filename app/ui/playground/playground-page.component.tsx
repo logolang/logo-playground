@@ -7,13 +7,14 @@ import { Subscription, Subject } from 'rxjs'
 
 import { stay, setupActionErrorHandler, callAction } from 'app/utils/async-helpers';
 import { ensure } from 'app/utils/syntax-helpers';
-import { subscribeLoadDataOnPropsParamsChange, translateInputChangeToState } from 'app/utils/react-helpers';
+import { subscribeLoadDataOnPropsParamsChange, translateInputChangeToState, goTo } from 'app/utils/react-helpers';
 
 import { MainMenuComponent } from 'app/ui/main-menu.component'
 import { PlaygroundPageLayoutComponent } from './playground-page-layout.component';
 import { AlertMessageComponent } from 'app/ui/_generic/alert-message.component';
 
 import { ServiceLocator } from 'app/services/service-locator'
+import { Routes } from "app/routes";
 import { UserCustomizationsProvider, IUserCustomizationsData } from "app/services/customizations/user-customizations-provider";
 import { Program } from "app/services/gallery/personal-gallery-localstorage.repository";
 import { ProgramsSamplesRepository } from "app/services/gallery/gallery-samples.repository";
@@ -23,8 +24,7 @@ import './playground-page.component.scss';
 interface IComponentState {
     isLoading: boolean
 
-    programTitle: string
-    code: string
+    program?: Program
     isRunning: boolean
     hasProgramBeenExecutedOnce: boolean
 
@@ -71,9 +71,6 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
         const state: IComponentState = {
             isLoading: true,
 
-            programTitle: '',
-            code: '',
-
             isRunning: false,
             hasProgramBeenExecutedOnce: false,
 
@@ -86,8 +83,10 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
 
     componentDidMount() {
         keymaster('f8, f9', () => {
-            this.runCommands.next(this.state.code);
-            this.focusCommands.next();
+            if (this.state.program) {
+                this.runCommands.next(this.state.program.code);
+                this.focusCommands.next();
+            }
             return false;
         });
 
@@ -99,7 +98,10 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
     }
 
     codeChanged = (code: string): void => {
-        this.setState({ code: code });
+        this.setState(s => {
+            if (s.program) { s.program.code = code; }
+            return s;
+        });
         this.userDataService.setPlaygroundCode(code);
     }
 
@@ -129,16 +131,14 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
                 lang: 'logo',
                 screenshot: ''
             };
-
-            //TODO: put program info to state, it will be useful when saving it back
         }
-
-        this.codeChanged(program.code);
         this.setState({
             isLoading: false,
-            programTitle: program.name,
+            program: program,
             userCustomizations: userCustomizations
         });
+
+        document.title = appInfo.description + ": " + program.name;
     }
 
     onIsRunningChanged = (isRunning: boolean) => {
@@ -148,12 +148,14 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
         }
     }
 
-    runClick = () => {
-        this.runCommands.next(this.state.code);
-        this.focusCommands.next();
+    runCurrentProgram = () => {
+        if (this.state.program) {
+            this.runCommands.next(this.state.program.code);
+            this.focusCommands.next();
+        }
     }
 
-    stopClick = () => {
+    stopCurrentProgram = () => {
         this.stopCommands.next();
         this.focusCommands.next();
     }
@@ -166,16 +168,18 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
     }
 
     saveCurrentProgram = async () => {
+        if (!this.state.program) { return }
         const prog = await this.programsRepo.get(ensure(this.props.params.programId));
         if (this.state.hasProgramBeenExecutedOnce) {
             prog.screenshot = await this.getScreenshot(true);
         }
-        prog.code = this.state.code;
+        prog.code = this.state.program.code;
         await this.programsRepo.update(prog);
         this.focusCommands.next();
     }
 
     saveProgramAction = async () => {
+        if (!this.state.program) { return }
         if (this.state.isSavingInProgress) {
             return;
         }
@@ -196,19 +200,25 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
             ? await this.getScreenshot(true)
             : '';
 
-        await this.programsRepo.add({
+        const addedProgram = await this.programsRepo.add({
             name: this.state.programNameInSaveModal,
             id: '',
             dateCreated: new Date(0),
             dateLastEdited: new Date(0),
             lang: 'logo',
-            code: this.state.code,
+            code: this.state.program.code,
             screenshot: screenshot
         });
 
-        this.setState({ isSavingInProgress: false, programNameInSaveModal: '' });
-        this.setState({ isSaveModalActive: false });
+        this.setState({
+            program: addedProgram,
+            isSaveModalActive: false,
+            isSavingInProgress: false,
+            programNameInSaveModal: '',
+        });
         this.focusCommands.next();
+
+        goTo(Routes.playgroundLoadFromLibrary.build({ programId: addedProgram.id }));
     }
 
     exportAsImageClick = async () => {
@@ -229,16 +239,16 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
     }
 
     render(): JSX.Element {
-        document.title = appInfo.description + ": " + this.state.programTitle;
         return (
             <div>
                 <MainMenuComponent pullRightChildren={
+                    this.state.program &&
                     <Nav className="main-playground-menu">
-                        <NavItem disabled={this.state.isRunning} onClick={this.runClick}>
+                        <NavItem disabled={this.state.isRunning} onClick={this.runCurrentProgram}>
                             <span className="glyphicon glyphicon-play" aria-hidden="true"></span>
                             <span> Run</span>
                         </NavItem>
-                        <NavItem disabled={!this.state.isRunning} onClick={this.stopClick}>
+                        <NavItem disabled={!this.state.isRunning} onClick={this.stopCurrentProgram}>
                             <span className="glyphicon glyphicon-stop" aria-hidden="true"></span>
                             <span> Stop</span>
                         </NavItem>
@@ -251,7 +261,7 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
                                 this.props.params.programId &&
                                 <MenuItem onClick={this.saveCurrentProgram}>
                                     <span className="glyphicon glyphicon-save" aria-hidden="true"></span>
-                                    <span>&nbsp;&nbsp;Save program '{this.state.programTitle}'</span>
+                                    <span>&nbsp;&nbsp;Save program '{this.state.program.name}'</span>
                                 </MenuItem>
                             }
                             <MenuItem onClick={this.showSaveDialog}>
@@ -274,16 +284,16 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
                 {this.renderSaveModal()}
 
                 {
-                    !this.state.isLoading && this.state.userCustomizations &&
+                    this.state.program && this.state.userCustomizations &&
                     <PlaygroundPageLayoutComponent
-                        programName={this.state.programTitle}
+                        program={this.state.program}
                         codePanelProps={{
                             codeInputProps: {
-                                code: this.state.code,
+                                code: this.state.program.code,
                                 onChanged: this.codeChanged,
                                 focusCommands: this.focusCommands,
                                 onHotkey: (k) => {
-                                    this.runCommands.next(this.state.code);
+                                    this.runCurrentProgram()
                                 },
                                 editorTheme: this.state.userCustomizations.codeEditorTheme
                             }
