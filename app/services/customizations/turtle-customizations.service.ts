@@ -11,6 +11,10 @@ const allTurtles: TurtleInfo[] = [
         imageData: require('app/ui/images/turtles/tt12.svg') as string
     },
     {
+        name: 'Chameleon',
+        imageData: require('app/ui/images/turtles/tt2.svg') as string
+    },
+    {
         name: 'Princess',
         imageData: require('app/ui/images/turtles/tt9.svg') as string
     },
