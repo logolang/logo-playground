@@ -116,9 +116,6 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
                 }));
                 return;
             }
-            else {
-                tutorialIdToLoad = '01';
-            }
         }
         if (!this.state.currentTutorial) {
             // Run code automatically if page is just opened
@@ -131,12 +128,15 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
             this.setState({ isLoading: true });
             const tutorialInfos = await callAction(errorHandler, () => this.tutorialsLoader.getTutorialsList());
             if (!tutorialInfos) { return }
-            const currentTutorial = tutorialInfos.find(t => t.id === tutorialIdToLoad);
+            let currentTutorial = tutorialIdToLoad
+                ? tutorialInfos.find(t => t.id === tutorialIdToLoad)
+                : tutorialInfos[0];
             if (!currentTutorial) {
                 await callAction(errorHandler, () => { throw new Error(`Can't find tutorial with id ${tutorialIdToLoad}`) });
-                return;
+                currentTutorial = tutorialInfos[0];
+                stepIndex = 0;
             }
-            const steps = await callAction(errorHandler, () => this.tutorialsLoader.getSteps(currentTutorial.id));
+            const steps = await callAction(errorHandler, () => this.tutorialsLoader.getSteps(currentTutorial!.id));
             if (!steps) { return }
             this.setState({
                 tutorials: tutorialInfos,
@@ -194,7 +194,7 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
                         onCancel={() => { this.setState({ showSelectionTutorials: false }) }}
                         onSelect={(tutorialId) => {
                             this.setState({ showSelectionTutorials: false });
-                            goTo(Routes.tutorialSpecified.build({ tutorialId: tutorialId, stepIndex: '01' }));
+                            goTo(Routes.tutorialSpecified.build({ tutorialId: tutorialId, stepIndex: this.formatStepIndexToParam(0) }));
                         }}
                     />
                 }
@@ -212,7 +212,7 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
                                         <div className="current-step-panel-heading">
                                             <div className="tutorials-selector-container">
                                                 <button className="btn btn-info" onClick={() => { this.setState({ showSelectionTutorials: true }) }}>
-                                                    <span>Tutorial: {this.state.currentTutorial.name}&nbsp;&nbsp;</span>
+                                                    <span>Tutorial: {this.state.currentTutorial.label}&nbsp;&nbsp;</span>
                                                     <span className="caret"></span>
                                                 </button>
                                             </div>

@@ -42,7 +42,7 @@ export class TutorialSelectModalComponent extends React.Component<IComponentProp
                             className="list-group-item"
                             onClick={this.onSelect(t.id)}
                         >
-                            <h4>{i + 1}. {t.name}</h4>
+                            <h4>{i + 1}. {t.label}</h4>
                             <p>{t.description}</p>
                         </button>)
                     }

@@ -3,7 +3,7 @@ import { ILocalizedContentLoader } from "app/services/infrastructure/localized-c
 
 export interface ITutorialInfo {
     id: string
-    name: string
+    label: string
     steps: number
     description: string
 }
@@ -41,10 +41,6 @@ export class TutorialsContentService {
                 let result = await this.contentLoader.getFileContent('tutorials/index.json');
                 let data = JSON.parse(result);
                 this.tutorialInfos = data.tutorials;
-                this.tutorialInfos.forEach((t, index) => {
-                    t.id = this.getIdFromIndex(index);
-                });
-
             }
             catch (ex) {
                 throw ex;
@@ -58,7 +54,7 @@ export class TutorialsContentService {
         if (!tutorial) { return [] };
         let stepContentPromises: Promise<string>[] = [];
         for (let stepIndex = 0; stepIndex < tutorial.steps; ++stepIndex) {
-            stepContentPromises.push(this.contentLoader.getFileContent(`tutorials/t${tutorialId}s${this.getIdFromIndex(stepIndex)}.md`));
+            stepContentPromises.push(this.contentLoader.getFileContent(`tutorials/${tutorialId}/step-${this.getIdFromIndex(stepIndex)}.md`));
         }
         const md = new markdown();
         const allStepsContent = await Promise.all(stepContentPromises);

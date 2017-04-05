@@ -1,12 +1,14 @@
 {
     "tutorials": [
         {
-            "name": "Turtle Basics",
+            "id": "01-basics",
+            "label": "Turtle Basics",
             "description": "Introduction and LOGO language basics",
             "steps": 7
         },
         {
-            "name": "Controlling the Turtle and Pen",
+            "id": "02-controlling",
+            "label": "Controlling the Turtle and Pen",
             "description": "Basic turtle commands, working with graphics",
             "steps": 8
         }
