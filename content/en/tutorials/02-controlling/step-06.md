@@ -1,9 +1,17 @@
-# Hiding the turtle
+# The turtle reappears
 
-Sometimes you can ask the turtle to hide. This way you could see how the drawing you've made looks without the turtle. The command for the turtle to hide is hideturtle
+Even though you can always work without seeing the turtle, most of the time it's easier to draw when you do see him. When we want the turtle to show up again we use the command `showturtle`.
 
-Ask the turtle to hide
+Make the turtle reappear.
 
 ```result
+fd 30
+penup
+fd 30
+pendown
+fd 30
 hideturtle
+lt 90 
+fd 40
+showturtle
 ```

@@ -56,7 +56,9 @@ export class TutorialsContentService {
         for (let stepIndex = 0; stepIndex < tutorial.steps; ++stepIndex) {
             stepContentPromises.push(this.contentLoader.getFileContent(`tutorials/${tutorialId}/step-${this.getIdFromIndex(stepIndex)}.md`));
         }
-        const md = new markdown();
+        const md = new markdown({
+            html: true,        // Enable HTML tags in source;
+        });
         const allStepsContent = await Promise.all(stepContentPromises);
         const steps = allStepsContent.map((stepContent, index) => {
             const resultCodeRegex = /```result[\s\S]*```/g;

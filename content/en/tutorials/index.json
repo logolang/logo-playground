@@ -10,7 +10,13 @@
             "id": "02-controlling",
             "label": "Controlling the Turtle and Pen",
             "description": "Basic turtle commands, working with graphics",
-            "steps": 8
+            "steps": 10
+        },
+        {
+            "id": "03-labels",
+            "label": "Cool Labels",
+            "description": "Printing nice labels using turtle graphics",
+            "steps": 7
         }
     ]
 }

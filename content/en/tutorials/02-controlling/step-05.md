@@ -1,9 +1,16 @@
-# Moving again with the pen down
+# Drawing with the hidden turtle
 
-Now the pen has returned to its previous position, down on the board. We can check that it is ready for action.
+A hidden turtle can draw just as usual. The turtle is shown on the screen only, so that drawing will be comfortable for you.
 
-Ask the turtle to go 40 points forward
+Ask the turtle to turn left in a 90 degree angle and then go forward 40 points
 
 ```result
+fd 30
+penup
+fd 30
+pendown
+fd 30
+hideturtle
+lt 90 
 fd 40
 ```

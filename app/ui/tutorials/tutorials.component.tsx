@@ -364,10 +364,13 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
             <Modal.Footer>
                 <button type="button" className="btn btn-default"
                     onClick={() => {
+                        const correctCode = this.state.currentStep!.resultCode;
                         this.setState({
                             showFixTheCode: false,
-                            currentCode: this.state.currentStep!.resultCode
+                            currentCode: correctCode
                         });
+                        this.stopCode.next();
+                        this.runCode.next(correctCode);
                     }}>
                     <strong>Yes</strong>
                     <span>, fix my code</span>
