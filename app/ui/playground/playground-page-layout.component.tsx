@@ -12,7 +12,7 @@ import { CodePanelComponent, ICodePanelComponentProps } from './code-panel.compo
 import { OutputPanelComponent, IOutputPanelComponentProps } from './output-panel.component'
 
 import { ServiceLocator } from "app/services/service-locator";
-import { Program } from "app/services/gallery/personal-gallery-localstorage.repository";
+import { ProgramModel } from "app/services/gallery/program.model";
 
 import './playground-page-layout.component.scss';
 
@@ -20,7 +20,7 @@ interface IComponentState {
 }
 
 interface IComponentProps {
-    program: Program
+    program: ProgramModel
     codePanelProps: ICodePanelComponentProps
     outputPanelProps: IOutputPanelComponentProps
 }

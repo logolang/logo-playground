@@ -1,26 +1,16 @@
-import { RandomHelper } from 'app/utils/random-helper';
-import { ICurrentUserProvider } from "app/services/login/current-user.provider";
 import { stay } from "app/utils/async-helpers";
 
-export type lang = "logo";
+import { RandomHelper } from 'app/utils/random-helper';
+import { ICurrentUserProvider } from "app/services/login/current-user.provider";
+import { ProgramModel } from "app/services/gallery/program.model";
 
 export type ProgramStorageType = "library" | "samples" | "gist";
 
-export interface Program {
-    id: string
-    name: string
-    lang: lang
-    code: string
-    screenshot: string
-    dateCreated: Date
-    dateLastEdited: Date
-}
-
 export interface IProgramsRepository {
-    getAll(): Promise<Program[]>
-    get(id: string): Promise<Program>
-    add(program: Program): Promise<Program>
-    update(program: Program): Promise<void>
+    getAll(): Promise<ProgramModel[]>
+    get(id: string): Promise<ProgramModel>
+    add(program: ProgramModel): Promise<ProgramModel>
+    update(program: ProgramModel): Promise<void>
     remove(id: string): Promise<void>
 }
 
@@ -29,9 +19,9 @@ export class ProgramsLocalStorageRepository implements IProgramsRepository {
     constructor(private currentUser: ICurrentUserProvider) {
     }
 
-    async getAll(): Promise<Program[]> {
+    async getAll(): Promise<ProgramModel[]> {
         //await stay(2000);
-        let programs: Program[] = [];
+        let programs: ProgramModel[] = [];
         for (let keyIndex = 0; keyIndex < this.storage.length; ++keyIndex) {
             const key = this.storage.key(keyIndex);
             if (key !== null && key.startsWith(this.getStorageKeyPrefix())) {
@@ -45,7 +35,7 @@ export class ProgramsLocalStorageRepository implements IProgramsRepository {
         return programs;
     }
 
-    async get(id: string): Promise<Program> {
+    async get(id: string): Promise<ProgramModel> {
         let program = this.getProgramFromStorage(this.getStorageKey(id));
         if (program) {
             return program;
@@ -53,17 +43,21 @@ export class ProgramsLocalStorageRepository implements IProgramsRepository {
         throw new Error(`Program with id ${id} is not found`);
     }
 
-    async add(program: Program): Promise<Program> {
-        program.id = RandomHelper.getRandomObjectId(32);
-        program.dateCreated = new Date();
-        program.dateLastEdited = new Date();
-        this.storage.setItem(this.getStorageKey(program.id), JSON.stringify(program));
+    async add(program: ProgramModel): Promise<ProgramModel> {
+        if (!program.id) {
+            program.id = RandomHelper.getRandomObjectId(32);
+        }
+        if (program.dateCreated.getTime() === 0) {
+            program.dateCreated = new Date();
+            program.dateLastEdited = new Date();
+        }
+        this.storage.setItem(this.getStorageKey(program.id), program.toJson());
         return program;
     }
 
-    async update(program: Program): Promise<void> {
+    async update(program: ProgramModel): Promise<void> {
         program.dateLastEdited = new Date();
-        this.storage.setItem(this.getStorageKey(program.id), JSON.stringify(program));
+        this.storage.setItem(this.getStorageKey(program.id), program.toJson());
     }
 
     async remove(id: string): Promise<void> {
@@ -83,13 +77,11 @@ export class ProgramsLocalStorageRepository implements IProgramsRepository {
         return `${this.getStorageKeyPrefix()}${id}`;
     }
 
-    private getProgramFromStorage(storageKey: string): Program | undefined {
+    private getProgramFromStorage(storageKey: string): ProgramModel | undefined {
         const data = this.storage.getItem(storageKey);
-        if (data !== null) {
+        if (data) {
             try {
-                let program = JSON.parse(data) as Program;
-                program.dateCreated = new Date(program.dateCreated);
-                program.dateLastEdited = new Date(program.dateLastEdited);
+                let program = ProgramModel.fromJson(JSON.parse(data));
                 return program;
             }
             catch (ex) {

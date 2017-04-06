@@ -13,19 +13,19 @@ import { NoDataComponent } from "app/ui/_generic/no-data.component";
 
 import { ServiceLocator } from 'app/services/service-locator'
 import { Routes } from '../routes';
-import { Program, ProgramStorageType } from "app/services/gallery/personal-gallery-localstorage.repository";
+import { ProgramStorageType } from "app/services/gallery/personal-gallery-localstorage.repository";
+import { ProgramModel } from "app/services/gallery/program.model";
 import { ProgramsSamplesRepository } from "app/services/gallery/gallery-samples.repository";
 
 import './gallery.component.scss'
 
 interface IComponentState {
     userName: string;
-    programs: Program[];
-    samples: Program[];
+    programs: ProgramModel[];
+    samples: ProgramModel[];
     isLoading?: boolean;
     errorMessge?: string;
-
-    programToDelete: Program | undefined;
+    programToDelete: ProgramModel | undefined;
 }
 
 interface IComponentProps {
@@ -75,7 +75,7 @@ export class GalleryComponent extends React.Component<IComponentProps, IComponen
         return '';
     }
 
-    renderProgramCard(p: Program, storageType: ProgramStorageType, deleteBox: boolean): JSX.Element {
+    renderProgramCard(p: ProgramModel, storageType: ProgramStorageType, deleteBox: boolean): JSX.Element {
         let link = '';
         switch (storageType) {
             case 'library':

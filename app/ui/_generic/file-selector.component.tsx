@@ -1,19 +1,23 @@
 import * as React from 'react';
-import * as Dropzone from 'react-dropzone';
 import * as cn from 'classnames';
 
-interface IFileUploadComponentState {
+interface IComponentState {
     fileInfo?: File
     isLoading: boolean
 }
 
-interface IFileUploadComponentProps {
+interface IComponentProps {
+    buttonText: string
+    className?: string
     onFileSelected?: (fileinfo: File) => void
-    onFileContentReady?: (fileinfo: File, fileContent: ArrayBuffer) => void
+    onFileBinaryContentReady?: (fileinfo: File, fileContent: ArrayBuffer) => void
+    onFileTextContentReady?: (fileinfo: File, fileContent: string) => void
 }
 
-export class FileUploadComponent extends React.Component<IFileUploadComponentProps, IFileUploadComponentState> {
-    constructor(props: IFileUploadComponentProps) {
+export class FileSelectorComponent extends React.Component<IComponentProps, IComponentState> {
+    private fileInputEl: HTMLInputElement;
+
+    constructor(props: IComponentProps) {
         super(props);
 
         this.state = {
@@ -21,25 +25,34 @@ export class FileUploadComponent extends React.Component<IFileUploadComponentPro
         }
     }
 
-    onFileSelected = (acceptedFiles: File[], rejectedFiles: any) => {
-        console.log('Accepted files: ', acceptedFiles);
-        console.log('Rejected files: ', rejectedFiles);
-
+    onFileSelected = (acceptedFiles: File[]) => {
         if (acceptedFiles.length > 0) {
             const fileInfo = acceptedFiles[0];
             this.setState({ fileInfo: fileInfo });
             if (this.props.onFileSelected) {
                 this.props.onFileSelected(fileInfo);
             }
-            if (this.props.onFileContentReady) {
+            if (this.props.onFileBinaryContentReady) {
                 this.setState({ isLoading: true });
                 let reader = new FileReader();
-                //reader.readAsText(fileInfo, "UTF-8");
                 reader.readAsArrayBuffer(fileInfo);
                 reader.onload = async (evt) => {
                     let fileBody = (evt.target as any).result as ArrayBuffer | undefined;
-                    if (fileBody && this.props.onFileContentReady) {
-                        this.props.onFileContentReady(fileInfo, fileBody);
+                    if (fileBody && this.props.onFileBinaryContentReady) {
+                        this.props.onFileBinaryContentReady(fileInfo, fileBody);
+                        fileBody = undefined;
+                        this.setState({ isLoading: false });
+                    }
+                }
+            }
+            if (this.props.onFileTextContentReady) {
+                this.setState({ isLoading: true });
+                let reader = new FileReader();
+                reader.readAsText(fileInfo, "UTF-8");
+                reader.onload = async (evt) => {
+                    let fileBody = (evt.target as any).result as string | undefined;
+                    if (fileBody && this.props.onFileTextContentReady) {
+                        this.props.onFileTextContentReady(fileInfo, fileBody);
                         fileBody = undefined;
                         this.setState({ isLoading: false });
                     }
@@ -49,23 +62,27 @@ export class FileUploadComponent extends React.Component<IFileUploadComponentPro
     }
 
     render(): JSX.Element {
-        let dz = Dropzone as any as React.ComponentClass<any>;
-        let refInstance: any;
-        const props = {
-            disableClick: true,
-            multiple: false,
-            onDrop: this.onFileSelected,
-            className: 'ex-drap-drop-files-here',
-            activeClassName: 'is-active',
-            ref: (x: any) => { refInstance = x; }
-        };
-        return React.createElement(dz, props,
-            <div>
-                <span className="glyphicon glyphicon-arrow-down"></span>
-                <div className="drag-drop-text">Drag file from your computer here or</div>
-                <div>
-                    <a href="javascript:void(0)" className={cn("btn btn-default", { "is-loading": this.state.isLoading })} onClick={() => { refInstance.open(); }}>Browse</a>
-                </div>
-            </div>);
+        return <button type="button" className={cn("btn btn-default", this.props.className)}
+            onClick={() => { this.fileInputEl.click(); }}
+        >
+            <span>{this.props.buttonText}</span>
+            <input type="file" style={{ display: "none" }}
+                ref={el => this.fileInputEl = el}
+                onChange={this.onFileInputChange} />
+        </button>
+    }
+
+    onFileInputChange = (e: React.SyntheticEvent<HTMLInputElement>) => {
+        e.preventDefault();
+        if (e.target) {
+            let input = (e.target as HTMLInputElement);
+            if (input && input.files) {
+                let files: File[] = [];
+                for (let i = 0; i < input.files.length; ++i) {
+                    files.push(input.files.item(i))
+                }
+                this.onFileSelected(files);
+            }
+        }
     }
 }

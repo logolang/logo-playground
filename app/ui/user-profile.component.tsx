@@ -5,13 +5,14 @@ import { Link } from 'react-router'
 import { Subject, BehaviorSubject } from 'rxjs'
 
 import { goBack, translateSelectChangeToState } from 'app/utils/react-helpers';
-import { stay } from 'app/utils/async-helpers';
+import { stay, setupActionErrorHandler, callAction } from 'app/utils/async-helpers';
 import { RandomHelper } from 'app/utils/random-helper';
 
 import { DateTimeStampComponent } from 'app/ui/_generic/date-time-stamp.component';
 import { PageHeaderComponent } from 'app/ui/_generic/page-header.component';
 import { MainMenuComponent } from 'app/ui/main-menu.component'
 import { LogoExecutorComponent } from 'app/ui/_shared/logo-executor.component';
+import { FileSelectorComponent } from "app/ui/_generic/file-selector.component";
 
 import { ServiceLocator } from 'app/services/service-locator'
 import { Routes } from 'app/routes';
@@ -19,6 +20,7 @@ import { UserInfo } from "app/services/login/user-info";
 import { TurtleCustomizationsService } from "app/services/customizations/turtle-customizations.service";
 import { IUserCustomizationsData, UserCustomizationsProvider } from "app/services/customizations/user-customizations-provider";
 import { Theme, ThemeCustomizationsService } from "app/services/customizations/theme-customizations.service";
+import { ProgramsExportImportService } from "app/services/gallery/programs-export-import.service";
 
 interface IComponentState {
     userInfo: UserInfo;
@@ -50,6 +52,11 @@ export class UserProfileComponent extends React.Component<IComponentProps, IComp
     private userSettingsService = ServiceLocator.resolve(x => x.userSettingsService);
     private turtleCustomService = new TurtleCustomizationsService();
     private runCode = new BehaviorSubject<string>('');
+    private exportInportService = new ProgramsExportImportService();
+    private notificationService = ServiceLocator.resolve(x => x.notificationService);
+    private errorHandler = setupActionErrorHandler((error) => {
+        this.notificationService.push({ type: 'danger', message: error });
+    })
 
     constructor(props: IComponentProps) {
         super(props);
@@ -72,22 +79,38 @@ export class UserProfileComponent extends React.Component<IComponentProps, IComp
     }
 
     private async loadData() {
-        let programs = await this.programsReporitory.getAll();
-        const userCustomizations = await this.userCustomizationsProvider.getCustomizationsData();
-        const themeName = await this.userSettingsService.getUiThemeName();
-        const theme = this.themeService.getTheme(themeName);
-        this.setState({
-            userCustomizations: userCustomizations,
-            theme: theme,
-            programCount: programs.length
-        });
+        const [programs, userCustomizations, themeName] = await Promise.all([
+            callAction(this.errorHandler, () => this.programsReporitory.getAll()),
+            callAction(this.errorHandler, () => this.userCustomizationsProvider.getCustomizationsData()),
+            callAction(this.errorHandler, () => this.userSettingsService.getUiThemeName())
+        ]);
+        if (programs && userCustomizations && themeName) {
+            const theme = this.themeService.getTheme(themeName);
+            this.setState({
+                userCustomizations: userCustomizations,
+                theme: theme,
+                programCount: programs.length
+            });
+        }
     }
 
     private doExport = async () => {
-        let programs = await this.programsReporitory.getAll();
-        let data = JSON.stringify(programs, null, 2);
+        const data = await callAction(this.errorHandler, () => this.exportInportService.exportAll(this.programsReporitory));
         const blob = new Blob([data], { type: "text/plain;charset=utf-8" });
         FileSaver.saveAs(blob, `logo-sandbox-personal-gallery.json`);
+    }
+
+    private onImport = async (fileInfo: File, content: string) => {
+        const added = await callAction(this.errorHandler, () => this.exportInportService.importAll(this.programsReporitory, content));
+        if (added !== undefined) {
+            await this.loadData();
+            this.notificationService.push({
+                type: 'success',
+                title: 'Import completed',
+                message: `Added programs: ${added}`,
+                closeTimeout: 4000
+            });
+        }
     }
 
     render(): JSX.Element {
@@ -184,6 +207,7 @@ export class UserProfileComponent extends React.Component<IComponentProps, IComp
                                                         onClick={this.doExport}>
                                                         <span>Export</span>
                                                     </button>
+                                                    <FileSelectorComponent buttonText="Import" onFileTextContentReady={this.onImport} />
                                                 </div>
                                             </blockquote>
                                         </div>
@@ -198,7 +222,7 @@ export class UserProfileComponent extends React.Component<IComponentProps, IComp
                         {
                             this.state.userCustomizations && [
                                 <LogoExecutorComponent
-                                    key={RandomHelper.getRandomObjectId(6)} //this is a hack to force component to be created each render in order to not handle prop change event
+                                    key={`${JSON.stringify(this.state.userCustomizations)}`} //this is a hack to force component to be created each render in order to not handle prop change event
                                     height={400}
                                     onError={() => { }}
                                     onIsRunningChanged={() => { }}

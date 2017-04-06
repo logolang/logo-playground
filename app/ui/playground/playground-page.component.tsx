@@ -16,15 +16,15 @@ import { AlertMessageComponent } from 'app/ui/_generic/alert-message.component';
 import { ServiceLocator } from 'app/services/service-locator'
 import { Routes } from "app/routes";
 import { UserCustomizationsProvider, IUserCustomizationsData } from "app/services/customizations/user-customizations-provider";
-import { Program } from "app/services/gallery/personal-gallery-localstorage.repository";
 import { ProgramsSamplesRepository } from "app/services/gallery/gallery-samples.repository";
+import { ProgramModel } from "app/services/gallery/program.model";
 
 import './playground-page.component.scss';
 
 interface IComponentState {
     isLoading: boolean
 
-    program?: Program
+    program?: ProgramModel
     isRunning: boolean
     hasProgramBeenExecutedOnce: boolean
 
@@ -111,7 +111,7 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
         const userCustomizations = await callAction(this.errorHandler, () => this.userCustomizationsProvider.getCustomizationsData());
         if (!userCustomizations) { return }
 
-        let program: Program | undefined;
+        let program: ProgramModel | undefined;
         if (props.params.programId) {
             program = await callAction(this.errorHandler, () => this.programsRepo.get(ensure(props.params.programId)));
         } else if (props.params.sampleId) {
@@ -122,15 +122,7 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
 
         if (!program) {
             const code = await callAction(this.errorHandler, () => this.userDataService.getPlaygroundCode()) || '';
-            program = {
-                code: code,
-                name: 'Playground',
-                dateCreated: new Date(),
-                dateLastEdited: new Date(),
-                id: '',
-                lang: 'logo',
-                screenshot: ''
-            };
+            program = new ProgramModel('', 'Playground', "logo", code, '');
         }
         this.setState({
             isLoading: false,
@@ -200,15 +192,9 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
             ? await this.getScreenshot(true)
             : '';
 
-        const addedProgram = await this.programsRepo.add({
-            name: this.state.programNameInSaveModal,
-            id: '',
-            dateCreated: new Date(0),
-            dateLastEdited: new Date(0),
-            lang: 'logo',
-            code: this.state.program.code,
-            screenshot: screenshot
-        });
+        const addedProgram = await this.programsRepo.add(
+            new ProgramModel('', this.state.programNameInSaveModal, "logo", this.state.program.code, screenshot)
+        );
 
         this.setState({
             program: addedProgram,
