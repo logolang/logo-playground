@@ -12,6 +12,7 @@ import { subscribeLoadDataOnPropsParamsChange, translateInputChangeToState, goTo
 import { MainMenuComponent } from 'app/ui/main-menu.component'
 import { PlaygroundPageLayoutComponent } from './playground-page-layout.component';
 import { AlertMessageComponent } from 'app/ui/_generic/alert-message.component';
+import { SaveProgramModalComponent, IProgramToSaveAttributes } from "app/ui/playground/save-program-modal.component";
 
 import { ServiceLocator } from 'app/services/service-locator'
 import { Routes } from "app/routes";
@@ -29,9 +30,6 @@ interface IComponentState {
     hasProgramBeenExecutedOnce: boolean
 
     isSaveModalActive: boolean
-    isSavingInProgress: boolean
-    programNameInSaveModal: string
-    errorInSaveModal?: string
 
     userCustomizations?: IUserCustomizationsData
 }
@@ -75,8 +73,6 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
             hasProgramBeenExecutedOnce: false,
 
             isSaveModalActive: false,
-            isSavingInProgress: false,
-            programNameInSaveModal: '',
         };
         return state;
     }
@@ -153,10 +149,7 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
     }
 
     showSaveDialog = () => {
-        this.setState({ isSaveModalActive: true, errorInSaveModal: '' });
-        setTimeout(() => {
-            (this.refs['programNameSaveInput'] as HTMLInputElement).focus();
-        }, 300);
+        this.setState({ isSaveModalActive: true });
     }
 
     saveCurrentProgram = async () => {
@@ -170,41 +163,39 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
         this.focusCommands.next();
     }
 
-    saveProgramAction = async () => {
+    saveProgramAction = async (attrs: IProgramToSaveAttributes): Promise<string | undefined> => {
         if (!this.state.program) { return }
-        if (this.state.isSavingInProgress) {
-            return;
-        }
 
-        if (!this.state.programNameInSaveModal || !this.state.programNameInSaveModal.trim()) {
-            this.setState({ errorInSaveModal: 'Program name is required.' })
-            return;
+        const programName = attrs.name;
+
+        if (!programName || !programName.trim()) {
+            return 'Program name is required.';
         }
-        const allProgs = await this.programsRepo.getAll();
-        const progWithSameName = allProgs.find(p => p.name.trim().toLowerCase() === this.state.programNameInSaveModal.trim().toLowerCase());
+        const allProgs = await callAction(this.errorHandler, () => this.programsRepo.getAll());
+        if (!allProgs) { return };
+
+        const progWithSameName = allProgs.find(p => p.name.trim().toLowerCase() === programName.trim().toLowerCase());
         if (progWithSameName) {
-            this.setState({ errorInSaveModal: 'Program with this name is already stored in library. Please enter different name.' })
-            return;
+            return 'Program with this name is already stored in library. Please enter different name.';
         }
 
-        this.setState({ isSavingInProgress: true });
         let screenshot = this.state.hasProgramBeenExecutedOnce
             ? await this.getScreenshot(true)
             : '';
 
-        const addedProgram = await this.programsRepo.add(
-            new ProgramModel('', this.state.programNameInSaveModal, "logo", this.state.program.code, screenshot)
-        );
+        const addedProgram = await callAction(this.errorHandler, () => this.programsRepo.add(
+            new ProgramModel('', programName, "logo", this.state.program!.code, screenshot)
+        ));
+
+        if (!addedProgram) { return };
 
         this.setState({
             program: addedProgram,
-            isSaveModalActive: false,
-            isSavingInProgress: false,
-            programNameInSaveModal: '',
         });
         this.focusCommands.next();
 
         goTo(Routes.playgroundLoadFromLibrary.build({ programId: addedProgram.id }));
+        return;
     }
 
     exportAsImageClick = async () => {
@@ -306,47 +297,10 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
 
     renderSaveModal(): JSX.Element | null {
         if (this.state.isSaveModalActive) {
-            return <Modal show={true} animation={false} onHide={() => { this.setState({ isSaveModalActive: false }) }} backdrop='static' >
-                <Modal.Header closeButton>
-                    <Modal.Title>Save your program to Gallery</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <div className="row">
-                        <div className="col-sm-12">
-                            <form>
-                                <div className="form-group">
-                                    <label htmlFor="name">Program name</label>
-                                    <div className="row">
-                                        <div className="col-sm-12">
-                                            <input ref="programNameSaveInput" type="text" className="form-control" id="name" placeholder="Please enter name for your program"
-                                                value={this.state.programNameInSaveModal}
-                                                onChange={translateInputChangeToState(this, (s, v) => ({ programNameInSaveModal: v }))}
-                                                onKeyDown={event => {
-                                                    if (event.which == 13) {
-                                                        event.preventDefault();
-                                                        this.saveProgramAction();
-                                                    }
-                                                }}
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                    <br />
-                    <AlertMessageComponent message={this.state.errorInSaveModal} />
-                    <br />
-                </Modal.Body>
-                <Modal.Footer>
-                    <button type="button" className={cn("btn btn-primary", { "is-loading": this.state.isSavingInProgress })} onClick={this.saveProgramAction}>
-                        <span>Save</span>
-                    </button>
-                    <button type="button" className="btn btn-link" onClick={() => { this.setState({ isSaveModalActive: false }) }}>
-                        <span>Cancel</span>
-                    </button>
-                </Modal.Footer>
-            </Modal>
+            return <SaveProgramModalComponent
+                onClose={() => { this.setState({ isSaveModalActive: false }) }}
+                onSave={this.saveProgramAction}
+            />
         }
         return null;
     }

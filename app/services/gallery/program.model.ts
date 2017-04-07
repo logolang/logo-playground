@@ -26,16 +26,14 @@ export class ProgramModel {
     public static fromJson(parsedJson: object): ProgramModel {
         const obj = parsedJson as any;
         // check imported program object
-        if (!obj.code
-            || !obj.dateCreated
-            || !obj.dateLastEdited
-            || !obj.id
-            || !obj.lang
-            || !obj.name
-            || !obj.screenshot) {
-            throw new Error(`Wrong JSON object`);
-        }
-        const program = new ProgramModel(obj.id, obj.name, obj.lang, obj.code, obj.screenshot);
+        if (!obj.code) { throw new Error(`Wrong program object: field 'code' is not defined`); }
+        if (!obj.dateCreated) { throw new Error(`Wrong program object: field 'dateCreated' is not defined`); }
+        if (!obj.dateLastEdited) { throw new Error(`Wrong program object: field 'dateLastEdited' is not defined`); }
+        if (!obj.id) { throw new Error(`Wrong program object: field 'id' is not defined`); }
+        if (!obj.lang) { throw new Error(`Wrong program object: field 'lang' is not defined`); }
+        if (!obj.name) { throw new Error(`Wrong program object: field 'name' is not defined`); }
+
+        const program = new ProgramModel(obj.id, obj.name, obj.lang, obj.code, obj.screenshot || '');
         program.dateCreated = new Date(obj.dateCreated);
         program.dateLastEdited = new Date(obj.dateLastEdited);
         return program;
