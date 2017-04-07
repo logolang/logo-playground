@@ -2,7 +2,6 @@ import * as React from 'react';
 import { Link } from 'react-router'
 import { Button, ButtonGroup, Nav, Navbar, NavDropdown, MenuItem, NavItem, DropdownButton, Modal, OverlayTrigger } from 'react-bootstrap';
 import { Subject, BehaviorSubject } from 'rxjs'
-import * as keymaster from 'keymaster';
 
 import { goTo, subscribeLoadDataOnPropsParamsChange } from 'app/utils/react-helpers';
 import { setupActionErrorHandler, callAction } from 'app/utils/async-helpers';
@@ -20,6 +19,7 @@ import { ServiceLocator } from 'app/services/service-locator'
 import { Routes } from 'app/routes';
 import { UserCustomizationsProvider, IUserCustomizationsData } from "app/services/customizations/user-customizations-provider";
 import { ITutorialInfo, ITutorialStep } from "app/services/tutorials/tutorials-content-service";
+import { ProgrammingFlowService } from "app/services/flow/programming-flow.service";
 
 import './tutorials.component.scss';
 
@@ -33,7 +33,6 @@ interface IComponentState {
     showSelectionTutorials: boolean
     showFixTheCode: boolean
     isRunning: boolean
-    currentCode: string
 
     userCustomizations?: IUserCustomizationsData
 }
@@ -52,9 +51,7 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
     private tutorialsLoader = ServiceLocator.resolve(x => x.tutorialsService);
     private userDataService = ServiceLocator.resolve(x => x.userDataService);
     private userCustomizationsProvider = new UserCustomizationsProvider();
-    private runCode = new Subject<string>();
-    private stopCode = new Subject<void>();
-    private focusCommands = new Subject<void>();
+    private flowService = new ProgrammingFlowService();
 
     constructor(props: IComponentProps) {
         super(props);
@@ -74,23 +71,17 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
             showSelectionTutorials: false,
             showFixTheCode: false,
             isRunning: false,
-            currentCode: '',
         };
         return state;
     }
 
     componentDidMount() {
-        keymaster('f8, f9', () => {
-            this.runCode.next(this.state.currentCode);
-            this.focusCommands.next();
-            return false;
-        });
-
         this.loadData(this.props);
+        this.flowService.initHotkeys();
     }
 
     componentWillUnmount() {
-        keymaster.unbind('f8, f9');
+        this.flowService.disposeHotkeys();
     }
 
     async loadData(props: IComponentProps) {
@@ -120,7 +111,7 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
         if (!this.state.currentTutorial) {
             // Run code automatically if page is just opened
             setTimeout(() => {
-                this.runCode.next(initialCode);
+                this.flowService.runCurrentProgram();
             }, 100);
         }
 
@@ -143,8 +134,8 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
                 currentTutorial: currentTutorial,
                 steps: steps,
                 userCustomizations: userCustomizations,
-                currentCode: initialCode
             });
+            this.flowService.code = initialCode;
         }
         this.setState(s => ({
             isLoading: false,
@@ -284,8 +275,9 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
                                         height={200}
                                         onError={() => { }}
                                         onIsRunningChanged={(running) => { this.setState({ isRunning: running }) }}
-                                        runCommands={this.runCode}
-                                        stopCommands={this.stopCode}
+                                        runCommands={this.flowService.runCommands}
+                                        stopCommands={this.flowService.stopCommands}
+                                        makeScreenshotCommands={this.flowService.makeScreenshotCommands}
                                         customTurtleImage={this.state.userCustomizations.customTurtle}
                                         customTurtleSize={this.state.userCustomizations.customTurtleSize}
                                         isDarkTheme={this.state.userCustomizations.isDark}
@@ -300,10 +292,7 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
                                 {
                                     !this.state.isRunning &&
                                     <button type="button" className="btn btn-success"
-                                        onClick={() => {
-                                            this.runCode.next(this.state.currentCode);
-                                            this.focusCommands.next();
-                                        }}
+                                        onClick={this.flowService.runCurrentProgram}
                                     >
                                         Run <span className="glyphicon glyphicon-play" aria-hidden="true"> <small>(F9)</small></span>
                                     </button>
@@ -311,7 +300,7 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
                                 {
                                     this.state.isRunning &&
                                     <button type="button" className="btn btn-default"
-                                        onClick={() => { this.stopCode.next() }}
+                                        onClick={this.flowService.stopCurrentProgram}
                                     >
                                         Stop <span className="glyphicon glyphicon-stop" aria-hidden="true"></span>
                                     </button>
@@ -322,19 +311,17 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
                                     this.state.userCustomizations && this.state.currentTutorial && this.state.currentStep &&
                                     <CodeInputLogoComponent
                                         className="codemirror-input-logo"
-                                        code={this.state.currentCode}
+                                        code={this.flowService.code}
                                         onChanged={(code) => {
-                                            this.setState({ currentCode: code })
+                                            this.flowService.code = code;
                                             this.userDataService.setCurrentTutorialInfo({
                                                 tutorialName: this.state.currentTutorial!.id,
                                                 step: this.state.currentStep!.index,
-                                                code: this.state.currentCode,
+                                                code: code,
                                             });
                                         }}
-                                        focusCommands={this.focusCommands}
-                                        onHotkey={(k) => {
-                                            this.runCode.next(this.state.currentCode);
-                                        }}
+                                        focusCommands={this.flowService.focusCommands}
+                                        onHotkey={this.flowService.runCurrentProgram}
                                         editorTheme={this.state.userCustomizations.codeEditorTheme}
                                     />
                                 }
@@ -365,12 +352,9 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
                 <button type="button" className="btn btn-default"
                     onClick={() => {
                         const correctCode = this.state.currentStep!.resultCode;
-                        this.setState({
-                            showFixTheCode: false,
-                            currentCode: correctCode
-                        });
-                        this.stopCode.next();
-                        this.runCode.next(correctCode);
+                        this.setState({ showFixTheCode: false });
+                        this.flowService.code = correctCode;
+                        this.flowService.runCurrentProgram();
                     }}>
                     <strong>Yes</strong>
                     <span>, fix my code</span>

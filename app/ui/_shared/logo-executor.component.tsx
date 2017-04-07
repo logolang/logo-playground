@@ -9,6 +9,11 @@ import { LogoOutputConsole } from './logo-output-console';
 
 import './logo-executor.component.scss'
 
+export interface ICreateScreenshotCommand {
+    isSmall: boolean,
+    whenReady: (data: string) => void
+}
+
 interface IComponentState {
 }
 
@@ -16,7 +21,7 @@ export interface ILogoExecutorComponentProps {
     height: number
     runCommands: Observable<string>
     stopCommands: Observable<void>
-    makeScreenshotCommands?: Observable<{ small: boolean, result: (data: string) => void }>
+    makeScreenshotCommands?: Observable<ICreateScreenshotCommand>
     onError: (error: string) => void
     onIsRunningChanged: (isRunning: boolean) => void
     isDarkTheme: boolean
@@ -126,10 +131,10 @@ export class LogoExecutorComponent extends React.Component<ILogoExecutorComponen
         }
     }
 
-    private makeScreenShot = (params: { small: boolean, result: (data: string) => void }) => {
+    private makeScreenShot = (params: ICreateScreenshotCommand) => {
         if (this.graphics) {
-            const data = this.graphics.createScreenshot(params.small);
-            params.result(data);
+            const data = this.graphics.createScreenshot(params.isSmall);
+            params.whenReady(data);
         }
     }
 

@@ -3,6 +3,7 @@ import * as cn from 'classnames'
 import { Button, ButtonGroup, Nav, Navbar, NavDropdown, MenuItem, NavItem, DropdownButton, Modal, OverlayTrigger } from 'react-bootstrap';
 import { AlertMessageComponent } from "app/ui/_generic/alert-message.component";
 import { translateInputChangeToState } from "app/utils/react-helpers";
+import { IProgramToSaveAttributes } from "app/services/flow/programming-flow.service";
 
 interface IComponentState {
     errorMessage: string
@@ -13,10 +14,6 @@ interface IComponentState {
 interface IComponentProps {
     onClose: () => void
     onSave: (attributes: IProgramToSaveAttributes) => Promise<string | undefined>
-}
-
-export interface IProgramToSaveAttributes {
-    name: string
 }
 
 export class SaveProgramModalComponent extends React.Component<IComponentProps, IComponentState> {
