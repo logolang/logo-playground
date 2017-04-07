@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as cn from 'classnames';
 import * as codemirror from 'codemirror';
 import { Observable, Subscription, Subject } from 'rxjs'
 
@@ -93,7 +94,7 @@ export class CodeInputLogoComponent extends React.Component<ICodeInputComponentP
 
     render(): JSX.Element {
         return (
-            <div ref="container" className={`${this.props.className}`}>
+            <div ref="container" className={cn("code-input-logo-component", this.props.className)}>
                 <textarea ref="text-area">
                 </textarea>
             </div>

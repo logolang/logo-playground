@@ -53,9 +53,15 @@ module.exports = function (env) {
                 { test: /\.json$/, loader: "json-loader" },
                 { test: /\.html$/, loader: "raw-loader" },
                 { test: /\.txt$/, loader: "raw-loader" },
-                { test: /\.css$/, loader: extractTextPlugin.extract(["css-loader"]) },
-                { test: /\.(scss|sass)$/, loader: extractTextPlugin.extract(["css-loader", "sass-loader"]) },
-            ]
+            ].concat(isDevBuild
+                ? [
+                    { test: /\.css$/, loaders: ["style-loader", "css-loader"] },
+                    { test: /\.(scss|sass)$/, loaders: ["style-loader", "css-loader", "sass-loader"] },
+                ]
+                : [
+                    { test: /\.css$/, loader: extractTextPlugin.extract(["css-loader"]) },
+                    { test: /\.(scss|sass)$/, loader: extractTextPlugin.extract(["css-loader", "sass-loader"]) },
+                ])
         },
 
         plugins: [
@@ -63,8 +69,6 @@ module.exports = function (env) {
                 context: __dirname,
                 manifest: path.join(__dirname, "dist", "vendor-manifest.json"),
             }),
-
-            extractTextPlugin,
 
             new CopyWebpackPlugin([
                 { from: 'content', to: 'content' }
@@ -96,6 +100,8 @@ module.exports = function (env) {
                 new WebpackNotifierPlugin(),
             ]
             : [
+                extractTextPlugin,
+                
                 // Apply minification
                 new webpack.optimize.UglifyJsPlugin({
                     sourceMap: true
