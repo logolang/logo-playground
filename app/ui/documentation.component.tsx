@@ -22,6 +22,7 @@ interface IComponentProps {
 export class DocumentationComponent extends React.Component<IComponentProps, IComponentState> {
     private notificationService = ServiceLocator.resolve(x => x.notificationService);
     private contentLoader = ServiceLocator.resolve(x => x.contentLoader);
+    private titleService = ServiceLocator.resolve(x => x.titleService);
 
     constructor(props: IComponentProps) {
         super(props);
@@ -34,6 +35,7 @@ export class DocumentationComponent extends React.Component<IComponentProps, ICo
 
     componentDidMount() {
         this.loadData();
+        this.titleService.setDocumentTitle("Documentation");
     }
 
     private async loadData() {

@@ -15,8 +15,6 @@ async function runApp() {
     try {
         await DependencyConfig.init();
 
-        document.title = appInfo.description;
-
         // Render the app
         ReactDOM.render(
             Routes.getRouteDefinitions(),

@@ -9,9 +9,6 @@ interface IPageHeaderComponentProps {
 
 export class PageHeaderComponent extends React.Component<IPageHeaderComponentProps, IPageHeaderComponentState> {
     render(): JSX.Element {
-        if (typeof this.props.title === 'string') {
-            document.title = appInfo.description + ": " + this.props.title;
-        }
         return (
             <div className="row">
                 <div className="col-sm-12">

@@ -48,6 +48,7 @@ export interface ITutorialPageRouteParams {
 
 export class TutorialsComponent extends React.Component<IComponentProps, IComponentState> {
     private notificationService = ServiceLocator.resolve(x => x.notificationService);
+    private titleService = ServiceLocator.resolve(x => x.titleService);
     private tutorialsLoader = ServiceLocator.resolve(x => x.tutorialsService);
     private userDataService = ServiceLocator.resolve(x => x.userDataService);
     private userCustomizationsProvider = new UserCustomizationsProvider();
@@ -78,6 +79,7 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
     componentDidMount() {
         this.loadData(this.props);
         this.flowService.initHotkeys();
+        this.titleService.setDocumentTitle("Tutorials");
     }
 
     componentWillUnmount() {

@@ -10,6 +10,7 @@ import { FakeUsersRepository } from "app/services/login/users.repository.fake";
 import { UserDataBrowserLocalStorageService } from "app/services/customizations/user-data.service";
 import { UserSettingsBrowserLocalStorageService } from "app/services/customizations/user-settings.service";
 import { NotificationService } from "app/services/infrastructure/notification.service";
+import { TitleService } from "app/services/infrastructure/title.service";
 
 export class DependencyConfig {
     static async init() {
@@ -22,6 +23,7 @@ export class DependencyConfig {
         const userDataService = new UserDataBrowserLocalStorageService('TBD');
         const userSettingsService = new UserSettingsBrowserLocalStorageService('TBD');
         const notificationService = new NotificationService();
+        const titleService = new TitleService(appInfo.description + ": ");
 
         const usersRepository = new FakeUsersRepository(currentUser);
 
@@ -36,6 +38,7 @@ export class DependencyConfig {
         ServiceLocator.set(x => x.userDataService = userDataService);
         ServiceLocator.set(x => x.userSettingsService = userSettingsService);
         ServiceLocator.set(x => x.notificationService = notificationService);
+        ServiceLocator.set(x => x.titleService = titleService);
 
         ServiceLocator.set(x => x.usersRepository = usersRepository);
         ServiceLocator.set(x => x.loginService = loginService);

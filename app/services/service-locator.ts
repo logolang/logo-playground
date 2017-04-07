@@ -9,6 +9,7 @@ import { ITutorialsContentService } from "app/services/tutorials/tutorials-conte
 import { IUserDataService } from "app/services/customizations/user-data.service";
 import { IUserSettingsService } from "app/services/customizations/user-settings.service";
 import { INotificationService } from "app/services/infrastructure/notification.service";
+import { ITitleService } from "app/services/infrastructure/title.service";
 
 interface ServicesList {
     currentUser: ICurrentUserProvider
@@ -18,6 +19,7 @@ interface ServicesList {
     userDataService: IUserDataService
     userSettingsService: IUserSettingsService
     notificationService: INotificationService
+    titleService: ITitleService
     usersRepository: IUsersRepository
     programsReporitory: IProgramsRepository
     contentLoader: ILocalizedContentLoader

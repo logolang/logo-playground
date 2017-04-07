@@ -36,6 +36,7 @@ export class GalleryComponent extends React.Component<IComponentProps, IComponen
     private currentUser = ServiceLocator.resolve(x => x.currentUser);
     private programsRepo = ServiceLocator.resolve(x => x.programsReporitory);
     private samplesRepo = new ProgramsSamplesRepository();
+    private titleService = ServiceLocator.resolve(x => x.titleService);
     readonly noScreenshot = require('./images/no.image.png') as string;
 
     constructor(props: IComponentProps) {
@@ -52,6 +53,7 @@ export class GalleryComponent extends React.Component<IComponentProps, IComponen
 
     componentDidMount() {
         this.loadData();
+        this.titleService.setDocumentTitle("Gallery");
     }
 
     async loadData() {

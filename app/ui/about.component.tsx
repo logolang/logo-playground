@@ -13,12 +13,15 @@ interface IComponentProps {
 
 export class AboutComponent extends React.Component<IComponentProps, IComponentState> {
     private appConfig = ServiceLocator.resolve(x => x.appConfig);
+    private titleService = ServiceLocator.resolve(x => x.titleService);
 
     constructor(props: IComponentProps) {
         super(props);
 
         this.state = {
         };
+
+        this.titleService.setDocumentTitle("About");
     }
 
     render(): JSX.Element {

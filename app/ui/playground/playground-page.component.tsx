@@ -42,6 +42,7 @@ interface IComponentProps {
 export class PlaygroundPageComponent extends React.Component<IComponentProps, IComponentState> {
     private notificationService = ServiceLocator.resolve(x => x.notificationService);
     private appConfig = ServiceLocator.resolve(x => x.appConfig);
+    private titleService = ServiceLocator.resolve(x => x.titleService);
     private programsRepo = ServiceLocator.resolve(x => x.programsReporitory);
     private programSamples = new ProgramsSamplesRepository();
     private userCustomizationsProvider = new UserCustomizationsProvider();
@@ -68,6 +69,7 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
     }
 
     componentDidMount() {
+        this.titleService.setDocumentTitle('Playground');
         this.loadData(this.props);
         this.flowService.initHotkeys();
     }
@@ -108,7 +110,7 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
             userCustomizations: userCustomizations
         });
 
-        document.title = appInfo.description + ": " + program.name;
+        this.titleService.setDocumentTitle(program.name);
     }
 
     onIsRunningChanged = (isRunning: boolean) => {

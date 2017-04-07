@@ -54,6 +54,7 @@ export class UserProfileComponent extends React.Component<IComponentProps, IComp
     private runCode = new BehaviorSubject<string>('');
     private exportInportService = new ProgramsExportImportService();
     private notificationService = ServiceLocator.resolve(x => x.notificationService);
+    private titleService = ServiceLocator.resolve(x => x.titleService);
     private errorHandler = setupActionErrorHandler((error) => {
         this.notificationService.push({ type: 'danger', message: error });
     })
@@ -72,6 +73,7 @@ export class UserProfileComponent extends React.Component<IComponentProps, IComp
 
     componentDidMount() {
         this.loadData();
+        this.titleService.setDocumentTitle("User profile");
     }
 
     private setRandomCode() {
@@ -117,7 +119,7 @@ export class UserProfileComponent extends React.Component<IComponentProps, IComp
         return (
             <div className="container">
                 <MainMenuComponent />
-                <PageHeaderComponent title="User Profile" />
+                <PageHeaderComponent title="User profile" />
                 <div className="row">
                     <div className="col-sm-6">
                         <p><strong>Login:</strong> {this.state.userInfo.login}</p>
