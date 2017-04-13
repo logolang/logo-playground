@@ -11,6 +11,7 @@ import { UserDataBrowserLocalStorageService } from "app/services/customizations/
 import { UserSettingsBrowserLocalStorageService } from "app/services/customizations/user-settings.service";
 import { NotificationService } from "app/services/infrastructure/notification.service";
 import { TitleService } from "app/services/infrastructure/title.service";
+import { LocalizationService } from "app/services/customizations/localization.service";
 
 export class DependencyConfig {
     static async init() {
@@ -22,13 +23,20 @@ export class DependencyConfig {
         const currentUser = new CurrentUserProvider();
         const userDataService = new UserDataBrowserLocalStorageService('TBD');
         const userSettingsService = new UserSettingsBrowserLocalStorageService('TBD');
+        const userSettings = await userSettingsService.getAll();
+
+        const localizationService = new LocalizationService();
+        const localeInfo = localizationService.getLocaleById(userSettings.localeId);
+        const contentLoader = new LocalizedContentLoader(ajaxService, localeInfo.id);
+        const localizationData = await contentLoader.getFileContent('messages.po');
+        localizationService.initLocale(localizationData);
+
         const notificationService = new NotificationService();
         const titleService = new TitleService(appInfo.description + ": ");
 
         const usersRepository = new FakeUsersRepository(currentUser);
 
         const loginService = new FakeLoginService();
-        const contentLoader = new LocalizedContentLoader(ajaxService);
         const tutorialsService = new TutorialsContentService(contentLoader);
 
         // Setup the global dependency injection container

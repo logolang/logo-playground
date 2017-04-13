@@ -8,6 +8,7 @@ export interface IUserCustomizationsData {
     customTurtleName: string
     codeEditorTheme: string
     isDark: boolean
+    localeId: string
 }
 
 export class UserCustomizationsProvider {
@@ -28,7 +29,8 @@ export class UserCustomizationsProvider {
             customTurtleName: settings.turtleName,
             customTurtle: turtleImage,
             isDark: theme.isDark,
-            codeEditorTheme: theme.codemirror
+            codeEditorTheme: theme.codemirror,
+            localeId: settings.localeId
         }
     }
 }

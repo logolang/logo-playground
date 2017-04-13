@@ -21,12 +21,14 @@ import { TurtleCustomizationsService } from "app/services/customizations/turtle-
 import { IUserCustomizationsData, UserCustomizationsProvider } from "app/services/customizations/user-customizations-provider";
 import { Theme, ThemeCustomizationsService } from "app/services/customizations/theme-customizations.service";
 import { ProgramsExportImportService } from "app/services/gallery/programs-export-import.service";
+import { LocalizationService, ILocaleInfo, T } from "app/services/customizations/localization.service";
 
 interface IComponentState {
     userInfo: UserInfo;
     isSavingInProgress: boolean;
     programCount: number;
 
+    currentLocale?: ILocaleInfo;
     theme?: Theme;
     userCustomizations?: IUserCustomizationsData
 }
@@ -55,6 +57,7 @@ export class UserProfileComponent extends React.Component<IComponentProps, IComp
     private exportInportService = new ProgramsExportImportService();
     private notificationService = ServiceLocator.resolve(x => x.notificationService);
     private titleService = ServiceLocator.resolve(x => x.titleService);
+    private localizationService = new LocalizationService();
     private errorHandler = setupActionErrorHandler((error) => {
         this.notificationService.push({ type: 'danger', message: error });
     })
@@ -88,10 +91,13 @@ export class UserProfileComponent extends React.Component<IComponentProps, IComp
         ]);
         if (programs && userCustomizations && themeName) {
             const theme = this.themeService.getTheme(themeName);
+            const locale = this.localizationService.getLocaleById(userCustomizations.localeId);
+
             this.setState({
                 userCustomizations: userCustomizations,
                 theme: theme,
-                programCount: programs.length
+                programCount: programs.length,
+                currentLocale: locale
             });
         }
     }
@@ -119,7 +125,7 @@ export class UserProfileComponent extends React.Component<IComponentProps, IComp
         return (
             <div className="container">
                 <MainMenuComponent />
-                <PageHeaderComponent title="User profile" />
+                <PageHeaderComponent title={T("User settings")} />
                 <div className="row">
                     <div className="col-sm-6">
                         <p><strong>Login:</strong> {this.state.userInfo.login}</p>
@@ -128,6 +134,34 @@ export class UserProfileComponent extends React.Component<IComponentProps, IComp
                         <br />
                         <form>
                             <fieldset>
+                                <div className="form-group">
+                                    <label htmlFor="localeselector">Language</label>
+                                    {
+                                        this.state.currentLocale &&
+                                        <div className="row">
+                                            <div className="col-sm-12">
+                                                <select className="form-control" id="localeselector"
+                                                    value={this.state.currentLocale.id} onChange={translateSelectChangeToState(this, (s, v) => {
+                                                        const selectedLocation = this.localizationService.getSupportedLocales().find(loc => loc.id === v);
+                                                        if (selectedLocation) {
+                                                            this.userSettingsService.setLocaleId(selectedLocation.id);
+                                                            setTimeout(function () {
+                                                                // refresh browser window
+                                                                window.location.reload(true);
+                                                            }, 0);
+                                                        }
+                                                        return {};
+                                                    })}>
+                                                    {
+                                                        this.localizationService.getSupportedLocales().map(loc => {
+                                                            return <option key={loc.id} value={loc.id}>{loc.name}</option>
+                                                        })
+                                                    }
+                                                </select>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
                                 <div className="form-group">
                                     <label htmlFor="themeselector">User Interface Theme</label>
                                     {

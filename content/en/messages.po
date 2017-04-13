@@ -1,0 +1,14 @@
+# Olek, 2017.
+msgid ""
+msgstr ""
+"Language: en\n"
+"domain": "messages\n"
+
+msgid "App title"
+msgstr "Logo Sandbox"
+
+msgid "Gallery"
+msgstr "Gallery"
+
+msgid "User settings"
+msgstr "User settings"

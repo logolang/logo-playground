@@ -45,6 +45,8 @@ module.exports = function (env) {
                 'color',
                 'markdown-it',
                 'keymaster',
+                'jed',
+                'po2json/lib/parse',
                 './lib/logojs/floodfill.js',
                 './lib/logojs/logo.js',
                 './lib/logojs/turtle.js',

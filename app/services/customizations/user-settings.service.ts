@@ -17,18 +17,23 @@ export interface IUserSettingsService {
 
     getUiThemeName(): Promise<string>
     setUiThemeName(value: string): Promise<void>
+
+    getLocaleId(): Promise<string>
+    setLocaleId(value: string): Promise<void>
 }
 
 interface ILocalStorageData {
     turtleName?: string
     turtleSize?: number
     themeName?: string
+    localeId?: string
 }
 
 export interface AllUserSettings {
     turtleName: string
     turtleSize: number
     themeName: string
+    localeId: string
 }
 
 export class UserSettingsBrowserLocalStorageService implements IUserSettingsService {
@@ -41,7 +46,8 @@ export class UserSettingsBrowserLocalStorageService implements IUserSettingsServ
         this.currentData = {
             themeName: localStorageValue.themeName || `default`,
             turtleName: localStorageValue.turtleName || `Bright Runner`,
-            turtleSize: localStorageValue.turtleSize || 40
+            turtleSize: localStorageValue.turtleSize || 40,
+            localeId: localStorageValue.localeId || ''
         }
     }
 
@@ -49,7 +55,7 @@ export class UserSettingsBrowserLocalStorageService implements IUserSettingsServ
         this.localStorage.setValue(this.currentData);
     }
 
-    async getAll(): Promise<ILocalStorageData> {
+    async getAll(): Promise<AllUserSettings> {
         return this.currentData;
     }
 
@@ -77,6 +83,15 @@ export class UserSettingsBrowserLocalStorageService implements IUserSettingsServ
 
     async setUiThemeName(value: string): Promise<void> {
         this.currentData.themeName = value;
+        return this.saveDataToStorage();
+    }
+
+    async getLocaleId(): Promise<string> {
+        return this.currentData.localeId;
+    }
+
+    async setLocaleId(value: string): Promise<void> {
+        this.currentData.localeId = value;
         return this.saveDataToStorage();
     }
 }

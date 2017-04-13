@@ -13,18 +13,19 @@ export interface ILocalizedContentLoader {
 export class LocalizedContentLoader implements ILocalizedContentLoader {
     private cache: DictionaryLike<string> = {};
 
-    constructor(private ajax: IAjaxService) {
+    constructor(private ajax: IAjaxService, private localeId: string) {
     }
 
     async getFileContent(relativePath: string): Promise<string> {
         //await stay(2000);
-        const fromCache = this.cache[relativePath];
+        const resKey = `${this.localeId}:${relativePath}`;
+        const fromCache = this.cache[resKey];
         if (fromCache) {
             return fromCache;
         }
         try {
-            let result = await this.ajax.getText('content/en/' + relativePath);
-            this.cache[relativePath] = result;
+            let result = await this.ajax.getText(`content/${this.localeId}/${relativePath}`);
+            this.cache[resKey] = result;
             return result;
         }
         catch (ex) {
