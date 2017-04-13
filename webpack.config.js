@@ -51,8 +51,7 @@ module.exports = function (env) {
                 { test: /\.tsx?$/, loader: "ts-loader", exclude: /node_modules/ },
                 { test: /\.(png|jpg|jpeg|gif|svg)$/, loader: "url-loader", options: { limit: 200000 } },
                 { test: /\.json$/, loader: "json-loader" },
-                { test: /\.html$/, loader: "raw-loader" },
-                { test: /\.txt$/, loader: "raw-loader" },
+                { test: /\.(txt|html|md|po)$/, loader: "raw-loader" },
             ].concat(isDevBuild
                 ? [
                     { test: /\.css$/, loaders: ["style-loader", "css-loader"] },
@@ -101,7 +100,7 @@ module.exports = function (env) {
             ]
             : [
                 extractTextPlugin,
-                
+
                 // Apply minification
                 new webpack.optimize.UglifyJsPlugin({
                     sourceMap: true

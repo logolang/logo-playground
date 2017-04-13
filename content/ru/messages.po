@@ -2,7 +2,7 @@
 # Olek <mega.boich@gmail.com>, 2017.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2017-04-13 14:55+0200\n"
+"PO-Revision-Date: 2017-04-13 16:57+0200\n"
 "Last-Translator: Olek <mega.boich@gmail.com>\n"
 "Language-Team: Olek\n"
 "Language: ru\n"
@@ -20,3 +20,9 @@ msgstr "Галлерея"
 
 msgid "User settings"
 msgstr "Настройки пользователя"
+
+msgid "You have %d program"
+msgid_plural "You have %d programs"
+msgstr[0] "У вас %d программа"
+msgstr[1] "У вас %d программы"
+msgstr[2] "У вас %d программ"

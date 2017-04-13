@@ -19,9 +19,37 @@ const supportedLocales: ILocaleInfo[] = [
 
 let i18n: any; // Jed onject
 
-export function T(messageKey: string): string {
+export interface ITranslationOptions {
+    plural?: string
+    value?: any;
+}
+
+/**
+ * Function to perform localization for messages. It is a wrapper around Jed library.
+ * http://messageformat.github.io/Jed/
+ * @param messageKey
+ * @param options 
+ */
+export function _T(messageKey: string, options?: ITranslationOptions): string {
     if (i18n) {
-        return i18n.translate(messageKey).fetch();
+        let chain = i18n.translate(messageKey);
+        if (options) {
+            if (options.plural) {
+                if (options.value === undefined) {
+                    throw new Error('value is a required parameter if you have plural');
+                }
+                if (typeof (options.value) != 'number') {
+                    throw new Error('value should be a number if you have plural');
+                }
+                chain = chain.ifPlural(options.value, options.plural);
+            }
+        }
+
+        if (options && options.value !== undefined) {
+            return chain.fetch(options.value);
+        } else {
+            return chain.fetch();
+        }
     }
     throw new Error('Locale data is not initialized yet');
 }

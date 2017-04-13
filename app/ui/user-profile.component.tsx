@@ -21,7 +21,7 @@ import { TurtleCustomizationsService } from "app/services/customizations/turtle-
 import { IUserCustomizationsData, UserCustomizationsProvider } from "app/services/customizations/user-customizations-provider";
 import { Theme, ThemeCustomizationsService } from "app/services/customizations/theme-customizations.service";
 import { ProgramsExportImportService } from "app/services/gallery/programs-export-import.service";
-import { LocalizationService, ILocaleInfo, T } from "app/services/customizations/localization.service";
+import { LocalizationService, ILocaleInfo, _T } from "app/services/customizations/localization.service";
 
 interface IComponentState {
     userInfo: UserInfo;
@@ -125,7 +125,7 @@ export class UserProfileComponent extends React.Component<IComponentProps, IComp
         return (
             <div className="container">
                 <MainMenuComponent />
-                <PageHeaderComponent title={T("User settings")} />
+                <PageHeaderComponent title={_T("User settings")} />
                 <div className="row">
                     <div className="col-sm-6">
                         <p><strong>Login:</strong> {this.state.userInfo.login}</p>
@@ -237,7 +237,7 @@ export class UserProfileComponent extends React.Component<IComponentProps, IComp
                                     <div className="row">
                                         <div className="col-sm-12">
                                             <blockquote className="ex-font-size-normal">
-                                                <p>Programs count: {this.state.programCount}</p>
+                                                <p>{_T("You have %d program", { plural: "You have %d programs", value: this.state.programCount })}</p>
                                                 <div className="btn-toolbar">
                                                     <button type="button" className="btn btn-default"
                                                         onClick={this.doExport}>

@@ -10,4 +10,7 @@ export class FakeDataProvider {
 
     public static getFakeUsers = () =>
         lodash.cloneDeep(fakeUsers);
+
+    public static getRussianTranslation = () =>
+        lodash.cloneDeep(require<any>('app/../content/ru/messages.po'));
 } 
