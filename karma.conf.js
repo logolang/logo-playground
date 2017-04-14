@@ -49,7 +49,7 @@ module.exports = function (config) {
 
         files: [
             "./dist/vendor.js",
-            "./build/tests-entry-point.spec.ts"
+            "./tools/tests-entry-point.spec.ts"
         ],
 
         // list of files to exclude
@@ -59,7 +59,7 @@ module.exports = function (config) {
          * Transform files before loading them.
          */
         preprocessors: {
-            './build/tests-entry-point.spec.ts': ['webpack', 'sourcemap'],
+            './tools/tests-entry-point.spec.ts': ['webpack', 'sourcemap'],
         },
 
         webpack: (() => {

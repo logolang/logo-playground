@@ -30,7 +30,7 @@ module.exports = function (env) {
         entry: isDevBuild
             ? {
                 app: './app/app-entry-point.tsx',
-                tests: './build/tests-entry-point.spec.ts'
+                tests: './tools/tests-entry-point.spec.ts'
             }
             : {
                 app: './app/app-entry-point.tsx'
@@ -92,7 +92,7 @@ module.exports = function (env) {
                 })
             }),
             new HtmlWebpackPlugin({
-                template: 'app/app-index.ejs',
+                template: 'app/app-index-template.ejs',
                 filename: 'index.html',
                 chunks: ['app'],
                 inject: false
@@ -100,7 +100,7 @@ module.exports = function (env) {
         ].concat(isDevBuild
             ? [
                 new HtmlWebpackPlugin({
-                    template: 'build/tests-index.ejs',
+                    template: 'tools/tests-index-template.ejs',
                     filename: 'tests.html',
                     chunks: ['tests']
                 }),
