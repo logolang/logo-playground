@@ -3,9 +3,9 @@ import { ThemeCustomizationsService } from "app/services/customizations/theme-cu
 import { TurtleCustomizationsService } from "app/services/customizations/turtle-customizations.service";
 
 export interface IUserCustomizationsData {
-    customTurtle: HTMLImageElement
-    customTurtleSize: number
-    customTurtleName: string
+    turtleImage: HTMLImageElement
+    turtleSize: number
+    turtleId: string
     codeEditorTheme: string
     isDark: boolean
     localeId: string
@@ -20,17 +20,17 @@ export class UserCustomizationsProvider {
     }
 
     async getCustomizationsData(): Promise<IUserCustomizationsData> {
-        const settings = await this.userSettings.getAll();
+        const settings = await this.userSettings.get();
         const theme = this.themeCustomizations.getTheme(settings.themeName);
-        const turtleInfo = this.turtleCustomizations.getTurtleInfo(settings.turtleName);
+        const turtleInfo = this.turtleCustomizations.getTurtleInfo(settings.turtleId);
         const turtleImage = this.turtleCustomizations.getTurtleImage(turtleInfo);
         return {
-            customTurtleSize: settings.turtleSize,
-            customTurtleName: settings.turtleName,
-            customTurtle: turtleImage,
+            localeId: settings.localeId,
+            turtleSize: settings.turtleSize,
+            turtleId: settings.turtleId,
+            turtleImage: turtleImage,
             isDark: theme.isDark,
             codeEditorTheme: theme.codemirror,
-            localeId: settings.localeId
         }
     }
 }

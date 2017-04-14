@@ -26,3 +26,21 @@ msgid_plural "You have %d programs"
 msgstr[0] "У вас %d программа"
 msgstr[1] "У вас %d программы"
 msgstr[2] "У вас %d программ"
+
+msgid "Turtle Name tt12"
+msgstr "Весёлый Боб"
+
+msgid "Turtle Name tt2"
+msgstr "Хамелеон"
+
+msgid "Turtle Name tt9"
+msgstr "Принцесса"
+
+msgid "Turtle Name tt10"
+msgstr "Мистер"
+
+msgid "Turtle Name tt11"
+msgstr "Жорик"
+
+msgid "Turtle Name tt13"
+msgstr "Ныряльщик"

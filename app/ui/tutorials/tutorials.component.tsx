@@ -280,8 +280,8 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
                                         runCommands={this.flowService.runCommands}
                                         stopCommands={this.flowService.stopCommands}
                                         makeScreenshotCommands={this.flowService.makeScreenshotCommands}
-                                        customTurtleImage={this.state.userCustomizations.customTurtle}
-                                        customTurtleSize={this.state.userCustomizations.customTurtleSize}
+                                        customTurtleImage={this.state.userCustomizations.turtleImage}
+                                        customTurtleSize={this.state.userCustomizations.turtleSize}
                                         isDarkTheme={this.state.userCustomizations.isDark}
                                     />
                                 }

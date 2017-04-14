@@ -84,13 +84,13 @@ export class UserProfileComponent extends React.Component<IComponentProps, IComp
     }
 
     private async loadData() {
-        const [programs, userCustomizations, themeName] = await Promise.all([
+        const [programs, userCustomizations, userSettings] = await Promise.all([
             callAction(this.errorHandler, () => this.programsReporitory.getAll()),
             callAction(this.errorHandler, () => this.userCustomizationsProvider.getCustomizationsData()),
-            callAction(this.errorHandler, () => this.userSettingsService.getUiThemeName())
+            callAction(this.errorHandler, () => this.userSettingsService.get())
         ]);
-        if (programs && userCustomizations && themeName) {
-            const theme = this.themeService.getTheme(themeName);
+        if (programs && userCustomizations && userSettings) {
+            const theme = this.themeService.getTheme(userSettings.themeName);
             const locale = this.localizationService.getLocaleById(userCustomizations.localeId);
 
             this.setState({
@@ -144,8 +144,8 @@ export class UserProfileComponent extends React.Component<IComponentProps, IComp
                                                     value={this.state.currentLocale.id} onChange={translateSelectChangeToState(this, (s, v) => {
                                                         const selectedLocation = this.localizationService.getSupportedLocales().find(loc => loc.id === v);
                                                         if (selectedLocation) {
-                                                            this.userSettingsService.setLocaleId(selectedLocation.id);
-                                                            setTimeout(function () {
+                                                            setTimeout(async () => {
+                                                                await this.userSettingsService.update({ localeId: selectedLocation.id });
                                                                 // refresh browser window
                                                                 window.location.reload(true);
                                                             }, 0);
@@ -172,9 +172,9 @@ export class UserProfileComponent extends React.Component<IComponentProps, IComp
                                                     value={this.state.theme.name} onChange={translateSelectChangeToState(this, (s, v) => {
                                                         const selectedTheme = this.themeService.getAllThemes().find(t => t.name === v);
                                                         if (selectedTheme) {
-                                                            this.userSettingsService.setUiThemeName(selectedTheme.name);
-                                                            window.localStorage.setItem((window as any).appThemeNameLocalStorageKey, JSON.stringify(selectedTheme));
-                                                            setTimeout(function () {
+                                                            setTimeout(async () => {
+                                                                await this.userSettingsService.update({ themeName: selectedTheme.name });
+                                                                window.localStorage.setItem((window as any).appThemeNameLocalStorageKey, JSON.stringify(selectedTheme));
                                                                 // refresh browser window
                                                                 window.location.reload(true);
                                                             }, 0);
@@ -199,24 +199,24 @@ export class UserProfileComponent extends React.Component<IComponentProps, IComp
                                         <div className="row">
                                             <div className="col-sm-8">
                                                 <select className="form-control" id="turtleSelector"
-                                                    value={this.state.userCustomizations.customTurtleName} onChange={async (event) => {
+                                                    value={this.state.userCustomizations.turtleId} onChange={async (event) => {
                                                         const value = event.target.value;
-                                                        this.userSettingsService.setTurtleName(value);
+                                                        await this.userSettingsService.update({ turtleId: value });
                                                         await this.loadData();
                                                         this.setRandomCode();
                                                     }}>
                                                     {
                                                         this.turtleCustomService.getAllTurtles().map(t => {
-                                                            return <option key={t.name} value={t.name}>{t.name}</option>
+                                                            return <option key={t.id} value={t.id}>{t.getName()}</option>
                                                         })
                                                     }
                                                 </select>
                                             </div>
                                             <div className="col-sm-4">
                                                 <select className="form-control" id="turtleSelector"
-                                                    value={this.state.userCustomizations.customTurtleSize} onChange={async (event) => {
+                                                    value={this.state.userCustomizations.turtleSize} onChange={async (event) => {
                                                         const value = parseInt(event.target.value);
-                                                        this.userSettingsService.setTurtleSize(value);
+                                                        await this.userSettingsService.update({ turtleSize: value });
                                                         await this.loadData();
                                                         this.setRandomCode();
                                                     }}>
@@ -264,8 +264,8 @@ export class UserProfileComponent extends React.Component<IComponentProps, IComp
                                     onIsRunningChanged={() => { }}
                                     runCommands={this.runCode}
                                     stopCommands={new Subject<void>()}
-                                    customTurtleImage={this.state.userCustomizations.customTurtle}
-                                    customTurtleSize={this.state.userCustomizations.customTurtleSize}
+                                    customTurtleImage={this.state.userCustomizations.turtleImage}
+                                    customTurtleSize={this.state.userCustomizations.turtleSize}
                                     isDarkTheme={this.state.userCustomizations.isDark}
                                 />
                             ]}

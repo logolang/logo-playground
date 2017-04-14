@@ -12,3 +12,21 @@ msgstr "Gallery"
 
 msgid "User settings"
 msgstr "User settings"
+
+msgid "Turtle Name tt12"
+msgstr "Bright Runner"
+
+msgid "Turtle Name tt2"
+msgstr "Chameleon"
+
+msgid "Turtle Name tt9"
+msgstr "Princess"
+
+msgid "Turtle Name tt10"
+msgstr "Chilly Bob"
+
+msgid "Turtle Name tt11"
+msgstr "Summer"
+
+msgid "Turtle Name tt13"
+msgstr "Deep Diver"

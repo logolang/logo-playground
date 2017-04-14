@@ -1,33 +1,41 @@
 import { LocalStorageService } from "app/services/infrastructure/local-storage.service";
+import { _T } from "app/services/customizations/localization.service";
 
 export interface TurtleInfo {
-    name: string
+    id: string,
+    getName: () => string
     imageData: string
 }
 
 const allTurtles: TurtleInfo[] = [
     {
-        name: 'Bright Runner',
+        id: 'tt12',
+        getName: () => _T('Turtle Name tt12'),
         imageData: require('app/ui/images/turtles/tt12.svg') as string
     },
     {
-        name: 'Chameleon',
+        id: 'tt2',
+        getName: () => _T('Turtle Name tt2'),
         imageData: require('app/ui/images/turtles/tt2.svg') as string
     },
     {
-        name: 'Princess',
+        id: 'tt9',
+        getName: () => _T('Turtle Name tt9'),
         imageData: require('app/ui/images/turtles/tt9.svg') as string
     },
     {
-        name: 'Chilly Bob',
+        id: 'tt10',
+        getName: () => _T('Turtle Name tt10'),
         imageData: require('app/ui/images/turtles/tt10.svg') as string
     },
     {
-        name: 'Summer',
+        id: 'tt11',
+        getName: () => _T('Turtle Name tt11'),
         imageData: require('app/ui/images/turtles/tt11.svg') as string
     },
     {
-        name: 'Deep Diver',
+        id: 'tt13',
+        getName: () => _T('Turtle Name tt13'),
         imageData: require('app/ui/images/turtles/tt13.svg') as string
     }
 ]
@@ -37,8 +45,8 @@ export class TurtleCustomizationsService {
         return allTurtles;
     }
 
-    getTurtleInfo(turtleName: string): TurtleInfo {
-        let turtleData = allTurtles.find(t => t.name === turtleName);
+    getTurtleInfo(turtleId: string): TurtleInfo {
+        let turtleData = allTurtles.find(t => t.id === turtleId);
         if (!turtleData) {
             turtleData = allTurtles[0];
         }

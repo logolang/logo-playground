@@ -182,8 +182,8 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
                                 onIsRunningChanged: this.onIsRunningChanged,
                                 onError: () => { },
                                 isDarkTheme: this.state.userCustomizations.isDark,
-                                customTurtleImage: this.state.userCustomizations.customTurtle,
-                                customTurtleSize: this.state.userCustomizations.customTurtleSize
+                                customTurtleImage: this.state.userCustomizations.turtleImage,
+                                customTurtleSize: this.state.userCustomizations.turtleSize
                             }
                         }}
                     >

@@ -23,7 +23,7 @@ export class DependencyConfig {
         const currentUser = new CurrentUserProvider();
         const userDataService = new UserDataBrowserLocalStorageService('TBD');
         const userSettingsService = new UserSettingsBrowserLocalStorageService('TBD');
-        const userSettings = await userSettingsService.getAll();
+        const userSettings = await userSettingsService.get();
 
         const localizationService = new LocalizationService();
         const localeInfo = localizationService.getLocaleById(userSettings.localeId);

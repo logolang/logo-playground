@@ -7,91 +7,37 @@
 import { LocalStorageService } from "app/services/infrastructure/local-storage.service";
 
 export interface IUserSettingsService {
-    getAll(): Promise<AllUserSettings>
-
-    getTurtleName(): Promise<string>
-    setTurtleName(value: string): Promise<void>
-
-    getTurtleSize(): Promise<number>
-    setTurtleSize(value: number): Promise<void>
-
-    getUiThemeName(): Promise<string>
-    setUiThemeName(value: string): Promise<void>
-
-    getLocaleId(): Promise<string>
-    setLocaleId(value: string): Promise<void>
+    get(): Promise<IUserSettings>
+    update<K extends keyof IUserSettings>(update: Pick<IUserSettings, K>): Promise<void>;
 }
 
-interface ILocalStorageData {
-    turtleName?: string
-    turtleSize?: number
-    themeName?: string
-    localeId?: string
-}
-
-export interface AllUserSettings {
-    turtleName: string
+export interface IUserSettings {
+    turtleId: string
     turtleSize: number
     themeName: string
     localeId: string
 }
 
 export class UserSettingsBrowserLocalStorageService implements IUserSettingsService {
-    private localStorage: LocalStorageService<ILocalStorageData>;
-    private currentData: AllUserSettings;
+    private localStorage: LocalStorageService<IUserSettings>;
+    private currentData: IUserSettings;
 
     constructor(private userId: string) {
-        this.localStorage = new LocalStorageService(`logo-sandbox-${userId}-settings`, {});
+        this.localStorage = new LocalStorageService<IUserSettings>(`logo-sandbox-${userId}-settings`, {} as any);
         const localStorageValue = this.localStorage.getValue();
-        this.currentData = {
-            themeName: localStorageValue.themeName || `default`,
-            turtleName: localStorageValue.turtleName || `Bright Runner`,
-            turtleSize: localStorageValue.turtleSize || 40,
-            localeId: localStorageValue.localeId || ''
-        }
+        this.currentData = localStorageValue;
     }
 
     async saveDataToStorage(): Promise<void> {
         this.localStorage.setValue(this.currentData);
     }
 
-    async getAll(): Promise<AllUserSettings> {
+    async get(): Promise<IUserSettings> {
         return this.currentData;
     }
 
-    async getTurtleName(): Promise<string> {
-        return this.currentData.turtleName;
-    }
-
-    async setTurtleName(value: string): Promise<void> {
-        this.currentData.turtleName = value;
-        return this.saveDataToStorage();
-    }
-
-    async getTurtleSize(): Promise<number> {
-        return this.currentData.turtleSize;
-    }
-
-    async setTurtleSize(value: number): Promise<void> {
-        this.currentData.turtleSize = value;
-        return this.saveDataToStorage();
-    }
-
-    async getUiThemeName(): Promise<string> {
-        return this.currentData.themeName;
-    }
-
-    async setUiThemeName(value: string): Promise<void> {
-        this.currentData.themeName = value;
-        return this.saveDataToStorage();
-    }
-
-    async getLocaleId(): Promise<string> {
-        return this.currentData.localeId;
-    }
-
-    async setLocaleId(value: string): Promise<void> {
-        this.currentData.localeId = value;
+    async update<K extends keyof IUserSettings>(update: Pick<IUserSettings, K>): Promise<void> {
+        this.currentData = Object.assign(this.currentData, update);
         return this.saveDataToStorage();
     }
 }
