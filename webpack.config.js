@@ -5,6 +5,12 @@ var CopyWebpackPlugin = require('copy-webpack-plugin');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var GitRevisionPlugin = require('git-revision-webpack-plugin');
 var BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+
+// `CheckerPlugin` is optional. Use it if you want async error reporting.
+// We need this plugin to detect a `--watch` mode. It may be removed later
+// after https://github.com/webpack/webpack/issues/3460 will be resolved.
+const { CheckerPlugin } = require('awesome-typescript-loader')
+
 var packageJson = require('./package.json');
 
 let extractTextPlugin = new ExtractTextPlugin("[name].css");
@@ -48,7 +54,7 @@ module.exports = function (env) {
         module: {
             rules: [
                 { test: /\.tsx?$/, loader: "tslint-loader", enforce: "pre" },
-                { test: /\.tsx?$/, loader: "ts-loader", exclude: /node_modules/ },
+                { test: /\.tsx?$/, loader: "awesome-typescript-loader" },
                 { test: /\.(png|jpg|jpeg|gif|svg)$/, loader: "url-loader", options: { limit: 200000 } },
                 { test: /\.json$/, loader: "json-loader" },
                 { test: /\.(txt|html|md|po)$/, loader: "raw-loader" },
@@ -64,6 +70,8 @@ module.exports = function (env) {
         },
 
         plugins: [
+            new CheckerPlugin(),
+            
             new webpack.DllReferencePlugin({
                 context: __dirname,
                 manifest: path.join(__dirname, "dist", "vendor-manifest.json"),
