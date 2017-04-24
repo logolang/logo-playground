@@ -3972,9 +3972,9 @@ po2json@0.4.5:
     gettext-parser "1.1.0"
     nomnom "1.8.1"
 
-"pofile@https://github.com/megaboich/pofile":
-  version "1.0.7"
-  resolved "https://github.com/megaboich/pofile#2bac66096640fded160678f4a5625ab121f662e4"
+pofile@^1.0.8:
+  version "1.0.8"
+  resolved "https://registry.yarnpkg.com/pofile/-/pofile-1.0.8.tgz#09246a1788035404fc4d1ee087fa5e9ea686567d"
 
 portfinder@^1.0.9:
   version "1.0.13"

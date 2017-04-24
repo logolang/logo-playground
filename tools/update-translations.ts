@@ -2,7 +2,7 @@ import * as glob from 'glob'
 import * as fs from 'fs'
 import * as path from 'path'
 import * as esprima from 'esprima'
-import * as pofile from 'pofile'
+import * as PO from 'pofile'
 
 type DictionaryLike<V> = { [name: string]: V };
 
@@ -78,7 +78,7 @@ function processFiles(files: string[]) {
 
     for (const poFilename of poFilenames) {
         const poContent = fs.readFileSync(poFilename, "utf-8");
-        const poFile = pofile.parse(poContent);
+        const poFile = PO.parse(poContent);
         console.log(`file ${poFilename}, items: ${poFile.items.length}`)
 
         // Check for missing keys
@@ -88,7 +88,7 @@ function processFiles(files: string[]) {
             if (!match) {
                 // Add new item if we do have it
                 console.log(` missing key: ${msg.msgId}`);
-                let poItem = new pofile.Item();
+                let poItem = new PO.Item();
                 poItem.msgid = msg.msgId;
                 if (msg.msgPlural) {
                     poItem.msgid_plural = msg.msgPlural;
