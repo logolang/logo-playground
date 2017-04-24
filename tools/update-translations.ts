@@ -1,8 +1,9 @@
+import * as glob from 'glob'
+import * as fs from 'fs'
+import * as path from 'path'
+import * as esprima from 'esprima'
 
-const glob = require('glob');
-const fs = require('fs');
-const path = require('path');
-const esprima = require('esprima');
+type DictionaryLike<V> = { [name: string]: V };
 
 const rootFolder = path.join(process.cwd(), 'app');
 const regExp = /\b_T\(.*\)/g;
@@ -17,8 +18,13 @@ glob(srcFilesGlob, { cwd: rootFolder }, (er, files) => {
     }
 });
 
-function processFiles(files) {
-    let msgs = {};
+interface IMessageEntry {
+    msgId: string,
+    msgPlural: string
+}
+
+function processFiles(files: string[]) {
+    let msgs: DictionaryLike<IMessageEntry> = {};
 
     files.forEach(f => {
         const filePath = path.join(rootFolder, f);
@@ -34,10 +40,11 @@ function processFiles(files) {
             const tokens = esprima.tokenize(tdef);
 
             // Here we assume that msgid parameter is at 2nd index
-            const msgid = decodeJSString(tokens[2].value);
+            const msgId = decodeJSString(tokens[2].value);
             let msgPlural = '';
 
-            if (tokens.length > 4) { // another assumption that 4 tokens are corresponding only for sindle parameter call
+            if (tokens.length > 4) { 
+                // another assumption that 4 tokens are corresponding only for sindle parameter call
                 const pluralIndex = tokens.findIndex(t => t.value == "plural");
                 if (pluralIndex >= 0) {
                     // assume that value for plural is on index+2
@@ -45,9 +52,9 @@ function processFiles(files) {
                 }
             }
 
-            if (!msgs[msgid]) {
-                msgs[msgid] = {
-                    msgid: msgid,
+            if (!msgs[msgId]) {
+                msgs[msgId] = {
+                    msgId: msgId,
                     msgPlural: msgPlural
                 }
             }
@@ -56,7 +63,7 @@ function processFiles(files) {
 
     for (let msgid in msgs) {
         const msg = msgs[msgid];
-        console.log('msgid: ' + msg.msgid);
+        console.log('msgid: ' + msg.msgId);
         if (msg.msgPlural) {
             console.log('msgidPlural: ' + msg.msgPlural);
         }
@@ -64,7 +71,7 @@ function processFiles(files) {
     }
 }
 
-function decodeJSString(encoded) {
+function decodeJSString(encoded: string): string {
     const f = new Function('return ' + encoded);
     return f();
 }
