@@ -6,11 +6,11 @@ import { fakeUsers } from "app/services/login/users.fake";
 
 export class FakeDataProvider {
     public static getFakeAppConfig = () =>
-        lodash.cloneDeep(require<AppConfig>('app/../content/config/config.json'));
+        lodash.cloneDeep(require('app/../content/config/config.json'));
 
     public static getFakeUsers = () =>
         lodash.cloneDeep(fakeUsers);
 
     public static getRussianTranslation = () =>
-        lodash.cloneDeep(require<any>('app/../content/ru/messages.po'));
+        lodash.cloneDeep(require('app/../content/ru/messages.po'));
 } 

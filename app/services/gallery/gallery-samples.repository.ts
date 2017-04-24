@@ -1,7 +1,7 @@
 import { ProgramModel } from "app/services/gallery/program.model";
 import { IProgramsRepository } from "app/services/gallery/personal-gallery-localstorage.repository";
 
-const data = require<object[]>('./gallery-samples.json').map(rec => ProgramModel.fromJson(rec));
+const data = require('./gallery-samples.json').map((rec: any) => ProgramModel.fromJson(rec)) as ProgramModel[];
 data.sort((p1, p2) => { return p1.dateLastEdited > p2.dateLastEdited ? -1 : 1 });
 
 export class ProgramsSamplesRepository implements IProgramsRepository {

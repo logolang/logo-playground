@@ -2,21 +2,87 @@
 # Olek <mega.boich@gmail.com>, 2017.
 msgid ""
 msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: \n"
 "PO-Revision-Date: 2017-04-13 16:57+0200\n"
 "Last-Translator: Olek <mega.boich@gmail.com>\n"
-"Language-Team: Olek\n"
 "Language: ru\n"
+"Language-Team: Olek\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%"
-"10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Generator: Virtaal 0.7.1\n"
 
+msgid "About..."
+msgstr ""
+
+# REDUNDANT
 msgid "App title"
 msgstr "Песочница Лого"
 
+msgid "Delete"
+msgstr ""
+
+msgid "Delete program"
+msgstr ""
+
+msgid "Do you want to delete?"
+msgstr ""
+
+msgid "Documentation"
+msgstr ""
+
 msgid "Gallery"
 msgstr "Галлерея"
+
+msgid "Log In"
+msgstr ""
+
+msgid "Log Out"
+msgstr ""
+
+msgid "NO_PROGRAMS_IN_PERSONAL_LIBRARY"
+msgstr ""
+
+msgid "Personal Library"
+msgstr ""
+
+msgid "Playground"
+msgstr ""
+
+msgid "Program"
+msgstr ""
+
+msgid "Samples"
+msgstr ""
+
+msgid "Space for you personal programs"
+msgstr ""
+
+msgid "Turtle Name tt10"
+msgstr "Мистер"
+
+msgid "Turtle Name tt11"
+msgstr "Жорик"
+
+msgid "Turtle Name tt12"
+msgstr "Весёлый Боб"
+
+msgid "Turtle Name tt13"
+msgstr "Ныряльщик"
+
+msgid "Turtle Name tt2"
+msgstr "Хамелеон"
+
+msgid "Turtle Name tt9"
+msgstr "Принцесса"
+
+msgid "Tutorials"
+msgstr ""
+
+msgid "User Profile"
+msgstr ""
 
 msgid "User settings"
 msgstr "Настройки пользователя"
@@ -26,21 +92,3 @@ msgid_plural "You have %d programs"
 msgstr[0] "У вас %d программа"
 msgstr[1] "У вас %d программы"
 msgstr[2] "У вас %d программ"
-
-msgid "Turtle Name tt12"
-msgstr "Весёлый Боб"
-
-msgid "Turtle Name tt2"
-msgstr "Хамелеон"
-
-msgid "Turtle Name tt9"
-msgstr "Принцесса"
-
-msgid "Turtle Name tt10"
-msgstr "Мистер"
-
-msgid "Turtle Name tt11"
-msgstr "Жорик"
-
-msgid "Turtle Name tt13"
-msgstr "Ныряльщик"

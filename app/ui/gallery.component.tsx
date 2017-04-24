@@ -16,6 +16,7 @@ import { Routes } from '../routes';
 import { ProgramStorageType } from "app/services/gallery/personal-gallery-localstorage.repository";
 import { ProgramModel } from "app/services/gallery/program.model";
 import { ProgramsSamplesRepository } from "app/services/gallery/gallery-samples.repository";
+import { _T } from "app/services/customizations/localization.service";
 
 import './gallery.component.scss'
 
@@ -53,7 +54,7 @@ export class GalleryComponent extends React.Component<IComponentProps, IComponen
 
     componentDidMount() {
         this.loadData();
-        this.titleService.setDocumentTitle("Gallery");
+        this.titleService.setDocumentTitle(_T("Gallery"));
     }
 
     async loadData() {
@@ -112,7 +113,7 @@ export class GalleryComponent extends React.Component<IComponentProps, IComponen
                 <h4 className="media-heading ex-break-word">
                     <span>&nbsp;</span>
                     <Link to={link}>
-                        <span className="ex-break-word">{p.name || 'Program'}</span>
+                        <span className="ex-break-word">{p.name || _T("Program")}</span>
                     </Link>
                 </h4>
                 <br />
@@ -142,17 +143,17 @@ export class GalleryComponent extends React.Component<IComponentProps, IComponen
                 <MainMenuComponent />
                 <div className="ex-scroll-outer">
                     <div className="container-fluid ex-gallery-container">
-                        <PageHeaderComponent title={`Gallery`} />
+                        <PageHeaderComponent title={_T("Gallery")} />
                         {
                             this.state.programToDelete &&
                             <ActionConfirmationModalComponent
                                 onConfirm={this.confirmDelete}
-                                actionButtonText="Delete"
-                                headerText="Do you want to delete?"
+                                actionButtonText={_T("Delete")}
+                                headerText={_T("Do you want to delete?")}
                                 onCancel={() => { this.setState({ programToDelete: undefined }) }}
                             >
                                 <div>
-                                    <h3>Delete program</h3>
+                                    <h3>{_T("Delete program")}</h3>
                                     <br />
                                     {this.renderProgramCard(this.state.programToDelete, 'library', false)}
                                     <br />
@@ -161,7 +162,7 @@ export class GalleryComponent extends React.Component<IComponentProps, IComponen
                         }
                         <div className="row">
                             <div className="col-sm-6">
-                                <CollapsiblePanelComponent collapsed={false} title="Personal Library ">
+                                <CollapsiblePanelComponent collapsed={false} title={_T("Personal Library")}>
                                     <div>
                                         {
                                             this.state.isLoading
@@ -181,13 +182,16 @@ export class GalleryComponent extends React.Component<IComponentProps, IComponen
                                                             {this.renderProgramCard(p, 'library', true)}
                                                         </div>
                                                     })
-                                                    : <NoDataComponent noBorder title="Space for you personal programs" description="You do not have programs in your personal library yet. To add a program you need to go to Playground or open one from Samples section." />
+                                                    : <NoDataComponent noBorder
+                                                        title={_T("Space for you personal programs")}
+                                                        description={_T("NO_PROGRAMS_IN_PERSONAL_LIBRARY")}
+                                                    />
                                         }
                                     </div>
                                 </CollapsiblePanelComponent>
                             </div>
                             <div className="col-sm-6">
-                                <CollapsiblePanelComponent collapsed={false} title="Samples ">
+                                <CollapsiblePanelComponent collapsed={false} title={_T("Samples")}>
                                     <div>
                                         {
                                             this.state.isLoading

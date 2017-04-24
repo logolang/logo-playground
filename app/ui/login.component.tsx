@@ -39,7 +39,6 @@ export class LoginComponent extends React.Component<ILoginFormComponentProps, IL
     componentDidMount = () => {
         let form = document.getElementById('loginForm');
         if (form) {
-            console.log('got the form');
             form.onsubmit = () => {
                 setTimeout(async () => {
                     this.performSubmitting();

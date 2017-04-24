@@ -2,12 +2,18 @@ import * as glob from 'glob'
 import * as fs from 'fs'
 import * as path from 'path'
 import * as esprima from 'esprima'
+import * as pofile from 'pofile'
 
 type DictionaryLike<V> = { [name: string]: V };
 
 const rootFolder = path.join(process.cwd(), 'app');
 const regExp = /\b_T\(.*\)/g;
 const srcFilesGlob = "**/*.@(tsx|ts)";
+
+const poFilenames = [
+    "content/en/messages.po",
+    "content/ru/messages.po"
+];
 
 glob(srcFilesGlob, { cwd: rootFolder }, (er, files) => {
     if (er) {
@@ -43,7 +49,7 @@ function processFiles(files: string[]) {
             const msgId = decodeJSString(tokens[2].value);
             let msgPlural = '';
 
-            if (tokens.length > 4) { 
+            if (tokens.length > 4) {
                 // another assumption that 4 tokens are corresponding only for sindle parameter call
                 const pluralIndex = tokens.findIndex(t => t.value == "plural");
                 if (pluralIndex >= 0) {
@@ -68,6 +74,54 @@ function processFiles(files: string[]) {
             console.log('msgidPlural: ' + msg.msgPlural);
         }
         console.log();
+    }
+
+    for (const poFilename of poFilenames) {
+        const poContent = fs.readFileSync(poFilename, "utf-8");
+        const poFile = pofile.parse(poContent);
+        console.log(`file ${poFilename}, items: ${poFile.items.length}`)
+
+        // Check for missing keys
+        for (let msgid in msgs) {
+            const msg = msgs[msgid];
+            const match = poFile.items.find(i => i.msgid === msg.msgId);
+            if (!match) {
+                // Add new item if we do have it
+                console.log(` missing key: ${msg.msgId}`);
+                let poItem = new pofile.Item();
+                poItem.msgid = msg.msgId;
+                if (msg.msgPlural) {
+                    poItem.msgid_plural = msg.msgPlural;
+                }
+                poFile.items.push(poItem);
+            } else {
+                // Check and update plural expression if it has been changed
+                if (match.msgid_plural != msg.msgPlural) {
+                    if (match.msgid_plural && msg.msgPlural) {
+                        match.msgid_plural = msg.msgPlural
+                    }
+                    if (!msg.msgPlural) {
+                        delete match.msgid_plural;
+                    }
+                }
+            }
+        }
+
+        // Check for extra keys
+        for (const item of poFile.items) {
+            if (!msgs[item.msgid]) {
+                console.log(` extra key: ${item.msgid}`);
+                if (!item.comments || !item.comments.find(c => c === "REDUNDANT")) {
+                    item.comments = ["REDUNDANT", ...item.comments || []];
+                }
+            }
+        }
+
+        // Sort item and save file
+        poFile.items.sort((i1, i2) => i1.msgid > i2.msgid ? 1 : -1);
+        poFile.save(poFilename, () => {
+            console.log('saved');
+        })
     }
 }
 

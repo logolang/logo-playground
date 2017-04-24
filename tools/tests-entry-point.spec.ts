@@ -14,5 +14,5 @@ chai.should();
  * We need to include all application files to create coverage report for them
  * Also we need to exclude entry point app.tsx, so it will no trigger while loading scripts in test runner
  */
-const req = require.context('app/', true, /^(.(?!app\.))*\.tsx?$/);
+const req = (require as any).context('app/', true, /^(.(?!app\.))*\.tsx?$/);
 req.keys().forEach(req);

@@ -1,26 +1,63 @@
 # Olek, 2017.
 msgid ""
 msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
 "Language: en\n"
+"Language-Team: \n"
+"Content-Type: \n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
 "domain": "messages\n"
 
+msgid "About..."
+msgstr ""
+
+# REDUNDANT
 msgid "App title"
 msgstr "Logo Sandbox"
+
+msgid "Delete"
+msgstr ""
+
+msgid "Delete program"
+msgstr ""
+
+msgid "Do you want to delete?"
+msgstr ""
+
+msgid "Documentation"
+msgstr ""
 
 msgid "Gallery"
 msgstr "Gallery"
 
-msgid "User settings"
-msgstr "User settings"
+msgid "Log In"
+msgstr ""
 
-msgid "Turtle Name tt12"
-msgstr "Bright Runner"
+msgid "Log Out"
+msgstr ""
 
-msgid "Turtle Name tt2"
-msgstr "Chameleon"
+msgid "NO_PROGRAMS_IN_PERSONAL_LIBRARY"
+msgstr ""
 
-msgid "Turtle Name tt9"
-msgstr "Princess"
+msgid "Personal Library"
+msgstr ""
+
+msgid "Playground"
+msgstr ""
+
+msgid "Program"
+msgstr ""
+
+msgid "Samples"
+msgstr ""
+
+msgid "Space for you personal programs"
+msgstr ""
 
 msgid "Turtle Name tt10"
 msgstr "Chilly Bob"
@@ -28,5 +65,28 @@ msgstr "Chilly Bob"
 msgid "Turtle Name tt11"
 msgstr "Summer"
 
+msgid "Turtle Name tt12"
+msgstr "Bright Runner"
+
 msgid "Turtle Name tt13"
 msgstr "Deep Diver"
+
+msgid "Turtle Name tt2"
+msgstr "Chameleon"
+
+msgid "Turtle Name tt9"
+msgstr "Princess"
+
+msgid "Tutorials"
+msgstr ""
+
+msgid "User Profile"
+msgstr ""
+
+msgid "User settings"
+msgstr "User settings"
+
+msgid "You have %d program"
+msgid_plural "You have %d programs"
+msgstr[0] ""
+msgstr[1] ""
