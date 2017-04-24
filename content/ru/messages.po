@@ -14,51 +14,122 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Generator: Virtaal 0.7.1\n"
 
-msgid "About..."
-msgstr ""
+msgid "About"
+msgstr "О программе"
 
-# REDUNDANT
+msgid "About..."
+msgstr "О программе..."
+
+msgid "Added programs: %d"
+msgstr "Добавленные программы: %d"
+
 msgid "App title"
 msgstr "Песочница Лого"
 
+msgid "App version"
+msgstr "Версия приложения"
+
+msgid "Choose another tutorial"
+msgstr "Выбрать другой учебник"
+
+msgid "Code version"
+msgstr "Версия кода"
+
+msgid "Continue"
+msgstr "Продолжить"
+
 msgid "Delete"
-msgstr ""
+msgstr "Удалить"
 
 msgid "Delete program"
-msgstr ""
+msgstr "Удалить программу"
 
 msgid "Do you want to delete?"
-msgstr ""
+msgstr "Вы хотите удалить?"
 
 msgid "Documentation"
-msgstr ""
+msgstr "Документация"
+
+msgid "Export"
+msgstr "Экспорт"
+
+msgid "Extra Small"
+msgstr "Очень маленький"
+
+msgid "FIX_THE_CODE_MESSAGE"
+msgstr "Если ваш код не работает, как описано в учебнике, вы можете заменить его рабочей версией."
+
+msgid "FIX_THE_CODE_WARNING"
+msgstr "Это полностью перезапишет ваш код."
+
+msgid "Fix the code?"
+msgstr "Исправить код?"
 
 msgid "Gallery"
 msgstr "Галлерея"
 
-msgid "Log In"
-msgstr ""
+msgid "Help – it's not working!"
+msgstr "Помогите - не работает!"
 
-msgid "Log Out"
-msgstr ""
+msgid "Huge"
+msgstr "Огромный"
+
+msgid "Import"
+msgstr "Импорт"
+
+msgid "Import completed"
+msgstr "Импорт завершен"
+
+msgid "Language"
+msgstr "Язык"
+
+msgid "Large"
+msgstr "Крупный"
+
+msgid "Log in"
+msgstr "Войти"
+
+msgid "Log out"
+msgstr "Выход из системы"
+
+msgid "Medium"
+msgstr "Средний"
 
 msgid "NO_PROGRAMS_IN_PERSONAL_LIBRARY"
-msgstr ""
+msgstr "У вас еще нет программ в вашей личной библиотеке. Чтобы добавить программу, вам нужно перейти на Детскую площадку или открыть одну из раздела Образцы."
 
-msgid "Personal Library"
-msgstr ""
+msgid "No, keep my code as is"
+msgstr "Нет, сохранить мой код как есть"
+
+msgid "Package name"
+msgstr "Имя пакета"
+
+msgid "Personal library"
+msgstr "Персональная библиотека"
 
 msgid "Playground"
-msgstr ""
+msgstr "Детская площадка"
 
 msgid "Program"
-msgstr ""
+msgstr "Программа"
+
+msgid "Run"
+msgstr "Выполнить"
 
 msgid "Samples"
-msgstr ""
+msgstr "Образцы"
 
-msgid "Space for you personal programs"
-msgstr ""
+msgid "Small"
+msgstr "Маленький"
+
+msgid "Space for your personal programs"
+msgstr "Пространство для ваших личных программ"
+
+msgid "Stop"
+msgstr "Остановить"
+
+msgid "Turtle"
+msgstr "Черепаха"
 
 msgid "Turtle Name tt10"
 msgstr "Мистер"
@@ -79,13 +150,19 @@ msgid "Turtle Name tt9"
 msgstr "Принцесса"
 
 msgid "Tutorials"
-msgstr ""
+msgstr "Учебные пособия"
 
-msgid "User Profile"
-msgstr ""
+msgid "User interface theme"
+msgstr "Тема пользовательского интерфейса"
+
+msgid "User profile"
+msgstr "Профиль пользователя"
 
 msgid "User settings"
 msgstr "Настройки пользователя"
+
+msgid "Yes, fix my code"
+msgstr "Да, исправить мой код"
 
 msgid "You have %d program"
 msgid_plural "You have %d programs"

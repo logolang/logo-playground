@@ -8,6 +8,7 @@ import { MainMenuComponent } from 'app/ui/main-menu.component'
 import { PageHeaderComponent } from 'app/ui/_generic/page-header.component';
 import { PageLoadingIndicatorComponent } from 'app/ui/_generic/page-loading-indicator.component';
 import { AlertMessageComponent } from 'app/ui/_generic/alert-message.component';
+import { _T } from "app/services/customizations/localization.service";
 
 import './documentation.component.scss'
 
@@ -35,7 +36,7 @@ export class DocumentationComponent extends React.Component<IComponentProps, ICo
 
     componentDidMount() {
         this.loadData();
-        this.titleService.setDocumentTitle("Documentation");
+        this.titleService.setDocumentTitle(_T("Documentation"));
     }
 
     private async loadData() {

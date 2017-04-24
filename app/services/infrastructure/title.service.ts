@@ -3,7 +3,12 @@ export class TitleService {
     }
 
     setDocumentTitle(title: string) {
-        document.title = this.prefix + title;
+        if (title) {
+            document.title = this.prefix + "-" + title;
+        }
+        else {
+            document.title = this.prefix;
+        }
     }
 }
 

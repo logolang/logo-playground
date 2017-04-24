@@ -99,7 +99,7 @@ export class MainMenuComponent extends React.Component<IComponentProps, ICompone
                                 !loginStatus.isLoggedIn &&
                                 <MenuItem onClick={() => { this.loginService.requestNewLogin() }}>
                                     <span className="glyphicon glyphicon-log-in" aria-hidden="true"></span>
-                                    <span>&nbsp;&nbsp;{_T("Log In")}</span>
+                                    <span>&nbsp;&nbsp;{_T("Log in")}</span>
                                 </MenuItem>
                             }
                             {
@@ -109,7 +109,7 @@ export class MainMenuComponent extends React.Component<IComponentProps, ICompone
                             <LinkContainer to={Routes.settingsRoot.build({})}>
                                 <MenuItem>
                                     <span className="glyphicon glyphicon-user" aria-hidden="true"></span>
-                                    <span>&nbsp;&nbsp;{_T("User Profile")}</span>
+                                    <span>&nbsp;&nbsp;{_T("User profile")}</span>
                                 </MenuItem>
                             </LinkContainer>
                             <LinkContainer to={Routes.aboutRoot.build({})}>
@@ -126,7 +126,7 @@ export class MainMenuComponent extends React.Component<IComponentProps, ICompone
                                 loginStatus.isLoggedIn &&
                                 <MenuItem onClick={this.menuLogOutClick}>
                                     <span className="glyphicon glyphicon-log-out" aria-hidden="true"></span>
-                                    <span>&nbsp;&nbsp;{_T("Log Out")}</span>
+                                    <span>&nbsp;&nbsp;{_T("Log out")}</span>
                                 </MenuItem>
                             }
                         </NavDropdown>

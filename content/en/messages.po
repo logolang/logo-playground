@@ -13,12 +13,29 @@ msgstr ""
 "Plural-Forms: \n"
 "domain": "messages\n"
 
+msgid "About"
+msgstr ""
+
 msgid "About..."
 msgstr ""
 
-# REDUNDANT
+msgid "Added programs: %d"
+msgstr ""
+
 msgid "App title"
 msgstr "Logo Sandbox"
+
+msgid "App version"
+msgstr ""
+
+msgid "Choose another tutorial"
+msgstr ""
+
+msgid "Code version"
+msgstr ""
+
+msgid "Continue"
+msgstr ""
 
 msgid "Delete"
 msgstr ""
@@ -32,19 +49,61 @@ msgstr ""
 msgid "Documentation"
 msgstr ""
 
+msgid "Export"
+msgstr ""
+
+msgid "Extra Small"
+msgstr ""
+
+msgid "FIX_THE_CODE_MESSAGE"
+msgstr "If your code isn't working as the tutorial describes, you can replace it with a working version."
+
+msgid "FIX_THE_CODE_WARNING"
+msgstr "This will overwrite your code entirely."
+
+msgid "Fix the code?"
+msgstr ""
+
 msgid "Gallery"
 msgstr "Gallery"
 
-msgid "Log In"
+msgid "Help – it's not working!"
 msgstr ""
 
-msgid "Log Out"
+msgid "Huge"
+msgstr ""
+
+msgid "Import"
+msgstr ""
+
+msgid "Import completed"
+msgstr ""
+
+msgid "Language"
+msgstr ""
+
+msgid "Large"
+msgstr ""
+
+msgid "Log in"
+msgstr ""
+
+msgid "Log out"
+msgstr ""
+
+msgid "Medium"
 msgstr ""
 
 msgid "NO_PROGRAMS_IN_PERSONAL_LIBRARY"
+msgstr "You do not have programs in your personal library yet. To add a program you need to go to Playground or open one from Samples section."
+
+msgid "No, keep my code as is"
 msgstr ""
 
-msgid "Personal Library"
+msgid "Package name"
+msgstr ""
+
+msgid "Personal library"
 msgstr ""
 
 msgid "Playground"
@@ -53,10 +112,22 @@ msgstr ""
 msgid "Program"
 msgstr ""
 
+msgid "Run"
+msgstr ""
+
 msgid "Samples"
 msgstr ""
 
-msgid "Space for you personal programs"
+msgid "Small"
+msgstr ""
+
+msgid "Space for your personal programs"
+msgstr ""
+
+msgid "Stop"
+msgstr ""
+
+msgid "Turtle"
 msgstr ""
 
 msgid "Turtle Name tt10"
@@ -80,11 +151,17 @@ msgstr "Princess"
 msgid "Tutorials"
 msgstr ""
 
-msgid "User Profile"
+msgid "User interface theme"
+msgstr ""
+
+msgid "User profile"
 msgstr ""
 
 msgid "User settings"
 msgstr "User settings"
+
+msgid "Yes, fix my code"
+msgstr ""
 
 msgid "You have %d program"
 msgid_plural "You have %d programs"

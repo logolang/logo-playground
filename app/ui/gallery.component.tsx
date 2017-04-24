@@ -162,7 +162,7 @@ export class GalleryComponent extends React.Component<IComponentProps, IComponen
                         }
                         <div className="row">
                             <div className="col-sm-6">
-                                <CollapsiblePanelComponent collapsed={false} title={_T("Personal Library")}>
+                                <CollapsiblePanelComponent collapsed={false} title={_T("Personal library")}>
                                     <div>
                                         {
                                             this.state.isLoading
@@ -183,7 +183,7 @@ export class GalleryComponent extends React.Component<IComponentProps, IComponen
                                                         </div>
                                                     })
                                                     : <NoDataComponent noBorder
-                                                        title={_T("Space for you personal programs")}
+                                                        title={_T("Space for your personal programs")}
                                                         description={_T("NO_PROGRAMS_IN_PERSONAL_LIBRARY")}
                                                     />
                                         }

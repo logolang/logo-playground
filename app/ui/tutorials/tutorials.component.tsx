@@ -20,6 +20,7 @@ import { Routes } from 'app/routes';
 import { UserCustomizationsProvider, IUserCustomizationsData } from "app/services/customizations/user-customizations-provider";
 import { ITutorialInfo, ITutorialStep } from "app/services/tutorials/tutorials-content-service";
 import { ProgrammingFlowService } from "app/services/flow/programming-flow.service";
+import { _T } from "app/services/customizations/localization.service";
 
 import './tutorials.component.scss';
 
@@ -79,7 +80,7 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
     componentDidMount() {
         this.loadData(this.props);
         this.flowService.initHotkeys();
-        this.titleService.setDocumentTitle("Tutorials");
+        this.titleService.setDocumentTitle(_T("Tutorials"));
     }
 
     componentWillUnmount() {
@@ -205,7 +206,7 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
                                         <div className="current-step-panel-heading">
                                             <div className="tutorials-selector-container">
                                                 <button className="btn btn-info" onClick={() => { this.setState({ showSelectionTutorials: true }) }}>
-                                                    <span>Tutorial: {this.state.currentTutorial.label}&nbsp;&nbsp;</span>
+                                                    <span>{this.state.currentTutorial.label}&nbsp;&nbsp;</span>
                                                     <span className="caret"></span>
                                                 </button>
                                             </div>
@@ -238,7 +239,7 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
                                                                 onClick={() => {
                                                                     this.setState({ showFixTheCode: true })
                                                                 }}>
-                                                                <span>Help – it's not working!</span>
+                                                                <span>{_T("Help – it's not working!")}</span>
                                                             </button>
                                                         }
                                                         <span> </span>
@@ -246,7 +247,7 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
                                                             (!nextStepButtonDisabled) &&
                                                             <button type="button" className="btn btn-primary"
                                                                 onClick={this.navigateToNextStep(1)}>
-                                                                <span>Continue&nbsp;&nbsp;</span>
+                                                                <span>{_T("Continue")}&nbsp;&nbsp;</span>
                                                                 <span className="glyphicon glyphicon-arrow-right" aria-hidden="true"></span>
                                                             </button>
                                                         }
@@ -254,7 +255,7 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
                                                             nextStepButtonDisabled &&
                                                             <button type="button" className="btn btn-primary"
                                                                 onClick={() => { this.setState({ showSelectionTutorials: true }) }}>
-                                                                <span>Choose another tutorial&nbsp;&nbsp;</span>
+                                                                <span>{_T("Choose another tutorial")}&nbsp;&nbsp;</span>
                                                                 <span className="glyphicon glyphicon-arrow-right" aria-hidden="true"></span>
                                                             </button>
                                                         }
@@ -296,7 +297,8 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
                                     <button type="button" className="btn btn-success"
                                         onClick={this.flowService.runCurrentProgram}
                                     >
-                                        Run <span className="glyphicon glyphicon-play" aria-hidden="true"> <small>(F9)</small></span>
+                                        <span>{_T("Run")}</span>
+                                        <span className="glyphicon glyphicon-play" aria-hidden="true"> <small>(F9)</small></span>
                                     </button>
                                 }
                                 {
@@ -304,7 +306,8 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
                                     <button type="button" className="btn btn-default"
                                         onClick={this.flowService.stopCurrentProgram}
                                     >
-                                        Stop <span className="glyphicon glyphicon-stop" aria-hidden="true"></span>
+                                        <span>{_T("Stop")}</span>
+                                        <span className="glyphicon glyphicon-stop" aria-hidden="true"></span>
                                     </button>
                                 }
                             </div>
@@ -341,12 +344,14 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
         }
         return <Modal show={true} onHide={() => { this.setState({ showFixTheCode: false }) }} animation={false} backdrop='static' >
             <Modal.Header closeButton>
-                <Modal.Title>Fix the code?</Modal.Title>
+                <Modal.Title>{_T("Fix the code?")}</Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 <p>
-                    If your code isn't working as the tutorial describes, you can replace it with a working version.
-                    <strong> This will overwrite your code entirely.</strong>
+                    {_T("FIX_THE_CODE_MESSAGE")}
+                    <strong>
+                        {_T("FIX_THE_CODE_WARNING")}
+                    </strong>
                 </p>
                 <br />
             </Modal.Body>
@@ -358,12 +363,10 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
                         this.flowService.code = correctCode;
                         this.flowService.runCurrentProgram();
                     }}>
-                    <strong>Yes</strong>
-                    <span>, fix my code</span>
+                    <span> {_T("Yes, fix my code")}</span>
                 </button>
                 <button type="button" className="btn btn-primary" onClick={() => { this.setState({ showFixTheCode: false }) }}>
-                    <strong>No</strong>
-                    <span>, keep my code as is</span>
+                    <span> {_T("No, keep my code as is")}</span>
                 </button>
             </Modal.Footer>
         </Modal>

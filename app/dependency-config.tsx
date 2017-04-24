@@ -11,7 +11,7 @@ import { UserDataBrowserLocalStorageService } from "app/services/customizations/
 import { UserSettingsBrowserLocalStorageService } from "app/services/customizations/user-settings.service";
 import { NotificationService } from "app/services/infrastructure/notification.service";
 import { TitleService } from "app/services/infrastructure/title.service";
-import { LocalizationService } from "app/services/customizations/localization.service";
+import { LocalizationService, _T } from "app/services/customizations/localization.service";
 
 export class DependencyConfig {
     static async init() {
@@ -32,7 +32,7 @@ export class DependencyConfig {
         localizationService.initLocale(localizationData);
 
         const notificationService = new NotificationService();
-        const titleService = new TitleService(appInfo.description + ": ");
+        const titleService = new TitleService(_T("App title"));
 
         const usersRepository = new FakeUsersRepository(currentUser);
 

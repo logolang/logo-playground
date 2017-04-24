@@ -76,7 +76,7 @@ export class UserProfileComponent extends React.Component<IComponentProps, IComp
 
     componentDidMount() {
         this.loadData();
-        this.titleService.setDocumentTitle("User profile");
+        this.titleService.setDocumentTitle(_T("User profile"));
     }
 
     private setRandomCode() {
@@ -114,8 +114,8 @@ export class UserProfileComponent extends React.Component<IComponentProps, IComp
             await this.loadData();
             this.notificationService.push({
                 type: 'success',
-                title: 'Import completed',
-                message: `Added programs: ${added}`,
+                title: _T('Import completed'),
+                message: _T('Added programs: %d', { value: added }),
                 closeTimeout: 4000
             });
         }
@@ -135,7 +135,7 @@ export class UserProfileComponent extends React.Component<IComponentProps, IComp
                         <form>
                             <fieldset>
                                 <div className="form-group">
-                                    <label htmlFor="localeselector">Language</label>
+                                    <label htmlFor="localeselector">{_T("Language")}</label>
                                     {
                                         this.state.currentLocale &&
                                         <div className="row">
@@ -163,7 +163,7 @@ export class UserProfileComponent extends React.Component<IComponentProps, IComp
                                     }
                                 </div>
                                 <div className="form-group">
-                                    <label htmlFor="themeselector">User Interface Theme</label>
+                                    <label htmlFor="themeselector">{_T("User interface theme")}</label>
                                     {
                                         this.state.theme &&
                                         <div className="row">
@@ -195,7 +195,7 @@ export class UserProfileComponent extends React.Component<IComponentProps, IComp
                                 {
                                     this.state.userCustomizations &&
                                     <div className="form-group">
-                                        <label htmlFor="turtleSelector">Turtle</label>
+                                        <label htmlFor="turtleSelector">{_T("Turtle")}</label>
                                         <div className="row">
                                             <div className="col-sm-8">
                                                 <select className="form-control" id="turtleSelector"
@@ -220,11 +220,11 @@ export class UserProfileComponent extends React.Component<IComponentProps, IComp
                                                         await this.loadData();
                                                         this.setRandomCode();
                                                     }}>
-                                                    <option value={20}>Extra Small</option>
-                                                    <option value={32}>Small</option>
-                                                    <option value={40}>Medium</option>
-                                                    <option value={52}>Large</option>
-                                                    <option value={72}>Huge</option>
+                                                    <option value={20}>{_T("Extra Small")}</option>
+                                                    <option value={32}>{_T("Small")}</option>
+                                                    <option value={40}>{_T("Medium")}</option>
+                                                    <option value={52}>{_T("Large")}</option>
+                                                    <option value={72}>{_T("Huge")}</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -233,7 +233,7 @@ export class UserProfileComponent extends React.Component<IComponentProps, IComp
 
                                 <br />
                                 <div className="form-group">
-                                    <label>Personal Gallery</label>
+                                    <label>{_T("Personal library")}</label>
                                     <div className="row">
                                         <div className="col-sm-12">
                                             <blockquote className="ex-font-size-normal">
@@ -241,9 +241,9 @@ export class UserProfileComponent extends React.Component<IComponentProps, IComp
                                                 <div className="btn-toolbar">
                                                     <button type="button" className="btn btn-default"
                                                         onClick={this.doExport}>
-                                                        <span>Export</span>
+                                                        <span>{_T("Export")}</span>
                                                     </button>
-                                                    <FileSelectorComponent buttonText="Import" onFileTextContentReady={this.onImport} />
+                                                    <FileSelectorComponent buttonText={_T("Import")} onFileTextContentReady={this.onImport} />
                                                 </div>
                                             </blockquote>
                                         </div>

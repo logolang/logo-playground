@@ -4,6 +4,7 @@ import { Link } from 'react-router'
 import { ServiceLocator } from 'app/services/service-locator'
 import { MainMenuComponent } from 'app/ui/main-menu.component'
 import { PageHeaderComponent } from 'app/ui/_generic/page-header.component';
+import { _T } from "app/services/customizations/localization.service";
 
 interface IComponentState {
 }
@@ -21,20 +22,20 @@ export class AboutComponent extends React.Component<IComponentProps, IComponentS
         this.state = {
         };
 
-        this.titleService.setDocumentTitle("About");
+        this.titleService.setDocumentTitle(_T("About"));
     }
 
     render(): JSX.Element {
         return (
             <div className="container">
                 <MainMenuComponent />
-                <PageHeaderComponent title="About" />
+                <PageHeaderComponent title={_T("About")} />
                 <div className="row">
                     <div className="col-sm-12">
                         <p>{appInfo.description}</p>
-                        <p><strong>Package Name:</strong> {appInfo.name}</p>
-                        <p><strong>App Version:</strong> {appInfo.version}</p>
-                        <p><strong>Code Version:</strong> {appInfo.gitVersion}</p>
+                        <p><strong>{_T("Package name")}:</strong> {appInfo.name}</p>
+                        <p><strong>{_T("App version")}:</strong> {appInfo.version}</p>
+                        <p><strong>{_T("Code version")}:</strong> {appInfo.gitVersion}</p>
                     </div>
                 </div>
             </div>
