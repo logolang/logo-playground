@@ -12,6 +12,7 @@ import { UserSettingsBrowserLocalStorageService } from "app/services/customizati
 import { NotificationService } from "app/services/infrastructure/notification.service";
 import { TitleService } from "app/services/infrastructure/title.service";
 import { LocalizationService, _T } from "app/services/customizations/localization.service";
+import { NavigationService } from "app/services/infrastructure/navigation.service";
 
 export class DependencyConfig {
     static async init() {
@@ -32,6 +33,7 @@ export class DependencyConfig {
         localizationService.initLocale(localizationData);
 
         const notificationService = new NotificationService();
+        const navigationService = new NavigationService();
         const titleService = new TitleService(_T("App title"));
 
         const usersRepository = new FakeUsersRepository(currentUser);
@@ -46,6 +48,7 @@ export class DependencyConfig {
         ServiceLocator.set(x => x.userDataService = userDataService);
         ServiceLocator.set(x => x.userSettingsService = userSettingsService);
         ServiceLocator.set(x => x.notificationService = notificationService);
+        ServiceLocator.set(x => x.navigationService = navigationService);
         ServiceLocator.set(x => x.titleService = titleService);
 
         ServiceLocator.set(x => x.usersRepository = usersRepository);

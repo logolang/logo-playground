@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Link } from 'react-router'
 import * as cn from 'classnames';
 
 import { translateCheckBoxChangeToState, translateInputChangeToState } from 'app/utils/react-helpers';

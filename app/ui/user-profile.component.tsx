@@ -1,10 +1,10 @@
 import * as React from 'react';
 import * as cn from 'classnames';
 import * as FileSaver from 'file-saver';
-import { Link } from 'react-router'
+import { Link, RouteComponentProps } from 'react-router-dom'
 import { Subject, BehaviorSubject } from 'rxjs'
 
-import { goBack, translateSelectChangeToState } from 'app/utils/react-helpers';
+import { translateSelectChangeToState } from 'app/utils/react-helpers';
 import { stay, setupActionErrorHandler, callAction } from 'app/utils/async-helpers';
 import { RandomHelper } from 'app/utils/random-helper';
 
@@ -33,7 +33,7 @@ interface IComponentState {
     userCustomizations?: IUserCustomizationsData
 }
 
-interface IComponentProps {
+interface IComponentProps extends RouteComponentProps<void> {
 }
 
 const codeSamples = [

@@ -17,7 +17,7 @@ async function runApp() {
 
         // Render the app
         ReactDOM.render(
-            Routes.getRouteDefinitions(),
+            <Routes />,
             appHostDomElement
         )
     }

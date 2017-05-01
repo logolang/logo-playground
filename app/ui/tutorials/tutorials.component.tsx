@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { Link } from 'react-router'
+import { Link, RouteComponentProps } from 'react-router-dom'
 import { Button, ButtonGroup, Nav, Navbar, NavDropdown, MenuItem, NavItem, DropdownButton, Modal, OverlayTrigger } from 'react-bootstrap';
 import { Subject, BehaviorSubject } from 'rxjs'
 
-import { goTo, subscribeLoadDataOnPropsParamsChange } from 'app/utils/react-helpers';
+import { subscribeLoadDataOnPropsParamsChange } from 'app/utils/react-helpers';
 import { setupActionErrorHandler, callAction } from 'app/utils/async-helpers';
 
 import { MainMenuComponent } from 'app/ui/main-menu.component'
@@ -38,8 +38,7 @@ interface IComponentState {
     userCustomizations?: IUserCustomizationsData
 }
 
-interface IComponentProps {
-    params: ITutorialPageRouteParams
+interface IComponentProps extends RouteComponentProps<ITutorialPageRouteParams> {
 }
 
 export interface ITutorialPageRouteParams {
@@ -52,6 +51,7 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
     private titleService = ServiceLocator.resolve(x => x.titleService);
     private tutorialsLoader = ServiceLocator.resolve(x => x.tutorialsService);
     private userDataService = ServiceLocator.resolve(x => x.userDataService);
+    private navService = ServiceLocator.resolve(x => x.navigationService);
     private userCustomizationsProvider = new UserCustomizationsProvider();
     private flowService = new ProgrammingFlowService();
 
@@ -100,14 +100,16 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
         if (!lastTutorialInfo) { return }
         let initialCode = lastTutorialInfo.code;
 
-        let tutorialIdToLoad = props.params.tutorialId;
-        let stepIndex = this.parseStepIndexFromParam(props.params.stepIndex);
+        let tutorialIdToLoad = props.match.params.tutorialId;
+        let stepIndex = this.parseStepIndexFromParam(props.match.params.stepIndex);
         if (!tutorialIdToLoad) {
             if (lastTutorialInfo.tutorialName) {
-                goTo(Routes.tutorialSpecified.build({
-                    tutorialId: lastTutorialInfo.tutorialName,
-                    stepIndex: this.formatStepIndexToParam(lastTutorialInfo.step)
-                }));
+                this.navService.navigate({
+                    route: Routes.tutorialSpecified.build({
+                        tutorialId: lastTutorialInfo.tutorialName,
+                        stepIndex: this.formatStepIndexToParam(lastTutorialInfo.step)
+                    })
+                });
                 return;
             }
         }
@@ -159,10 +161,12 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
         return () => {
             if (this.state.currentStep && this.state.currentTutorial) {
                 let newStepIndex = this.state.currentStep.index + direction;
-                goTo(Routes.tutorialSpecified.build({
-                    tutorialId: this.state.currentTutorial.id,
-                    stepIndex: this.formatStepIndexToParam(newStepIndex)
-                }));
+                this.navService.navigate({
+                    route: Routes.tutorialSpecified.build({
+                        tutorialId: this.state.currentTutorial.id,
+                        stepIndex: this.formatStepIndexToParam(newStepIndex)
+                    })
+                });
             }
         }
     }
@@ -188,7 +192,12 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
                         onCancel={() => { this.setState({ showSelectionTutorials: false }) }}
                         onSelect={(tutorialId) => {
                             this.setState({ showSelectionTutorials: false });
-                            goTo(Routes.tutorialSpecified.build({ tutorialId: tutorialId, stepIndex: this.formatStepIndexToParam(0) }));
+                            this.navService.navigate({
+                                route: Routes.tutorialSpecified.build({
+                                    tutorialId: tutorialId,
+                                    stepIndex: this.formatStepIndexToParam(0)
+                                })
+                            });
                         }}
                     />
                 }

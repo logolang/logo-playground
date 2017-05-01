@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Link } from 'react-router'
+import { Link, RouteComponentProps } from 'react-router-dom'
 
 import { ServiceLocator } from 'app/services/service-locator'
 import { MainMenuComponent } from 'app/ui/main-menu.component'
@@ -9,7 +9,7 @@ import { _T } from "app/services/customizations/localization.service";
 interface IComponentState {
 }
 
-interface IComponentProps {
+interface IComponentProps extends RouteComponentProps<void> {
 }
 
 export class AboutComponent extends React.Component<IComponentProps, IComponentState> {

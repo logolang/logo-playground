@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Link } from 'react-router';
+import { Link, RouteComponentProps } from 'react-router-dom';
 import { Button, ButtonGroup, Nav, Navbar, NavDropdown, MenuItem, NavItem, DropdownButton, Modal, OverlayTrigger } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 
@@ -29,7 +29,7 @@ interface IComponentState {
     programToDelete: ProgramModel | undefined;
 }
 
-interface IComponentProps {
+interface IComponentProps extends RouteComponentProps<void> {
 }
 
 export class GalleryComponent extends React.Component<IComponentProps, IComponentState> {

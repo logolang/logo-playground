@@ -1,33 +1,29 @@
-export function inject(routeDef: string, params: any): string {
-    for (const key in params) {
-        if (params.hasOwnProperty(key)) {
-            routeDef = routeDef.replace(':' + key, encodeURIComponent(params[key]));
-        }
-    }
-    return routeDef;
-}
-
 export class RouteInfo<TParams>{
-    parent?: RouteInfo<never>
-    relativePath: string
+    private parent?: RouteInfo<never>
+    private path: string
 
-    constructor(parent: RouteInfo<any> | undefined | null, path: string) {
-        this.parent = parent || undefined;
-        this.relativePath = path;
+    constructor(parent: RouteInfo<any> | undefined, path: string) {
+        this.parent = parent;
+        this.path = path;
     }
 
-    private buildWithoutInject(): string {
+    get relativePath(): string {
         if (this.parent) {
-            return this.parent.buildWithoutInject() + "/" + this.relativePath;
+            const parentRelativePath = this.parent.relativePath;
+            if (parentRelativePath != '/') {
+                return this.parent.relativePath + this.path;
+            }
         }
-        return this.relativePath;
+        return this.path;
     }
 
     build(params: TParams): string {
-        const fullPath = this.buildWithoutInject();
-        if (params) {
-            return inject(fullPath, params);
+        let result = this.relativePath;
+        for (const key in params) {
+            if (params.hasOwnProperty(key)) {
+                result = result.replace(':' + key, encodeURIComponent((params as any)[key]));
+            }
         }
-        return fullPath;
+        return result;
     }
 }

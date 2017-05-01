@@ -2,11 +2,12 @@ import * as React from 'react';
 import * as cn from 'classnames';
 import { Button, ButtonGroup, Nav, Navbar, NavDropdown, MenuItem, NavItem, DropdownButton, Modal, OverlayTrigger } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
+import { RouteComponentProps } from "react-router-dom";
 import { Subscription, Subject } from 'rxjs'
 
 import { stay, setupActionErrorHandler, callAction } from 'app/utils/async-helpers';
 import { ensure } from 'app/utils/syntax-helpers';
-import { subscribeLoadDataOnPropsParamsChange, translateInputChangeToState, goTo } from 'app/utils/react-helpers';
+import { subscribeLoadDataOnPropsParamsChange, translateInputChangeToState } from 'app/utils/react-helpers';
 
 import { AlertMessageComponent } from 'app/ui/_generic/alert-message.component';
 import { MainMenuComponent } from 'app/ui/main-menu.component'
@@ -31,12 +32,13 @@ interface IComponentState {
     userCustomizations?: IUserCustomizationsData
 }
 
-interface IComponentProps {
-    params: {
-        programId: string | undefined
-        gistId: string | undefined
-        sampleId: string | undefined
-    }
+interface IRouteParams {
+    programId: string | undefined
+    gistId: string | undefined
+    sampleId: string | undefined
+}
+
+interface IComponentProps extends RouteComponentProps<IRouteParams> {
 }
 
 export class PlaygroundPageComponent extends React.Component<IComponentProps, IComponentState> {
@@ -47,6 +49,7 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
     private programSamples = new ProgramsSamplesRepository();
     private userCustomizationsProvider = new UserCustomizationsProvider();
     private userDataService = ServiceLocator.resolve(x => x.userDataService);
+    private navService = ServiceLocator.resolve(x => x.navigationService);
     private flowService = new ProgrammingFlowService();
 
     private errorHandler = setupActionErrorHandler((error) => {
@@ -90,11 +93,11 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
         if (!userCustomizations) { return }
 
         let program: ProgramModel | undefined;
-        if (props.params.programId) {
-            program = await callAction(this.errorHandler, () => this.programsRepo.get(ensure(props.params.programId)));
-        } else if (props.params.sampleId) {
-            program = await callAction(this.errorHandler, () => this.programSamples.get(ensure(props.params.sampleId)));
-        } else if (props.params.gistId) {
+        if (props.match.params.programId) {
+            program = await callAction(this.errorHandler, () => this.programsRepo.get(ensure(props.match.params.programId)));
+        } else if (props.match.params.sampleId) {
+            program = await callAction(this.errorHandler, () => this.programSamples.get(ensure(props.match.params.sampleId)));
+        } else if (props.match.params.gistId) {
             //TODO: load program from Gist
         }
 
@@ -122,8 +125,8 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
     }
 
     saveCurrentProgram = async () => {
-        if (!this.state.program || !this.props.params.programId) { return }
-        const result = await this.errorHandler(() => this.flowService.saveCurrentProgram(ensure(this.props.params.programId), this.programsRepo))
+        if (!this.state.program || !this.props.match.params.programId) { return }
+        const result = await this.errorHandler(() => this.flowService.saveCurrentProgram(ensure(this.props.match.params.programId), this.programsRepo))
     }
 
     saveProgramAction = async (attrs: IProgramToSaveAttributes): Promise<string | undefined> => {
@@ -137,7 +140,7 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
             program: addedProgram,
         });
 
-        goTo(Routes.playgroundLoadFromLibrary.build({ programId: addedProgram.id }));
+        this.navService.navigate({ route: Routes.playgroundLoadFromLibrary.build({ programId: addedProgram.id }) });
         return;
     }
 

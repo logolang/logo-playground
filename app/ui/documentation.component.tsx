@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Link } from 'react-router';
+import { Link, RouteComponentProps } from 'react-router-dom';
 
 import { setupActionErrorHandler, callAction } from "app/utils/async-helpers";
 
@@ -17,7 +17,7 @@ interface IComponentState {
     content: string
 }
 
-interface IComponentProps {
+interface IComponentProps extends RouteComponentProps<void> {
 }
 
 export class DocumentationComponent extends React.Component<IComponentProps, IComponentState> {

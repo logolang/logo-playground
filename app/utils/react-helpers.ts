@@ -1,8 +1,7 @@
 import * as React from 'react';
-import { hashHistory } from 'react-router';
 
 interface IParamsProps {
-    params: any
+    match: { params: any }
 }
 
 interface IsLoadingState {
@@ -11,6 +10,7 @@ interface IsLoadingState {
 
 interface ComponentWithDynamicDataLoad<S extends IsLoadingState, P extends IParamsProps> extends React.Component<P, S> {
     loadData: (props: P) => Promise<void>
+    buildDefaultState(props: P): S
     props: P
 }
 
@@ -54,22 +54,17 @@ export function alterState<P, S, K extends keyof S>(component: React.Component<P
     }
 }
 
-export function goTo(route: string) {
-    hashHistory.push(route);
-}
-
-export function goBack() {
-    hashHistory.goBack();
-}
-
 /**
  * Adds componentWillReceiveProps handler to component. If props params will be different it will execute loadData function.
  * This happens if URL in browser is changed and the same component receives new route, for instance history navigation event.
  */
 export function subscribeLoadDataOnPropsParamsChange<S extends IsLoadingState, P extends IParamsProps>(component: ComponentWithDynamicDataLoad<S, P>) {
     (component as any).componentWillReceiveProps = (newProps: P) => {
-        //console.log('componentWillReceiveProps params', component.props.params, newProps.params);
-        if (JSON.stringify(component.props.params) != JSON.stringify(newProps.params)) {
+        // console.log('componentWillReceiveProps params', component.props.params, newProps.params);
+        if (JSON.stringify(component.props.match.params) != JSON.stringify(newProps.match.params)) {
+            let newState = component.buildDefaultState(newProps);
+            newState.isLoading = true;
+            component.setState(newState);
             component.loadData(newProps);
         }
     }

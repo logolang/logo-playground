@@ -10,6 +10,7 @@ import { IUserDataService } from "app/services/customizations/user-data.service"
 import { IUserSettingsService } from "app/services/customizations/user-settings.service";
 import { INotificationService } from "app/services/infrastructure/notification.service";
 import { ITitleService } from "app/services/infrastructure/title.service";
+import { INavigationService } from "app/services/infrastructure/navigation.service";
 
 interface ServicesList {
     currentUser: ICurrentUserProvider
@@ -19,6 +20,7 @@ interface ServicesList {
     userDataService: IUserDataService
     userSettingsService: IUserSettingsService
     notificationService: INotificationService
+    navigationService: INavigationService
     titleService: ITitleService
     usersRepository: IUsersRepository
     programsReporitory: IProgramsRepository
