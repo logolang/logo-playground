@@ -21,6 +21,7 @@ import { UserCustomizationsProvider, IUserCustomizationsData } from "app/service
 import { ProgramsSamplesRepository } from "app/services/gallery/gallery-samples.repository";
 import { ProgramModel } from "app/services/gallery/program.model";
 import { ProgrammingFlowService, IProgramToSaveAttributes } from "app/services/flow/programming-flow.service";
+import { _T } from "app/services/customizations/localization.service";
 
 import './playground-page.component.scss';
 
@@ -72,7 +73,7 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
     }
 
     componentDidMount() {
-        this.titleService.setDocumentTitle('Playground');
+        this.titleService.setDocumentTitle(_T('Playground'));
         this.loadData(this.props);
         this.flowService.initHotkeys();
     }
@@ -103,7 +104,7 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
 
         if (!program) {
             const code = await callAction(this.errorHandler, () => this.userDataService.getPlaygroundCode()) || '';
-            program = new ProgramModel('', 'Playground', "logo", code, '');
+            program = new ProgramModel('', _T("Playground"), "logo", code, '');
         }
 
         this.flowService.code = program.code;

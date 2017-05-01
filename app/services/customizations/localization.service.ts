@@ -19,9 +19,12 @@ const supportedLocales: ILocaleInfo[] = [
 
 let i18n: any; // Jed onject
 
+type ValueType = string | number;
+
 export interface ITranslationOptions {
     plural?: string
-    value?: any;
+    value?: ValueType;
+    values?: ValueType[];
 }
 
 /**
@@ -33,23 +36,22 @@ export interface ITranslationOptions {
 export function _T(messageKey: string, options?: ITranslationOptions): string {
     if (i18n) {
         let chain = i18n.translate(messageKey);
+        let values: ValueType[] = [];
         if (options) {
+            if (options.value !== undefined) {
+                values = [options.value];
+            }
+            if (options.values) {
+                values = [...values, ...options.values];
+            }
             if (options.plural) {
-                if (options.value === undefined) {
+                if (values.length === 0) {
                     throw new Error('value is a required parameter if you have plural');
                 }
-                if (typeof (options.value) != 'number') {
-                    throw new Error('value should be a number if you have plural');
-                }
-                chain = chain.ifPlural(options.value, options.plural);
+                chain = chain.ifPlural(values[0], options.plural);
             }
         }
-
-        if (options && options.value !== undefined) {
-            return chain.fetch(options.value);
-        } else {
-            return chain.fetch();
-        }
+        return chain.fetch(...values);
     }
     throw new Error('Locale data is not initialized yet');
 }

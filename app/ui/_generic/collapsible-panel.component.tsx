@@ -30,7 +30,7 @@ export class CollapsiblePanelComponent extends React.Component<ICollapsiblePanel
                     onClick={alterState(this, x => ({ collapsed: !x.collapsed }))}
                 >
                     <span>{this.props.title}</span>
-                    <span className="ex-spacer-small" />
+                    <span className="ex-noselect">&nbsp;</span>
                     <small><span className={cn("glyphicon",
                         {
                             "glyphicon-menu-down": this.state.collapsed,

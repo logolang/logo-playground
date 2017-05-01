@@ -65,7 +65,7 @@ export class TutorialsContentService {
             let matches = stepContent.match(resultCodeRegex);
             let resultCode = ''
             if (matches && matches.length > 0) {
-                resultCode = matches[0].replace(/```result|```/g, '');
+                resultCode = matches[0].replace(/```result|```/g, '').trim() + "\r\n";
                 stepContent = stepContent.replace(resultCodeRegex, '');
             }
 

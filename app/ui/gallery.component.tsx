@@ -106,7 +106,7 @@ export class GalleryComponent extends React.Component<IComponentProps, IComponen
                         <button type="button" className="btn btn-xs btn-link"
                             onClick={() => { this.setState({ programToDelete: p }) }}
                         >
-                            <span>Delete</span>
+                            <span>{_T("Delete")}</span>
                         </button>
                     </div>
                 }
@@ -122,12 +122,12 @@ export class GalleryComponent extends React.Component<IComponentProps, IComponen
                         {
                             p.dateLastEdited.getTime() !== p.dateCreated.getTime() &&
                             <tr>
-                                <th style={{ width: '10%' }}>Edited</th>
+                                <th style={{ width: '10%' }}>{_T("Edited")}</th>
                                 <td style={{ width: '90%' }}>{<DateTimeStampComponent datetime={p.dateLastEdited} />}</td>
                             </tr>
                         }
                         <tr>
-                            <th style={{ width: '10%' }}>Created</th>
+                            <th style={{ width: '10%' }}>{_T("Created")}</th>
                             <td style={{ width: '90%' }}>{<DateTimeStampComponent datetime={p.dateCreated} />}</td>
                         </tr>
                     </tbody>
@@ -149,6 +149,7 @@ export class GalleryComponent extends React.Component<IComponentProps, IComponen
                             <ActionConfirmationModalComponent
                                 onConfirm={this.confirmDelete}
                                 actionButtonText={_T("Delete")}
+                                cancelButtonText={_T("Cancel")}
                                 headerText={_T("Do you want to delete?")}
                                 onCancel={() => { this.setState({ programToDelete: undefined }) }}
                             >

@@ -13,6 +13,7 @@ import { OutputPanelComponent, IOutputPanelComponentProps } from './output-panel
 
 import { ServiceLocator } from "app/services/service-locator";
 import { ProgramModel } from "app/services/gallery/program.model";
+import { _T } from "app/services/customizations/localization.service";
 
 import './playground-page-layout.component.scss';
 
@@ -34,7 +35,7 @@ export class PlaygroundPageLayoutComponent extends React.Component<IComponentPro
             type: 'row',
             content: [
                 {
-                    title: 'Output',
+                    title: '',
                     type: 'react-component',
                     component: 'output-panel',
                     componentName: 'output-panel',
@@ -42,7 +43,7 @@ export class PlaygroundPageLayoutComponent extends React.Component<IComponentPro
                     isClosable: false
                 },
                 {
-                    title: 'Source Code',
+                    title: '',
                     type: 'react-component',
                     component: 'code-panel',
                     componentName: 'code-panel',
@@ -127,7 +128,13 @@ export class PlaygroundPageLayoutComponent extends React.Component<IComponentPro
             console.log('Error: cannot find code panel in layout');
             return;
         }
+        const outPanel = this.findGoldenLayoutContentItem(this.layout.root, 'output-panel');
+        if (!outPanel) {
+            console.log('Error: cannot find output panel in layout');
+            return;
+        }
         codePanel.setTitle(props.program.name);
+        outPanel.setTitle(_T("Output"));
     }
 
     saveState = () => {

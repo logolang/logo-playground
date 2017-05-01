@@ -226,7 +226,7 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
                                                 </button>
                                             </div>
                                             <div className="step-title-container">
-                                                <span>Step {this.state.currentStep.index + 1} of {this.state.currentTutorial.steps}</span>
+                                                <span>{_T("Step %1$s of %2$s", { values: [this.state.currentStep.index + 1, this.state.currentTutorial.steps] })}</span>
                                             </div>
                                             <div className="next-btn-container">
                                                 <button type="button" className="btn btn-default step-nav-btn" disabled={nextStepButtonDisabled}
@@ -358,6 +358,7 @@ export class TutorialsComponent extends React.Component<IComponentProps, ICompon
             <Modal.Body>
                 <p>
                     {_T("FIX_THE_CODE_MESSAGE")}
+                    <span>&nbsp;</span>
                     <strong>
                         {_T("FIX_THE_CODE_WARNING")}
                     </strong>

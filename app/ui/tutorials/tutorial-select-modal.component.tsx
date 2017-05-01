@@ -3,6 +3,7 @@ import { Button, ButtonGroup, Nav, Navbar, NavDropdown, MenuItem, NavItem, Dropd
 import { Subject, BehaviorSubject } from 'rxjs'
 
 import { ITutorialInfo } from "app/services/tutorials/tutorials-content-service";
+import { _T } from "app/services/customizations/localization.service";
 
 interface IComponentState {
 }
@@ -30,7 +31,7 @@ export class TutorialSelectModalComponent extends React.Component<IComponentProp
     render(): JSX.Element {
         return <Modal show={true} onHide={this.props.onCancel} animation={false} backdrop='static' >
             <Modal.Header closeButton>
-                <Modal.Title>Choose a tutorial</Modal.Title>
+                <Modal.Title>{_T("Choose a tutorial")}</Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 <div className="list-group">
@@ -50,7 +51,7 @@ export class TutorialSelectModalComponent extends React.Component<IComponentProp
             </Modal.Body>
             <Modal.Footer>
                 <button type="button" className="btn btn-default" onClick={this.props.onCancel}>
-                    <span>Cancel</span>
+                    <span>{_T("Cancel")}</span>
                 </button>
             </Modal.Footer>
         </Modal>

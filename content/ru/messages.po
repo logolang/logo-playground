@@ -29,6 +29,12 @@ msgstr "Песочница Лого"
 msgid "App version"
 msgstr "Версия приложения"
 
+msgid "Cancel"
+msgstr "Отменить"
+
+msgid "Choose a tutorial"
+msgstr "Выберите учебник"
+
 msgid "Choose another tutorial"
 msgstr "Выбрать другой учебник"
 
@@ -37,6 +43,9 @@ msgstr "Версия кода"
 
 msgid "Continue"
 msgstr "Продолжить"
+
+msgid "Created"
+msgstr "Дата создания"
 
 msgid "Delete"
 msgstr "Удалить"
@@ -49,6 +58,9 @@ msgstr "Вы хотите удалить?"
 
 msgid "Documentation"
 msgstr "Документация"
+
+msgid "Edited"
+msgstr "Дата обновления"
 
 msgid "Export"
 msgstr "Экспорт"
@@ -92,14 +104,23 @@ msgstr "Войти"
 msgid "Log out"
 msgstr "Выход из системы"
 
+msgid "Login"
+msgstr "Логин"
+
 msgid "Medium"
 msgstr "Средний"
 
 msgid "NO_PROGRAMS_IN_PERSONAL_LIBRARY"
 msgstr "У вас еще нет программ в вашей личной библиотеке. Чтобы добавить программу, вам нужно перейти на Детскую площадку или открыть одну из раздела Образцы."
 
+msgid "Name"
+msgstr "Имя"
+
 msgid "No, keep my code as is"
 msgstr "Нет, сохранить мой код как есть"
+
+msgid "Output"
+msgstr "Вывод"
 
 msgid "Package name"
 msgstr "Имя пакета"
@@ -110,8 +131,14 @@ msgstr "Персональная библиотека"
 msgid "Playground"
 msgstr "Детская площадка"
 
+msgid "Please enter name for your program"
+msgstr "Введите название своей программы"
+
 msgid "Program"
 msgstr "Программа"
+
+msgid "Program name"
+msgstr "Название программы"
 
 msgid "Run"
 msgstr "Выполнить"
@@ -119,14 +146,35 @@ msgstr "Выполнить"
 msgid "Samples"
 msgstr "Образцы"
 
+msgid "Save"
+msgstr "Сохранить"
+
+msgid "Save as new..."
+msgstr "Сохранить как новую ..."
+
+msgid "Save program '%s'"
+msgstr "Сохранить программу '%s'"
+
+msgid "Save to Gallery..."
+msgstr "Сохранить в галерее ..."
+
+msgid "Save your program to Gallery"
+msgstr "Сохранить вашу программу в галерее"
+
 msgid "Small"
 msgstr "Маленький"
 
 msgid "Space for your personal programs"
 msgstr "Пространство для ваших личных программ"
 
+msgid "Step %1$s of %2$s"
+msgstr "Шаг %1$s из %2$s"
+
 msgid "Stop"
 msgstr "Остановить"
+
+msgid "Take Screenshot"
+msgstr "Сделать скриншот"
 
 msgid "Turtle"
 msgstr "Черепаха"

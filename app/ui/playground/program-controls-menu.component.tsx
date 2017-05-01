@@ -3,6 +3,7 @@ import * as cn from 'classnames';
 
 import { Button, Nav, Navbar, NavDropdown, MenuItem, NavItem, DropdownButton } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
+import { _T } from "app/services/customizations/localization.service";
 
 interface IComponentState {
 }
@@ -33,11 +34,13 @@ export class ProgramControlsMenuComponent extends React.Component<IComponentProp
         return <Nav className={cn(this.props.className)}>
             <NavItem disabled={this.props.isRunning} onClick={this.props.runProgram}>
                 <span className="glyphicon glyphicon-play" aria-hidden="true"></span>
-                <span> Run</span>
+                <span>&nbsp;</span>
+                <span>{_T("Run")}</span>
             </NavItem>
             <NavItem disabled={!this.props.isRunning} onClick={this.props.stopProgram}>
                 <span className="glyphicon glyphicon-stop" aria-hidden="true"></span>
-                <span> Stop</span>
+                <span>&nbsp;</span>
+                <span>{_T("Stop")}</span>
             </NavItem>
 
             <NavDropdown id="main-playground-menu-options-dropdown" bsClass="dropdown" noCaret pullRight
@@ -48,7 +51,8 @@ export class ProgramControlsMenuComponent extends React.Component<IComponentProp
                     this.props.existingProgramName && this.props.saveCurrent &&
                     <MenuItem onClick={this.props.saveCurrent}>
                         <span className="glyphicon glyphicon-save" aria-hidden="true"></span>
-                        <span>&nbsp;&nbsp;Save program '{this.props.existingProgramName}'</span>
+                        <span>&nbsp;&nbsp;</span>
+                        <span>{_T("Save program '%s'", { value: this.props.existingProgramName })}</span>
                     </MenuItem>
                 }
                 {
@@ -57,15 +61,16 @@ export class ProgramControlsMenuComponent extends React.Component<IComponentProp
                         <span className="glyphicon glyphicon-file" aria-hidden="true"></span>
                         {
                             this.props.existingProgramName
-                                ? <span>&nbsp;&nbsp;Save as new...</span>
-                                : <span>&nbsp;&nbsp;Save to Gallery...</span>
+                                ? <span><span>&nbsp;&nbsp;</span>{_T("Save as new...")}</span>
+                                : <span><span>&nbsp;&nbsp;</span>{_T("Save to Gallery...")}</span>
                         }
                     </MenuItem>
                 }
                 <MenuItem divider />
                 <MenuItem onClick={this.props.exportImage}>
                     <span className="glyphicon glyphicon-camera" aria-hidden="true"></span>
-                    <span>&nbsp;&nbsp;Take Screenshot</span>
+                    <span>&nbsp;&nbsp;</span>
+                    <span>{_T("Take Screenshot")}</span>
                 </MenuItem>
             </NavDropdown>
         </Nav>

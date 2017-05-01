@@ -5,14 +5,14 @@ import { Button, ButtonGroup, Nav, Navbar, NavDropdown, MenuItem, NavItem, Dropd
 interface IComponentState {
     isDeletionConfirmed: boolean
     errorMessage: string
-    actionButtonText: JSX.Element | string
 }
 
 interface IComponentProps {
     headerText?: string
-    onCancel: () => void;
-    onConfirm: () => Promise<string>;
+    onCancel(): void
+    onConfirm(): Promise<string>
     actionButtonText?: JSX.Element | string
+    cancelButtonText?: JSX.Element | string
 }
 
 export class ActionConfirmationModalComponent extends React.Component<IComponentProps, IComponentState> {
@@ -22,12 +22,13 @@ export class ActionConfirmationModalComponent extends React.Component<IComponent
         this.state = {
             errorMessage: '',
             isDeletionConfirmed: false,
-            actionButtonText: this.props.actionButtonText || "Delete"
         }
     }
 
     render(): JSX.Element {
         const headerText = this.props.headerText || "Are you sure?";
+        const actionButtonText = this.props.actionButtonText || "Delete";
+        const cancelButtonText = this.props.cancelButtonText || "Cancel";
         return (
             <Modal show={true} onHide={this.props.onCancel} backdrop='static'>
                 <Modal.Header closeButton>
@@ -52,14 +53,18 @@ export class ActionConfirmationModalComponent extends React.Component<IComponent
                                 this.setState({ isDeletionConfirmed: false, errorMessage: result });
                             }
                         }
-                    }>{this.state.actionButtonText}</button>
+                    }>
+                        <span>{actionButtonText}</span>
+                    </button>
                     <button type="button" className="btn btn-link" onClick={
                         () => {
                             if (!this.state.isDeletionConfirmed) {
                                 this.props.onCancel();
                             }
                         }
-                    }><span>Cancel</span></button>
+                    }>
+                        <span>{cancelButtonText}</span>
+                    </button>
                 </Modal.Footer>
             </Modal >
         );

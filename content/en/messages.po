@@ -28,6 +28,12 @@ msgstr "Logo Sandbox"
 msgid "App version"
 msgstr ""
 
+msgid "Cancel"
+msgstr ""
+
+msgid "Choose a tutorial"
+msgstr ""
+
 msgid "Choose another tutorial"
 msgstr ""
 
@@ -35,6 +41,9 @@ msgid "Code version"
 msgstr ""
 
 msgid "Continue"
+msgstr ""
+
+msgid "Created"
 msgstr ""
 
 msgid "Delete"
@@ -47,6 +56,9 @@ msgid "Do you want to delete?"
 msgstr ""
 
 msgid "Documentation"
+msgstr ""
+
+msgid "Edited"
 msgstr ""
 
 msgid "Export"
@@ -91,13 +103,22 @@ msgstr ""
 msgid "Log out"
 msgstr ""
 
+msgid "Login"
+msgstr ""
+
 msgid "Medium"
 msgstr ""
 
 msgid "NO_PROGRAMS_IN_PERSONAL_LIBRARY"
 msgstr "You do not have programs in your personal library yet. To add a program you need to go to Playground or open one from Samples section."
 
+msgid "Name"
+msgstr ""
+
 msgid "No, keep my code as is"
+msgstr ""
+
+msgid "Output"
 msgstr ""
 
 msgid "Package name"
@@ -109,7 +130,13 @@ msgstr ""
 msgid "Playground"
 msgstr ""
 
+msgid "Please enter name for your program"
+msgstr ""
+
 msgid "Program"
+msgstr ""
+
+msgid "Program name"
 msgstr ""
 
 msgid "Run"
@@ -118,13 +145,34 @@ msgstr ""
 msgid "Samples"
 msgstr ""
 
+msgid "Save"
+msgstr ""
+
+msgid "Save as new..."
+msgstr ""
+
+msgid "Save program '%s'"
+msgstr ""
+
+msgid "Save to Gallery..."
+msgstr ""
+
+msgid "Save your program to Gallery"
+msgstr ""
+
 msgid "Small"
 msgstr ""
 
 msgid "Space for your personal programs"
 msgstr ""
 
+msgid "Step %1$s of %2$s"
+msgstr ""
+
 msgid "Stop"
+msgstr ""
+
+msgid "Take Screenshot"
 msgstr ""
 
 msgid "Turtle"

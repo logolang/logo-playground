@@ -2,8 +2,8 @@
     "tutorials": [
         {
             "id": "01-basics",
-            "label": "Turtle Basics",
-            "description": "Introduction and LOGO language basics",
+            "label": "Введение и основы",
+            "description": "Введение и основы языка LOGO. Встреча с черепахой.",
             "steps": 7
         },
         {
