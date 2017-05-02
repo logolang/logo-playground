@@ -38,11 +38,17 @@ msgstr "Выберите учебник"
 msgid "Choose another tutorial"
 msgstr "Выбрать другой учебник"
 
+msgid "Close"
+msgstr "Закрыть"
+
 msgid "Code version"
 msgstr "Версия кода"
 
 msgid "Continue"
 msgstr "Продолжить"
+
+msgid "Copy link to clipboard"
+msgstr "Скопировать ссылку в буфер обмена"
 
 msgid "Created"
 msgstr "Дата создания"
@@ -161,8 +167,14 @@ msgstr "Сохранить в галерее ..."
 msgid "Save your program to Gallery"
 msgstr "Сохранить вашу программу в галерее"
 
+msgid "Screenshot"
+msgstr "Скриншот"
+
 msgid "Small"
 msgstr "Маленький"
+
+msgid "Sorry, error has occured"
+msgstr "Произошла ошибка"
 
 msgid "Space for your personal programs"
 msgstr "Пространство для ваших личных программ"

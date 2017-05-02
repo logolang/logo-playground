@@ -8,6 +8,8 @@ const appConfigSchema = require('app/../content/config/config.schema.json');
 
 export interface IAppServicesDetails {
     appApiUrl: string
+    imgurServiceUrl: string
+    imgurServiceClientID: string
 }
 
 export class AppConfig {

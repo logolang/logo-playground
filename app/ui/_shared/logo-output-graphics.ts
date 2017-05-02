@@ -72,7 +72,7 @@ export class LogoOutputGraphics {
     // The crop and resize function
     private prepareScreenshot(canvas: HTMLCanvasElement): string {
         const targetRect = {
-            width: 133, height: 100
+            width: 200, height: 150
         }
         const clipRect = {
             width: Math.min(400, canvas.width),
@@ -96,6 +96,6 @@ export class LogoOutputGraphics {
         b_ctx.drawImage(canvas, sourceOffset.x, sourceOffset.y, clipRect.width, clipRect.height,
             0, 0, targetRect.width, targetRect.height);
         // now call the callback with the dataURL of our buffer canvas
-        return buffer.toDataURL('image/jpeg', 0.8);
+        return buffer.toDataURL();
     };
 }

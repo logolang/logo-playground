@@ -55,11 +55,6 @@ export class ProgrammingFlowService {
         });
     }
 
-    exportCurrentImage = async () => {
-        const data = await this.getScreenshot(false);
-        const win = window.open(data, '_blank');
-        win.focus();
-    }
 
     saveCurrentProgramToRepository = async (programAttributes: IProgramToSaveAttributes, repository: IProgramsRepository): Promise<ProgramModel> => {
         const programName = programAttributes.name;
@@ -77,7 +72,7 @@ export class ProgrammingFlowService {
         let screenshot = this.hasProgramBeenExecutedOnce
             ? await this.getScreenshot(true)
             : '';
-
+        
         const addedProgram = repository.add(
             new ProgramModel('', programName, "logo", this.code, screenshot)
         );

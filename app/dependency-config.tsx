@@ -13,6 +13,7 @@ import { NotificationService } from "app/services/infrastructure/notification.se
 import { TitleService } from "app/services/infrastructure/title.service";
 import { LocalizationService, _T } from "app/services/customizations/localization.service";
 import { NavigationService } from "app/services/infrastructure/navigation.service";
+import { ImageUploadImgurService } from "app/services/infrastructure/image-upload-imgur.service";
 
 export class DependencyConfig {
     static async init() {
@@ -41,6 +42,8 @@ export class DependencyConfig {
         const loginService = new FakeLoginService();
         const tutorialsService = new TutorialsContentService(contentLoader);
 
+        const imageUploadService = new ImageUploadImgurService(appConfig.services.imgurServiceClientID, appConfig.services.imgurServiceUrl);
+
         // Setup the global dependency injection container
         ServiceLocator.set(x => x.configLoader = confLoader);
         ServiceLocator.set(x => x.appConfig = appConfig);
@@ -57,5 +60,6 @@ export class DependencyConfig {
         ServiceLocator.set(x => x.contentLoader = contentLoader);
         ServiceLocator.set(x => x.programsReporitory = new ProgramsLocalStorageRepository(currentUser));
         ServiceLocator.set(x => x.tutorialsService = tutorialsService);
+        ServiceLocator.set(x => x.imageUploadService = imageUploadService);
     }
 }

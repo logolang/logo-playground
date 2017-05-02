@@ -11,6 +11,7 @@ import { IUserSettingsService } from "app/services/customizations/user-settings.
 import { INotificationService } from "app/services/infrastructure/notification.service";
 import { ITitleService } from "app/services/infrastructure/title.service";
 import { INavigationService } from "app/services/infrastructure/navigation.service";
+import { ImageUploadService } from "app/services/infrastructure/image-upload-imgur.service";
 
 interface ServicesList {
     currentUser: ICurrentUserProvider
@@ -26,6 +27,7 @@ interface ServicesList {
     programsReporitory: IProgramsRepository
     contentLoader: ILocalizedContentLoader
     tutorialsService: ITutorialsContentService
+    imageUploadService: ImageUploadService
 }
 
 /**

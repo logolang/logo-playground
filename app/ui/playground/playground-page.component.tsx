@@ -14,6 +14,7 @@ import { MainMenuComponent } from 'app/ui/main-menu.component'
 import { PlaygroundPageLayoutComponent } from './playground-page-layout.component';
 import { SaveProgramModalComponent } from "app/ui/playground/save-program-modal.component";
 import { ProgramControlsMenuComponent } from "app/ui/playground/program-controls-menu.component";
+import { ShareScreenshotModalComponent } from "app/ui/playground/share-screenshot-modal.component";
 
 import { ServiceLocator } from 'app/services/service-locator'
 import { Routes } from "app/routes";
@@ -31,6 +32,8 @@ interface IComponentState {
     isRunning: boolean
     isSaveModalActive: boolean
     userCustomizations?: IUserCustomizationsData
+
+    screenshotDataToSave?: string
 }
 
 interface IRouteParams {
@@ -156,13 +159,20 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
                         existingProgramName={this.state.program.id && this.state.program.name}
                         runProgram={this.flowService.runCurrentProgram}
                         stopProgram={this.flowService.stopCurrentProgram}
-                        exportImage={this.flowService.exportCurrentImage}
+                        exportImage={this.exportScreenshot}
                         saveAsNew={this.showSaveDialog}
                         saveCurrent={this.saveCurrentProgram}
                     />
                 } />
 
                 {this.renderSaveModal()}
+
+                {
+                    this.state.screenshotDataToSave
+                    && <ShareScreenshotModalComponent
+                        imageBase64={this.state.screenshotDataToSave}
+                        onClose={() => { this.setState({ screenshotDataToSave: '' }) }} />
+                }
 
                 {
                     this.state.program && this.state.userCustomizations &&
@@ -205,5 +215,10 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
             />
         }
         return null;
+    }
+
+    exportScreenshot = async () => {
+        const data = await this.flowService.getScreenshot(false);
+        this.setState({ screenshotDataToSave: data });
     }
 }

@@ -10,10 +10,20 @@
                 "appApiUrl": {
                     "description": "Url of endpoint",
                     "type": "string"
+                },
+                "imgurServiceUrl": {
+                    "description": "Url of imgur upload API",
+                    "type": "string"
+                },
+                "imgurServiceClientID": {
+                    "description": "ClientID to use with imgurAPI",
+                    "type": "string"
                 }
             },
             "required": [
-                "appApiUrl"
+                "appApiUrl",
+                "imgurServiceUrl",
+                "imgurServiceClientID"
             ]
         }
     },

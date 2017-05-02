@@ -37,10 +37,16 @@ msgstr ""
 msgid "Choose another tutorial"
 msgstr ""
 
+msgid "Close"
+msgstr ""
+
 msgid "Code version"
 msgstr ""
 
 msgid "Continue"
+msgstr ""
+
+msgid "Copy link to clipboard"
 msgstr ""
 
 msgid "Created"
@@ -160,7 +166,13 @@ msgstr ""
 msgid "Save your program to Gallery"
 msgstr ""
 
+msgid "Screenshot"
+msgstr ""
+
 msgid "Small"
+msgstr ""
+
+msgid "Sorry, error has occured"
 msgstr ""
 
 msgid "Space for your personal programs"
