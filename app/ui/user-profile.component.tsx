@@ -128,8 +128,8 @@ export class UserProfileComponent extends React.Component<IComponentProps, IComp
                 <PageHeaderComponent title={_T("User settings")} />
                 <div className="row">
                     <div className="col-sm-6">
-                        <p><strong>{_T("Login")}:</strong> {this.state.userInfo.login}</p>
                         <p><strong>{_T("Name")}:</strong> {this.state.userInfo.attributes.name}</p>
+                        <p><strong>{_T("Email")}:</strong> {this.state.userInfo.attributes.email}</p>
                         <br />
                         <br />
                         <form>

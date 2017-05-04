@@ -4,7 +4,6 @@ import { HashRouter as Router, Route, Switch, Redirect, RouteProps, RouteCompone
 import { RouteInfo } from 'app/utils/route-info';
 
 import { ServiceLocator } from "app/services/service-locator";
-import { MainComponent } from 'app/ui/main.component'
 import { UserProfileComponent } from 'app/ui/user-profile.component';
 import { MessageTosterComponent } from "app/ui/_generic/message-toster.component";
 import { AboutComponent } from "app/ui/about.component";
@@ -12,6 +11,7 @@ import { TutorialsComponent, ITutorialPageRouteParams } from "app/ui/tutorials/t
 import { GalleryComponent } from "app/ui/gallery.component";
 import { PlaygroundPageComponent } from "app/ui/playground/playground-page.component";
 import { DocumentationComponent } from "app/ui/documentation.component";
+import { LoginComponent } from "app/ui/login.component";
 
 export class Routes extends React.Component<object, object> {
     private router: any;
@@ -27,9 +27,11 @@ export class Routes extends React.Component<object, object> {
 
     render(): JSX.Element {
         return <Router ref={router => this.router = router}>
-            <MainComponent>
+            <div>
                 <MessageTosterComponent events={this.notificationService.getObservable()} />
                 <Switch>
+                    <Route path={Routes.loginRoot.relativePath} component={LoginComponent} />
+
                     <Route path={Routes.galleryRoot.relativePath} component={GalleryComponent} />
 
                     <Route path={Routes.settingsRoot.relativePath} component={UserProfileComponent} />
@@ -51,11 +53,13 @@ export class Routes extends React.Component<object, object> {
                     {/* Default route will be used in case if nothing matches */}
                     <Route component={GalleryComponent} />
                 </Switch>
-            </MainComponent>
+            </div>
         </Router>
     }
 
     static readonly root = new RouteInfo(undefined, "/");
+
+    static readonly loginRoot = new RouteInfo(Routes.root, "/login");
 
     static readonly aboutRoot = new RouteInfo(Routes.root, "/about");
     static readonly settingsRoot = new RouteInfo(Routes.root, "/settings");

@@ -22,7 +22,6 @@ interface IComponentProps {
 export class MainMenuComponent extends React.Component<IComponentProps, IComponentState> {
     private appConfig = ServiceLocator.resolve(x => x.appConfig);
     private currentUser = ServiceLocator.resolve(x => x.currentUser);
-    private loginService = ServiceLocator.resolve(x => x.loginService);
 
     constructor(props: IComponentProps) {
         super(props);
@@ -33,9 +32,7 @@ export class MainMenuComponent extends React.Component<IComponentProps, ICompone
     }
 
     menuLogOutClick = async () => {
-        await this.loginService.logout();
-        this.currentUser.eraseLocalStoredUserSettings();
-
+        await this.currentUser.signOut();
         // refresh browser window
         window.location.reload(true);
     }
@@ -89,18 +86,19 @@ export class MainMenuComponent extends React.Component<IComponentProps, ICompone
                             title={
                                 <NavbarUsercardComponent
                                     userName={loginStatus.userInfo.attributes.name}
-                                    role={'Contributor'}
+                                    avatarImageUrl={loginStatus.userInfo.attributes.imageUrl}
                                     caret={true}
-                                    loggedIn={loginStatus.isLoggedIn}
                                 >
                                 </NavbarUsercardComponent> as any
                             }>
                             {
                                 !loginStatus.isLoggedIn &&
-                                <MenuItem onClick={() => { this.loginService.requestNewLogin() }}>
-                                    <span className="glyphicon glyphicon-log-in" aria-hidden="true"></span>
-                                    <span>&nbsp;&nbsp;{_T("Log in")}</span>
-                                </MenuItem>
+                                <LinkContainer to={Routes.loginRoot.build({})}>
+                                    <MenuItem>
+                                        <span className="glyphicon glyphicon-log-in" aria-hidden="true"></span>
+                                        <span>&nbsp;&nbsp;{_T("Log in")}</span>
+                                    </MenuItem>
+                                </LinkContainer>
                             }
                             {
                                 !loginStatus.isLoggedIn &&

@@ -1,8 +1,6 @@
 import { ICurrentUserProvider } from "app/services/login/current-user.provider";
 import { AppConfig } from "app/services/config/app-config";
 import { IAppConfigLoader } from "app/services/config/app-config-loader";
-import { ILoginService } from "app/services/login/login.service";
-import { IUsersRepository } from "app/services/login/users.repository";
 import { IProgramsRepository } from "app/services/gallery/personal-gallery-localstorage.repository";
 import { ILocalizedContentLoader } from "app/services/infrastructure/localized-content-loader";
 import { ITutorialsContentService } from "app/services/tutorials/tutorials-content-service";
@@ -17,13 +15,11 @@ interface ServicesList {
     currentUser: ICurrentUserProvider
     appConfig: AppConfig
     configLoader: IAppConfigLoader
-    loginService: ILoginService
     userDataService: IUserDataService
     userSettingsService: IUserSettingsService
     notificationService: INotificationService
     navigationService: INavigationService
     titleService: ITitleService
-    usersRepository: IUsersRepository
     programsReporitory: IProgramsRepository
     contentLoader: ILocalizedContentLoader
     tutorialsService: ITutorialsContentService

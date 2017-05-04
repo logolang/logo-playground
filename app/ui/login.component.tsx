@@ -1,130 +1,62 @@
 import * as React from 'react';
+import { RouteComponentProps } from "react-router";
 import * as cn from 'classnames';
+import { Subscription } from "rxjs/Subscription";
 
-import { translateCheckBoxChangeToState, translateInputChangeToState } from 'app/utils/react-helpers';
+import { MainMenuComponent } from "app/ui/main-menu.component";
+import { PageHeaderComponent } from "app/ui/_generic/page-header.component";
 
+import { _T } from "app/services/customizations/localization.service";
 import { ServiceLocator } from 'app/services/service-locator'
-import { LoginCredentials, LoginStatus } from "app/services/login/login.service";
+import { Routes } from "app/routes";
 
-import './login.component.scss'
-
-interface ILoginFormComponentState {
-    errorMessage: string
-    login: string
-    password: string
-    rememberMe: boolean
-    inProgress: boolean
+interface IComponentState {
 }
 
-interface ILoginFormComponentProps {
-    onSubmit: (credentials: LoginCredentials) => Promise<LoginStatus>
+interface IComponentProps extends RouteComponentProps<void> {
 }
 
-export class LoginComponent extends React.Component<ILoginFormComponentProps, ILoginFormComponentState> {
+export class LoginComponent extends React.Component<IComponentProps, IComponentState> {
     private appConfig = ServiceLocator.resolve(x => x.appConfig);
+    private currentUser = ServiceLocator.resolve(x => x.currentUser);
+    private titleService = ServiceLocator.resolve(x => x.titleService);
+    private navService = ServiceLocator.resolve(x => x.navigationService);
+    private loginSubscription: Subscription;
 
-    constructor(props: ILoginFormComponentProps) {
+    constructor(props: IComponentProps) {
         super(props);
 
         this.state = {
-            errorMessage: '',
-            inProgress: false,
-            login: '',
-            rememberMe: false,
-            password: ''
         };
+
+        this.titleService.setDocumentTitle(_T("Log in"));
     }
 
     componentDidMount = () => {
-        let form = document.getElementById('loginForm');
-        if (form) {
-            form.onsubmit = () => {
-                setTimeout(async () => {
-                    this.performSubmitting();
-                }, 0);
-                return false;
+        this.currentUser.initLoginUIAllProviders();
+        this.loginSubscription = this.currentUser.loginStatusObservable.subscribe((status) => {
+            if (status) {
+                setTimeout(() => {
+                    this.navService.navigate({ route: Routes.root.build({}) });
+                }, 400);
             }
-        }
+        })
     }
 
-    async performSubmitting() {
-        this.setState({ errorMessage: '', inProgress: true });
-
-        let result = await this.props.onSubmit({
-            login: this.state.login,
-            password: this.state.password,
-            rememberMe: this.state.rememberMe
-        });
-
-        if (!result.isLoggedIn) {
-            this.setState({ errorMessage: result.errorMessage, inProgress: false });
-        } else {
-            // this is to trigger save password in Chrome
-            history.pushState({}, "", window.location.href);
-        }
-    }
-
-    triggerSubmitOnInputEnterKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-        if (event.which == 13) {
-            (document.getElementById('loginSubmitBtn') as HTMLInputElement).click();
+    componentWillUnmount() {
+        if (this.loginSubscription) {
+            this.loginSubscription.unsubscribe();
         }
     }
 
     render(): JSX.Element {
         return (
-            <div className="container container-login">
-                <form id="loginForm" method="post" className="form-signin" style={{ backgroundColor: window.getComputedStyle(document.body, undefined).backgroundColor }} >
-                    <div className="row">
-                        <div className="col-sm-12">
-                            <h2>Log In</h2>
-                            <br />
-                            {
-                                this.state.errorMessage && <div className="alert alert-danger">
-                                    <p>{this.state.errorMessage}</p>
-                                </div>
-                            }
-                        </div>
-                    </div>
-                    <fieldset>
-                        <div className="form-group">
-                            <label htmlFor="userLogin">Username</label>
-                            <div className="row">
-                                <div className="col-sm-12">
-                                    <input type="text" id="userLogin" className="form-control" placeholder="Username" required
-                                        value={this.state.login}
-                                        onChange={translateInputChangeToState(this, (state, value) => ({ login: value }))}
-                                        onKeyDown={this.triggerSubmitOnInputEnterKeyDown}
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="userPassword">Password</label>
-                            <div className="row">
-                                <div className="col-sm-12">
-                                    <input type="password" id="userPassword" className="form-control" placeholder="Password" required
-                                        value={this.state.password}
-                                        onChange={translateInputChangeToState(this, (state, value) => ({ password: value }))}
-                                        onKeyDown={this.triggerSubmitOnInputEnterKeyDown}
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                    </fieldset>
-                    <br />
-                    <button id="loginSubmitBtn" type="submit" className={cn("btn btn-info btn-block", { "is-loading": this.state.inProgress })}>
-                        <span>Log In</span>
-                    </button>
-                    <br />
-                    <div className="checkbox keepmeloggeincheckbox">
-                        <label>
-                            <input type="checkbox"
-                                checked={this.state.rememberMe}
-                                onChange={translateCheckBoxChangeToState(this, (state, value) => ({ rememberMe: value }))}
-                            /> Keep me logged in
-                        </label>
-                    </div>
-                </form>
+            <div className="container">
+                <MainMenuComponent />
+                <PageHeaderComponent title={_T("Log in")} />
+                <br />
+                <br />
+                {this.currentUser.renderLoginUIAllProviders()}
             </div>
         );
     }

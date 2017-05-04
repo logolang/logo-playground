@@ -1,62 +1,71 @@
 import { Observable, Subject } from 'rxjs/Rx';
-import { LoginStatus } from './login.service';
-import { LocalStorageService } from "app/services/infrastructure/local-storage.service";
+import { UserInfo } from "app/services/login/user-info";
+import { GoogleAuthProvider } from "app/services/login/google-auth.provider";
 
-export class LocalStoredUserSettings {
-    constructor(public login: string, public authToken: string) {
-    }
+export interface LoginStatus {
+    isLoggedIn: boolean
+    userInfo: UserInfo
 }
 
 export interface ICurrentUserProvider {
-    getLocalStoredUserSettings(): LocalStoredUserSettings | undefined;
-    eraseLocalStoredUserSettings(): void;
-    setLoginStatus(loginStatus: LoginStatus, rememberMe: boolean): void;
-    getLoginStatus(): LoginStatus;
-    loginStatusObservable: Observable<LoginStatus>;
+    getLoginStatus(): LoginStatus
+    loginStatusObservable: Observable<LoginStatus>
+    signOut(): Promise<void>
+    renderLoginUIAllProviders(): JSX.Element[]
+    initLoginUIAllProviders(): Promise<void>
 }
 
 export class CurrentUserProvider implements ICurrentUserProvider {
-    private storage = new LocalStorageService<LocalStoredUserSettings | undefined>(`${appInfo.name}.v${appInfo.version}:user:settings`, undefined);
-    private currentLoginStatus: LoginStatus | undefined;
     private loginStatusSubject = new Subject<LoginStatus>();
+    private googleAuth: GoogleAuthProvider;
 
-    constructor() {
-    }
-
-    getLocalStoredUserSettings(): LocalStoredUserSettings | undefined {
-        let settings = this.storage.getValue();
-        if (settings
-            && settings.login
-            && settings.authToken) {
-            return settings;
+    private readonly guestUser: LoginStatus = {
+        isLoggedIn: false,
+        userInfo: {
+            attributes: {
+                email: "",
+                imageUrl: "",
+                name: "Guest"
+            }, id: "0"
         }
-        return undefined;
+    };
+
+    private currentLoginStatus = this.guestUser;
+
+    constructor(googleClientId: string) {
+        this.googleAuth = new GoogleAuthProvider(googleClientId);
+        this.googleAuth.loginStatusObservable.subscribe(status => {
+            this.currentLoginStatus = status || this.guestUser;
+            this.loginStatusSubject.next(this.currentLoginStatus);
+        })
     }
 
-    eraseLocalStoredUserSettings(): void {
-        this.storage.clearValue();
-    }
-
-    setLoginStatus(loginStatus: LoginStatus, rememberMe: boolean) {
-        this.currentLoginStatus = loginStatus;
-        if (loginStatus.isLoggedIn && rememberMe) {
-            this.storage.setValue({
-                authToken: loginStatus.authToken,
-                login: loginStatus.userInfo.login
-            })
-        };
-
-        this.loginStatusSubject.next(this.currentLoginStatus);
+    async init(): Promise<LoginStatus> {
+        const loginStatus = await this.googleAuth.init();
+        this.currentLoginStatus = loginStatus || this.guestUser;
+        return this.currentLoginStatus;
     }
 
     getLoginStatus(): LoginStatus {
         if (this.currentLoginStatus) {
             return this.currentLoginStatus;
         }
-        throw new Error('Current user credentials are not defined yet!');
+        throw new Error('Current user credentials are not defined!');
     }
 
     get loginStatusObservable(): Observable<LoginStatus> {
         return this.loginStatusSubject;
+    }
+
+    async signOut(): Promise<void> {
+        return this.googleAuth.signOut();
+    }
+
+    renderLoginUIAllProviders(): JSX.Element[] {
+        return [this.googleAuth.renderLoginUI()];
+    }
+
+    async initLoginUIAllProviders(): Promise<void> {
+        this.googleAuth.initLoginUI();
     }
 }

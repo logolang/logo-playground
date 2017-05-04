@@ -2,27 +2,19 @@ import * as React from 'react';
 
 import './navbar-usercard.component.scss'
 
-interface IUserCardComponentState {
-}
-
-interface IUserCardComponentProps {
+interface IComponentProps {
     userName: string
-    role: string
+    avatarImageUrl?: string
     caret: boolean
-    loggedIn: boolean
 }
 
-export class NavbarUsercardComponent extends React.Component<IUserCardComponentProps, IUserCardComponentState> {
-    constructor(props: IUserCardComponentProps) {
+export class NavbarUsercardComponent extends React.Component<IComponentProps, void> {
+    constructor(props: IComponentProps) {
         super(props);
-
-        this.state = {
-        }
     }
 
     render(): JSX.Element {
-        const nameToDisplay = this.props.userName || "Unknown";
-        const firstLetter = nameToDisplay.substr(0, 1).toUpperCase();
+        const nameToDisplay = this.props.userName || "Guest";
         return (
             <table className="ex-navbar-usercard">
                 <tbody>
@@ -38,33 +30,26 @@ export class NavbarUsercardComponent extends React.Component<IUserCardComponentP
                         </td>
                         <td rowSpan={2}>
                             {
-                                this.props.loggedIn
-                                    ? <div className="avatar">
-                                        <span>
-                                            {firstLetter}
-                                        </span>
+                                this.props.avatarImageUrl
+                                    ? <div className="avatar-img">
+                                        <img className="img-responsive" src={this.props.avatarImageUrl} />
                                     </div>
-                                    : <div className="guest-pic">
+                                    : <div className="avatar-img">
+                                        <img className="img-responsive" src={require("../images/user-32-pic.png")} />
                                     </div>
                             }
                         </td>
+                        <td className="userInfo">
+                            <div className="userName">{nameToDisplay}</div>
+                        </td>
                         {
-                            this.props.loggedIn &&
-                            <td className="userName"><span>{nameToDisplay}</span></td>
-                        }
-                        {
-                            this.props.caret && <td rowSpan={2}>
+                            this.props.caret
+                            && <td rowSpan={2}>
                                 <span className="caret">
                                 </span>
                             </td>
                         }
                     </tr>
-                    {
-                        this.props.loggedIn &&
-                        <tr>
-                            <td className="userRole"><small>{this.props.role}</small></td>
-                        </tr>
-                    }
                 </tbody>
             </table>
         );

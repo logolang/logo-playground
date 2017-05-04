@@ -5,8 +5,6 @@ import { CurrentUserProvider } from "app/services/login/current-user.provider";
 import { LocalizedContentLoader } from "app/services/infrastructure/localized-content-loader";
 import { TutorialsContentService } from "app/services/tutorials/tutorials-content-service";
 import { ProgramsLocalStorageRepository } from "app/services/gallery/personal-gallery-localstorage.repository";
-import { FakeLoginService } from "app/services/login/login.service.fake";
-import { FakeUsersRepository } from "app/services/login/users.repository.fake";
 import { UserDataBrowserLocalStorageService } from "app/services/customizations/user-data.service";
 import { UserSettingsBrowserLocalStorageService } from "app/services/customizations/user-settings.service";
 import { NotificationService } from "app/services/infrastructure/notification.service";
@@ -22,7 +20,10 @@ export class DependencyConfig {
         const confLoader = new AppConfigLoader(ajaxService);
         const appConfig = await confLoader.loadData();
 
-        const currentUser = new CurrentUserProvider();
+        const currentUser = new CurrentUserProvider("388088822786-2okb2ch7pov7d6oqk8chrq33u0ed0kfr.apps.googleusercontent.com");
+        const status = await currentUser.init();
+        console.log('Hello', status);
+
         const userDataService = new UserDataBrowserLocalStorageService('TBD');
         const userSettingsService = new UserSettingsBrowserLocalStorageService('TBD');
         const userSettings = await userSettingsService.get();
@@ -37,9 +38,6 @@ export class DependencyConfig {
         const navigationService = new NavigationService();
         const titleService = new TitleService(_T("App title"));
 
-        const usersRepository = new FakeUsersRepository(currentUser);
-
-        const loginService = new FakeLoginService();
         const tutorialsService = new TutorialsContentService(contentLoader);
 
         const imageUploadService = new ImageUploadImgurService(appConfig.services.imgurServiceClientID, appConfig.services.imgurServiceUrl);
@@ -53,9 +51,6 @@ export class DependencyConfig {
         ServiceLocator.set(x => x.notificationService = notificationService);
         ServiceLocator.set(x => x.navigationService = navigationService);
         ServiceLocator.set(x => x.titleService = titleService);
-
-        ServiceLocator.set(x => x.usersRepository = usersRepository);
-        ServiceLocator.set(x => x.loginService = loginService);
 
         ServiceLocator.set(x => x.contentLoader = contentLoader);
         ServiceLocator.set(x => x.programsReporitory = new ProgramsLocalStorageRepository(currentUser));
