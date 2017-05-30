@@ -83,7 +83,7 @@ module.exports = function (env) {
 
             new webpack.DefinePlugin({
                 // Custom object injected to application and contains build version and package info
-                appInfo: JSON.stringify({
+                APP_WEBPACK_STATIC_INFO: JSON.stringify({
                     gitVersion: global.appGitVersion,
                     buildVersion: env.buildVersion,
                     name: packageJson.name,

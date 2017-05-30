@@ -2,10 +2,7 @@ import { RandomHelper } from 'app/utils/random-helper';
 import { IAjaxService } from "app/services/infrastructure/ajax-service";
 import { AppConfig } from "app/services/config/app-config";
 
-export interface IAppConfigLoader {
-}
-
-export class AppConfigLoader implements IAppConfigLoader {
+export class AppConfigLoader {
     private cache = new Map<string, string>();
 
     constructor(private ajaxService: IAjaxService) {

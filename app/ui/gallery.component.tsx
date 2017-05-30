@@ -11,12 +11,14 @@ import { DateTimeStampComponent } from "app/ui/_generic/date-time-stamp.componen
 import { ProgressIndicatorComponent } from "app/ui/_generic/progress-indicator.component";
 import { NoDataComponent } from "app/ui/_generic/no-data.component";
 
-import { ServiceLocator } from 'app/services/service-locator'
-import { Routes } from '../routes';
-import { ProgramStorageType } from "app/services/gallery/personal-gallery-localstorage.repository";
+import { lazyInject } from "app/di";
+import { Routes } from "app/routes";
+import { _T } from "app/services/customizations/localization.service";
+import { ProgramStorageType, ProgramsLocalStorageRepository, IProgramsRepository } from "app/services/gallery/personal-gallery-localstorage.repository";
 import { ProgramModel } from "app/services/gallery/program.model";
 import { ProgramsSamplesRepository } from "app/services/gallery/gallery-samples.repository";
-import { _T } from "app/services/customizations/localization.service";
+import { ICurrentUserProvider } from "app/services/login/current-user.provider";
+import { TitleService } from "app/services/infrastructure/title.service";
 
 import './gallery.component.scss'
 
@@ -33,11 +35,18 @@ interface IComponentProps extends RouteComponentProps<void> {
 }
 
 export class GalleryComponent extends React.Component<IComponentProps, IComponentState> {
-    private appConfig = ServiceLocator.resolve(x => x.appConfig);
-    private currentUser = ServiceLocator.resolve(x => x.currentUser);
-    private programsRepo = ServiceLocator.resolve(x => x.programsReporitory);
-    private samplesRepo = new ProgramsSamplesRepository();
-    private titleService = ServiceLocator.resolve(x => x.titleService);
+    @lazyInject(ICurrentUserProvider)
+    private currentUser: ICurrentUserProvider;
+
+    @lazyInject(TitleService)
+    private titleService: TitleService;
+
+    @lazyInject(ProgramsLocalStorageRepository)
+    private programsRepo: IProgramsRepository;
+
+    @lazyInject(ProgramsSamplesRepository)
+    private samplesRepo: IProgramsRepository;
+
     readonly noScreenshot = require('./images/no.image.png') as string;
 
     constructor(props: IComponentProps) {

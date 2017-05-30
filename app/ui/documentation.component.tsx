@@ -3,12 +3,16 @@ import { Link, RouteComponentProps } from 'react-router-dom';
 
 import { setupActionErrorHandler, callAction } from "app/utils/async-helpers";
 
-import { ServiceLocator } from 'app/services/service-locator'
 import { MainMenuComponent } from 'app/ui/main-menu.component'
 import { PageHeaderComponent } from 'app/ui/_generic/page-header.component';
 import { PageLoadingIndicatorComponent } from 'app/ui/_generic/page-loading-indicator.component';
 import { AlertMessageComponent } from 'app/ui/_generic/alert-message.component';
+
+import { lazyInject } from "app/di";
 import { _T } from "app/services/customizations/localization.service";
+import { INotificationService } from "app/services/infrastructure/notification.service";
+import { TitleService } from "app/services/infrastructure/title.service";
+import { ILocalizedContentLoader } from "app/services/infrastructure/localized-content-loader";
 
 import './documentation.component.scss'
 
@@ -21,9 +25,14 @@ interface IComponentProps extends RouteComponentProps<void> {
 }
 
 export class DocumentationComponent extends React.Component<IComponentProps, IComponentState> {
-    private notificationService = ServiceLocator.resolve(x => x.notificationService);
-    private contentLoader = ServiceLocator.resolve(x => x.contentLoader);
-    private titleService = ServiceLocator.resolve(x => x.titleService);
+    @lazyInject(INotificationService)
+    private notificationService: INotificationService;
+
+    @lazyInject(TitleService)
+    private titleService: TitleService;
+
+    @lazyInject(ILocalizedContentLoader)
+    private contentLoader: ILocalizedContentLoader;
 
     constructor(props: IComponentProps) {
         super(props);

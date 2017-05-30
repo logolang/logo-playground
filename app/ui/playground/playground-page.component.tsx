@@ -16,13 +16,18 @@ import { SaveProgramModalComponent } from "app/ui/playground/save-program-modal.
 import { ProgramControlsMenuComponent } from "app/ui/playground/program-controls-menu.component";
 import { ShareScreenshotModalComponent } from "app/ui/playground/share-screenshot-modal.component";
 
-import { ServiceLocator } from 'app/services/service-locator'
+import { _T } from "app/services/customizations/localization.service";
+import { lazyInject } from "app/di";
 import { Routes } from "app/routes";
 import { UserCustomizationsProvider, IUserCustomizationsData } from "app/services/customizations/user-customizations-provider";
 import { ProgramsSamplesRepository } from "app/services/gallery/gallery-samples.repository";
 import { ProgramModel } from "app/services/gallery/program.model";
 import { ProgrammingFlowService, IProgramToSaveAttributes } from "app/services/flow/programming-flow.service";
-import { _T } from "app/services/customizations/localization.service";
+import { INotificationService } from "app/services/infrastructure/notification.service";
+import { TitleService } from "app/services/infrastructure/title.service";
+import { ProgramsLocalStorageRepository, IProgramsRepository } from "app/services/gallery/personal-gallery-localstorage.repository";
+import { IUserDataService } from "app/services/customizations/user-data.service";
+import { INavigationService } from "app/services/infrastructure/navigation.service";
 
 import './playground-page.component.scss';
 
@@ -46,14 +51,27 @@ interface IComponentProps extends RouteComponentProps<IRouteParams> {
 }
 
 export class PlaygroundPageComponent extends React.Component<IComponentProps, IComponentState> {
-    private notificationService = ServiceLocator.resolve(x => x.notificationService);
-    private appConfig = ServiceLocator.resolve(x => x.appConfig);
-    private titleService = ServiceLocator.resolve(x => x.titleService);
-    private programsRepo = ServiceLocator.resolve(x => x.programsReporitory);
-    private programSamples = new ProgramsSamplesRepository();
-    private userCustomizationsProvider = new UserCustomizationsProvider();
-    private userDataService = ServiceLocator.resolve(x => x.userDataService);
-    private navService = ServiceLocator.resolve(x => x.navigationService);
+    @lazyInject(INotificationService)
+    private notificationService: INotificationService;
+
+    @lazyInject(TitleService)
+    private titleService: TitleService;
+
+    @lazyInject(ProgramsLocalStorageRepository)
+    private programsRepo: IProgramsRepository;
+
+    @lazyInject(ProgramsSamplesRepository)
+    private programSamples: IProgramsRepository;
+
+    @lazyInject(IUserDataService)
+    private userDataService: IUserDataService;
+
+    @lazyInject(UserCustomizationsProvider)
+    private userCustomizationsProvider: UserCustomizationsProvider;
+
+    @lazyInject(INavigationService)
+    private navService: INavigationService;
+
     private flowService = new ProgrammingFlowService();
 
     private errorHandler = setupActionErrorHandler((error) => {

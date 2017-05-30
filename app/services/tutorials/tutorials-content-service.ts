@@ -1,5 +1,6 @@
 import * as markdown from 'markdown-it'
 import { ILocalizedContentLoader } from "app/services/infrastructure/localized-content-loader";
+import { injectable, inject } from "app/di";
 
 export interface ITutorialInfo {
     id: string
@@ -19,15 +20,18 @@ export interface ITutorialStep {
 /**
  * Gets access to tutorials content
  */
-export interface ITutorialsContentService {
-    getTutorialsList(): Promise<ITutorialInfo[]>
-    getSteps(tutorialId: string): Promise<ITutorialStep[]>
+export abstract class ITutorialsContentService {
+    abstract getTutorialsList(): Promise<ITutorialInfo[]>
+    abstract getSteps(tutorialId: string): Promise<ITutorialStep[]>
 }
 
-export class TutorialsContentService {
+@injectable()
+export class TutorialsContentService implements ITutorialsContentService {
     private tutorialInfos: ITutorialInfo[] = [];
 
-    constructor(private contentLoader: ILocalizedContentLoader) {
+    constructor(
+        @inject(ILocalizedContentLoader) private contentLoader: ILocalizedContentLoader
+    ) {
     }
 
     private getIdFromIndex(index: number): string {

@@ -1,11 +1,13 @@
 import * as fetch from 'isomorphic-fetch';
 import { handleAsyncError } from "app/utils/async-helpers";
+import { injectable } from "app/di";
 
-export interface IAjaxService {
-    getText(url: string): Promise<string>
-    ajax<T>(url: string, method: "post" | "get", body?: string): Promise<T>
+export abstract class  IAjaxService {
+    abstract getText(url: string): Promise<string>
+    abstract ajax<T>(url: string, method: "post" | "get", body?: string): Promise<T>
 }
 
+@injectable()
 export class AjaxService {
     async getText(url: string): Promise<string> {
         const result = await fetch(url, {

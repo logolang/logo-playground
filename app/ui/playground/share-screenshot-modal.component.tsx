@@ -6,7 +6,8 @@ import { AlertMessageComponent } from "app/ui/_generic/alert-message.component";
 import { ProgressIndicatorComponent } from "app/ui/_generic/progress-indicator.component";
 
 import { _T } from "app/services/customizations/localization.service";
-import { ServiceLocator } from "app/services/service-locator";
+import { lazyInject } from "app/di";
+import { ImageUploadService } from "app/services/infrastructure/image-upload-imgur.service";
 
 interface IComponentState {
     errorMessage: string
@@ -20,7 +21,9 @@ interface IComponentProps {
 }
 
 export class ShareScreenshotModalComponent extends React.Component<IComponentProps, IComponentState> {
-    private imageUploadService = ServiceLocator.resolve(x => x.imageUploadService);
+    @lazyInject(ImageUploadService)
+    private imageUploadService: ImageUploadService;
+    
     private clipboardInstance: clipboard;
 
     constructor(props: IComponentProps) {

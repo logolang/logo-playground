@@ -11,9 +11,10 @@ import * as goldenLayout from 'golden-layout';
 import { CodePanelComponent, ICodePanelComponentProps } from './code-panel.component'
 import { OutputPanelComponent, IOutputPanelComponentProps } from './output-panel.component'
 
-import { ServiceLocator } from "app/services/service-locator";
-import { ProgramModel } from "app/services/gallery/program.model";
+import { lazyInject } from "app/di";
 import { _T } from "app/services/customizations/localization.service";
+import { ProgramModel } from "app/services/gallery/program.model";
+import { IUserDataService } from "app/services/customizations/user-data.service";
 
 import './playground-page-layout.component.scss';
 
@@ -27,7 +28,8 @@ interface IComponentProps {
 }
 
 export class PlaygroundPageLayoutComponent extends React.Component<IComponentProps, IComponentState> {
-    private userDataService = ServiceLocator.resolve(x => x.userDataService);
+    @lazyInject(IUserDataService)
+    private userDataService: IUserDataService;
 
     private layout: goldenLayout;
     private readonly defaultConfig: goldenLayout.Config = {

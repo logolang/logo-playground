@@ -1,4 +1,5 @@
 import { LocalStorageService } from "app/services/infrastructure/local-storage.service";
+import { injectable } from "app/di";
 
 export interface Theme {
     name: string
@@ -8,6 +9,7 @@ export interface Theme {
     isDark: boolean
 }
 
+@injectable()
 export class ThemeCustomizationsService {
     private readonly themes: Theme[] = [
         {

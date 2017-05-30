@@ -4,16 +4,16 @@ import 'core-js';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
-import { DependencyConfig } from 'app/dependency-config'
 import { ErrorComponent } from 'app/ui/error.component';
 import { Routes } from 'app/routes';
+import { DependecyInjectionSetup } from "app/di-setup";
 
 import 'app/ui/_styles/app.scss';
 
 async function runApp() {
     const appHostDomElement = document.getElementById('app-container') || document.body;
     try {
-        await DependencyConfig.init();
+        await DependecyInjectionSetup.setup()
 
         // Render the app
         ReactDOM.render(

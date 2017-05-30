@@ -1,20 +1,22 @@
 import { Observable, Subject } from 'rxjs/Rx';
 import { UserInfo } from "app/services/login/user-info";
 import { GoogleAuthProvider } from "app/services/login/google-auth.provider";
+import { injectable } from "app/di";
 
 export interface LoginStatus {
     isLoggedIn: boolean
     userInfo: UserInfo
 }
 
-export interface ICurrentUserProvider {
-    getLoginStatus(): LoginStatus
-    loginStatusObservable: Observable<LoginStatus>
-    signOut(): Promise<void>
-    renderLoginUIAllProviders(): JSX.Element[]
-    initLoginUIAllProviders(): Promise<void>
+export abstract class ICurrentUserProvider {
+    abstract getLoginStatus(): LoginStatus
+    abstract loginStatusObservable: Observable<LoginStatus>
+    abstract signOut(): Promise<void>
+    abstract renderLoginUIAllProviders(): JSX.Element[]
+    abstract initLoginUIAllProviders(): Promise<void>
 }
 
+@injectable()
 export class CurrentUserProvider implements ICurrentUserProvider {
     private loginStatusSubject = new Subject<LoginStatus>();
     private googleAuth: GoogleAuthProvider;

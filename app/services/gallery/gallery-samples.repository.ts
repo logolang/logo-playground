@@ -1,9 +1,11 @@
 import { ProgramModel } from "app/services/gallery/program.model";
 import { IProgramsRepository } from "app/services/gallery/personal-gallery-localstorage.repository";
+import { injectable } from "app/di";
 
 const data = require('./gallery-samples.json').map((rec: any) => ProgramModel.fromJson(rec)) as ProgramModel[];
 data.sort((p1, p2) => { return p1.dateLastEdited > p2.dateLastEdited ? -1 : 1 });
 
+@injectable()
 export class ProgramsSamplesRepository implements IProgramsRepository {
     constructor() {
     }

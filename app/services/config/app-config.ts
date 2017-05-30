@@ -1,4 +1,5 @@
 import * as tv4 from 'tv4';
+import { injectable } from "app/di";
 const appConfigSchema = require('app/../content/config/config.schema.json');
 
 /**
@@ -12,6 +13,7 @@ export interface IAppServicesDetails {
     imgurServiceClientID: string
 }
 
+@injectable()
 export class AppConfig {
     services: IAppServicesDetails
 

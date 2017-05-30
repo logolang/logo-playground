@@ -6,8 +6,8 @@
         "baseUrl": ".",
         "sourceMap": true,
         "inlineSourceMap": false,
-        //"emitDecoratorMetadata": true,
-        //"experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
         "removeComments": false,
         "strictNullChecks": true,
         "noImplicitAny": true,
@@ -18,10 +18,6 @@
         //"noUnusedParameters": true,
         "pretty": true,
         "jsx": "react",
-        "types": [
-            "mocha",
-            "jquery"
-        ],
         "importHelpers": true,
         "lib": [
             "dom",

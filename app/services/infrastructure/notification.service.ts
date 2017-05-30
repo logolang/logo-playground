@@ -1,4 +1,5 @@
 import { Observable, Subject, Subscription } from 'rxjs/Rx';
+import { injectable } from "app/di";
 
 type NotificationType = "danger" | "info" | "success" | "warning"
 
@@ -9,11 +10,12 @@ interface INotification {
     closeTimeout?: number
 }
 
-export interface INotificationService {
-    push(notification: INotification): void
-    getObservable(): Observable<INotification>
+export abstract class INotificationService {
+    abstract push(notification: INotification): void
+    abstract getObservable(): Observable<INotification>
 }
 
+@injectable()
 export class NotificationService implements INotificationService {
     private notificationsSubject = new Subject<INotification>();
 

@@ -14,7 +14,7 @@ import { MainMenuComponent } from 'app/ui/main-menu.component'
 import { LogoExecutorComponent } from 'app/ui/_shared/logo-executor.component';
 import { FileSelectorComponent } from "app/ui/_generic/file-selector.component";
 
-import { ServiceLocator } from 'app/services/service-locator'
+import { lazyInject } from "app/di";
 import { Routes } from 'app/routes';
 import { UserInfo } from "app/services/login/user-info";
 import { TurtleCustomizationsService } from "app/services/customizations/turtle-customizations.service";
@@ -22,12 +22,17 @@ import { IUserCustomizationsData, UserCustomizationsProvider } from "app/service
 import { Theme, ThemeCustomizationsService } from "app/services/customizations/theme-customizations.service";
 import { ProgramsExportImportService } from "app/services/gallery/programs-export-import.service";
 import { LocalizationService, ILocaleInfo, _T } from "app/services/customizations/localization.service";
+import { ICurrentUserProvider } from "app/services/login/current-user.provider";
+import { TitleService } from "app/services/infrastructure/title.service";
+import { INavigationService } from "app/services/infrastructure/navigation.service";
+import { IUserSettingsService } from "app/services/customizations/user-settings.service";
+import { INotificationService } from "app/services/infrastructure/notification.service";
+import { ProgramsLocalStorageRepository, IProgramsRepository } from "app/services/gallery/personal-gallery-localstorage.repository";
 
 interface IComponentState {
     userInfo: UserInfo;
     isSavingInProgress: boolean;
     programCount: number;
-
     currentLocale?: ILocaleInfo;
     theme?: Theme;
     userCustomizations?: IUserCustomizationsData
@@ -46,18 +51,39 @@ const codeSamples = [
 ]
 
 export class UserProfileComponent extends React.Component<IComponentProps, IComponentState> {
-    private appConfig = ServiceLocator.resolve(x => x.appConfig);
-    private currentUser = ServiceLocator.resolve(x => x.currentUser);
-    private programsReporitory = ServiceLocator.resolve(x => x.programsReporitory);
-    private userCustomizationsProvider = new UserCustomizationsProvider();
-    private themeService = new ThemeCustomizationsService();
-    private userSettingsService = ServiceLocator.resolve(x => x.userSettingsService);
-    private turtleCustomService = new TurtleCustomizationsService();
+    @lazyInject(ICurrentUserProvider)
+    private currentUser: ICurrentUserProvider;
+
+    @lazyInject(TitleService)
+    private titleService: TitleService;
+
+    @lazyInject(INavigationService)
+    private navService: INavigationService;
+
+    @lazyInject(ThemeCustomizationsService)
+    private themeService: ThemeCustomizationsService;
+
+    @lazyInject(UserCustomizationsProvider)
+    private userCustomizationsProvider: UserCustomizationsProvider;
+
+    @lazyInject(TurtleCustomizationsService)
+    private turtleCustomizationService: TurtleCustomizationsService;
+
+    @lazyInject(IUserSettingsService)
+    private userSettingsService: IUserSettingsService;
+
+    @lazyInject(INotificationService)
+    private notificationService: INotificationService;
+
+    @lazyInject(LocalizationService)
+    private localizationService: LocalizationService;
+
+    @lazyInject(ProgramsLocalStorageRepository)
+    private programsReporitory: IProgramsRepository;
+
     private runCode = new BehaviorSubject<string>('');
     private exportInportService = new ProgramsExportImportService();
-    private notificationService = ServiceLocator.resolve(x => x.notificationService);
-    private titleService = ServiceLocator.resolve(x => x.titleService);
-    private localizationService = new LocalizationService();
+
     private errorHandler = setupActionErrorHandler((error) => {
         this.notificationService.push({ type: 'danger', message: error });
     })
@@ -206,7 +232,7 @@ export class UserProfileComponent extends React.Component<IComponentProps, IComp
                                                         this.setRandomCode();
                                                     }}>
                                                     {
-                                                        this.turtleCustomService.getAllTurtles().map(t => {
+                                                        this.turtleCustomizationService.getAllTurtles().map(t => {
                                                             return <option key={t.id} value={t.id}>{t.getName()}</option>
                                                         })
                                                     }

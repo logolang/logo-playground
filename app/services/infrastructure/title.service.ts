@@ -1,3 +1,6 @@
+import { injectable } from "app/di";
+
+@injectable()
 export class TitleService {
     constructor(private prefix: string) {
     }

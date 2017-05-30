@@ -1,6 +1,7 @@
-import { ServiceLocator } from "app/services/service-locator";
 import { ThemeCustomizationsService } from "app/services/customizations/theme-customizations.service";
 import { TurtleCustomizationsService } from "app/services/customizations/turtle-customizations.service";
+import { injectable, inject } from "app/di";
+import { IUserSettingsService } from "app/services/customizations/user-settings.service";
 
 export interface IUserCustomizationsData {
     turtleImage: HTMLImageElement
@@ -11,12 +12,13 @@ export interface IUserCustomizationsData {
     localeId: string
 }
 
+@injectable()
 export class UserCustomizationsProvider {
-    private userSettings = ServiceLocator.resolve(x => x.userSettingsService);
-    private themeCustomizations = new ThemeCustomizationsService();
-    private turtleCustomizations = new TurtleCustomizationsService();
-
-    constructor() {
+    constructor(
+        @inject(IUserSettingsService) private userSettings: IUserSettingsService,
+        @inject(ThemeCustomizationsService) private themeCustomizations: ThemeCustomizationsService,
+        @inject(TurtleCustomizationsService) private turtleCustomizations: TurtleCustomizationsService,
+    ) {
     }
 
     async getCustomizationsData(): Promise<IUserCustomizationsData> {

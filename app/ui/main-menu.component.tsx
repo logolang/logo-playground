@@ -3,11 +3,12 @@ import * as Color from 'color';
 import { Button, Nav, Navbar, NavDropdown, MenuItem, NavItem, DropdownButton } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 
-import { ServiceLocator } from 'app/services/service-locator'
 import { NavbarUsercardComponent } from 'app/ui/_generic/navbar-usercard.component'
 
+import { lazyInject } from "app/di";
 import { Routes } from 'app/routes';
 import { _T } from "app/services/customizations/localization.service";
+import { ICurrentUserProvider } from "app/services/login/current-user.provider";
 
 let globalIsDarkNavbar = false;
 
@@ -20,8 +21,8 @@ interface IComponentProps {
 }
 
 export class MainMenuComponent extends React.Component<IComponentProps, IComponentState> {
-    private appConfig = ServiceLocator.resolve(x => x.appConfig);
-    private currentUser = ServiceLocator.resolve(x => x.currentUser);
+    @lazyInject(ICurrentUserProvider)
+    private currentUser: ICurrentUserProvider;
 
     constructor(props: IComponentProps) {
         super(props);

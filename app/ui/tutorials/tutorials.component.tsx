@@ -15,12 +15,16 @@ import { CodeInputLogoComponent } from 'app/ui/_shared/code-input-logo.component
 import { LogoExecutorComponent } from 'app/ui/_shared/logo-executor.component';
 import { TutorialSelectModalComponent } from './tutorial-select-modal.component';
 
-import { ServiceLocator } from 'app/services/service-locator'
+import { _T } from "app/services/customizations/localization.service";
+import { lazyInject } from "app/di";
 import { Routes } from 'app/routes';
 import { UserCustomizationsProvider, IUserCustomizationsData } from "app/services/customizations/user-customizations-provider";
-import { ITutorialInfo, ITutorialStep } from "app/services/tutorials/tutorials-content-service";
+import { ITutorialInfo, ITutorialStep, ITutorialsContentService } from "app/services/tutorials/tutorials-content-service";
 import { ProgrammingFlowService } from "app/services/flow/programming-flow.service";
-import { _T } from "app/services/customizations/localization.service";
+import { INotificationService } from "app/services/infrastructure/notification.service";
+import { TitleService } from "app/services/infrastructure/title.service";
+import { INavigationService } from "app/services/infrastructure/navigation.service";
+import { IUserDataService } from "app/services/customizations/user-data.service";
 
 import './tutorials.component.scss';
 
@@ -47,12 +51,24 @@ export interface ITutorialPageRouteParams {
 }
 
 export class TutorialsComponent extends React.Component<IComponentProps, IComponentState> {
-    private notificationService = ServiceLocator.resolve(x => x.notificationService);
-    private titleService = ServiceLocator.resolve(x => x.titleService);
-    private tutorialsLoader = ServiceLocator.resolve(x => x.tutorialsService);
-    private userDataService = ServiceLocator.resolve(x => x.userDataService);
-    private navService = ServiceLocator.resolve(x => x.navigationService);
-    private userCustomizationsProvider = new UserCustomizationsProvider();
+    @lazyInject(INotificationService)
+    private notificationService: INotificationService;
+
+    @lazyInject(TitleService)
+    private titleService: TitleService;
+
+    @lazyInject(ITutorialsContentService)
+    private tutorialsLoader: ITutorialsContentService;
+
+    @lazyInject(IUserDataService)
+    private userDataService: IUserDataService;
+
+    @lazyInject(UserCustomizationsProvider)
+    private userCustomizationsProvider: UserCustomizationsProvider;
+
+    @lazyInject(INavigationService)
+    private navService: INavigationService;
+
     private flowService = new ProgrammingFlowService();
 
     constructor(props: IComponentProps) {

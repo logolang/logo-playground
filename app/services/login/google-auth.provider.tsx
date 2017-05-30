@@ -14,9 +14,13 @@ export class GoogleAuthProvider {
     }
 
     init(): Promise<LoginStatus | undefined> {
+        const gapi = (window as any).gapi;
+        if (!gapi) {
+            return Promise.resolve(undefined);
+        }
+
         let isResolved = false;
         const promise = new Promise<LoginStatus | undefined>(resolve => {
-            const gapi = (window as any).gapi;
             gapi.load("auth2", () => {
                 const auth2 = gapi.auth2.init({
                     client_id: this.googleClientId,

@@ -1,19 +1,16 @@
-/**
- * This service is to store and get user data stored in local browser
- * So this data is designed as not be to synchronized to whatever backend whenever
- * This data is persisted only for current browser
- */
+import { injectable, inject } from "app/di";
 import { LocalStorageService } from "app/services/infrastructure/local-storage.service";
+import { ICurrentUserProvider } from "app/services/login/current-user.provider";
 
-export interface IUserDataService {
-    getPlaygroundCode(): Promise<string>
-    setPlaygroundCode(value: string): Promise<void>
+export abstract class IUserDataService {
+    abstract getPlaygroundCode(): Promise<string>
+    abstract setPlaygroundCode(value: string): Promise<void>
 
-    getPlaygroundLayoutJSON(): Promise<string>
-    setPlaygroundLayoutJSON(value: string): Promise<void>
+    abstract getPlaygroundLayoutJSON(): Promise<string>
+    abstract setPlaygroundLayoutJSON(value: string): Promise<void>
 
-    getCurrentTutorialInfo(): Promise<ICurrentTutorialInfo>
-    setCurrentTutorialInfo(value: ICurrentTutorialInfo): Promise<void>
+    abstract getCurrentTutorialInfo(): Promise<ICurrentTutorialInfo>
+    abstract setCurrentTutorialInfo(value: ICurrentTutorialInfo): Promise<void>
 }
 
 interface ICurrentTutorialInfo {
@@ -36,11 +33,20 @@ forward 100
 arc 360 50
 `;
 
+@injectable()
+/**
+ * This service is to store and get user data stored in local browser
+ * So this data is designed as not be to synchronized to whatever backend whenever
+ * This data is persisted only in current browser
+ */
 export class UserDataBrowserLocalStorageService implements IUserDataService {
     private localStorage: LocalStorageService<ILocalStorageData>;
     private currentData: ILocalStorageData;
 
-    constructor(private userId: string) {
+    constructor(
+        @inject(ICurrentUserProvider) private currentUser: ICurrentUserProvider
+    ) {
+        const userId = this.currentUser.getLoginStatus().userInfo.id;
         this.localStorage = new LocalStorageService(`logo-sandbox-${userId}-data`, {});
         this.currentData = this.localStorage.getValue();
     }
@@ -59,7 +65,7 @@ export class UserDataBrowserLocalStorageService implements IUserDataService {
     }
 
     async getPlaygroundLayoutJSON(): Promise<string> {
-        return this.currentData.playgroundLayoutSerialized || defaultPlaygroundProgram;
+        return this.currentData.playgroundLayoutSerialized || "";
     }
 
     async setPlaygroundLayoutJSON(value: string): Promise<void> {

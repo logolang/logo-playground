@@ -3,6 +3,7 @@ import { stay } from "app/utils/async-helpers";
 import { RandomHelper } from 'app/utils/random-helper';
 import { ICurrentUserProvider } from "app/services/login/current-user.provider";
 import { ProgramModel } from "app/services/gallery/program.model";
+import { injectable, inject } from "app/di";
 
 export type ProgramStorageType = "library" | "samples" | "gist";
 
@@ -14,9 +15,12 @@ export interface IProgramsRepository {
     remove(id: string): Promise<void>
 }
 
+@injectable()
 export class ProgramsLocalStorageRepository implements IProgramsRepository {
     storage: Storage = window.localStorage;
-    constructor(private currentUser: ICurrentUserProvider) {
+    constructor(
+        @inject(ICurrentUserProvider) private currentUser: ICurrentUserProvider
+    ) {
     }
 
     async getAll(): Promise<ProgramModel[]> {

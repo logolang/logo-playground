@@ -3,7 +3,6 @@ import * as ReactDOM from 'react-dom';
 import { HashRouter as Router, Route, Switch, Redirect, RouteProps, RouteComponentProps, withRouter } from "react-router-dom";
 import { RouteInfo } from 'app/utils/route-info';
 
-import { ServiceLocator } from "app/services/service-locator";
 import { UserProfileComponent } from 'app/ui/user-profile.component';
 import { MessageTosterComponent } from "app/ui/_generic/message-toster.component";
 import { AboutComponent } from "app/ui/about.component";
@@ -12,11 +11,18 @@ import { GalleryComponent } from "app/ui/gallery.component";
 import { PlaygroundPageComponent } from "app/ui/playground/playground-page.component";
 import { DocumentationComponent } from "app/ui/documentation.component";
 import { LoginComponent } from "app/ui/login.component";
+import { lazyInject } from "app/di";
+import { INavigationService } from "app/services/infrastructure/navigation.service";
+import { INotificationService } from "app/services/infrastructure/notification.service";
 
 export class Routes extends React.Component<object, object> {
+    @lazyInject(INavigationService)
+    private navigationService: INavigationService;
+
+    @lazyInject(INotificationService)
+    private notificationService: INotificationService;
+
     private router: any;
-    private navigationService = ServiceLocator.resolve(x => x.navigationService);
-    private notificationService = ServiceLocator.resolve(x => x.notificationService);
 
     componentDidMount() {
         // Initialize navigation service to perform navigation via React Router

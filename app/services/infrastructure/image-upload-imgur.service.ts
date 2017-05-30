@@ -1,10 +1,12 @@
 import * as fetch from 'isomorphic-fetch';
 import { handleAsyncError } from "app/utils/async-helpers";
+import { injectable } from "app/di";
 
-export interface ImageUploadService {
-    doUpload(imageBase64: string): Promise<string>
+export abstract class ImageUploadService {
+    abstract doUpload(imageBase64: string): Promise<string>
 }
 
+@injectable()
 export class ImageUploadImgurService implements ImageUploadService {
     constructor(private clientId: string, private serviceUrl: string) {
     }
