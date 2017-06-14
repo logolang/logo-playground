@@ -11,5 +11,7 @@
     "files.exclude": {
         "**/.git": true,
         "**/node_modules": true
-    }
+    },
+    "prettier.tabWidth": 2,
+    "prettier.printWidth": 120
 }
