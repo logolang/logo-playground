@@ -1,13 +1,16 @@
 ﻿import { container } from "app/di";
 
-import { AjaxService, IAjaxService } from 'app/services/infrastructure/ajax-service';
+import { AjaxService, IAjaxService } from "app/services/infrastructure/ajax-service";
 import { AppConfigLoader } from "app/services/config/app-config-loader";
 import { CurrentUserProvider, ICurrentUserProvider } from "app/services/login/current-user.provider";
 import { LocalizedContentLoader, ILocalizedContentLoader } from "app/services/infrastructure/localized-content-loader";
 import { TutorialsContentService, ITutorialsContentService } from "app/services/tutorials/tutorials-content-service";
 import { ProgramsLocalStorageRepository } from "app/services/gallery/personal-gallery-localstorage.repository";
 import { UserDataBrowserLocalStorageService, IUserDataService } from "app/services/customizations/user-data.service";
-import { UserSettingsBrowserLocalStorageService, IUserSettingsService } from "app/services/customizations/user-settings.service";
+import {
+    UserSettingsBrowserLocalStorageService,
+    IUserSettingsService
+} from "app/services/customizations/user-settings.service";
 import { NotificationService, INotificationService } from "app/services/infrastructure/notification.service";
 import { TitleService } from "app/services/infrastructure/title.service";
 import { LocalizationService, _T } from "app/services/customizations/localization.service";
@@ -19,6 +22,8 @@ import { ThemeCustomizationsService } from "app/services/customizations/theme-cu
 import { TurtleCustomizationsService } from "app/services/customizations/turtle-customizations.service";
 import { UserCustomizationsProvider } from "app/services/customizations/user-customizations-provider";
 import { ProgramsSamplesRepository } from "app/services/gallery/gallery-samples.repository";
+import { GoogleAuthService } from "app/services/login/google-auth.service";
+import { LoginService, ILoginService } from "app/services/login/login.service";
 
 export class DependecyInjectionSetup {
     static async setup() {
@@ -31,11 +36,14 @@ export class DependecyInjectionSetup {
         const appConfig = await appConfigLoader.loadData();
         container.bind(AppConfig).toConstantValue(appConfig);
 
+        container.bind(ICurrentUserProvider).to(CurrentUserProvider);
         //TODO: use google API key from config file
-        const currentUser = new CurrentUserProvider("388088822786-2okb2ch7pov7d6oqk8chrq33u0ed0kfr.apps.googleusercontent.com");
-        const status = await currentUser.init();
-        console.log('Hello', status);
-        container.bind(ICurrentUserProvider).toConstantValue(currentUser);
+        const authService = new GoogleAuthService(
+            "388088822786-2okb2ch7pov7d6oqk8chrq33u0ed0kfr.apps.googleusercontent.com"
+        );
+        const loginService = new LoginService(authService, container.get(ICurrentUserProvider));
+        container.bind(ILoginService).toConstantValue(loginService);
+        await loginService.tryLoginUserAutomatically();
 
         container.bind(IUserDataService).to(UserDataBrowserLocalStorageService);
         container.bind(IUserSettingsService).to(UserSettingsBrowserLocalStorageService);
@@ -45,7 +53,7 @@ export class DependecyInjectionSetup {
         const contentLoader = new LocalizedContentLoader(container.get(IAjaxService), userSettings.localeId);
         container.bind(ILocalizedContentLoader).toConstantValue(contentLoader);
 
-        const localizationData = await contentLoader.getFileContent('messages.po');
+        const localizationData = await contentLoader.getFileContent("messages.po");
         const localizationService = new LocalizationService();
         localizationService.initLocale(localizationData);
         container.bind(LocalizationService).toConstantValue(localizationService);
@@ -58,7 +66,10 @@ export class DependecyInjectionSetup {
 
         container.bind(ITutorialsContentService).to(TutorialsContentService);
 
-        const imageUploadService = new ImageUploadImgurService(appConfig.services.imgurServiceClientID, appConfig.services.imgurServiceUrl);
+        const imageUploadService = new ImageUploadImgurService(
+            appConfig.services.imgurServiceClientID,
+            appConfig.services.imgurServiceUrl
+        );
         container.bind(ImageUploadService).toConstantValue(imageUploadService);
 
         container.bind(ThemeCustomizationsService).to(ThemeCustomizationsService);

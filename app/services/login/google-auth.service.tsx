@@ -1,26 +1,31 @@
 import * as React from "react";
-import { LoginStatus } from "app/services/login/current-user.provider";
+import { LoginStatus, NotLoggenInStatus } from "app/services/login/current-user.provider";
 import { Subject } from "rxjs/Subject";
+import { IAuthService } from "app/services/login/auth.service";
 
-export class GoogleAuthProvider {
+export class GoogleAuthService implements IAuthService {
     private isSignedIn: boolean = false;
-    private loginStatusSubject = new Subject<LoginStatus | undefined>();
+    private loginStatus: LoginStatus;
+    private loginStatusSubject = new Subject<LoginStatus>();
 
-    constructor(private googleClientId: string) {
+    constructor(private googleClientId: string) {}
+
+    getLoginStatus(): LoginStatus {
+        return this.loginStatus;
     }
 
     get loginStatusObservable() {
         return this.loginStatusSubject;
     }
 
-    init(): Promise<LoginStatus | undefined> {
+    init(): Promise<void> {
         const gapi = (window as any).gapi;
         if (!gapi) {
-            return Promise.resolve(undefined);
+            return Promise.resolve();
         }
 
         let isResolved = false;
-        const promise = new Promise<LoginStatus | undefined>(resolve => {
+        const promise = new Promise<void>(resolve => {
             gapi.load("auth2", () => {
                 const auth2 = gapi.auth2.init({
                     client_id: this.googleClientId,
@@ -38,26 +43,29 @@ export class GoogleAuthProvider {
                                     email: profile.getEmail(),
                                     imageUrl: profile.getImageUrl(),
                                     name: profile.getName()
-                                }, id: profile.getId()
+                                },
+                                id: profile.getId()
                             }
-                        }
+                        };
                         this.isSignedIn = true;
+                        this.loginStatus = loginStatus;
+                        this.loginStatusSubject.next(this.loginStatus);
                         if (!isResolved) {
                             isResolved = true;
-                            resolve(loginStatus);
-
+                            resolve();
                         }
-                        this.loginStatusSubject.next(loginStatus);
                     } else {
+                        this.isSignedIn = false;
+                        this.loginStatus = NotLoggenInStatus;
+                        this.loginStatusSubject.next(this.loginStatus);
                         if (!isResolved) {
                             isResolved = true;
-                            resolve(undefined);
+                            resolve();
                         }
-                        this.loginStatusSubject.next(undefined);
                     }
                 });
             });
-        })
+        });
         return promise;
     }
 
@@ -70,18 +78,29 @@ export class GoogleAuthProvider {
     }
 
     renderLoginUI(): JSX.Element {
-        return <div key="google-auth" id="google-btn-signin2" className="g-signin2" data-width="300" data-height="200" data-longtitle="true"></div>;
+        return (
+            <div
+                key="google-auth"
+                id="google-btn-signin2"
+                className="g-signin2"
+                data-width="300"
+                data-height="200"
+                data-longtitle="true"
+            />
+        );
     }
 
-    initLoginUI() {
+    async initLoginUI(): Promise<void> {
         const gapi = (window as any).gapi;
-        gapi.signin2.render("google-btn-signin2", {
-            client_id: this.googleClientId,
-            scope: "profile email",
-            width: 240,
-            height: 50,
-            longtitle: true,
-            theme: "dark",
-        });
+        if (gapi) {
+            gapi.signin2.render("google-btn-signin2", {
+                client_id: this.googleClientId,
+                scope: "profile email",
+                width: 240,
+                height: 50,
+                longtitle: true,
+                theme: "dark"
+            });
+        }
     }
 }
