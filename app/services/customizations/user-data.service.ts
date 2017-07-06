@@ -1,6 +1,6 @@
 import { injectable, inject } from "app/di";
 import { LocalStorageService } from "app/services/infrastructure/local-storage.service";
-import { ICurrentUserProvider } from "app/services/login/current-user.provider";
+import { ICurrentUserService } from "app/services/login/current-user.service";
 
 export abstract class IUserDataService {
     abstract getPlaygroundCode(): Promise<string>
@@ -44,7 +44,7 @@ export class UserDataBrowserLocalStorageService implements IUserDataService {
     private currentData: ILocalStorageData;
 
     constructor(
-        @inject(ICurrentUserProvider) private currentUser: ICurrentUserProvider
+        @inject(ICurrentUserService) private currentUser: ICurrentUserService
     ) {
         const userId = this.currentUser.getLoginStatus().userInfo.id;
         this.localStorage = new LocalStorageService(`logo-sandbox-${userId}-data`, {});

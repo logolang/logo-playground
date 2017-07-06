@@ -1,7 +1,7 @@
 import { stay } from "app/utils/async-helpers";
 
 import { RandomHelper } from 'app/utils/random-helper';
-import { ICurrentUserProvider } from "app/services/login/current-user.provider";
+import { ICurrentUserService } from "app/services/login/current-user.service";
 import { ProgramModel } from "app/services/gallery/program.model";
 import { injectable, inject } from "app/di";
 
@@ -19,7 +19,7 @@ export interface IProgramsRepository {
 export class ProgramsLocalStorageRepository implements IProgramsRepository {
     storage: Storage = window.localStorage;
     constructor(
-        @inject(ICurrentUserProvider) private currentUser: ICurrentUserProvider
+        @inject(ICurrentUserService) private currentUser: ICurrentUserService
     ) {
     }
 

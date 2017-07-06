@@ -2,7 +2,7 @@
 
 import { AjaxService, IAjaxService } from "app/services/infrastructure/ajax-service";
 import { AppConfigLoader } from "app/services/config/app-config-loader";
-import { CurrentUserProvider, ICurrentUserProvider } from "app/services/login/current-user.provider";
+import { CurrentUserService, ICurrentUserService } from "app/services/login/current-user.service";
 import { LocalizedContentLoader, ILocalizedContentLoader } from "app/services/infrastructure/localized-content-loader";
 import { TutorialsContentService, ITutorialsContentService } from "app/services/tutorials/tutorials-content-service";
 import { ProgramsLocalStorageRepository } from "app/services/gallery/personal-gallery-localstorage.repository";
@@ -36,12 +36,12 @@ export class DependecyInjectionSetup {
         const appConfig = await appConfigLoader.loadData();
         container.bind(AppConfig).toConstantValue(appConfig);
 
-        container.bind(ICurrentUserProvider).to(CurrentUserProvider);
+        container.bind(ICurrentUserService).to(CurrentUserService);
         //TODO: use google API key from config file
         const authService = new GoogleAuthService(
             "388088822786-2okb2ch7pov7d6oqk8chrq33u0ed0kfr.apps.googleusercontent.com"
         );
-        const loginService = new LoginService(authService, container.get(ICurrentUserProvider));
+        const loginService = new LoginService(authService, container.get(ICurrentUserService));
         container.bind(ILoginService).toConstantValue(loginService);
         await loginService.tryLoginUserAutomatically();
 

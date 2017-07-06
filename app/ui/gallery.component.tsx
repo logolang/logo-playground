@@ -17,7 +17,7 @@ import { _T } from "app/services/customizations/localization.service";
 import { ProgramStorageType, ProgramsLocalStorageRepository, IProgramsRepository } from "app/services/gallery/personal-gallery-localstorage.repository";
 import { ProgramModel } from "app/services/gallery/program.model";
 import { ProgramsSamplesRepository } from "app/services/gallery/gallery-samples.repository";
-import { ICurrentUserProvider } from "app/services/login/current-user.provider";
+import { ICurrentUserService } from "app/services/login/current-user.service";
 import { TitleService } from "app/services/infrastructure/title.service";
 
 import './gallery.component.scss'
@@ -35,8 +35,8 @@ interface IComponentProps extends RouteComponentProps<void> {
 }
 
 export class GalleryComponent extends React.Component<IComponentProps, IComponentState> {
-    @lazyInject(ICurrentUserProvider)
-    private currentUser: ICurrentUserProvider;
+    @lazyInject(ICurrentUserService)
+    private currentUser: ICurrentUserService;
 
     @lazyInject(TitleService)
     private titleService: TitleService;

@@ -1,6 +1,6 @@
 import { injectable, inject } from "app/di";
 import { LocalStorageService } from "app/services/infrastructure/local-storage.service";
-import { ICurrentUserProvider } from "app/services/login/current-user.provider";
+import { ICurrentUserService } from "app/services/login/current-user.service";
 
 export abstract class IUserSettingsService {
     abstract get(): Promise<IUserSettings>
@@ -25,7 +25,7 @@ export class UserSettingsBrowserLocalStorageService implements IUserSettingsServ
     private currentData: IUserSettings;
 
     constructor(
-        @inject(ICurrentUserProvider) private currentUser: ICurrentUserProvider
+        @inject(ICurrentUserService) private currentUser: ICurrentUserService
     ) {
         const userId = this.currentUser.getLoginStatus().userInfo.attributes.email;
         this.localStorage = new LocalStorageService<IUserSettings>(`logo-sandbox-${userId}-settings`, {} as any);

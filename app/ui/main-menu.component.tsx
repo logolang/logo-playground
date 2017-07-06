@@ -8,7 +8,7 @@ import { NavbarUsercardComponent } from "app/ui/_generic/navbar-usercard.compone
 import { lazyInject } from "app/di";
 import { Routes } from "app/routes";
 import { _T } from "app/services/customizations/localization.service";
-import { ICurrentUserProvider } from "app/services/login/current-user.provider";
+import { ICurrentUserService } from "app/services/login/current-user.service";
 import { ILoginService } from "app/services/login/login.service";
 
 let globalIsDarkNavbar = false;
@@ -23,7 +23,7 @@ interface IComponentProps {
 
 export class MainMenuComponent extends React.Component<IComponentProps, IComponentState> {
     @lazyInject(ILoginService) private loginService: ILoginService;
-    @lazyInject(ICurrentUserProvider) private currentUser: ICurrentUserProvider;
+    @lazyInject(ICurrentUserService) private currentUser: ICurrentUserService;
 
     constructor(props: IComponentProps) {
         super(props);

@@ -22,7 +22,7 @@ import { IUserCustomizationsData, UserCustomizationsProvider } from "app/service
 import { Theme, ThemeCustomizationsService } from "app/services/customizations/theme-customizations.service";
 import { ProgramsExportImportService } from "app/services/gallery/programs-export-import.service";
 import { LocalizationService, ILocaleInfo, _T } from "app/services/customizations/localization.service";
-import { ICurrentUserProvider } from "app/services/login/current-user.provider";
+import { ICurrentUserService } from "app/services/login/current-user.service";
 import { TitleService } from "app/services/infrastructure/title.service";
 import { INavigationService } from "app/services/infrastructure/navigation.service";
 import { IUserSettingsService } from "app/services/customizations/user-settings.service";
@@ -51,8 +51,8 @@ const codeSamples = [
 ]
 
 export class UserProfileComponent extends React.Component<IComponentProps, IComponentState> {
-    @lazyInject(ICurrentUserProvider)
-    private currentUser: ICurrentUserProvider;
+    @lazyInject(ICurrentUserService)
+    private currentUser: ICurrentUserService;
 
     @lazyInject(TitleService)
     private titleService: TitleService;

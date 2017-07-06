@@ -1,5 +1,5 @@
 import { IAuthService } from "app/services/login/auth.service";
-import { NotLoggenInStatus, ICurrentUserProvider, LoginStatus } from "app/services/login/current-user.provider";
+import { NotLoggenInStatus, ICurrentUserService, LoginStatus } from "app/services/login/current-user.service";
 
 export abstract class ILoginService {
     abstract tryLoginUserAutomatically(): Promise<void>;
@@ -11,7 +11,7 @@ export abstract class ILoginService {
 export class LoginService implements ILoginService {
     private currentLoginStatus = NotLoggenInStatus;
 
-    constructor(private authService: IAuthService, private currentUserService: ICurrentUserProvider) {
+    constructor(private authService: IAuthService, private currentUserService: ICurrentUserService) {
         this.authService.loginStatusObservable.subscribe(status => {
             this.currentLoginStatus = status;
             this.currentUserService.setLoginStatus(status);
