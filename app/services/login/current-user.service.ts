@@ -19,14 +19,14 @@ export const NotLoggenInStatus: LoginStatus = Object.freeze({
     }
 });
 
-export abstract class ICurrentUserProvider {
+export abstract class ICurrentUserService {
     abstract getLoginStatus(): LoginStatus;
     abstract setLoginStatus(loginStatus: LoginStatus): void;
     abstract loginStatusObservable: Observable<LoginStatus>;
 }
 
 @injectable()
-export class CurrentUserProvider implements ICurrentUserProvider {
+export class CurrentUserService implements ICurrentUserService {
     private currentLoginStatus: LoginStatus | undefined;
     private loginStatusSubject = new Subject<LoginStatus>();
 
