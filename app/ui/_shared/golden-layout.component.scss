@@ -1,0 +1,11 @@
+.full-page {
+  position: absolute;
+  top: 60px;
+  bottom: 10px;
+  left: 10px;
+  right: 10px;
+}
+
+body.full-page-body {
+  overflow: hidden;
+}

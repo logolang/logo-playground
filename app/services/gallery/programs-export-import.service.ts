@@ -1,6 +1,6 @@
 import { RandomHelper } from "app/utils/random-helper";
 
-import { ProgramModel } from "app/services/gallery/program.model";
+import { ProgramModel } from "app/services/program/program.model";
 import { IProgramsRepository } from "app/services/gallery/personal-gallery-localstorage.repository";
 
 function getIncrementalName(name: string, checkExist: (name: string) => boolean) {
