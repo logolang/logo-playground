@@ -1,19 +1,7 @@
 import * as React from "react";
 import * as cn from "classnames";
-import {
-  Button,
-  ButtonGroup,
-  Nav,
-  Navbar,
-  NavDropdown,
-  MenuItem,
-  NavItem,
-  DropdownButton,
-  Modal,
-  OverlayTrigger
-} from "react-bootstrap";
+import { Modal } from "react-bootstrap";
 import { AlertMessageComponent } from "app/ui/_generic/alert-message.component";
-import { translateInputChangeToState } from "app/utils/react-helpers";
 import { _T } from "app/services/customizations/localization.service";
 import { IProgramToSaveAttributes } from "app/services/program/program-management.service";
 
@@ -68,11 +56,13 @@ export class SaveProgramModalComponent extends React.Component<IComponentProps, 
                         placeholder={_T("Please enter name for your program")}
                         autoFocus
                         value={this.state.programName}
-                        onChange={translateInputChangeToState(this, (s, v) => ({ programName: v }))}
-                        onKeyDown={event => {
+                        onChange={event => {
+                          this.setState({ programName: event.target.value });
+                        }}
+                        onKeyDown={async event => {
                           if (event.which == 13) {
                             event.preventDefault();
-                            this.saveProgramAction();
+                            await this.saveProgramAction();
                           }
                         }}
                       />
@@ -116,13 +106,12 @@ export class SaveProgramModalComponent extends React.Component<IComponentProps, 
       await this.props.onSave(attrs);
       this.props.onClose();
     } catch (ex) {
-      let message = ex.toString();
-      if (message) {
-        this.setState({
-          isSavingInProgress: false,
-          errorMessage: message
-        });
-      }
+      const message = ex.toString();
+
+      this.setState({
+        isSavingInProgress: false,
+        errorMessage: message
+      });
     }
   };
 }

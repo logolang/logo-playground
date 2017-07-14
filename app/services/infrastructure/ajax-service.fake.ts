@@ -18,7 +18,7 @@ export class FakeAjaxService implements IAjaxService {
         await stay(100);
         let matched = '';
 
-        for (let resUrl in this.objUrlMap) {
+        for (const resUrl in this.objUrlMap) {
             if (ajaxUrl.startsWith(resUrl)) {
                 matched = resUrl;
             }

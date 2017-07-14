@@ -1,4 +1,4 @@
-import { LocalStorageService } from "app/services/infrastructure/local-storage.service";
+
 import { injectable } from "app/di";
 
 export interface Theme {

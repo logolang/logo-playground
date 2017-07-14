@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as Color from "color";
-import { Button, Nav, Navbar, NavDropdown, MenuItem, NavItem, DropdownButton } from "react-bootstrap";
+import { Nav, Navbar, NavDropdown, MenuItem, NavItem } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
 
 import { NavbarUsercardComponent } from "app/ui/_generic/navbar-usercard.component";
@@ -41,7 +41,7 @@ export class MainMenuComponent extends React.Component<IComponentProps, ICompone
 
   componentDidMount() {
     setTimeout(() => {
-      let mainBar = document.getElementById("main-nav-bar");
+      const mainBar = document.getElementById("main-nav-bar");
       if (mainBar) {
         const isDarkBgNavBar =
           Color(window.getComputedStyle(mainBar, undefined).backgroundColor || "white").luminosity() < 0.3;

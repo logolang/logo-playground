@@ -1,9 +1,7 @@
-import { stay } from "app/utils/async-helpers";
-
 import { RandomHelper } from "app/utils/random-helper";
+import { injectable, inject } from "app/di";
 import { ICurrentUserService } from "app/services/login/current-user.service";
 import { ProgramModel } from "app/services/program/program.model";
-import { injectable, inject } from "app/di";
 
 export interface IProgramsRepository {
   getAll(): Promise<ProgramModel[]>;
@@ -19,12 +17,11 @@ export class ProgramsLocalStorageRepository implements IProgramsRepository {
   constructor(@inject(ICurrentUserService) private currentUser: ICurrentUserService) {}
 
   async getAll(): Promise<ProgramModel[]> {
-    //await stay(2000);
     let programs: ProgramModel[] = [];
     for (let keyIndex = 0; keyIndex < this.storage.length; ++keyIndex) {
       const key = this.storage.key(keyIndex);
       if (key !== null && key.startsWith(this.getStorageKeyPrefix())) {
-        let program = this.getProgramFromStorage(key);
+        const program = this.getProgramFromStorage(key);
         if (program) {
           programs.push(program);
         }
@@ -37,7 +34,7 @@ export class ProgramsLocalStorageRepository implements IProgramsRepository {
   }
 
   async get(id: string): Promise<ProgramModel> {
-    let program = this.getProgramFromStorage(this.getStorageKey(id));
+    const program = this.getProgramFromStorage(this.getStorageKey(id));
     if (program) {
       return program;
     }
@@ -83,7 +80,7 @@ export class ProgramsLocalStorageRepository implements IProgramsRepository {
     const data = this.storage.getItem(storageKey);
     if (data) {
       try {
-        let program = ProgramModel.fromJson(JSON.parse(data));
+        const program = ProgramModel.fromJson(JSON.parse(data));
         return program;
       } catch (ex) {
         console.error("Error during parsing the program", data, ex);

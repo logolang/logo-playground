@@ -14,23 +14,20 @@ import { DependecyInjectionSetup } from "app/di-setup";
 import "app/ui/_styles/app.scss";
 
 async function runApp() {
-    const appHostDomElement = document.getElementById("app-container") || document.body;
-    try {
-        await DependecyInjectionSetup.setup();
+  const appHostDomElement = document.getElementById("app-container") || document.body;
+  try {
+    await DependecyInjectionSetup.setup();
 
-        // Render the app
-        ReactDOM.render(<Routes />, appHostDomElement);
-    } catch (ex) {
-        ReactDOM.render(
-            <ErrorComponent headerText="Application failed because of error" error={ex} />,
-            appHostDomElement
-        );
-        throw ex;
-    }
+    // Render the app
+    ReactDOM.render(<Routes />, appHostDomElement);
+  } catch (ex) {
+    ReactDOM.render(<ErrorComponent headerText="Application failed because of error" error={ex} />, appHostDomElement);
+    throw ex;
+  }
 }
 
 Object.assign(window, {
-    app: {
-        run: runApp
-    }
+  app: {
+    run: runApp
+  }
 });

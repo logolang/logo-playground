@@ -21,7 +21,6 @@ export interface ILogoExecutorComponentProps {
   runCommands: Observable<string>;
   stopCommands: Observable<void>;
   makeScreenshotCommands?: Observable<ICreateScreenshotCommand>;
-  onError: (error: string) => void;
   onIsRunningChanged: Subject<boolean>;
   isDarkTheme: boolean;
   customTurtleImage?: HTMLImageElement;
@@ -107,12 +106,14 @@ export class LogoExecutorComponent extends React.Component<ILogoExecutorComponen
 
     this.resizeCanvas();
 
-    let LogoInterpreter: any = (window as any)["LogoInterpreter"];
+    const LogoInterpreter: any = (window as any)["LogoInterpreter"];
 
     this.logo = new LogoInterpreter(this.graphics.initTurtle(), new LogoOutputConsole("#overlay"), function(
       name: any,
       def: any
-    ) {});
+    ) {
+      /*empty*/
+    });
 
     this.clearError();
     try {
@@ -142,9 +143,9 @@ export class LogoExecutorComponent extends React.Component<ILogoExecutorComponen
 
   private resizeCanvas() {
     if (this.graphics) {
-      let container = jquery(".logo-executor-container");
-      let width = container.width();
-      let height = container.height();
+      const container = jquery(".logo-executor-container");
+      const width = container.width();
+      const height = container.height();
       this.graphics.resizeCanvas(width, height);
     }
   }

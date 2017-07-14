@@ -1,14 +1,6 @@
 import * as React from "react";
-import * as ReactDOM from "react-dom";
-import {
-  HashRouter as Router,
-  Route,
-  Switch,
-  Redirect,
-  RouteProps,
-  RouteComponentProps,
-  withRouter
-} from "react-router-dom";
+
+import { HashRouter as Router, Route, Switch, Redirect } from "react-router-dom";
 import { RouteInfo } from "app/utils/route-info";
 
 import { UserProfileComponent } from "app/ui/user-profile.component";

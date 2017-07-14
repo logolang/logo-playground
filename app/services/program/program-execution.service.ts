@@ -1,7 +1,6 @@
 import { Subject, BehaviorSubject } from "rxjs/Rx";
 import * as keymaster from "keymaster";
-import { IProgramsRepository } from "app/services/gallery/personal-gallery-localstorage.repository";
-import { ProgramModel } from "app/services/program/program.model";
+
 import { ProgramStorageType } from "app/services/program/program-management.service";
 
 export interface ICreateScreenshotCommand {
@@ -25,7 +24,9 @@ export class ProgramExecutionService {
   public makeScreenshotCommands = new Subject<ICreateScreenshotCommand>();
   private hasProgramBeenExecutedOnce = false;
 
-  constructor() {}
+  constructor() {
+    /**/
+  }
 
   setProgram = (programId: string, programName: string, storageType: ProgramStorageType, code: string) => {
     this.programId = programId;
@@ -65,7 +66,7 @@ export class ProgramExecutionService {
     this.focusCommands.next();
   };
 
-  getScreenshot = (small: boolean): Promise<string> => {
+  getScreenshot = async (small: boolean): Promise<string> => {
     return new Promise<string>(resolve => {
       this.makeScreenshotCommands.next({
         isSmall: small,

@@ -1,32 +1,29 @@
-import { Observable, Subject, Subscription } from 'rxjs/Rx';
+import { Observable, Subject } from "rxjs/Rx";
 import { injectable } from "app/di";
 
-type NotificationType = "danger" | "info" | "success" | "warning"
+type NotificationType = "danger" | "info" | "success" | "warning";
 
 interface INotification {
-    title?: string | JSX.Element
-    message: string | JSX.Element
-    type?: NotificationType
-    closeTimeout?: number
+  title?: string | JSX.Element;
+  message: string | JSX.Element;
+  type?: NotificationType;
+  closeTimeout?: number;
 }
 
 export abstract class INotificationService {
-    abstract push(notification: INotification): void
-    abstract getObservable(): Observable<INotification>
+  abstract push(notification: INotification): void;
+  abstract getObservable(): Observable<INotification>;
 }
 
 @injectable()
 export class NotificationService implements INotificationService {
-    private notificationsSubject = new Subject<INotification>();
+  private notificationsSubject = new Subject<INotification>();
 
-    constructor() {
-    }
+  push(notification: INotification): void {
+    this.notificationsSubject.next(notification);
+  }
 
-    push(notification: INotification): void {
-        this.notificationsSubject.next(notification);
-    }
-
-    getObservable(): Observable<INotification> {
-        return this.notificationsSubject;
-    }
+  getObservable(): Observable<INotification> {
+    return this.notificationsSubject;
+  }
 }

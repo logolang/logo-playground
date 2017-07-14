@@ -1,9 +1,7 @@
 import { IProgramsRepository } from "app/services/gallery/personal-gallery-localstorage.repository";
 import { ProgramModel } from "app/services/program/program.model";
 import { ProgramExecutionService } from "app/services/program/program-execution.service";
-import { callAction } from "app/utils/async-helpers";
 import { IUserDataService } from "app/services/customizations/user-data.service";
-import { _T } from "app/services/customizations/localization.service";
 
 export type ProgramStorageType = "playground" | "samples" | "gallery" | "gist";
 
@@ -53,7 +51,7 @@ export class ProgramManagementService {
       if (progWithSameName) {
         throw new Error("Program with this name is already stored in library. Please enter different name.");
       }
-      let screenshot = await this.executionService.getScreenshot(true);
+      const screenshot = await this.executionService.getScreenshot(true);
       const addedProgram = this.personalRepository.add(
         new ProgramModel("", programName, "logo", programAttributes.code, screenshot)
       );

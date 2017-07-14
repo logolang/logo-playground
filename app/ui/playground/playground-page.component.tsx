@@ -1,11 +1,10 @@
 import * as React from "react";
-import * as cn from "classnames";
-import { LinkContainer } from "react-router-bootstrap";
 import { RouteComponentProps } from "react-router-dom";
-import { Subscription, Subject } from "rxjs";
+import { Subject } from "rxjs";
 import { ISubscription } from "rxjs/Subscription";
 
-import { setupActionErrorHandler, callAction } from "app/utils/async-helpers";
+import { as } from "app/utils/syntax-helpers";
+import { callActionSafe } from "app/utils/async-helpers";
 import { subscribeLoadDataOnPropsParamsChange } from "app/utils/react-helpers";
 
 import { MainMenuComponent } from "app/ui/main-menu.component";
@@ -15,7 +14,6 @@ import { OutputPanelComponent, IOutputPanelComponentProps } from "app/ui/playgro
 
 import { _T } from "app/services/customizations/localization.service";
 import { lazyInject } from "app/di";
-import { Routes } from "app/routes";
 import {
   UserCustomizationsProvider,
   IUserCustomizationsData
@@ -30,11 +28,10 @@ import {
   IProgramsRepository
 } from "app/services/gallery/personal-gallery-localstorage.repository";
 import { IUserDataService } from "app/services/customizations/user-data.service";
-import { INavigationService } from "app/services/infrastructure/navigation.service";
+
 import { ProgramStorageType, ProgramManagementService } from "app/services/program/program-management.service";
 
 import "./playground-page.component.scss";
-import { as } from "app/utils/syntax-helpers";
 
 interface IComponentState {
   isLoading: boolean;
@@ -58,7 +55,6 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
   @lazyInject(ProgramsSamplesRepository) private programSamples: IProgramsRepository;
   @lazyInject(IUserDataService) private userDataService: IUserDataService;
   @lazyInject(UserCustomizationsProvider) private userCustomizationsProvider: UserCustomizationsProvider;
-  @lazyInject(INavigationService) private navService: INavigationService;
   private executionService = new ProgramExecutionService();
   private managementService = new ProgramManagementService(
     this.programSamples,
@@ -67,9 +63,10 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
     this.userDataService
   );
 
-  private errorHandler = setupActionErrorHandler(error => {
-    this.notificationService.push({ type: "danger", message: error });
-  });
+  private errorHandler = (err: string) => {
+    this.notificationService.push({ message: err, type: "danger" });
+    this.setState({ isLoading: false });
+  };
 
   private defaultLayoutConfig: GoldenLayoutConfig = {
     content: [
@@ -114,9 +111,9 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
     return state;
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     this.titleService.setDocumentTitle(_T("Playground"));
-    this.loadData(this.props);
+    await this.loadData(this.props);
     this.executionService.initHotkeys();
     this.subscriptions.push(this.layoutChangeSubject.subscribe(this.layoutChanged));
   }
@@ -126,15 +123,15 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
     this.subscriptions.forEach(s => s.unsubscribe());
   }
 
-  layoutChanged = (newLayout: GoldenLayoutConfig): void => {
+  layoutChanged = async (newLayout: GoldenLayoutConfig): Promise<void> => {
     this.setState({ pageLayoutConfig: newLayout });
-    this.userDataService.setPlaygroundLayoutJSON(JSON.stringify(newLayout));
+    await this.userDataService.setPlaygroundLayoutJSON(JSON.stringify(newLayout));
   };
 
   async loadData(props: IComponentProps) {
     this.setState({ isLoading: true });
 
-    const userCustomizations = await callAction(this.errorHandler, () =>
+    const userCustomizations = await callActionSafe(this.errorHandler, async () =>
       this.userCustomizationsProvider.getCustomizationsData()
     );
     if (!userCustomizations) {
@@ -143,15 +140,24 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
 
     let layoutConfig = this.defaultLayoutConfig;
     if (!this.state.pageLayoutConfig) {
-      const pageLayoutJSON = await callAction(this.errorHandler, () => this.userDataService.getPlaygroundLayoutJSON());
+      const pageLayoutJSON = await callActionSafe(this.errorHandler, async () =>
+        this.userDataService.getPlaygroundLayoutJSON()
+      );
       try {
         layoutConfig = JSON.parse(pageLayoutJSON || "");
-      } catch (ex) {}
+      } catch (ex) {
+        /*nothing*/
+      }
     }
 
     const programId = props.match.params.programId;
     const storageType = props.match.params.storageType;
-    const programModel = await this.managementService.loadProgram(programId || "", storageType);
+    const programModel = await callActionSafe(this.errorHandler, async () =>
+      this.managementService.loadProgram(programId, storageType)
+    );
+    if (!programModel) {
+      return;
+    }
 
     this.executionService.setProgram(programModel.id, programModel.name, storageType, programModel.code);
     this.setState({
@@ -199,7 +205,6 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
                     stopCommands: this.executionService.stopCommands,
                     makeScreenshotCommands: this.executionService.makeScreenshotCommands,
                     onIsRunningChanged: this.executionService.onIsRunningChanged,
-                    onError: () => {},
                     isDarkTheme: this.state.userCustomizations.isDark,
                     customTurtleImage: this.state.userCustomizations.turtleImage,
                     customTurtleSize: this.state.userCustomizations.turtleSize

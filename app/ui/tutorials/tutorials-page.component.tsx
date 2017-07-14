@@ -3,7 +3,7 @@ import { RouteComponentProps } from "react-router-dom";
 import { Subject, Subscription } from "rxjs";
 
 import { subscribeLoadDataOnPropsParamsChange } from "app/utils/react-helpers";
-import { setupActionErrorHandler, callAction } from "app/utils/async-helpers";
+import { callActionSafe } from "app/utils/async-helpers";
 import { as } from "app/utils/syntax-helpers";
 
 import { lazyInject } from "app/di";
@@ -13,11 +13,7 @@ import {
   UserCustomizationsProvider,
   IUserCustomizationsData
 } from "app/services/customizations/user-customizations-provider";
-import {
-  ITutorialInfo,
-  ITutorialStep,
-  ITutorialsContentService
-} from "app/services/tutorials/tutorials-content-service";
+
 import { ProgramExecutionService } from "app/services/program/program-execution.service";
 import { INotificationService } from "app/services/infrastructure/notification.service";
 import { TitleService } from "app/services/infrastructure/title.service";
@@ -31,9 +27,9 @@ import { OutputPanelComponent, IOutputPanelComponentProps } from "app/ui/playgro
 import {
   TutorialViewComponent,
   ITutorialViewComponentProps,
+  ITutorialNavigationRequest,
   ITutorialRequestData,
-  ITutorialLoadedData,
-  ITutorialNavigationRequest
+  ITutorialLoadedData
 } from "app/ui/tutorials/tutorial-view.component";
 
 interface IComponentState {
@@ -54,7 +50,6 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
   @lazyInject(INotificationService) private notificationService: INotificationService;
   @lazyInject(INavigationService) private navService: INavigationService;
   @lazyInject(TitleService) private titleService: TitleService;
-  @lazyInject(ITutorialsContentService) private tutorialsLoader: ITutorialsContentService;
   @lazyInject(IUserDataService) private userDataService: IUserDataService;
   @lazyInject(UserCustomizationsProvider) private userCustomizationsProvider: UserCustomizationsProvider;
 
@@ -86,7 +81,7 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
                 type: "react-component",
                 component: "output-panel",
                 componentName: "output-panel",
-                height: 70,
+                height: 60,
                 isClosable: false
               },
               {
@@ -94,7 +89,7 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
                 type: "react-component",
                 component: "code-panel",
                 componentName: "code-panel",
-                height: 30,
+                height: 40,
                 isClosable: false
               }
             ]
@@ -105,6 +100,11 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
   };
   private layoutChangeSubject = new Subject<GoldenLayoutConfig>();
   private subscriptions: Subscription[] = [];
+
+  private errorHandler = (err: string) => {
+    this.notificationService.push({ message: err, type: "danger" });
+    this.setState({ isLoading: false });
+  };
 
   constructor(props: IComponentProps) {
     super(props);
@@ -120,12 +120,13 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
     return state;
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     this.titleService.setDocumentTitle(_T("Tutorials"));
-    this.loadData(this.props);
+    await this.loadData(this.props);
     this.executionService.initHotkeys();
     this.subscriptions.push(this.layoutChangeSubject.subscribe(this.layoutChanged));
     this.subscriptions.push(this.tutorialNavigationStream.subscribe(this.onTutorialNavigationRequest));
+    this.subscriptions.push(this.tutorialLoadedStream.subscribe(this.onTutorialLoaded));
     this.subscriptions.push(this.fixTheCodeStream.subscribe(this.onFixTheCodeRequest));
   }
 
@@ -141,28 +142,25 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
   };
 
   async loadData(props: IComponentProps) {
-    const errorHandler = setupActionErrorHandler(error => {
-      this.notificationService.push({ type: "danger", message: error });
-      this.setState({ isLoading: false });
-    });
-
-    const userCustomizations = await callAction(errorHandler, () =>
+    const userCustomizations = await callActionSafe(this.errorHandler, async () =>
       this.userCustomizationsProvider.getCustomizationsData()
     );
     if (!userCustomizations) {
       return;
     }
 
-    let layoutConfig = this.defaultLayoutConfig;
+    const layoutConfig = this.defaultLayoutConfig;
 
-    const lastTutorialInfo = await callAction(errorHandler, () => this.userDataService.getCurrentTutorialInfo());
+    const lastTutorialInfo = await callActionSafe(this.errorHandler, async () =>
+      this.userDataService.getCurrentTutorialInfo()
+    );
     if (!lastTutorialInfo) {
       return;
     }
-    let initialCode = lastTutorialInfo.code;
+    const initialCode = lastTutorialInfo.code;
 
-    let tutorialIdToLoad = props.match.params.tutorialId;
-    let stepIndex = this.parseStepIndexFromParam(props.match.params.stepIndex);
+    const tutorialIdToLoad = props.match.params.tutorialId;
+    const stepIndex = this.parseStepIndexFromParam(props.match.params.stepIndex);
     if (!tutorialIdToLoad) {
       if (lastTutorialInfo.tutorialName) {
         this.navService.navigate({
@@ -182,15 +180,16 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
       userCustomizations: userCustomizations
     });
 
-    this.tutorialLoadRequest.next({
+    const tutorialInfo: ITutorialRequestData = {
       tutorialId: tutorialIdToLoad,
       stepIndex: stepIndex,
       code: initialCode
-    });
+    };
+    this.tutorialLoadRequest.next(tutorialInfo);
   }
 
   private parseStepIndexFromParam(stepIndexFromParam: string) {
-    let stepIndex = parseInt(stepIndexFromParam, 10);
+    const stepIndex = parseInt(stepIndexFromParam, 10);
     if (isNaN(stepIndex)) {
       return 0;
     }
@@ -208,6 +207,10 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
         stepIndex: this.formatStepIndexToParam(request.stepIndex)
       })
     });
+  };
+
+  onTutorialLoaded = (tutorial: ITutorialLoadedData) => {
+    /**Nothing here yet */
   };
 
   onFixTheCodeRequest = (code: string) => {
@@ -258,7 +261,6 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
                     stopCommands: this.executionService.stopCommands,
                     makeScreenshotCommands: this.executionService.makeScreenshotCommands,
                     onIsRunningChanged: this.executionService.onIsRunningChanged,
-                    onError: () => {},
                     isDarkTheme: this.state.userCustomizations.isDark,
                     customTurtleImage: this.state.userCustomizations.turtleImage,
                     customTurtleSize: this.state.userCustomizations.turtleSize

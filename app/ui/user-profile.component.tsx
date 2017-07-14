@@ -4,8 +4,7 @@ import * as FileSaver from "file-saver";
 import { Link, RouteComponentProps } from "react-router-dom";
 import { Subject, BehaviorSubject } from "rxjs";
 
-import { translateSelectChangeToState } from "app/utils/react-helpers";
-import { stay, setupActionErrorHandler, callAction } from "app/utils/async-helpers";
+import { stay, callActionSafe } from "app/utils/async-helpers";
 import { RandomHelper } from "app/utils/random-helper";
 
 import { DateTimeStampComponent } from "app/ui/_generic/date-time-stamp.component";
@@ -71,13 +70,13 @@ export class UserProfileComponent extends React.Component<IComponentProps, IComp
   private runCode = new BehaviorSubject<string>("");
   private exportInportService = new ProgramsExportImportService();
 
-  private errorHandler = setupActionErrorHandler(error => {
-    this.notificationService.push({ type: "danger", message: error });
-  });
+  private errorHandler = (err: string) => {
+    this.notificationService.push({ message: err, type: "danger" });
+  };
 
   constructor(props: IComponentProps) {
     super(props);
-    let loginStatus = this.currentUser.getLoginStatus();
+    const loginStatus = this.currentUser.getLoginStatus();
 
     this.state = {
       userInfo: loginStatus.userInfo,
@@ -87,9 +86,9 @@ export class UserProfileComponent extends React.Component<IComponentProps, IComp
     this.setRandomCode();
   }
 
-  componentDidMount() {
-    this.loadData();
+  async componentDidMount() {
     this.titleService.setDocumentTitle(_T("User profile"));
+    await this.loadData();
   }
 
   private setRandomCode() {
@@ -98,9 +97,9 @@ export class UserProfileComponent extends React.Component<IComponentProps, IComp
 
   private async loadData() {
     const [programs, userCustomizations, userSettings] = await Promise.all([
-      callAction(this.errorHandler, () => this.programsReporitory.getAll()),
-      callAction(this.errorHandler, () => this.userCustomizationsProvider.getCustomizationsData()),
-      callAction(this.errorHandler, () => this.userSettingsService.get())
+      callActionSafe(this.errorHandler, async () => this.programsReporitory.getAll()),
+      callActionSafe(this.errorHandler, async () => this.userCustomizationsProvider.getCustomizationsData()),
+      callActionSafe(this.errorHandler, async () => this.userSettingsService.get())
     ]);
     if (programs && userCustomizations && userSettings) {
       const theme = this.themeService.getTheme(userSettings.themeName);
@@ -116,13 +115,15 @@ export class UserProfileComponent extends React.Component<IComponentProps, IComp
   }
 
   private doExport = async () => {
-    const data = await callAction(this.errorHandler, () => this.exportInportService.exportAll(this.programsReporitory));
+    const data = await callActionSafe(this.errorHandler, async () =>
+      this.exportInportService.exportAll(this.programsReporitory)
+    );
     const blob = new Blob([data], { type: "text/plain;charset=utf-8" });
     FileSaver.saveAs(blob, `logo-sandbox-personal-gallery.json`);
   };
 
   private onImport = async (fileInfo: File, content: string) => {
-    const added = await callAction(this.errorHandler, () =>
+    const added = await callActionSafe(this.errorHandler, async () =>
       this.exportInportService.importAll(this.programsReporitory, content)
     );
     if (added !== undefined) {
@@ -164,10 +165,10 @@ export class UserProfileComponent extends React.Component<IComponentProps, IComp
                           className="form-control"
                           id="localeselector"
                           value={this.state.currentLocale.id}
-                          onChange={translateSelectChangeToState(this, (s, v) => {
+                          onChange={event => {
                             const selectedLocation = this.localizationService
                               .getSupportedLocales()
-                              .find(loc => loc.id === v);
+                              .find(loc => loc.id === event.target.value);
                             if (selectedLocation) {
                               setTimeout(async () => {
                                 await this.userSettingsService.update({ localeId: selectedLocation.id });
@@ -176,7 +177,7 @@ export class UserProfileComponent extends React.Component<IComponentProps, IComp
                               }, 0);
                             }
                             return {};
-                          })}
+                          }}
                         >
                           {this.localizationService.getSupportedLocales().map(loc => {
                             return (
@@ -200,8 +201,10 @@ export class UserProfileComponent extends React.Component<IComponentProps, IComp
                           className="form-control"
                           id="themeselector"
                           value={this.state.theme.name}
-                          onChange={translateSelectChangeToState(this, (s, v) => {
-                            const selectedTheme = this.themeService.getAllThemes().find(t => t.name === v);
+                          onChange={event => {
+                            const selectedTheme = this.themeService
+                              .getAllThemes()
+                              .find(t => t.name === event.target.value);
                             if (selectedTheme) {
                               setTimeout(async () => {
                                 await this.userSettingsService.update({ themeName: selectedTheme.name });
@@ -214,7 +217,7 @@ export class UserProfileComponent extends React.Component<IComponentProps, IComp
                               }, 0);
                             }
                             return {};
-                          })}
+                          }}
                         >
                           {this.themeService.getAllThemes().map(t => {
                             return (
@@ -261,7 +264,7 @@ export class UserProfileComponent extends React.Component<IComponentProps, IComp
                           id="turtleSelector"
                           value={this.state.userCustomizations.turtleSize}
                           onChange={async event => {
-                            const value = parseInt(event.target.value);
+                            const value = parseInt(event.target.value, 10);
                             await this.userSettingsService.update({ turtleSize: value });
                             await this.loadData();
                             this.setRandomCode();
@@ -323,7 +326,6 @@ export class UserProfileComponent extends React.Component<IComponentProps, IComp
               <LogoExecutorComponent
                 key={`${JSON.stringify(this.state.userCustomizations)}`} //this is a hack to force component to be created each render in order to not handle prop change event
                 height={400}
-                onError={() => {}}
                 onIsRunningChanged={this.onIsRunningChanged}
                 runCommands={this.runCode}
                 stopCommands={new Subject<void>()}

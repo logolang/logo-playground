@@ -1,6 +1,5 @@
 import * as React from "react";
 import { RouteComponentProps } from "react-router";
-import * as cn from "classnames";
 import { Subscription } from "rxjs/Subscription";
 
 import { MainMenuComponent } from "app/ui/main-menu.component";
@@ -19,45 +18,45 @@ interface IComponentState {}
 interface IComponentProps extends RouteComponentProps<void> {}
 
 export class LoginComponent extends React.Component<IComponentProps, IComponentState> {
-    @lazyInject(ICurrentUserService) private currentUser: ICurrentUserService;
-    @lazyInject(ILoginService) private loginService: ILoginService;
-    @lazyInject(TitleService) private titleService: TitleService;
-    @lazyInject(INavigationService) private navService: INavigationService;
+  @lazyInject(ICurrentUserService) private currentUser: ICurrentUserService;
+  @lazyInject(ILoginService) private loginService: ILoginService;
+  @lazyInject(TitleService) private titleService: TitleService;
+  @lazyInject(INavigationService) private navService: INavigationService;
 
-    private subscriptions: Subscription[] = [];
+  private subscriptions: Subscription[] = [];
 
-    constructor(props: IComponentProps) {
-        super(props);
-        this.state = {};
-        this.titleService.setDocumentTitle(_T("Log in"));
-    }
+  constructor(props: IComponentProps) {
+    super(props);
+    this.state = {};
+    this.titleService.setDocumentTitle(_T("Log in"));
+  }
 
-    componentDidMount() {
-        this.loginService.initLoginUI();
-        this.subscriptions.push(
-            this.currentUser.loginStatusObservable.subscribe(status => {
-                if (status) {
-                    setTimeout(() => {
-                        this.navService.navigate({ route: Routes.root.build({}) });
-                    }, 400);
-                }
-            })
-        );
-    }
+  async componentDidMount() {
+    this.subscriptions.push(
+      this.currentUser.loginStatusObservable.subscribe(status => {
+        if (status) {
+          setTimeout(() => {
+            this.navService.navigate({ route: Routes.root.build({}) });
+          }, 400);
+        }
+      })
+    );
+    await this.loginService.initLoginUI();
+  }
 
-    componentWillUnmount() {
-        this.subscriptions.forEach(s => s.unsubscribe());
-    }
+  componentWillUnmount() {
+    this.subscriptions.forEach(s => s.unsubscribe());
+  }
 
-    render(): JSX.Element {
-        return (
-            <div className="container">
-                <MainMenuComponent />
-                <PageHeaderComponent title={_T("Log in")} />
-                <br />
-                <br />
-                {this.loginService.renderLoginUI()}
-            </div>
-        );
-    }
+  render(): JSX.Element {
+    return (
+      <div className="container">
+        <MainMenuComponent />
+        <PageHeaderComponent title={_T("Log in")} />
+        <br />
+        <br />
+        {this.loginService.renderLoginUI()}
+      </div>
+    );
+  }
 }

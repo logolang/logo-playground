@@ -1,12 +1,9 @@
 import * as React from "react";
-import { Observable } from "rxjs";
+import { ISubscription } from "rxjs/Subscription";
 
-import { lazyInject } from "app/di";
+
 import { ProgramExecutionService } from "app/services/program/program-execution.service";
-import {
-  ProgramsLocalStorageRepository,
-  IProgramsRepository
-} from "app/services/gallery/personal-gallery-localstorage.repository";
+
 import { ProgramManagementService, IProgramToSaveAttributes } from "app/services/program/program-management.service";
 
 import "./code-panel.component.scss";
@@ -15,7 +12,7 @@ import { ShareScreenshotModalComponent } from "app/ui/playground/share-screensho
 import { CodeInputLogoComponent, ICodeInputComponentProps } from "app/ui/_shared/code-input-logo.component";
 import { SaveProgramModalComponent } from "app/ui/playground/save-program-modal.component";
 import { ProgramControlsMenuComponent } from "app/ui/playground/program-controls-menu.component";
-import { ISubscription } from "rxjs/Subscription";
+import { as } from "app/utils/syntax-helpers";
 
 export interface ICodePanelComponentProps {
   editorTheme: string;
@@ -29,7 +26,6 @@ interface IComponentState {
 }
 
 export class CodePanelComponent extends React.Component<ICodePanelComponentProps, IComponentState> {
-  @lazyInject(ProgramsLocalStorageRepository) private programsRepo: IProgramsRepository;
   private subscriptions: ISubscription[] = [];
 
   constructor(props: ICodePanelComponentProps) {
@@ -83,14 +79,14 @@ export class CodePanelComponent extends React.Component<ICodePanelComponentProps
         />
         {React.createElement(
           CodeInputLogoComponent,
-          {
+          as<ICodeInputComponentProps>({
             className: "code-input-container",
             editorTheme: this.props.editorTheme,
             code: execService.code,
             focusCommands: execService.focusCommands,
             onChanged: this.onCodeChanged,
             onHotkey: execService.runCurrentProgram
-          } as ICodeInputComponentProps
+          })
         )}
       </div>
     );

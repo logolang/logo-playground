@@ -1,18 +1,7 @@
 import * as React from "react";
-import * as cn from "classnames";
 import * as clipboard from "clipboard";
-import {
-  Button,
-  ButtonGroup,
-  Nav,
-  Navbar,
-  NavDropdown,
-  MenuItem,
-  NavItem,
-  DropdownButton,
-  Modal,
-  OverlayTrigger
-} from "react-bootstrap";
+import { Modal } from "react-bootstrap";
+
 import { AlertMessageComponent } from "app/ui/_generic/alert-message.component";
 import { ProgressIndicatorComponent } from "app/ui/_generic/progress-indicator.component";
 

@@ -1,5 +1,4 @@
 import * as React from "react";
-import * as ReactDOM from "react-dom";
 import * as $ from "jquery"; //required for goldenLayout
 import * as goldenLayout from "golden-layout";
 import { Subject } from "rxjs";
@@ -37,7 +36,7 @@ export class GoldenLayoutComponent extends React.Component<IComponentProps, ICom
     this.initLayout(this.props);
   }
 
-  async initLayout(props: IComponentProps) {
+  initLayout(props: IComponentProps) {
     const config = props.layoutConfig;
 
     for (const panel of props.panels) {
@@ -105,7 +104,7 @@ export class GoldenLayoutComponent extends React.Component<IComponentProps, ICom
   }
 
   private getGoldenLayoutConfigItem(type: string, config: goldenLayout.Config): goldenLayout.ItemConfigType {
-    let item = this.findGoldenLayoutConfigItem(type, config.content);
+    const item = this.findGoldenLayoutConfigItem(type, config.content);
     if (item) {
       return item;
     } else {
@@ -139,12 +138,12 @@ export class GoldenLayoutComponent extends React.Component<IComponentProps, ICom
     content: goldenLayout.ItemConfigType[]
   ): goldenLayout.ItemConfigType | undefined {
     if (content) {
-      for (let item of content) {
+      for (const item of content) {
         if ((item as any).component === componentName) {
           return item;
         }
         if (item.content) {
-          let res = this.findGoldenLayoutConfigItem(componentName, item.content);
+          const res = this.findGoldenLayoutConfigItem(componentName, item.content);
           if (res) {
             return res;
           }

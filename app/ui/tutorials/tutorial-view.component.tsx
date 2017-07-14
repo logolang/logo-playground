@@ -83,7 +83,7 @@ export class TutorialViewComponent extends React.Component<ITutorialViewComponen
     if (!tutorialInfos) {
       return;
     }
-    let tutorialId = data.tutorialId;
+    const tutorialId = data.tutorialId;
     let stepIndex = data.stepIndex;
     let currentTutorial = tutorialInfos.find(t => t.id === tutorialId);
     if (!currentTutorial) {
@@ -301,7 +301,7 @@ export class TutorialViewComponent extends React.Component<ITutorialViewComponen
   navigateToNextStep = (direction: number) => {
     return () => {
       if (this.state.currentStep && this.state.currentTutorial) {
-        let newStepIndex = this.state.currentStep.index + direction;
+        const newStepIndex = this.state.currentStep.index + direction;
         this.props.tutorialNavigationStream.next({
           tutorialId: this.state.currentTutorial.id,
           stepIndex: newStepIndex

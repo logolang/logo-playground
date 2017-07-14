@@ -1,50 +1,57 @@
-import * as React from 'react';
-import * as cn from 'classnames';
-import { Button, ButtonGroup, Nav, Navbar, NavDropdown, MenuItem, NavItem, DropdownButton, Tab, Row, Col, Collapse } from 'react-bootstrap';
+import * as React from "react";
+import * as cn from "classnames";
+import { Collapse } from "react-bootstrap";
 
-import { alterState } from 'app/utils/react-helpers';
-
-interface ICollapsiblePanelState {
-    collapsed: boolean
+interface IComponentState {
+  collapsed: boolean;
 }
 
-interface ICollapsiblePanelProps {
-    title: string
-    collapsed: boolean
-    bsStyle?: string
+interface IComponentProps {
+  title: string;
+  collapsed: boolean;
+  bsStyle?: string;
 }
 
-export class CollapsiblePanelComponent extends React.Component<ICollapsiblePanelProps, ICollapsiblePanelState> {
-    constructor(props: ICollapsiblePanelProps) {
-        super(props);
+export class CollapsiblePanelComponent extends React.Component<IComponentProps, IComponentState> {
+  constructor(props: IComponentProps) {
+    super(props);
 
-        this.state = {
-            collapsed: this.props.collapsed
-        }
-    }
+    this.state = {
+      collapsed: this.props.collapsed
+    };
+  }
 
-    render(): JSX.Element {
-        return (
-            <div className={`panel panel-${this.props.bsStyle || 'default'}`}>
-                <div className="panel-heading"
-                    onClick={alterState(this, x => ({ collapsed: !x.collapsed }))}
-                >
-                    <span>{this.props.title}</span>
-                    <span className="ex-noselect">&nbsp;</span>
-                    <small><span className={cn("glyphicon",
-                        {
-                            "glyphicon-menu-down": this.state.collapsed,
-                            "glyphicon-menu-up": !this.state.collapsed
-                        })}></span></small>
-                </div>
-                <Collapse in={!this.state.collapsed}>
-                    <div>
-                        <div className="panel-body">
-                            {this.props.children}
-                        </div>
-                    </div>
-                </Collapse>
+  render(): JSX.Element {
+    return (
+      <div className={`panel panel-${this.props.bsStyle || "default"}`}>
+        <div
+          className="panel-heading"
+          onClick={() =>
+            this.setState({
+              collapsed: !this.state.collapsed
+            })}
+        >
+          <span>
+            {this.props.title}
+          </span>
+          <span className="ex-noselect">&nbsp;</span>
+          <small>
+            <span
+              className={cn("glyphicon", {
+                "glyphicon-menu-down": this.state.collapsed,
+                "glyphicon-menu-up": !this.state.collapsed
+              })}
+            />
+          </small>
+        </div>
+        <Collapse in={!this.state.collapsed}>
+          <div>
+            <div className="panel-body">
+              {this.props.children}
             </div>
-        );
-    }
+          </div>
+        </Collapse>
+      </div>
+    );
+  }
 }

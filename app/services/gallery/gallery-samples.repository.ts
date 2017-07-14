@@ -9,8 +9,6 @@ data.sort((p1, p2) => {
 
 @injectable()
 export class ProgramsSamplesRepository implements IProgramsRepository {
-  constructor() {}
-
   async getAll(): Promise<ProgramModel[]> {
     return data;
   }

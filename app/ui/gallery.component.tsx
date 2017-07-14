@@ -1,23 +1,13 @@
 import * as React from "react";
 import { Link, RouteComponentProps } from "react-router-dom";
-import {
-  Button,
-  ButtonGroup,
-  Nav,
-  Navbar,
-  NavDropdown,
-  MenuItem,
-  NavItem,
-  DropdownButton,
-  Modal,
-  OverlayTrigger
-} from "react-bootstrap";
-import { LinkContainer } from "react-router-bootstrap";
 
 import { MainMenuComponent } from "app/ui/main-menu.component";
 import { PageHeaderComponent } from "app/ui/_generic/page-header.component";
 import { CollapsiblePanelComponent } from "app/ui/_generic/collapsible-panel.component";
-import { ActionConfirmationModalComponent } from "app/ui/_generic/action-confirmation-modal.component";
+import {
+  ActionConfirmationModalComponent,
+  IDialogCallbackResult
+} from "app/ui/_generic/action-confirmation-modal.component";
 import { DateTimeStampComponent } from "app/ui/_generic/date-time-stamp.component";
 import { ProgressIndicatorComponent } from "app/ui/_generic/progress-indicator.component";
 import { NoDataComponent } from "app/ui/_generic/no-data.component";
@@ -68,9 +58,9 @@ export class GalleryComponent extends React.Component<IComponentProps, IComponen
     };
   }
 
-  componentDidMount() {
-    this.loadData();
+  async componentDidMount() {
     this.titleService.setDocumentTitle(_T("Gallery"));
+    await this.loadData();
   }
 
   async loadData() {
@@ -84,18 +74,18 @@ export class GalleryComponent extends React.Component<IComponentProps, IComponen
     });
   }
 
-  confirmDelete = async (): Promise<string> => {
+  confirmDelete = async (): Promise<IDialogCallbackResult> => {
     if (this.state.programToDelete) {
       this.setState({ isLoading: true });
       await this.programsRepo.remove(this.state.programToDelete.id);
     }
     await this.loadData();
     this.setState({ programToDelete: undefined });
-    return "";
+    return { isSuccess: true };
   };
 
   renderProgramCard(p: ProgramModel, storageType: ProgramStorageType, deleteBox: boolean): JSX.Element {
-    let link = Routes.playgroundRoot.build({ programId: p.id, storageType: storageType });
+    const link = Routes.playgroundRoot.build({ programId: p.id, storageType: storageType });
 
     return (
       <div className="media">
@@ -163,6 +153,7 @@ export class GalleryComponent extends React.Component<IComponentProps, IComponen
             <PageHeaderComponent title={_T("Gallery")} />
             {this.state.programToDelete &&
               <ActionConfirmationModalComponent
+                show
                 onConfirm={this.confirmDelete}
                 actionButtonText={_T("Delete")}
                 cancelButtonText={_T("Cancel")}
