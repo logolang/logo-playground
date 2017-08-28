@@ -9,7 +9,7 @@ interface IComponentProps {
   className?: string;
 }
 
-export class PageLoadingIndicatorComponent extends React.Component<IComponentProps, void> {
+export class PageLoadingIndicatorComponent extends React.Component<IComponentProps, {}> {
   render(): JSX.Element | null {
     return (
       <div className={this.props.className}>

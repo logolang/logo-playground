@@ -8,7 +8,7 @@ interface IComponentProps {
   caret: boolean;
 }
 
-export class NavbarUsercardComponent extends React.Component<IComponentProps, void> {
+export class NavbarUsercardComponent extends React.Component<IComponentProps, {}> {
   constructor(props: IComponentProps) {
     super(props);
   }

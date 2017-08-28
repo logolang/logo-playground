@@ -11,7 +11,8 @@ export class LogoOutputConsole {
 
   write() {
     const div = $(this.overlaySelector);
-    for (let i = 0; i < arguments.length; i += 1) {
+    for (let i = 0; i < arguments.length; ) {
+      i++;
       div.innerHTML += arguments[i];
     }
     div.scrollTop = div.scrollHeight;

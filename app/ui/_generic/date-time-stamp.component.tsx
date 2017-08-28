@@ -7,7 +7,7 @@ interface IDateTimeStampComponentProps {
   datetime: Date;
 }
 
-export class DateTimeStampComponent extends React.Component<IDateTimeStampComponentProps, void> {
+export class DateTimeStampComponent extends React.Component<IDateTimeStampComponentProps, {}> {
   constructor(props: IDateTimeStampComponentProps) {
     super(props);
   }

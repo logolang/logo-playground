@@ -15,7 +15,7 @@ interface IComponentProps {
 }
 
 export class FileSelectorComponent extends React.Component<IComponentProps, IComponentState> {
-  private fileInputEl: HTMLInputElement;
+  private fileInputEl: HTMLInputElement | null;
 
   constructor(props: IComponentProps) {
     super(props);
@@ -67,7 +67,7 @@ export class FileSelectorComponent extends React.Component<IComponentProps, ICom
         type="button"
         className={cn("btn btn-default", this.props.className)}
         onClick={() => {
-          this.fileInputEl.click();
+          this.fileInputEl && this.fileInputEl.click();
         }}
       >
         <span>

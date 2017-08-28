@@ -10,7 +10,7 @@ interface IComponentProps {
   noBorder?: boolean;
 }
 
-export class NoDataComponent extends React.Component<IComponentProps, void> {
+export class NoDataComponent extends React.Component<IComponentProps, {}> {
   render(): JSX.Element {
     const iconClass = this.props.iconClass || "glyphicon-list";
 

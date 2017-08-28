@@ -14,7 +14,7 @@ interface IComponentProps {
   onDismiss?: () => void;
 }
 
-export class AlertMessageComponent extends React.Component<IComponentProps, void> {
+export class AlertMessageComponent extends React.Component<IComponentProps, {}> {
   private getIconClass(type: messageType) {
     switch (type) {
       case "info":

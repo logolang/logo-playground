@@ -5,13 +5,13 @@ interface IParamsProps {
 }
 
 interface IsLoadingState {
-  isLoading: boolean;
+  isLoading?: boolean;
 }
 
 interface ComponentWithDynamicDataLoad<S extends IsLoadingState, P extends IParamsProps> extends React.Component<P, S> {
   loadData: (props: P) => Promise<void>;
   buildDefaultState(props: P): S;
-  props: P;
+  props: Readonly<{ children?: React.ReactNode }> & Readonly<P>;
 }
 
 /**

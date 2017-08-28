@@ -9,7 +9,7 @@ import "./message-toster.component.scss";
 type TosterMessageType = "danger" | "info" | "success" | "warning";
 
 interface ITosterMessage {
-  title: string | JSX.Element;
+  title?: string | JSX.Element;
   message: string | JSX.Element;
   type?: TosterMessageType;
   closeTimeout?: number;

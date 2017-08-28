@@ -135,7 +135,7 @@ export class GoldenLayoutComponent extends React.Component<IComponentProps, ICom
 
   private findGoldenLayoutConfigItem(
     componentName: string,
-    content: goldenLayout.ItemConfigType[]
+    content?: goldenLayout.ItemConfigType[]
   ): goldenLayout.ItemConfigType | undefined {
     if (content) {
       for (const item of content) {

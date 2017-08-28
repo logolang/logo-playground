@@ -8,7 +8,7 @@ interface IComponentProps {
   className?: string;
 }
 
-export class ProgressIndicatorComponent extends React.Component<IComponentProps, void> {
+export class ProgressIndicatorComponent extends React.Component<IComponentProps, {}> {
   render(): JSX.Element | null {
     if (this.props.isLoading) {
       return (

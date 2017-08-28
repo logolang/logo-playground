@@ -146,7 +146,7 @@ export class LogoExecutorComponent extends React.Component<ILogoExecutorComponen
       const container = jquery(".logo-executor-container");
       const width = container.width();
       const height = container.height();
-      this.graphics.resizeCanvas(width, height);
+      this.graphics.resizeCanvas(width || 400, height || 300);
     }
   }
 }

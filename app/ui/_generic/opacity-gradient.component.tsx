@@ -8,7 +8,7 @@ interface IComponentProps {
   className: string;
 }
 
-export class OpacityGradientComponent extends React.Component<IComponentProps, void> {
+export class OpacityGradientComponent extends React.Component<IComponentProps, {}> {
   constructor() {
     super();
 
