@@ -1,7 +1,5 @@
 import * as React from "react";
 
-import { Alert } from "react-bootstrap";
-
 import "./alert-message.component.scss";
 
 type messageType = "info" | "danger" | "warning" | "success";
@@ -44,7 +42,7 @@ export class AlertMessageComponent extends React.Component<IComponentProps, {}> 
 
     if (message || title) {
       return (
-        <Alert className={`ex-customized-alert`} bsStyle={type} onDismiss={this.props.onDismiss}>
+        <div className={`ex-customized-alert`}>
           <div className="media ex-margin-top-zero">
             <div className="media-left">
               <span className="text-nowrap">
@@ -68,7 +66,7 @@ export class AlertMessageComponent extends React.Component<IComponentProps, {}> 
                   : message)}
             </div>
           </div>
-        </Alert>
+        </div>
       );
     }
     return null;

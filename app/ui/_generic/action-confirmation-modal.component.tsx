@@ -1,6 +1,5 @@
 import * as React from "react";
 import * as cn from "classnames";
-import { Modal } from "react-bootstrap";
 
 interface IComponentState {
   isActionInProgress: boolean;
@@ -36,13 +35,14 @@ export class ActionConfirmationModalComponent extends React.Component<IComponent
     const actionButtonText = this.props.actionButtonText || "Delete";
     const cancelButtonText = this.props.cancelButtonText || "Cancel";
     return (
-      <Modal show={this.props.show} onHide={this.props.onCancel} backdrop="static">
-        <Modal.Header closeButton>
-          <Modal.Title>
-            {headerText}
-          </Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
+      <div data-show={this.props.show}>
+        <button type="button" onClick={this.props.onCancel}>
+          X
+        </button>
+        <h4>
+          {headerText}
+        </h4>
+        <div>
           {this.props.children}
           {this.state.errorMessage &&
             <div>
@@ -52,8 +52,8 @@ export class ActionConfirmationModalComponent extends React.Component<IComponent
               </div>
             </div>}
           <br />
-        </Modal.Body>
-        <Modal.Footer>
+        </div>
+        <div>
           <button
             type="button"
             className={cn("btn btn-primary", { "is-loading": this.state.isActionInProgress })}
@@ -84,8 +84,8 @@ export class ActionConfirmationModalComponent extends React.Component<IComponent
               {cancelButtonText}
             </span>
           </button>
-        </Modal.Footer>
-      </Modal>
+        </div>
+      </div>
     );
   }
 }

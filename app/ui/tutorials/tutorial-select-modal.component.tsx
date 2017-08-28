@@ -1,5 +1,4 @@
 import * as React from "react";
-import { Modal } from "react-bootstrap";
 
 import { ITutorialInfo } from "app/services/tutorials/tutorials-content-service";
 import { _T } from "app/services/customizations/localization.service";
@@ -24,7 +23,9 @@ export class TutorialSelectModalComponent extends React.Component<IComponentProp
     };
   };
 
-  render(): JSX.Element {
+  render(): JSX.Element | null {
+    return null;
+    /*
     return (
       <Modal show={true} onHide={this.props.onCancel} animation={false} backdrop="static">
         <Modal.Header closeButton>
@@ -55,6 +56,6 @@ export class TutorialSelectModalComponent extends React.Component<IComponentProp
           </button>
         </Modal.Footer>
       </Modal>
-    );
+    );*/
   }
 }

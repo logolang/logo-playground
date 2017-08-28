@@ -1,6 +1,5 @@
 import * as React from "react";
 import * as cn from "classnames";
-import { Modal } from "react-bootstrap";
 import { AlertMessageComponent } from "app/ui/_generic/alert-message.component";
 import { _T } from "app/services/customizations/localization.service";
 import { IProgramToSaveAttributes } from "app/services/program/program-management.service";
@@ -30,7 +29,9 @@ export class SaveProgramModalComponent extends React.Component<IComponentProps, 
     };
   }
 
-  render(): JSX.Element {
+  render(): JSX.Element | null {
+    return null;
+    /*
     return (
       <Modal show={true} animation={false} onHide={this.props.onClose} backdrop="static">
         <Modal.Header closeButton>
@@ -91,7 +92,7 @@ export class SaveProgramModalComponent extends React.Component<IComponentProps, 
           </button>
         </Modal.Footer>
       </Modal>
-    );
+    );*/
   }
 
   saveProgramAction = async () => {

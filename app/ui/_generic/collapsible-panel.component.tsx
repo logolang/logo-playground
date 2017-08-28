@@ -1,6 +1,5 @@
 import * as React from "react";
 import * as cn from "classnames";
-import { Collapse } from "react-bootstrap";
 
 interface IComponentState {
   collapsed: boolean;
@@ -44,13 +43,10 @@ export class CollapsiblePanelComponent extends React.Component<IComponentProps, 
             />
           </small>
         </div>
-        <Collapse in={!this.state.collapsed}>
-          <div>
-            <div className="panel-body">
-              {this.props.children}
-            </div>
-          </div>
-        </Collapse>
+        {!this.state.collapsed &&
+          <div className="panel-body">
+            {this.props.children}
+          </div>}
       </div>
     );
   }

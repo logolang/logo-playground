@@ -1,63 +1,46 @@
-
 import { injectable } from "app/di";
 
 export interface Theme {
-    name: string
-    codemirror: string
-    goldenlayout: string
-    bootstrap: string
-    isDark: boolean
+  name: string;
+  isDark: boolean;
+  codeEditorThemeName: string;
+  styleLinks: string[];
 }
 
 @injectable()
 export class ThemeCustomizationsService {
-    private readonly themes: Theme[] = [
-        {
-            name: 'Default',
-            isDark: false,
-            bootstrap: 'default',
-            codemirror: 'eclipse',
-            goldenlayout: 'light'
-        },
-        {
-            name: 'Yeti',
-            isDark: false,
-            bootstrap: 'yeti',
-            codemirror: 'eclipse',
-            goldenlayout: 'light'
-        },
-        {
-            name: 'Darkly',
-            isDark: true,
-            bootstrap: 'darkly',
-            codemirror: 'abcdef',
-            goldenlayout: 'dark'
-        },
-        {
-            name: 'Cerulean',
-            isDark: false,
-            bootstrap: 'cerulean',
-            codemirror: 'eclipse',
-            goldenlayout: 'light'
-        },
-        {
-            name: 'Slate',
-            isDark: true,
-            bootstrap: 'slate',
-            codemirror: 'abcdef',
-            goldenlayout: 'dark'
-        },
-    ]
-
-    getAllThemes() {
-        return this.themes;
+  private readonly themes: Theme[] = [
+    {
+      name: "Default",
+      isDark: false,
+      codeEditorThemeName: "eclipse",
+      styleLinks: [
+        "content/css/bulma/bulmaswatch.default.min.css",
+        "content/css/codemirror/themes/eclipse.css",
+        "content/css/golden-layout/goldenlayout-light-theme.css"
+      ]
+    },
+    {
+      name: "Slate",
+      isDark: true,
+      codeEditorThemeName: "abcdef",
+      styleLinks: [
+        "content/css/bulma/bulmaswatch.slate.min.css",
+        "content/css/codemirror/themes/abcdef.css",
+        "content/css/golden-layout/goldenlayout-dark-theme.css"
+      ]
     }
+  ];
 
-    getTheme(themeName: string): Theme {
-        const selectedTheme = this.themes.find(t => t.name === themeName);
-        if (selectedTheme) {
-            return selectedTheme;
-        }
-        return this.themes[0];
+  getAllThemes() {
+    return this.themes;
+  }
+
+  getTheme(themeName: string): Theme {
+    const selectedTheme = this.themes.find(t => t.name === themeName);
+    if (selectedTheme) {
+      return selectedTheme;
     }
+    return this.themes[0];
+  }
 }

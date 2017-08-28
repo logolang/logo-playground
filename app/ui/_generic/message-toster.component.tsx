@@ -1,5 +1,4 @@
 import * as React from "react";
-import { Collapse } from "react-bootstrap";
 import { Observable, Subscription } from "rxjs/Rx";
 
 import { AlertMessageComponent } from "app/ui/_generic/alert-message.component";
@@ -27,7 +26,6 @@ interface IComponentProps {
 
 interface IComponentState {
   messages: IMessageData[];
-  offsetLeft: number;
 }
 
 export class MessageTosterComponent extends React.Component<IComponentProps, IComponentState> {
@@ -37,8 +35,7 @@ export class MessageTosterComponent extends React.Component<IComponentProps, ICo
   constructor(props: IComponentProps) {
     super(props);
     this.state = {
-      messages: [],
-      offsetLeft: 40
+      messages: []
     };
   }
 
@@ -47,19 +44,13 @@ export class MessageTosterComponent extends React.Component<IComponentProps, ICo
   }
 
   onMessage = (message: ITosterMessage) => {
-    let offsetLeft = this.state.offsetLeft;
-    const container = window.document.querySelector(".container") as HTMLElement;
-    if (container) {
-      offsetLeft = container.offsetLeft;
-    }
-
     console.log("got a message!", message);
     const newMessageData: IMessageData = {
       id: (++this.id).toString(),
       message: message,
       open: false
     };
-    this.setState(s => ({ messages: [...s.messages, newMessageData], offsetLeft: offsetLeft }));
+    this.setState(s => ({ messages: [...s.messages, newMessageData] }));
     if (message.closeTimeout) {
       setTimeout(this.handleAlertDismiss(newMessageData), message.closeTimeout);
     }
@@ -88,19 +79,17 @@ export class MessageTosterComponent extends React.Component<IComponentProps, ICo
 
   render(): JSX.Element {
     return (
-      <div className="message-toster" style={{ left: this.state.offsetLeft + 12 + "px" }}>
+      <div className="message-toster">
         {this.state.messages.map(m => {
           return (
-            <Collapse timeout={200} in={m.open} key={m.id}>
-              <div>
-                <AlertMessageComponent
-                  onDismiss={this.handleAlertDismiss(m)}
-                  type={m.message.type}
-                  title={m.message.title}
-                  message={m.message.message}
-                />
-              </div>
-            </Collapse>
+            <div>
+              <AlertMessageComponent
+                onDismiss={this.handleAlertDismiss(m)}
+                type={m.message.type}
+                title={m.message.title}
+                message={m.message.message}
+              />
+            </div>
           );
         })}
       </div>

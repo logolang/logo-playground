@@ -1,6 +1,4 @@
 import * as React from "react";
-import { Nav, Navbar, NavDropdown, MenuItem, NavItem } from "react-bootstrap";
-
 import { _T } from "app/services/customizations/localization.service";
 
 interface IComponentState {}
@@ -23,7 +21,9 @@ export class ProgramControlsMenuComponent extends React.Component<IComponentProp
     this.state = {};
   }
 
-  render(): JSX.Element {
+  render(): JSX.Element | null {
+    return null;
+    /*
     return (
       <Navbar className="program-controls-menu-component">
         <Nav>
@@ -86,5 +86,6 @@ export class ProgramControlsMenuComponent extends React.Component<IComponentProp
         </Nav>
       </Navbar>
     );
+    */
   }
 }

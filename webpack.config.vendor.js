@@ -26,8 +26,6 @@ module.exports = function (env) {
                 'react',
                 'react-dom',
                 'react-router',
-                'react-bootstrap',
-                'react-router-bootstrap',
                 'classnames',
                 'rxjs',
                 'lodash',

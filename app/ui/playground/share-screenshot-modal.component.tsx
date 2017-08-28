@@ -1,6 +1,5 @@
 import * as React from "react";
 import * as clipboard from "clipboard";
-import { Modal } from "react-bootstrap";
 
 import { AlertMessageComponent } from "app/ui/_generic/alert-message.component";
 import { ProgressIndicatorComponent } from "app/ui/_generic/progress-indicator.component";
@@ -57,7 +56,9 @@ export class ShareScreenshotModalComponent extends React.Component<IComponentPro
     }
   }
 
-  render(): JSX.Element {
+  render(): JSX.Element | null {
+    return null;
+    /*
     return (
       <Modal show={true} animation={false} onHide={this.props.onClose} backdrop="static">
         <Modal.Header closeButton>
@@ -105,5 +106,6 @@ export class ShareScreenshotModalComponent extends React.Component<IComponentPro
         </Modal.Footer>
       </Modal>
     );
+    */
   }
 }

@@ -1,5 +1,4 @@
 import * as React from "react";
-import { Modal } from "react-bootstrap";
 import { Observable, Subject } from "rxjs";
 import { ISubscription } from "rxjs/Subscription";
 
@@ -245,6 +244,8 @@ export class TutorialViewComponent extends React.Component<ITutorialViewComponen
       return null;
     }
     const currentStep = this.state.currentStep;
+    return null;
+    /*
     return (
       <Modal
         show={true}
@@ -295,7 +296,7 @@ export class TutorialViewComponent extends React.Component<ITutorialViewComponen
           </button>
         </Modal.Footer>
       </Modal>
-    );
+    );*/
   }
 
   navigateToNextStep = (direction: number) => {
