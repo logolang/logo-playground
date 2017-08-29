@@ -1,45 +1,57 @@
 @import './ux-extensions.scss';
 
-.ex-app-logo {
-    background-image: url(../images/logo_black.png);
-    background-repeat: no-repeat;
-    background-position: center;
-    width: 100px;
+html {
+  overflow-y: hidden;
 }
 
-.dark-navbar {
-    .ex-app-logo {
-        background-image: url(../images/logo_white.png);
-    }
+/* Bulma extensions */
+.navbar-dropdown.is-right {
+  left: auto;
+  right: 0;
+}
+
+/* Application specific styles */
+.ex-app-logo {
+  background-image: url(../images/logo_black.png);
+  background-repeat: no-repeat;
+  background-position: center;
+  width: 60px;
+  height: 32px;
+}
+
+.is-dark {
+  .ex-app-logo {
+    background-image: url(../images/logo_white.png);
+  }
 }
 
 .ex-page-container {
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 .ex-scroll-outer {
-    display: flex;
-    overflow-y: auto;
+  display: flex;
+  overflow-y: auto;
 }
 
 .ex-flex-direction-column {
-    flex-direction: column;
+  flex-direction: column;
 }
 
 .ex-flex-direction-row {
-    flex-direction: row;
+  flex-direction: row;
 }
 
 .ex-display-flex {
-    display: flex;
+  display: flex;
 }
 
 .ex-flex-block {
-    flex: 0 1 100%
+  flex: 0 1 100%;
 }
 
 .ex-overflow-hidden {
-    overflow: hidden;
+  overflow: hidden;
 }

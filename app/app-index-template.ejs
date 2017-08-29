@@ -22,19 +22,22 @@
         <link href="content/css/golden-layout/goldenlayout-base.css" rel="stylesheet">
 
         <script type="text/javascript">
-            var styleLinks = [
-                "content/css/bulma/bulmaswatch.default.min.css",
-                "content/css/codemirror/themes/eclipse.css",
-                "content/css/golden-layout/goldenlayout-light-theme.css"
-            ];
+            var theme = {
+                isDark: false,
+                styleLinks: [
+                    "content/css/bulma/bulmaswatch.default.min.css",
+                    "content/css/codemirror/themes/eclipse.css",
+                    "content/css/golden-layout/goldenlayout-light-theme.css"
+                ]
+            };
             try {
                 window.appThemeNameLocalStorageKey = '<%= packageJson.name %>-<%= packageJson.version %>-theme-storage';
                 console.log('storagekey', window.appThemeNameLocalStorageKey);
                 var storedTheme = window.localStorage.getItem(window.appThemeNameLocalStorageKey);
                 if (storedTheme) {
-                    var theme = JSON.parse(storedTheme);
-                    if (theme.styleLinks && Array.isArray(theme.styleLinks)) {
-                        styleLinks = theme.styleLinks;
+                    var parsedTheme = JSON.parse(storedTheme);
+                    if (parsedTheme.styleLinks && Array.isArray(parsedTheme.styleLinks)) {
+                        theme = parsedTheme;
                     }
                     if (theme.isDark) {
                         document.body.className = document.body.className + "is-dark";
@@ -51,7 +54,7 @@
                 link.setAttribute('href', linkUrl + '?<%= global.appGitVersion%>');
                 document.getElementsByTagName('head')[0].appendChild(link);
             }
-            styleLinks.forEach(x => injectCssLink(x));
+            theme.styleLinks.forEach(x => injectCssLink(x));
         </script>
 
         <div id="app-container">

@@ -61,8 +61,6 @@ export class GoldenLayoutComponent extends React.Component<IComponentProps, ICom
     const layoutUnsafe: any = this.layout;
     layoutUnsafe.on("stateChanged", this.onStateChanged);
 
-    $(document.body).addClass("full-page-body");
-
     this.setPanelTitles(this.props);
   }
 
@@ -92,7 +90,6 @@ export class GoldenLayoutComponent extends React.Component<IComponentProps, ICom
     if (this.layout) {
       this.layout.destroy();
     }
-    $(document.body).removeClass("full-page-body");
   }
 
   shouldComponentUpdate() {
@@ -100,7 +97,7 @@ export class GoldenLayoutComponent extends React.Component<IComponentProps, ICom
   }
 
   render(): JSX.Element {
-    return <div className="full-page" ref="container" />;
+    return <div ref="container" />;
   }
 
   private getGoldenLayoutConfigItem(type: string, config: goldenLayout.Config): goldenLayout.ItemConfigType {

@@ -139,30 +139,34 @@ export class UserProfileComponent extends React.Component<IComponentProps, IComp
 
   render(): JSX.Element {
     return (
-      <div className="container">
+      <div>
         <MainMenuComponent />
-        <PageHeaderComponent title={_T("User settings")} />
-        <div className="row">
-          <div className="col-sm-6">
-            <p>
-              <strong>{_T("Name")}:</strong> {this.state.userInfo.attributes.name}
-            </p>
-            <p>
-              <strong>{_T("Email")}:</strong> {this.state.userInfo.attributes.email}
-            </p>
-            <br />
-            <br />
-            <form>
-              <fieldset>
-                <div className="form-group">
-                  <label htmlFor="localeselector">
-                    {_T("Language")}
-                  </label>
-                  {this.state.currentLocale &&
-                    <div className="row">
-                      <div className="col-sm-12">
+        <div className="container">
+          <br />
+          <PageHeaderComponent title={_T("User settings")} />
+
+          {this.state.currentLocale &&
+            this.state.theme &&
+            this.state.userCustomizations &&
+            this.state.userInfo &&
+            <div className="tile is-ancestor">
+              <div className="tile is-6 is-vertical is-parent">
+                <div className="tile is-child box">
+                  <p>
+                    <strong>{_T("Name")}:</strong> {this.state.userInfo.attributes.name}
+                  </p>
+                  <p>
+                    <strong>{_T("Email")}:</strong> {this.state.userInfo.attributes.email}
+                  </p>
+                </div>
+                <div className="tile is-child box">
+                  <div className="field">
+                    <label className="label">
+                      {_T("Language")}
+                    </label>
+                    <div className="control">
+                      <div className="select">
                         <select
-                          className="form-control"
                           id="localeselector"
                           value={this.state.currentLocale.id}
                           onChange={event => {
@@ -188,17 +192,16 @@ export class UserProfileComponent extends React.Component<IComponentProps, IComp
                           })}
                         </select>
                       </div>
-                    </div>}
-                </div>
-                <div className="form-group">
-                  <label htmlFor="themeselector">
-                    {_T("User interface theme")}
-                  </label>
-                  {this.state.theme &&
-                    <div className="row">
-                      <div className="col-sm-12">
+                    </div>
+                  </div>
+
+                  <div className="field">
+                    <label className="label">
+                      {_T("User interface theme")}
+                    </label>
+                    <div className="control">
+                      <div className="select">
                         <select
-                          className="form-control"
                           id="themeselector"
                           value={this.state.theme.name}
                           onChange={event => {
@@ -228,18 +231,16 @@ export class UserProfileComponent extends React.Component<IComponentProps, IComp
                           })}
                         </select>
                       </div>
-                    </div>}
-                </div>
-                <br />
-                {this.state.userCustomizations &&
-                  <div className="form-group">
-                    <label htmlFor="turtleSelector">
-                      {_T("Turtle")}
-                    </label>
-                    <div className="row">
-                      <div className="col-sm-8">
+                    </div>
+                  </div>
+
+                  <label className="label">
+                    {_T("Turtle")}
+                  </label>
+                  <div className="field is-grouped">
+                    <div className="control">
+                      <div className="select">
                         <select
-                          className="form-control"
                           id="turtleSelector"
                           value={this.state.userCustomizations.turtleId}
                           onChange={async event => {
@@ -258,9 +259,10 @@ export class UserProfileComponent extends React.Component<IComponentProps, IComp
                           })}
                         </select>
                       </div>
-                      <div className="col-sm-4">
+                    </div>
+                    <div className="control">
+                      <div className="select">
                         <select
-                          className="form-control"
                           id="turtleSelector"
                           value={this.state.userCustomizations.turtleSize}
                           onChange={async event => {
@@ -288,54 +290,48 @@ export class UserProfileComponent extends React.Component<IComponentProps, IComp
                         </select>
                       </div>
                     </div>
-                  </div>}
+                  </div>
 
-                <br />
-                <div className="form-group">
-                  <label>
+                  <label className="label">
                     {_T("Personal library")}
                   </label>
-                  <div className="row">
-                    <div className="col-sm-12">
-                      <blockquote className="ex-font-size-normal">
-                        <p>
-                          {_T("You have %d program", {
-                            plural: "You have %d programs",
-                            value: this.state.programCount
-                          })}
-                        </p>
-                        <div className="btn-toolbar">
-                          <button type="button" className="btn btn-default" onClick={this.doExport}>
-                            <span>
-                              {_T("Export")}
-                            </span>
-                          </button>
-                          <FileSelectorComponent buttonText={_T("Import")} onFileTextContentReady={this.onImport} />
-                        </div>
-                      </blockquote>
-                    </div>
+                  <p className="help">
+                    <span>
+                      {_T("You have %d program", {
+                        plural: "You have %d programs",
+                        value: this.state.programCount
+                      })}
+                    </span>
+                  </p>
+                  <div className="field is-grouped is-grouped-multiline">
+                    <p className="control">
+                      <a className="button" onClick={this.doExport}>
+                        {_T("Export")}
+                      </a>
+                    </p>
+                    <p className="control">
+                      <FileSelectorComponent buttonText={_T("Import")} onFileTextContentReady={this.onImport} />
+                    </p>
                   </div>
                 </div>
-                <br />
-                <br />
-              </fieldset>
-            </form>
-          </div>
-          <div className="col-sm-4">
-            {this.state.userCustomizations && [
-              <LogoExecutorComponent
-                key={`${JSON.stringify(this.state.userCustomizations)}`} //this is a hack to force component to be created each render in order to not handle prop change event
-                height={400}
-                onIsRunningChanged={this.onIsRunningChanged}
-                runCommands={this.runCode}
-                stopCommands={new Subject<void>()}
-                customTurtleImage={this.state.userCustomizations.turtleImage}
-                customTurtleSize={this.state.userCustomizations.turtleSize}
-                isDarkTheme={this.state.userCustomizations.isDark}
-              />
-            ]}
-          </div>
-          <div className="col-sm-2" />
+              </div>
+              <div className="tile is-parent">
+                <div className="tile is-child box">
+                  {[
+                    <LogoExecutorComponent
+                      key={`${JSON.stringify(this.state.userCustomizations)}`} //this is a hack to force component to be created each render in order to not handle prop change event
+                      height={400}
+                      onIsRunningChanged={this.onIsRunningChanged}
+                      runCommands={this.runCode}
+                      stopCommands={new Subject<void>()}
+                      customTurtleImage={this.state.userCustomizations.turtleImage}
+                      customTurtleSize={this.state.userCustomizations.turtleSize}
+                      isDarkTheme={this.state.userCustomizations.isDark}
+                    />
+                  ]}
+                </div>
+              </div>
+            </div>}
         </div>
       </div>
     );

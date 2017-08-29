@@ -9,11 +9,9 @@ interface IPageHeaderComponentProps {
 export class PageHeaderComponent extends React.Component<IPageHeaderComponentProps, IPageHeaderComponentState> {
   render(): JSX.Element {
     return (
-      <div>
-        <h1>
-          {this.props.title}
-        </h1>
-      </div>
+      <h1 className="title">
+        {this.props.title}
+      </h1>
     );
   }
 }

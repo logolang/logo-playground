@@ -50,12 +50,15 @@ export class LoginComponent extends React.Component<IComponentProps, IComponentS
 
   render(): JSX.Element {
     return (
-      <div className="container">
+      <div>
         <MainMenuComponent />
-        <PageHeaderComponent title={_T("Log in")} />
-        <br />
-        <br />
-        {this.loginService.renderLoginUI()}
+        <div className="container">
+          <br />
+          <PageHeaderComponent title={_T("Log in")} />
+          <br />
+          <br />
+          {this.loginService.renderLoginUI()}
+        </div>
       </div>
     );
   }

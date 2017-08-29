@@ -27,19 +27,22 @@ export class AboutComponent extends React.Component<IComponentProps, IComponentS
     return (
       <div>
         <MainMenuComponent />
-        <PageHeaderComponent title={_T("About")} />
-        <p>
-          {this.appInfo.description}
-        </p>
-        <p>
-          <strong>{_T("Package name")}:</strong> {this.appInfo.name}
-        </p>
-        <p>
-          <strong>{_T("App version")}:</strong> {this.appInfo.version}
-        </p>
-        <p>
-          <strong>{_T("Code version")}:</strong> {this.appInfo.gitVersion}
-        </p>
+        <div className="container">
+          <br />
+          <PageHeaderComponent title={_T("About")} />
+          <p>
+            {this.appInfo.description}
+          </p>
+          <p>
+            <strong>{_T("Package name")}:</strong> {this.appInfo.name}
+          </p>
+          <p>
+            <strong>{_T("App version")}:</strong> {this.appInfo.version}
+          </p>
+          <p>
+            <strong>{_T("Code version")}:</strong> {this.appInfo.gitVersion}
+          </p>
+        </div>
       </div>
     );
   }
