@@ -1,5 +1,14 @@
-.ex-gallery-container{
+.gallery-component {
+  .program-cards-container {
     display: flex;
-    flex-direction: column;
-    flex: 1 1 auto;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: flex-start;
+
+    .program-card {
+      width: 200px;
+      margin: 20px;
+    }
+  }
 }

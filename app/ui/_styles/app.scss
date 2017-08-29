@@ -1,4 +1,4 @@
-@import './ux-extensions.scss';
+@import "./ux-extensions.scss";
 
 html {
   overflow-y: hidden;
@@ -31,27 +31,8 @@ html {
   flex-direction: column;
 }
 
-.ex-scroll-outer {
+.ex-page-content {
   display: flex;
   overflow-y: auto;
-}
-
-.ex-flex-direction-column {
-  flex-direction: column;
-}
-
-.ex-flex-direction-row {
-  flex-direction: row;
-}
-
-.ex-display-flex {
-  display: flex;
-}
-
-.ex-flex-block {
-  flex: 0 1 100%;
-}
-
-.ex-overflow-hidden {
-  overflow: hidden;
+  flex: auto;
 }

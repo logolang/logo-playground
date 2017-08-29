@@ -25,23 +25,30 @@ export class AboutComponent extends React.Component<IComponentProps, IComponentS
 
   render(): JSX.Element {
     return (
-      <div>
+      <div className="ex-page-container">
         <MainMenuComponent />
-        <div className="container">
-          <br />
-          <PageHeaderComponent title={_T("About")} />
-          <p>
-            {this.appInfo.description}
-          </p>
-          <p>
-            <strong>{_T("Package name")}:</strong> {this.appInfo.name}
-          </p>
-          <p>
-            <strong>{_T("App version")}:</strong> {this.appInfo.version}
-          </p>
-          <p>
-            <strong>{_T("Code version")}:</strong> {this.appInfo.gitVersion}
-          </p>
+        <div className="ex-page-content">
+          <div className="container">
+            <br />
+            <PageHeaderComponent title={_T("About")} />
+            <br />
+            <div className="card">
+              <div className="card-content">
+                <div className="content">
+                  <p>{this.appInfo.description}</p>
+                  <p>
+                    <strong>{_T("Package name")}:</strong> {this.appInfo.name}
+                  </p>
+                  <p>
+                    <strong>{_T("App version")}:</strong> {this.appInfo.version}
+                  </p>
+                  <p>
+                    <strong>{_T("Code version")}:</strong> {this.appInfo.gitVersion}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     );

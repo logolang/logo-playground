@@ -59,11 +59,13 @@ export class DocumentationComponent extends React.Component<IComponentProps, ICo
     return (
       <div className="ex-page-container">
         <MainMenuComponent />
-        <div className="ex-scroll-outer container-fluid">
-          <PageLoadingIndicatorComponent isLoading={this.state.isLoading}>
-            <div className="doc-section" dangerouslySetInnerHTML={{ __html: this.state.content }} />
-            <br />
-          </PageLoadingIndicatorComponent>
+        <div className="ex-page-content">
+          <div className="container">
+            <PageLoadingIndicatorComponent isLoading={this.state.isLoading}>
+              <div className="doc-section" dangerouslySetInnerHTML={{ __html: this.state.content }} />
+              <br />
+            </PageLoadingIndicatorComponent>
+          </div>
         </div>
       </div>
     );

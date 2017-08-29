@@ -84,74 +84,17 @@ export class GalleryComponent extends React.Component<IComponentProps, IComponen
     return { isSuccess: true };
   };
 
-  renderProgramCard(p: ProgramModel, storageType: ProgramStorageType, deleteBox: boolean): JSX.Element {
-    const link = Routes.playgroundRoot.build({ programId: p.id, storageType: storageType });
-
-    return (
-      <div className="media">
-        <div className="media-left">
-          <Link to={link}>
-            <img className="media-object" style={{ width: 133, height: 100 }} src={p.screenshot || this.noScreenshot} />
-          </Link>
-        </div>
-        <div className="media-body">
-          {deleteBox &&
-            <div className="pull-right">
-              <button
-                type="button"
-                className="btn btn-xs btn-link"
-                onClick={() => {
-                  this.setState({ programToDelete: p });
-                }}
-              >
-                <span>
-                  {_T("Delete")}
-                </span>
-              </button>
-            </div>}
-          <h4 className="media-heading ex-break-word">
-            <span>&nbsp;</span>
-            <Link to={link}>
-              <span className="ex-break-word">
-                {p.name || _T("Program")}
-              </span>
-            </Link>
-          </h4>
-          <br />
-          <table className="table table-condensed">
-            <tbody>
-              {p.dateLastEdited.getTime() !== p.dateCreated.getTime() &&
-                <tr>
-                  <th style={{ width: "10%" }}>
-                    {_T("Edited")}
-                  </th>
-                  <td style={{ width: "90%" }}>
-                    {<DateTimeStampComponent datetime={p.dateLastEdited} />}
-                  </td>
-                </tr>}
-              <tr>
-                <th style={{ width: "10%" }}>
-                  {_T("Created")}
-                </th>
-                <td style={{ width: "90%" }}>
-                  {<DateTimeStampComponent datetime={p.dateCreated} />}
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    );
-  }
-
   render(): JSX.Element {
     return (
-      <div className="ex-page-container">
+      <div className="ex-page-container gallery-component">
         <MainMenuComponent />
-        <div className="ex-scroll-outer">
-          <div className="container-fluid ex-gallery-container">
+        <div className="ex-page-content">
+          <div className="container">
+            <br />
             <PageHeaderComponent title={_T("Gallery")} />
-            {this.state.programToDelete &&
+            <br />
+
+            {this.state.programToDelete && (
               <ActionConfirmationModalComponent
                 show
                 onConfirm={this.confirmDelete}
@@ -163,69 +106,52 @@ export class GalleryComponent extends React.Component<IComponentProps, IComponen
                 }}
               >
                 <div>
-                  <h3>
-                    {_T("Delete program")}
-                  </h3>
+                  <h3>{_T("Delete program")}</h3>
                   <br />
                   {this.renderProgramCard(this.state.programToDelete, "samples", false)}
                   <br />
                 </div>
-              </ActionConfirmationModalComponent>}
-            <div className="row">
-              <div className="col-sm-6">
-                <CollapsiblePanelComponent collapsed={false} title={_T("Personal library")}>
-                  <div>
-                    {this.state.isLoading
-                      ? <div>
-                          <br />
-                          <br />
-                          <br />
-                          <ProgressIndicatorComponent isLoading />
-                          <br />
-                          <br />
-                          <br />
-                        </div>
-                      : this.state.programs.length > 0
-                        ? this.state.programs.map((p, i) => {
-                            return (
-                              <div key={p.id}>
-                                {i != 0 && <hr />}
-                                {this.renderProgramCard(p, "gallery", true)}
-                              </div>
-                            );
-                          })
-                        : <NoDataComponent
-                            noBorder
-                            title={_T("Space for your personal programs")}
-                            description={_T("NO_PROGRAMS_IN_PERSONAL_LIBRARY")}
-                          />}
-                  </div>
-                </CollapsiblePanelComponent>
+              </ActionConfirmationModalComponent>
+            )}
+
+            {this.state.programs.length > 0 && (
+              <div>
+                <p className="subtitle">Your personal library</p>
+                <div className="program-cards-container">
+                  {this.state.programs.map(pr => this.renderProgramCard(pr, "gallery", true))}
+                </div>
               </div>
-              <div className="col-sm-6">
-                <CollapsiblePanelComponent collapsed={false} title={_T("Samples")}>
-                  <div>
-                    {this.state.isLoading
-                      ? <div>
-                          <br />
-                          <br />
-                          <br />
-                          <ProgressIndicatorComponent isLoading />
-                          <br />
-                          <br />
-                          <br />
-                        </div>
-                      : this.state.samples.map((p, i) => {
-                          return (
-                            <div key={p.id}>
-                              {i != 0 && <hr />}
-                              {this.renderProgramCard(p, "samples", false)}
-                            </div>
-                          );
-                        })}
-                  </div>
-                </CollapsiblePanelComponent>
-              </div>
+            )}
+            <p className="subtitle">Samples</p>
+            <div className="program-cards-container">
+              {this.state.samples.map(pr => this.renderProgramCard(pr, "samples", false))}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  renderProgramCard(p: ProgramModel, storageType: ProgramStorageType, deleteBox: boolean): JSX.Element {
+    const link = Routes.playgroundRoot.build({ programId: p.id, storageType: storageType });
+    return (
+      <div key={p.id} className="card program-card">
+        <div className="card-image">
+          <figure className="image is-4by3">
+            <Link to={link}>
+              <img src={p.screenshot || this.noScreenshot} />
+            </Link>
+          </figure>
+        </div>
+        <div className="card-content">
+          <div className="media">
+            <div className="media-content">
+              <p className="title is-4">
+                <Link to={link}>{p.name}</Link>
+              </p>
+              <p className="subtitle is-6">
+                <DateTimeStampComponent datetime={p.dateLastEdited} />
+              </p>
             </div>
           </div>
         </div>
