@@ -1,7 +1,6 @@
 import * as React from "react";
 import { ISubscription } from "rxjs/Subscription";
 
-
 import { ProgramExecutionService } from "app/services/program/program-execution.service";
 
 import { ProgramManagementService, IProgramToSaveAttributes } from "app/services/program/program-management.service";
@@ -22,7 +21,7 @@ export interface ICodePanelComponentProps {
 
 interface IComponentState {
   isSaveModalActive: boolean;
-  screenshotDataToSave?: string;
+  screenshotDataToSave: string;
 }
 
 export class CodePanelComponent extends React.Component<ICodePanelComponentProps, IComponentState> {
@@ -31,14 +30,15 @@ export class CodePanelComponent extends React.Component<ICodePanelComponentProps
   constructor(props: ICodePanelComponentProps) {
     super(props);
     this.state = {
-      isSaveModalActive: false
+      isSaveModalActive: false,
+      screenshotDataToSave: ""
     };
   }
 
   componentDidMount() {
     this.subscriptions.push(
       this.props.executionService.onIsRunningChanged.subscribe(() => {
-        // Update state to force a component renderF
+        // Update state to force a component render
         this.setState({});
       })
     );
@@ -60,13 +60,14 @@ export class CodePanelComponent extends React.Component<ICodePanelComponentProps
     return (
       <div className="code-panel-container">
         {this.renderSaveModal()}
-        {this.state.screenshotDataToSave &&
+        {this.state.screenshotDataToSave && (
           <ShareScreenshotModalComponent
             imageBase64={this.state.screenshotDataToSave}
             onClose={() => {
               this.setState({ screenshotDataToSave: "" });
             }}
-          />}
+          />
+        )}
 
         <ProgramControlsMenuComponent
           isRunning={execService.isRunning}

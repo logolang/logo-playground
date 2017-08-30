@@ -219,57 +219,58 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
 
   render(): JSX.Element {
     return (
-      <div>
+      <div className="ex-page-container">
         <MainMenuComponent />
-
-        {this.state.userCustomizations &&
-        this.state.pageLayoutConfig && [
-          <GoldenLayoutComponent
-            key={this.state.layoutReRenderIncrement}
-            layoutConfig={this.state.pageLayoutConfig}
-            onLayoutChange={this.layoutChangeSubject}
-            panels={[
-              as<IPanelConfig<TutorialViewComponent, ITutorialViewComponentProps>>({
-                title: _T("Tutorial"),
-                componentName: "tutorial-panel",
-                componentType: TutorialViewComponent,
-                props: {
-                  tutorialLoadRequest: this.tutorialLoadRequest,
-                  tutorialLoadedStream: this.tutorialLoadedStream,
-                  tutorialNavigationStream: this.tutorialNavigationStream,
-                  fixTheCodeStream: this.fixTheCodeStream
-                }
-              }),
-              as<IPanelConfig<CodePanelComponent, ICodePanelComponentProps>>({
-                title: _T("Code"),
-                componentName: "code-panel",
-                componentType: CodePanelComponent,
-                props: {
-                  editorTheme: this.state.userCustomizations.codeEditorTheme,
-                  executionService: this.executionService,
-                  managementService: {} as any //this.managementService
-                }
-              }),
-              as<IPanelConfig<OutputPanelComponent, IOutputPanelComponentProps>>({
-                title: "Output",
-                componentName: "output-panel",
-                componentType: OutputPanelComponent,
-                props: {
-                  logoExecutorProps: {
-                    height: 300,
-                    runCommands: this.executionService.runCommands,
-                    stopCommands: this.executionService.stopCommands,
-                    makeScreenshotCommands: this.executionService.makeScreenshotCommands,
-                    onIsRunningChanged: this.executionService.onIsRunningChanged,
-                    isDarkTheme: this.state.userCustomizations.isDark,
-                    customTurtleImage: this.state.userCustomizations.turtleImage,
-                    customTurtleSize: this.state.userCustomizations.turtleSize
+        <div className="ex-page-content">
+          {this.state.userCustomizations &&
+          this.state.pageLayoutConfig && [
+            <GoldenLayoutComponent
+              key={this.state.layoutReRenderIncrement}
+              layoutConfig={this.state.pageLayoutConfig}
+              onLayoutChange={this.layoutChangeSubject}
+              panels={[
+                as<IPanelConfig<TutorialViewComponent, ITutorialViewComponentProps>>({
+                  title: _T("Tutorial"),
+                  componentName: "tutorial-panel",
+                  componentType: TutorialViewComponent,
+                  props: {
+                    tutorialLoadRequest: this.tutorialLoadRequest,
+                    tutorialLoadedStream: this.tutorialLoadedStream,
+                    tutorialNavigationStream: this.tutorialNavigationStream,
+                    fixTheCodeStream: this.fixTheCodeStream
                   }
-                }
-              })
-            ]}
-          />
-        ]}
+                }),
+                as<IPanelConfig<CodePanelComponent, ICodePanelComponentProps>>({
+                  title: _T("Code"),
+                  componentName: "code-panel",
+                  componentType: CodePanelComponent,
+                  props: {
+                    editorTheme: this.state.userCustomizations.codeEditorTheme,
+                    executionService: this.executionService,
+                    managementService: {} as any //this.managementService
+                  }
+                }),
+                as<IPanelConfig<OutputPanelComponent, IOutputPanelComponentProps>>({
+                  title: "Output",
+                  componentName: "output-panel",
+                  componentType: OutputPanelComponent,
+                  props: {
+                    logoExecutorProps: {
+                      height: 300,
+                      runCommands: this.executionService.runCommands,
+                      stopCommands: this.executionService.stopCommands,
+                      makeScreenshotCommands: this.executionService.makeScreenshotCommands,
+                      onIsRunningChanged: this.executionService.onIsRunningChanged,
+                      isDarkTheme: this.state.userCustomizations.isDark,
+                      customTurtleImage: this.state.userCustomizations.turtleImage,
+                      customTurtleSize: this.state.userCustomizations.turtleSize
+                    }
+                  }
+                })
+              ]}
+            />
+          ]}
+        </div>
       </div>
     );
   }

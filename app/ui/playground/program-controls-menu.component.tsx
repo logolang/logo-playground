@@ -22,70 +22,54 @@ export class ProgramControlsMenuComponent extends React.Component<IComponentProp
   }
 
   render(): JSX.Element | null {
-    return null;
-    /*
     return (
-      <Navbar className="program-controls-menu-component">
-        <Nav>
-          {!this.props.isRunning &&
-            <NavItem onClick={this.props.runProgram} title={_T("Execute the program (F9)")}>
-              <span className="glyphicon glyphicon-play text-success" aria-hidden="true" />
-              <span>&nbsp;</span>
-              <span>
-                {_T("Run")}
-              </span>
-            </NavItem>}
-
-          {this.props.isRunning &&
-            <NavItem onClick={this.props.stopProgram}>
-              <span className="glyphicon glyphicon-stop text-danger" aria-hidden="true" />
-              <span>&nbsp;</span>
-              <span>
-                {_T("Stop")}
-              </span>
-            </NavItem>}
-
-          <NavDropdown
-            id="main-playground-menu-options-dropdown"
-            bsClass="dropdown"
-            noCaret
-            pullRight
-            title={<span className="glyphicon glyphicon-option-vertical" aria-hidden="true" /> as any}
+      <div className="program-controls-menu-component">
+        {!this.props.isRunning && (
+          <button
+            type="button"
+            className="button is-success is-borderless"
+            onClick={this.props.runProgram}
+            title={_T("Execute the program (F9)")}
           >
-            {this.props.existingProgramName &&
-              this.props.saveCurrent &&
-              <MenuItem onClick={this.props.saveCurrent}>
-                <span className="glyphicon glyphicon-save" aria-hidden="true" />
-                <span>&nbsp;&nbsp;</span>
-                <span>
-                  {_T("Save program '%s'", { value: this.props.existingProgramName })}
-                </span>
-              </MenuItem>}
-            {this.props.saveAsNew &&
-              <MenuItem onClick={this.props.saveAsNew}>
-                <span className="glyphicon glyphicon-file" aria-hidden="true" />
-                {this.props.existingProgramName
-                  ? <span>
-                      <span>&nbsp;&nbsp;</span>
-                      {_T("Save as new...")}
-                    </span>
-                  : <span>
-                      <span>&nbsp;&nbsp;</span>
-                      {_T("Save to Gallery...")}
-                    </span>}
-              </MenuItem>}
-            <MenuItem divider />
-            <MenuItem onClick={this.props.exportImage}>
-              <span className="glyphicon glyphicon-camera" aria-hidden="true" />
-              <span>&nbsp;&nbsp;</span>
-              <span>
-                {_T("Take Screenshot")}
-              </span>
-            </MenuItem>
-          </NavDropdown>
-        </Nav>
-      </Navbar>
+            {_T("Run")}
+          </button>
+        )}{" "}
+        {this.props.isRunning && (
+          <button
+            type="button"
+            className="button is-warning is-borderless"
+            onClick={this.props.stopProgram}
+            title={_T("Stop execution of the program")}
+          >
+            {_T("Stop")}
+          </button>
+        )}{" "}
+        <div className="dropdown is-right is-hoverable is-borderless">
+          <div className="dropdown-trigger">
+            <button className="button is-light" aria-haspopup="true" aria-controls="dropdown-menu6">
+              <i className="fa fa-bars" aria-hidden="true" />
+            </button>
+          </div>
+          <div className="dropdown-menu" id="dropdown-menu6" role="menu">
+            <div className="dropdown-content">
+              {this.props.existingProgramName &&
+              this.props.saveCurrent && (
+                <a className="dropdown-item" onClick={this.props.saveCurrent}>
+                  <span>{_T("Save program '%s'", { value: this.props.existingProgramName })}</span>
+                </a>
+              )}
+              {this.props.saveAsNew && (
+                <a className="dropdown-item" onClick={this.props.saveAsNew}>
+                  {_T("Save as new...")}
+                </a>
+              )}
+              <a className="dropdown-item" onClick={this.props.exportImage}>
+                <span>{_T("Take Screenshot")}</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
     );
-    */
   }
 }

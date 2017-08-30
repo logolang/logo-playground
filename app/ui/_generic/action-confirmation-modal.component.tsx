@@ -1,5 +1,7 @@
 import * as React from "react";
 import * as cn from "classnames";
+import { AlertMessageComponent } from "app/ui/_generic/alert-message.component";
+import { callActionSafe } from "app/utils/async-helpers";
 
 interface IComponentState {
   isActionInProgress: boolean;
@@ -8,9 +10,10 @@ interface IComponentState {
 
 interface IComponentProps {
   show: boolean;
-  headerText?: string;
+  withoutFooter?: boolean;
+  title?: string;
   onCancel(): void;
-  onConfirm(): Promise<IDialogCallbackResult>;
+  onConfirm?(): Promise<void>;
   actionButtonText?: JSX.Element | string;
   cancelButtonText?: JSX.Element | string;
 }
@@ -20,7 +23,9 @@ export interface IDialogCallbackResult {
   isSuccess: boolean;
 }
 
-export class ActionConfirmationModalComponent extends React.Component<IComponentProps, IComponentState> {
+export class ModalComponent extends React.Component<IComponentProps, IComponentState> {
+  private isComponentMounted = false;
+
   constructor(props: IComponentProps) {
     super(props);
 
@@ -30,60 +35,80 @@ export class ActionConfirmationModalComponent extends React.Component<IComponent
     };
   }
 
-  render(): JSX.Element {
-    const headerText = this.props.headerText || "Are you sure?";
+  componentDidMount() {
+    this.isComponentMounted = true;
+  }
+  componentWillUnmount() {
+    this.isComponentMounted = false;
+  }
+
+  executeAction = async (): Promise<void> => {
+    if (!this.props.onConfirm) {
+      return;
+    }
+    this.setState({
+      isActionInProgress: true
+    });
+
+    const result = await callActionSafe(
+      err => {
+        this.setState({
+          isActionInProgress: false,
+          errorMessage: err || "Error"
+        });
+      },
+      async () => {
+        await this.props.onConfirm!();
+        return true;
+      }
+    );
+
+    if (result && this.isComponentMounted) {
+      this.setState({
+        isActionInProgress: false,
+        errorMessage: ""
+      });
+    }
+  };
+
+  render(): JSX.Element | null {
+    const headerText = this.props.title || "Are you sure?";
     const actionButtonText = this.props.actionButtonText || "Delete";
     const cancelButtonText = this.props.cancelButtonText || "Cancel";
     return (
-      <div data-show={this.props.show}>
-        <button type="button" onClick={this.props.onCancel}>
-          X
-        </button>
-        <h4>
-          {headerText}
-        </h4>
-        <div>
-          {this.props.children}
-          {this.state.errorMessage &&
-            <div>
-              <br />
-              <div className="alert alert-danger" role="alert">
-                {this.state.errorMessage}
-              </div>
-            </div>}
-          <br />
-        </div>
-        <div>
-          <button
-            type="button"
-            className={cn("btn btn-primary", { "is-loading": this.state.isActionInProgress })}
-            onClick={async () => {
-              this.setState({ isActionInProgress: true, errorMessage: "" });
-              try {
-                const result = await this.props.onConfirm();
-                this.setState({ isActionInProgress: false, errorMessage: result.errorMessage || "" });
-              } catch (ex) {
-                this.setState({ isActionInProgress: false, errorMessage: ex.toString() });
-              }
-            }}
-          >
-            <span>
-              {actionButtonText}
-            </span>
-          </button>
-          <button
-            type="button"
-            className="btn btn-link"
-            onClick={() => {
-              if (!this.state.isActionInProgress) {
-                this.props.onCancel();
-              }
-            }}
-          >
-            <span>
-              {cancelButtonText}
-            </span>
-          </button>
+      <div className={cn("modal", { " is-active": this.props.show })}>
+        <div className="modal-background" onClick={this.props.onCancel} />
+        <div className="modal-card">
+          <header className="modal-card-head">
+            <p className="modal-card-title">{headerText}</p>
+            <button className="delete" aria-label="close" onClick={this.props.onCancel} />
+          </header>
+          <section className="modal-card-body">
+            {this.props.children}
+            {this.state.errorMessage && <AlertMessageComponent message={this.state.errorMessage} type="danger" />}
+          </section>
+          {!this.props.withoutFooter && (
+            <footer className="modal-card-foot">
+              {this.props.onConfirm && (
+                <button
+                  className={cn("button is-success", { "is-loading": this.state.isActionInProgress })}
+                  onClick={this.executeAction}
+                >
+                  {actionButtonText}
+                </button>
+              )}
+              <button
+                className="button"
+                onClick={() => {
+                  if (!this.state.isActionInProgress) {
+                    this.props.onCancel();
+                  }
+                }}
+              >
+                Cancel
+              </button>
+            </footer>
+          )}
         </div>
       </div>
     );

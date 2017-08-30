@@ -173,47 +173,48 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
 
   render(): JSX.Element {
     return (
-      <div>
+      <div className="ex-page-container">
         <MainMenuComponent />
-
-        {this.state.program &&
-        this.state.userCustomizations &&
-        this.state.pageLayoutConfig && [
-          <GoldenLayoutComponent
-            key={this.state.layoutReRenderIncrement}
-            layoutConfig={this.state.pageLayoutConfig}
-            onLayoutChange={this.layoutChangeSubject}
-            panels={[
-              as<IPanelConfig<CodePanelComponent, ICodePanelComponentProps>>({
-                title: this.state.program.name || _T("Playground"),
-                componentName: "code-panel",
-                componentType: CodePanelComponent,
-                props: {
-                  editorTheme: this.state.userCustomizations.codeEditorTheme,
-                  executionService: this.executionService,
-                  managementService: this.managementService
-                }
-              }),
-              as<IPanelConfig<OutputPanelComponent, IOutputPanelComponentProps>>({
-                title: "Output",
-                componentName: "output-panel",
-                componentType: OutputPanelComponent,
-                props: {
-                  logoExecutorProps: {
-                    height: 300,
-                    runCommands: this.executionService.runCommands,
-                    stopCommands: this.executionService.stopCommands,
-                    makeScreenshotCommands: this.executionService.makeScreenshotCommands,
-                    onIsRunningChanged: this.executionService.onIsRunningChanged,
-                    isDarkTheme: this.state.userCustomizations.isDark,
-                    customTurtleImage: this.state.userCustomizations.turtleImage,
-                    customTurtleSize: this.state.userCustomizations.turtleSize
+        <div className="ex-page-content">
+          {this.state.program &&
+          this.state.userCustomizations &&
+          this.state.pageLayoutConfig && [
+            <GoldenLayoutComponent
+              key={this.state.layoutReRenderIncrement}
+              layoutConfig={this.state.pageLayoutConfig}
+              onLayoutChange={this.layoutChangeSubject}
+              panels={[
+                as<IPanelConfig<CodePanelComponent, ICodePanelComponentProps>>({
+                  title: this.state.program.name || _T("Playground"),
+                  componentName: "code-panel",
+                  componentType: CodePanelComponent,
+                  props: {
+                    editorTheme: this.state.userCustomizations.codeEditorTheme,
+                    executionService: this.executionService,
+                    managementService: this.managementService
                   }
-                }
-              })
-            ]}
-          />
-        ]}
+                }),
+                as<IPanelConfig<OutputPanelComponent, IOutputPanelComponentProps>>({
+                  title: "Output",
+                  componentName: "output-panel",
+                  componentType: OutputPanelComponent,
+                  props: {
+                    logoExecutorProps: {
+                      height: 300,
+                      runCommands: this.executionService.runCommands,
+                      stopCommands: this.executionService.stopCommands,
+                      makeScreenshotCommands: this.executionService.makeScreenshotCommands,
+                      onIsRunningChanged: this.executionService.onIsRunningChanged,
+                      isDarkTheme: this.state.userCustomizations.isDark,
+                      customTurtleImage: this.state.userCustomizations.turtleImage,
+                      customTurtleSize: this.state.userCustomizations.turtleSize
+                    }
+                  }
+                })
+              ]}
+            />
+          ]}
+        </div>
       </div>
     );
   }

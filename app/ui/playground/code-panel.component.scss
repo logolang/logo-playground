@@ -9,13 +9,7 @@
   .program-controls-menu-component {
     position: absolute;
     right: 32px;
-    width: 150px;
+    top: 4px;
     z-index: 3;
-    border-radius: 0px 0px 10px 10px;
-    opacity: 0.6;
-    transition: opacity 0.5s;
-    &:hover {
-      opacity: 1;
-    }
   }
 }

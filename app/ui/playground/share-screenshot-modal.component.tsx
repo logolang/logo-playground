@@ -7,10 +7,14 @@ import { ProgressIndicatorComponent } from "app/ui/_generic/progress-indicator.c
 import { _T } from "app/services/customizations/localization.service";
 import { lazyInject } from "app/di";
 import { ImageUploadService } from "app/services/infrastructure/image-upload-imgur.service";
+import { ModalComponent } from "app/ui/_generic/action-confirmation-modal.component";
+
+import "./share-screenshot-modal.component.scss";
 
 interface IComponentState {
   errorMessage: string;
   isSavingInProgress: boolean;
+  isCopiedToClipboard: boolean;
   imgUrl?: string;
 }
 
@@ -29,15 +33,20 @@ export class ShareScreenshotModalComponent extends React.Component<IComponentPro
 
     this.state = {
       errorMessage: "",
-      isSavingInProgress: true
+      isSavingInProgress: true,
+      isCopiedToClipboard: false
     };
   }
 
   async componentDidMount() {
-    this.clipboardInstance = new clipboard(".btn-clipboard-img-url");
+    this.clipboardInstance = new clipboard("#btn-clipboard-img-url");
+    this.clipboardInstance.on("success", () => {
+      this.setState({ isCopiedToClipboard: true });
+    });
 
     try {
       const link = await this.imageUploadService.doUpload(this.props.imageBase64);
+      //const link = "http://bulma.io/images/placeholders/640x480.png";
       this.setState({
         isSavingInProgress: false,
         imgUrl: link
@@ -57,55 +66,41 @@ export class ShareScreenshotModalComponent extends React.Component<IComponentPro
   }
 
   render(): JSX.Element | null {
-    return null;
-    /*
     return (
-      <Modal show={true} animation={false} onHide={this.props.onClose} backdrop="static">
-        <Modal.Header closeButton>
-          <Modal.Title>
-            {_T("Screenshot")}
-          </Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <div className="row">
-            <div className="col-sm-12">
-              {this.state.isSavingInProgress &&
-                <ProgressIndicatorComponent isLoading={this.state.isSavingInProgress} />}
-              {this.state.errorMessage && <AlertMessageComponent message={this.state.errorMessage} type="danger" />}
-              {this.state.imgUrl &&
-                <div>
-                  <input
-                    id="foo"
-                    type="text"
-                    className="form-control"
-                    value={this.state.imgUrl}
-                    spellCheck={false}
-                    autoComplete="off"
-                    autoCorrect="off"
-                    autoCapitalize="off"
-                  />
-                  <br />
-                  <img className="img-responsive center-block" src={this.state.imgUrl} style={{ width: 300 }} />
-                </div>}
+      <ModalComponent show withoutFooter title={_T("Screenshot")} onCancel={this.props.onClose}>
+        {this.state.isSavingInProgress && <ProgressIndicatorComponent isLoading={this.state.isSavingInProgress} />}
+        {this.state.errorMessage && <AlertMessageComponent message={this.state.errorMessage} type="danger" />}
+        {this.state.imgUrl && (
+          <div className="share-screenshot-modal-component">
+            <img className="screenshot-img" src={this.state.imgUrl} />
+            <br />
+            <br />
+            <label className="label">Image url</label>
+            <div className="field has-addons">
+              <div className="control is-expanded has-icons-right">
+                <input id="input-with-img-url" className="input" type="text" value={this.state.imgUrl} readOnly />
+                {this.state.isCopiedToClipboard && (
+                  <span className="icon is-small is-right">
+                    <i className="fa fa-check" />
+                  </span>
+                )}
+              </div>
+              <div className="control">
+                <button
+                  id="btn-clipboard-img-url"
+                  type="button"
+                  className="button is-info"
+                  data-clipboard-target="#input-with-img-url"
+                >
+                  <i className="fa fa-clipboard" aria-hidden="true" />
+                  &nbsp;&nbsp;
+                  <span>Copy to clipboard</span>
+                </button>
+              </div>
             </div>
           </div>
-          <br />
-        </Modal.Body>
-        <Modal.Footer>
-          {this.state.imgUrl &&
-            <button type="button" className="btn btn-primary btn-clipboard-img-url" data-clipboard-target="#foo">
-              <span>
-                {_T("Copy link to clipboard")}
-              </span>
-            </button>}
-          <button type="button" className="btn btn-link" onClick={this.props.onClose}>
-            <span>
-              {_T("Close")}
-            </span>
-          </button>
-        </Modal.Footer>
-      </Modal>
+        )}
+      </ModalComponent>
     );
-    */
   }
 }

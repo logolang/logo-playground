@@ -4,10 +4,7 @@ import { Link, RouteComponentProps } from "react-router-dom";
 import { MainMenuComponent } from "app/ui/main-menu.component";
 import { PageHeaderComponent } from "app/ui/_generic/page-header.component";
 import { CollapsiblePanelComponent } from "app/ui/_generic/collapsible-panel.component";
-import {
-  ActionConfirmationModalComponent,
-  IDialogCallbackResult
-} from "app/ui/_generic/action-confirmation-modal.component";
+import { ModalComponent, IDialogCallbackResult } from "app/ui/_generic/action-confirmation-modal.component";
 import { DateTimeStampComponent } from "app/ui/_generic/date-time-stamp.component";
 import { ProgressIndicatorComponent } from "app/ui/_generic/progress-indicator.component";
 import { NoDataComponent } from "app/ui/_generic/no-data.component";
@@ -74,14 +71,13 @@ export class GalleryComponent extends React.Component<IComponentProps, IComponen
     });
   }
 
-  confirmDelete = async (): Promise<IDialogCallbackResult> => {
+  confirmDelete = async (): Promise<void> => {
     if (this.state.programToDelete) {
       this.setState({ isLoading: true });
       await this.programsRepo.remove(this.state.programToDelete.id);
     }
     await this.loadData();
     this.setState({ programToDelete: undefined });
-    return { isSuccess: true };
   };
 
   render(): JSX.Element {
@@ -95,12 +91,12 @@ export class GalleryComponent extends React.Component<IComponentProps, IComponen
             <br />
 
             {this.state.programToDelete && (
-              <ActionConfirmationModalComponent
+              <ModalComponent
                 show
                 onConfirm={this.confirmDelete}
                 actionButtonText={_T("Delete")}
                 cancelButtonText={_T("Cancel")}
-                headerText={_T("Do you want to delete?")}
+                title={_T("Do you want to delete?")}
                 onCancel={() => {
                   this.setState({ programToDelete: undefined });
                 }}
@@ -111,7 +107,7 @@ export class GalleryComponent extends React.Component<IComponentProps, IComponen
                   {this.renderProgramCard(this.state.programToDelete, "samples", false)}
                   <br />
                 </div>
-              </ActionConfirmationModalComponent>
+              </ModalComponent>
             )}
 
             {this.state.programs.length > 0 && (

@@ -42,6 +42,7 @@ export class GoldenLayoutComponent extends React.Component<IComponentProps, ICom
     for (const panel of props.panels) {
       const panelConfig = this.getGoldenLayoutConfigItem(panel.componentName, config);
       (panelConfig as any).props = panel.props;
+      (panelConfig as any).componentState = {};
     }
     config.settings = {
       showMaximiseIcon: false,
@@ -81,6 +82,7 @@ export class GoldenLayoutComponent extends React.Component<IComponentProps, ICom
     for (const panel of this.props.panels) {
       const codePanelConfig = this.getGoldenLayoutConfigItem(panel.componentName, config);
       (codePanelConfig as any).props = {};
+      delete (codePanelConfig as any).componentState;
     }
     this.props.onLayoutChange.next(config);
   };
@@ -97,7 +99,7 @@ export class GoldenLayoutComponent extends React.Component<IComponentProps, ICom
   }
 
   render(): JSX.Element {
-    return <div ref="container" />;
+    return <div className="golden-layout-component" ref="container" />;
   }
 
   private getGoldenLayoutConfigItem(type: string, config: goldenLayout.Config): goldenLayout.ItemConfigType {
