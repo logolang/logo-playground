@@ -67,6 +67,9 @@ export class ProgramExecutionService {
   };
 
   getScreenshot = async (small: boolean): Promise<string> => {
+    if (!this.hasProgramBeenExecutedOnce) {
+      return "";
+    }
     return new Promise<string>(resolve => {
       this.makeScreenshotCommands.next({
         isSmall: small,

@@ -11,7 +11,7 @@ import {
 import { _T } from "app/services/customizations/localization.service";
 import { TutorialSelectModalComponent } from "app/ui/tutorials/tutorial-select-modal.component";
 import { PageLoadingIndicatorComponent } from "app/ui/_generic/page-loading-indicator.component";
-import { OpacityGradientComponent } from "app/ui/_generic/opacity-gradient.component";
+import { ModalComponent } from "app/ui/_generic/modal.component";
 
 import "./tutorial-view.component.scss";
 
@@ -121,121 +121,116 @@ export class TutorialViewComponent extends React.Component<ITutorialViewComponen
 
     return (
       <div className="tutorial-view-panel">
-        {this.renderFixTheCodeModal()}
-        {this.state.showSelectionTutorials &&
-          <TutorialSelectModalComponent
-            tutorials={this.state.tutorials}
-            onCancel={() => {
-              this.setState({ showSelectionTutorials: false });
-            }}
-            onSelect={tutorialId => {
-              this.setState({ showSelectionTutorials: false });
-              this.props.tutorialNavigationStream.next({
-                tutorialId: tutorialId,
-                stepIndex: 0
-              });
-            }}
-          />}
-
         {this.state.isLoading && <PageLoadingIndicatorComponent isLoading={true} />}
         {!this.state.isLoading &&
-          this.state.currentStep &&
-          this.state.currentTutorial &&
-          <div className="current-step-panel-container">
-            <div className="current-step-panel panel-default">
-              <div className="current-step-panel-heading">
-                <div className="tutorials-selector-container">
+        this.state.currentStep &&
+        this.state.currentTutorial && (
+          <div className="tutorial-content">
+            {this.renderFixTheCodeModal()}
+            {this.renderSelectTutorialModal()}
+
+            <button
+              className="button is-info"
+              onClick={() => {
+                this.setState({ showSelectionTutorials: true });
+              }}
+            >
+              <span>{this.state.currentTutorial.label}</span>
+              <span className="icon is-small">
+                <i className="fa fa-angle-down" aria-hidden="true" />
+              </span>
+            </button>
+
+            <p className="help">
+              {_T("Step %1$s of %2$s", {
+                values: [this.state.currentStep.index + 1, this.state.currentTutorial.steps]
+              })}
+            </p>
+
+            <div className="content" dangerouslySetInnerHTML={{ __html: this.state.currentStep.content }} />
+            <br />
+            <br />
+            <div className="field is-grouped">
+              <p className="control">
+                {!prevStepButtonDisabled && (
+                  <button type="button" className="button" onClick={this.navigateToNextStep(-1)}>
+                    <span className="icon">
+                      <i className="fa fa-arrow-left" aria-hidden="true" />
+                    </span>
+                    <span>Back</span>
+                  </button>
+                )}
+              </p>
+              <p className="control">
+                {this.state.currentStep.resultCode && (
                   <button
-                    className="btn btn-info"
+                    type="button"
+                    className="button is-warning"
+                    onClick={() => {
+                      this.setState({ showFixTheCode: true });
+                    }}
+                  >
+                    <span className="icon">
+                      <i className="fa fa-question" aria-hidden="true" />
+                    </span>
+                    <span>{_T("Help – it's not working!")}</span>
+                  </button>
+                )}
+              </p>
+              <p className="control">
+                {!nextStepButtonDisabled && (
+                  <button type="button" className="button is-primary" onClick={this.navigateToNextStep(1)}>
+                    <span className="icon">
+                      <i className="fa fa-arrow-right" aria-hidden="true" />
+                    </span>
+                    <span>{_T("Continue")}</span>
+                  </button>
+                )}
+              </p>
+              <p className="control">
+                {nextStepButtonDisabled && (
+                  <button
+                    type="button"
+                    className="button is-primary"
                     onClick={() => {
                       this.setState({ showSelectionTutorials: true });
                     }}
                   >
-                    <span>
-                      {this.state.currentTutorial.label}&nbsp;&nbsp;
+                    <span className="icon">
+                      <i className="fa fa-arrow-right" aria-hidden="true" />
                     </span>
-                    <span className="caret" />
+                    <span>{_T("Choose another tutorial")}</span>
                   </button>
-                </div>
-                <div className="prev-btn-container">
-                  <button
-                    type="button"
-                    className="btn btn-default step-nav-btn"
-                    disabled={prevStepButtonDisabled}
-                    onClick={this.navigateToNextStep(-1)}
-                  >
-                    <span className="glyphicon glyphicon-triangle-left" aria-hidden="true" />
-                  </button>
-                </div>
-                <div className="step-title-container">
-                  <span>
-                    {_T("Step %1$s of %2$s", {
-                      values: [this.state.currentStep.index + 1, this.state.currentTutorial.steps]
-                    })}
-                  </span>
-                </div>
-                <div className="next-btn-container">
-                  <button
-                    type="button"
-                    className="btn btn-default step-nav-btn"
-                    disabled={nextStepButtonDisabled}
-                    onClick={this.navigateToNextStep(1)}
-                  >
-                    <span className="glyphicon glyphicon-triangle-right" aria-hidden="true" />
-                  </button>
-                </div>
-              </div>
-              <div className="current-step-panel-body">
-                {
-                  <div className="current-step-panel-inner">
-                    <div
-                      className="step-content"
-                      dangerouslySetInnerHTML={{ __html: this.state.currentStep.content }}
-                    />
-                    <div className="pull-right">
-                      {this.state.currentStep.resultCode &&
-                        <button
-                          type="button"
-                          className="btn btn-warning"
-                          onClick={() => {
-                            this.setState({ showFixTheCode: true });
-                          }}
-                        >
-                          <span>
-                            {_T("Help – it's not working!")}
-                          </span>
-                        </button>}
-                      <span> </span>
-                      {!nextStepButtonDisabled &&
-                        <button type="button" className="btn btn-primary" onClick={this.navigateToNextStep(1)}>
-                          <span>
-                            {_T("Continue")}&nbsp;&nbsp;
-                          </span>
-                          <span className="glyphicon glyphicon-arrow-right" aria-hidden="true" />
-                        </button>}
-                      {nextStepButtonDisabled &&
-                        <button
-                          type="button"
-                          className="btn btn-primary"
-                          onClick={() => {
-                            this.setState({ showSelectionTutorials: true });
-                          }}
-                        >
-                          <span>
-                            {_T("Choose another tutorial")}&nbsp;&nbsp;
-                          </span>
-                          <span className="glyphicon glyphicon-arrow-right" aria-hidden="true" />
-                        </button>}
-                      <br />
-                      <br />
-                    </div>
-                  </div>
-                }
-              </div>
-              <OpacityGradientComponent className="bottom-opacity-gradient" />
+                )}
+              </p>
             </div>
-          </div>}
+            <div />
+          </div>
+        )}
       </div>
+    );
+  }
+
+  renderSelectTutorialModal(): JSX.Element | null {
+    if (!this.state.showSelectionTutorials || !this.state.currentTutorial || !this.state.currentStep) {
+      return null;
+    }
+    return (
+      <TutorialSelectModalComponent
+        tutorials={this.state.tutorials}
+        currentTutorialId={this.state.currentTutorial.id}
+        currentStepIndex={this.state.currentStep.index}
+        onCancel={() => {
+          this.setState({ showSelectionTutorials: false });
+        }}
+        onSelect={tutorialId => {
+          this.setState({ showSelectionTutorials: false });
+          this.props.tutorialNavigationStream.next({
+            tutorialId: tutorialId,
+            stepIndex: 0
+          });
+        }}
+      />
     );
   }
 
@@ -244,59 +239,27 @@ export class TutorialViewComponent extends React.Component<ITutorialViewComponen
       return null;
     }
     const currentStep = this.state.currentStep;
-    return null;
-    /*
     return (
-      <Modal
-        show={true}
-        onHide={() => {
+      <ModalComponent
+        show
+        title={_T("Fix the code?")}
+        actionButtonText={_T("Yes, fix my code")}
+        cancelButtonText={_T("No, keep my code as is")}
+        onConfirm={async () => {
+          this.setState({ showFixTheCode: false });
+          this.props.fixTheCodeStream.next(currentStep.resultCode);
+        }}
+        onCancel={() => {
           this.setState({ showFixTheCode: false });
         }}
-        animation={false}
-        backdrop="static"
       >
-        <Modal.Header closeButton>
-          <Modal.Title>
-            {_T("Fix the code?")}
-          </Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <p>
-            {_T("FIX_THE_CODE_MESSAGE")}
-            <span>&nbsp;</span>
-            <strong>
-              {_T("FIX_THE_CODE_WARNING")}
-            </strong>
-          </p>
-          <br />
-        </Modal.Body>
-        <Modal.Footer>
-          <button
-            type="button"
-            className="btn btn-default"
-            onClick={() => {
-              this.setState({ showFixTheCode: false });
-              this.props.fixTheCodeStream.next(currentStep.resultCode);
-            }}
-          >
-            <span>
-              {_T("Yes, fix my code")}
-            </span>
-          </button>
-          <button
-            type="button"
-            className="btn btn-primary"
-            onClick={() => {
-              this.setState({ showFixTheCode: false });
-            }}
-          >
-            <span>
-              {_T("No, keep my code as is")}
-            </span>
-          </button>
-        </Modal.Footer>
-      </Modal>
-    );*/
+        <p>
+          {_T("FIX_THE_CODE_MESSAGE")}
+          <span>&nbsp;</span>
+          <strong>{_T("FIX_THE_CODE_WARNING")}</strong>
+        </p>
+      </ModalComponent>
+    );
   }
 
   navigateToNextStep = (direction: number) => {

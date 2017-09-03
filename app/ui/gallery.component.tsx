@@ -3,11 +3,11 @@ import { Link, RouteComponentProps } from "react-router-dom";
 
 import { MainMenuComponent } from "app/ui/main-menu.component";
 import { PageHeaderComponent } from "app/ui/_generic/page-header.component";
-import { CollapsiblePanelComponent } from "app/ui/_generic/collapsible-panel.component";
-import { ModalComponent, IDialogCallbackResult } from "app/ui/_generic/action-confirmation-modal.component";
+import { ModalComponent, IDialogCallbackResult } from "app/ui/_generic/modal.component";
 import { DateTimeStampComponent } from "app/ui/_generic/date-time-stamp.component";
 import { ProgressIndicatorComponent } from "app/ui/_generic/progress-indicator.component";
 import { NoDataComponent } from "app/ui/_generic/no-data.component";
+import { AlertMessageComponent } from "app/ui/_generic/alert-message.component";
 
 import { lazyInject } from "app/di";
 import { Routes } from "app/routes";
@@ -18,11 +18,11 @@ import {
 } from "app/services/gallery/personal-gallery-localstorage.repository";
 import { ProgramModel } from "app/services/program/program.model";
 import { ProgramsSamplesRepository } from "app/services/gallery/gallery-samples.repository";
+import { ProgramStorageType } from "app/services/program/program-management.service";
 import { ICurrentUserService } from "app/services/login/current-user.service";
 import { TitleService } from "app/services/infrastructure/title.service";
 
 import "./gallery.component.scss";
-import { ProgramStorageType } from "app/services/program/program-management.service";
 
 interface IComponentState {
   userName: string;
@@ -89,39 +89,20 @@ export class GalleryComponent extends React.Component<IComponentProps, IComponen
             <br />
             <PageHeaderComponent title={_T("Gallery")} />
             <br />
-
-            {this.state.programToDelete && (
-              <ModalComponent
-                show
-                onConfirm={this.confirmDelete}
-                actionButtonText={_T("Delete")}
-                cancelButtonText={_T("Cancel")}
-                title={_T("Do you want to delete?")}
-                onCancel={() => {
-                  this.setState({ programToDelete: undefined });
-                }}
-              >
-                <div>
-                  <h3>{_T("Delete program")}</h3>
-                  <br />
-                  {this.renderProgramCard(this.state.programToDelete, "samples", false)}
-                  <br />
-                </div>
-              </ModalComponent>
-            )}
-
             {this.state.programs.length > 0 && (
               <div>
                 <p className="subtitle">Your personal library</p>
                 <div className="program-cards-container">
                   {this.state.programs.map(pr => this.renderProgramCard(pr, "gallery", true))}
                 </div>
+                <br />
               </div>
             )}
             <p className="subtitle">Samples</p>
             <div className="program-cards-container">
               {this.state.samples.map(pr => this.renderProgramCard(pr, "samples", false))}
             </div>
+            {this.renderDeleteModal()}
           </div>
         </div>
       </div>
@@ -133,11 +114,15 @@ export class GalleryComponent extends React.Component<IComponentProps, IComponen
     return (
       <div key={p.id} className="card program-card">
         <div className="card-image">
-          <figure className="image is-4by3">
-            <Link to={link}>
-              <img src={p.screenshot || this.noScreenshot} />
-            </Link>
-          </figure>
+          {p.screenshot ? (
+            <figure className="image is-4by3">
+              <Link to={link}>
+                <img src={p.screenshot} />
+              </Link>
+            </figure>
+          ) : (
+            <NoDataComponent iconClass="fa-picture-o" title="NO IMAGE" />
+          )}
         </div>
         <div className="card-content">
           <div className="media">
@@ -148,10 +133,63 @@ export class GalleryComponent extends React.Component<IComponentProps, IComponen
               <p className="subtitle is-6">
                 <DateTimeStampComponent datetime={p.dateLastEdited} />
               </p>
+              {deleteBox && (
+                <a
+                  onClick={() => {
+                    this.setState({ programToDelete: p });
+                  }}
+                >
+                  Delete
+                </a>
+              )}
             </div>
           </div>
         </div>
       </div>
+    );
+  }
+
+  renderDeleteModal() {
+    const p = this.state.programToDelete;
+
+    return (
+      p && (
+        <ModalComponent
+          show
+          onConfirm={this.confirmDelete}
+          actionButtonText={_T("Delete")}
+          cancelButtonText={_T("Cancel")}
+          title={_T("Do you want to delete?")}
+          onCancel={() => {
+            this.setState({ programToDelete: undefined });
+          }}
+        >
+          <AlertMessageComponent title={_T("You are going to delete this program.")} type="warning" />
+          <br />
+          <div className="card">
+            <div className="card-content">
+              <div className="media">
+                <div className="media-left">
+                  {p.screenshot ? (
+                    <figure className="image is-128x128">
+                      <img src={p.screenshot} />
+                    </figure>
+                  ) : (
+                    <NoDataComponent iconClass="fa-picture-o" title="NO IMAGE" />
+                  )}
+                </div>
+                <div className="media-content">
+                  <p className="subtitle is-4">{p.name}</p>
+                  <p className="is-6">
+                    <strong>Edited: </strong>
+                    <DateTimeStampComponent datetime={p.dateLastEdited} />
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ModalComponent>
+      )
     );
   }
 }

@@ -1,17 +1,20 @@
 import * as React from "react";
 import { ISubscription } from "rxjs/Subscription";
 
+import { as } from "app/utils/syntax-helpers";
+import { lazyInject } from "app/di";
+
+import { INotificationService } from "app/services/infrastructure/notification.service";
 import { ProgramExecutionService } from "app/services/program/program-execution.service";
-
 import { ProgramManagementService, IProgramToSaveAttributes } from "app/services/program/program-management.service";
-
-import "./code-panel.component.scss";
 
 import { ShareScreenshotModalComponent } from "app/ui/playground/share-screenshot-modal.component";
 import { CodeInputLogoComponent, ICodeInputComponentProps } from "app/ui/_shared/code-input-logo.component";
 import { SaveProgramModalComponent } from "app/ui/playground/save-program-modal.component";
 import { ProgramControlsMenuComponent } from "app/ui/playground/program-controls-menu.component";
-import { as } from "app/utils/syntax-helpers";
+
+import "./code-panel.component.scss";
+import { _T } from "app/services/customizations/localization.service";
 
 export interface ICodePanelComponentProps {
   editorTheme: string;
@@ -25,6 +28,7 @@ interface IComponentState {
 }
 
 export class CodePanelComponent extends React.Component<ICodePanelComponentProps, IComponentState> {
+  @lazyInject(INotificationService) private notificationService: INotificationService;
   private subscriptions: ISubscription[] = [];
 
   constructor(props: ICodePanelComponentProps) {
@@ -120,6 +124,11 @@ export class CodePanelComponent extends React.Component<ICodePanelComponentProps
 
   saveProgramAsCallback = async (attrs: IProgramToSaveAttributes): Promise<void> => {
     await this.props.managementService.saveProgram(attrs);
+    this.notificationService.push({
+      type: "info",
+      title: "Success",
+      message: _T("Program has been saved in the library.")
+    });
   };
 
   saveCurrentProgram = async () => {

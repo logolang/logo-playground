@@ -3,11 +3,11 @@ import * as clipboard from "clipboard";
 
 import { AlertMessageComponent } from "app/ui/_generic/alert-message.component";
 import { ProgressIndicatorComponent } from "app/ui/_generic/progress-indicator.component";
+import { ModalComponent } from "app/ui/_generic/modal.component";
 
 import { _T } from "app/services/customizations/localization.service";
 import { lazyInject } from "app/di";
 import { ImageUploadService } from "app/services/infrastructure/image-upload-imgur.service";
-import { ModalComponent } from "app/ui/_generic/action-confirmation-modal.component";
 
 import "./share-screenshot-modal.component.scss";
 

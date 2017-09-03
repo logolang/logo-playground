@@ -3,6 +3,8 @@ import * as cn from "classnames";
 import { AlertMessageComponent } from "app/ui/_generic/alert-message.component";
 import { callActionSafe } from "app/utils/async-helpers";
 
+import "./modal.component.scss";
+
 interface IComponentState {
   isActionInProgress: boolean;
   errorMessage: string;
@@ -12,6 +14,7 @@ interface IComponentProps {
   show: boolean;
   withoutFooter?: boolean;
   title?: string;
+  width?: "default" | "medium" | "wide";
   onCancel(): void;
   onConfirm?(): Promise<void>;
   actionButtonText?: JSX.Element | string;
@@ -76,14 +79,19 @@ export class ModalComponent extends React.Component<IComponentProps, IComponentS
     const actionButtonText = this.props.actionButtonText || "Delete";
     const cancelButtonText = this.props.cancelButtonText || "Cancel";
     return (
-      <div className={cn("modal", { " is-active": this.props.show })}>
+      <div className={cn("modal modal-component", { " is-active": this.props.show })}>
         <div className="modal-background" onClick={this.props.onCancel} />
-        <div className="modal-card">
+        <div
+          className={cn("modal-card", {
+            "is-medium": this.props.width === "medium",
+            "is-wide": this.props.width === "wide"
+          })}
+        >
           <header className="modal-card-head">
             <p className="modal-card-title">{headerText}</p>
             <button className="delete" aria-label="close" onClick={this.props.onCancel} />
           </header>
-          <section className="modal-card-body">
+          <section className={cn("modal-card-body")}>
             {this.props.children}
             {this.state.errorMessage && <AlertMessageComponent message={this.state.errorMessage} type="danger" />}
           </section>
@@ -91,7 +99,7 @@ export class ModalComponent extends React.Component<IComponentProps, IComponentS
             <footer className="modal-card-foot">
               {this.props.onConfirm && (
                 <button
-                  className={cn("button is-success", { "is-loading": this.state.isActionInProgress })}
+                  className={cn("button is-primary", { "is-loading": this.state.isActionInProgress })}
                   onClick={this.executeAction}
                 >
                   {actionButtonText}
@@ -105,7 +113,7 @@ export class ModalComponent extends React.Component<IComponentProps, IComponentS
                   }
                 }}
               >
-                Cancel
+                {cancelButtonText}
               </button>
             </footer>
           )}
