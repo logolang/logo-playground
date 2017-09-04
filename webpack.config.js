@@ -59,7 +59,15 @@ module.exports = function(env) {
             fix: true
           }
         },
-        { test: /\.tsx?$/, loader: "awesome-typescript-loader" },
+        {
+          test: /\.tsx?$/,
+          loader: "awesome-typescript-loader",
+          options: {
+            target: isDevBuild ? "esnext" : "es5",
+            useCache: true,
+            cacheDirectory: isDevBuild ? ".atl-cache.esnext" : ".atl-cache.es5"
+          }
+        },
         { test: /\.(png|jpg|jpeg|gif|svg)$/, loader: "url-loader", options: { limit: 200000 } },
         { test: /\.json$/, loader: "json-loader" },
         { test: /\.(txt|html|md|po)$/, loader: "raw-loader" },

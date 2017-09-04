@@ -15,11 +15,13 @@ import { ProgramControlsMenuComponent } from "app/ui/playground/program-controls
 
 import "./code-panel.component.scss";
 import { _T } from "app/services/customizations/localization.service";
+import { ProgramModel } from "app/services/program/program.model";
 
 export interface ICodePanelComponentProps {
   editorTheme: string;
   executionService: ProgramExecutionService;
   managementService: ProgramManagementService;
+  program: ProgramModel;
 }
 
 interface IComponentState {

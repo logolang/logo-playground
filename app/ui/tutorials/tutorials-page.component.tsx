@@ -31,6 +31,7 @@ import {
   ITutorialRequestData,
   ITutorialLoadedData
 } from "app/ui/tutorials/tutorial-view.component";
+import { ProgramModel } from "app/services/program/program.model";
 
 interface IComponentState {
   isLoading: boolean;
@@ -247,7 +248,8 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
                   props: {
                     editorTheme: this.state.userCustomizations.codeEditorTheme,
                     executionService: this.executionService,
-                    managementService: {} as any //this.managementService
+                    managementService: {} as any, //this.managementService
+                    program: new ProgramModel("0", "tutorial", "logo", "", "")
                   }
                 }),
                 as<IPanelConfig<OutputPanelComponent, IOutputPanelComponentProps>>({

@@ -2,8 +2,13 @@ import { IProgramsRepository } from "app/services/gallery/personal-gallery-local
 import { ProgramModel } from "app/services/program/program.model";
 import { ProgramExecutionService } from "app/services/program/program-execution.service";
 import { IUserDataService } from "app/services/customizations/user-data.service";
+import { ensure } from "app/utils/syntax-helpers";
 
-export type ProgramStorageType = "playground" | "samples" | "gallery" | "gist";
+export enum ProgramStorageType {
+  samples = "samples",
+  gallery = "gallery",
+  gist = "gist"
+}
 
 export interface IProgramToSaveAttributes {
   name: string;
@@ -19,16 +24,17 @@ export class ProgramManagementService {
     private userDataService: IUserDataService
   ) {}
 
-  loadProgram = async (programId: string, storageType: ProgramStorageType): Promise<ProgramModel> => {
+  loadProgram = async (storageType?: ProgramStorageType, programId?: string): Promise<ProgramModel> => {
+    if (!storageType || !programId) {
+      const code = await this.userDataService.getPlaygroundCode();
+      return new ProgramModel("", "", "logo", code, "");
+    }
     switch (storageType) {
-      case "playground":
-        const code = await this.userDataService.getPlaygroundCode();
-        return new ProgramModel("", "", "logo", code, "");
-      case "samples":
+      case ProgramStorageType.samples:
         return this.examplesRepository.get(programId);
-      case "gallery":
+      case ProgramStorageType.gallery:
         return this.personalRepository.get(programId);
-      case "gist":
+      case ProgramStorageType.gist:
         throw new Error("Not implemented");
     }
   };

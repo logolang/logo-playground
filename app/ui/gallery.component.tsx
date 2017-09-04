@@ -93,14 +93,14 @@ export class GalleryComponent extends React.Component<IComponentProps, IComponen
               <div>
                 <p className="subtitle">Your personal library</p>
                 <div className="program-cards-container">
-                  {this.state.programs.map(pr => this.renderProgramCard(pr, "gallery", true))}
+                  {this.state.programs.map(pr => this.renderProgramCard(pr, ProgramStorageType.gallery, true))}
                 </div>
                 <br />
               </div>
             )}
             <p className="subtitle">Samples</p>
             <div className="program-cards-container">
-              {this.state.samples.map(pr => this.renderProgramCard(pr, "samples", false))}
+              {this.state.samples.map(pr => this.renderProgramCard(pr, ProgramStorageType.samples, false))}
             </div>
             {this.renderDeleteModal()}
           </div>
@@ -110,7 +110,7 @@ export class GalleryComponent extends React.Component<IComponentProps, IComponen
   }
 
   renderProgramCard(p: ProgramModel, storageType: ProgramStorageType, deleteBox: boolean): JSX.Element {
-    const link = Routes.playgroundRoot.build({ programId: p.id, storageType: storageType });
+    const link = Routes.playgroundCode.build({ programId: p.id, storageType: storageType });
     return (
       <div key={p.id} className="card program-card">
         <div className="card-image">

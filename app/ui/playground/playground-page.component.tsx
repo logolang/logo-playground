@@ -43,8 +43,10 @@ interface IComponentState {
 
 export interface IPlaygroundPageRouteParams {
   storageType: ProgramStorageType;
-  programId: string;
+  programId?: string;
 }
+
+export { ProgramStorageType };
 
 interface IComponentProps extends RouteComponentProps<IPlaygroundPageRouteParams> {}
 
@@ -153,13 +155,13 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
     const programId = props.match.params.programId;
     const storageType = props.match.params.storageType;
     const programModel = await callActionSafe(this.errorHandler, async () =>
-      this.managementService.loadProgram(programId, storageType)
+      this.managementService.loadProgram(storageType, programId)
     );
     if (!programModel) {
       return;
     }
 
-    this.executionService.setProgram(programModel.id, programModel.name, storageType, programModel.code);
+    this.executionService.setProgram(programModel.id, programModel.name, programModel.code);
     this.setState({
       isLoading: false,
       program: programModel,
@@ -189,6 +191,7 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
                   componentName: "code-panel",
                   componentType: CodePanelComponent,
                   props: {
+                    program: this.state.program,
                     editorTheme: this.state.userCustomizations.codeEditorTheme,
                     executionService: this.executionService,
                     managementService: this.managementService

@@ -7,7 +7,11 @@ import { UserProfileComponent } from "app/ui/user-profile.component";
 import { MessageTosterComponent } from "app/ui/_generic/message-toster.component";
 import { AboutComponent } from "app/ui/about.component";
 import { GalleryComponent } from "app/ui/gallery.component";
-import { PlaygroundPageComponent, IPlaygroundPageRouteParams } from "app/ui/playground/playground-page.component";
+import {
+  PlaygroundPageComponent,
+  IPlaygroundPageRouteParams,
+  ProgramStorageType
+} from "app/ui/playground/playground-page.component";
 import { DocumentationComponent } from "app/ui/documentation.component";
 import { LoginComponent } from "app/ui/login.component";
 import { lazyInject } from "app/di";
@@ -43,6 +47,7 @@ export class Routes extends React.Component<object, object> {
             <Route path={Routes.aboutRoot.relativePath} component={AboutComponent} />
 
             <Route exact path={Routes.playgroundRoot.relativePath} component={PlaygroundPageComponent} />
+            <Route exact path={Routes.playgroundCode.relativePath} component={PlaygroundPageComponent} />
 
             <Route path={Routes.documentationRoot.relativePath} component={DocumentationComponent} />
 
@@ -68,12 +73,14 @@ export class Routes extends React.Component<object, object> {
 
   static readonly galleryRoot = new RouteInfo(Routes.root, "/gallery");
 
-  static readonly playgroundRoot = new RouteInfo<IPlaygroundPageRouteParams>(
+  static readonly playgroundCode = new RouteInfo<IPlaygroundPageRouteParams>(
     Routes.root,
     "/code/:storageType/:programId"
   );
 
-  static readonly playgroundLoadFromGist = new RouteInfo<{ gistId: string }>(Routes.playgroundRoot, "/gist/:gistId");
+  static readonly playgroundRoot = new RouteInfo(Routes.root, "/code/playground");
+
+  static readonly playgroundLoadFromGist = new RouteInfo<{ gistId: string }>(Routes.playgroundCode, "/gist/:gistId");
 
   static readonly documentationRoot = new RouteInfo(Routes.root, "/doc");
 
