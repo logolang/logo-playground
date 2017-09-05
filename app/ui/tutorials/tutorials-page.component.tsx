@@ -251,9 +251,9 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
                   props: {
                     editorTheme: this.state.theme.codeEditorThemeName,
                     executionService: this.executionService,
-                    managementService: {} as any, //this.managementService
-                    program: new ProgramModel("0", "tutorial", "logo", "", ""),
-                    isFromGallery: false
+                    program: new ProgramModel("", undefined, "tutorial", "logo", "", ""),
+                    saveCurrentEnabled: false,
+                    navigateAutomaticallyAfterSaveAs: false
                   }
                 }),
                 as<IPanelConfig<OutputPanelComponent, IOutputPanelComponentProps>>({

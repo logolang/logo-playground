@@ -53,17 +53,11 @@ interface IComponentProps extends RouteComponentProps<IPlaygroundPageRouteParams
 export class PlaygroundPageComponent extends React.Component<IComponentProps, IComponentState> {
   @lazyInject(INotificationService) private notificationService: INotificationService;
   @lazyInject(TitleService) private titleService: TitleService;
-  @lazyInject(ProgramsLocalStorageRepository) private programsRepo: IProgramsRepository;
-  @lazyInject(ProgramsSamplesRepository) private programSamples: IProgramsRepository;
+  @lazyInject(ProgramManagementService) private programManagementService: ProgramManagementService;
   @lazyInject(IUserSettingsService) private userSettingsService: IUserSettingsService;
   @lazyInject(ThemesService) private themesService: ThemesService;
   @lazyInject(TurtlesService) private turtlesService: TurtlesService;
   private executionService = new ProgramExecutionService();
-  private managementService = new ProgramManagementService(
-    this.programSamples,
-    this.programsRepo,
-    this.executionService
-  );
 
   private errorHandler = (err: string) => {
     this.notificationService.push({ message: err, type: "danger" });
@@ -152,7 +146,7 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
     const programId = props.match.params.programId;
     const storageType = props.match.params.storageType;
     const programModel = await callActionSafe(this.errorHandler, async () =>
-      this.managementService.loadProgram(storageType, programId)
+      this.programManagementService.loadProgram(storageType, programId)
     );
     if (!programModel) {
       return;
@@ -161,7 +155,7 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
     const theme = this.themesService.getTheme(userSettings.themeName);
     const turtleImage = this.turtlesService.getTurtleImage(userSettings.turtleId);
 
-    this.executionService.setProgram(programModel.id, programModel.name, programModel.code);
+    this.executionService.setProgram(programModel.code);
     this.setState({
       isLoading: false,
       program: programModel,
@@ -194,11 +188,11 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
                   componentName: "code-panel",
                   componentType: CodePanelComponent,
                   props: {
-                    isFromGallery: this.props.match.params.storageType === ProgramStorageType.gallery,
+                    saveCurrentEnabled: this.props.match.params.storageType === ProgramStorageType.gallery,
                     program: this.state.program,
                     editorTheme: this.state.theme.codeEditorThemeName,
                     executionService: this.executionService,
-                    managementService: this.managementService
+                    navigateAutomaticallyAfterSaveAs: true
                   }
                 }),
                 as<IPanelConfig<OutputPanelComponent, IOutputPanelComponentProps>>({

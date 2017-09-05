@@ -23,6 +23,7 @@ import { TurtlesService } from "app/services/customizations/turtles.service";
 import { ProgramsSamplesRepository } from "app/services/gallery/gallery-samples.repository";
 import { GoogleAuthService } from "app/services/login/google-auth.service";
 import { LoginService, ILoginService } from "app/services/login/login.service";
+import { ProgramManagementService } from "app/services/program/program-management.service";
 
 export class DependecyInjectionSetup {
   static async setup() {
@@ -76,5 +77,6 @@ export class DependecyInjectionSetup {
 
     container.bind(ProgramsLocalStorageRepository).to(ProgramsLocalStorageRepository);
     container.bind(ProgramsSamplesRepository).to(ProgramsSamplesRepository);
+    container.bind(ProgramManagementService).to(ProgramManagementService);
   }
 }

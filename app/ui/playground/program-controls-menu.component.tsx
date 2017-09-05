@@ -10,6 +10,7 @@ interface IComponentProps {
   stopProgram: () => void;
   existingProgramName?: string;
   saveCurrent?: () => void;
+  revertChanges?: () => void;
   saveAsNew?: () => void;
   exportImage: () => void;
 }
@@ -58,6 +59,17 @@ export class ProgramControlsMenuComponent extends React.Component<IComponentProp
                   <span>{_T("Save program '%s'", { value: this.props.existingProgramName })}</span>
                 </a>
               )}
+              {this.props.revertChanges && (
+                <a
+                  className="dropdown-item"
+                  onClick={() => {
+                    this.props.revertChanges && this.props.revertChanges();
+                  }}
+                >
+                  {_T("Revert changes")}
+                </a>
+              )}
+
               {this.props.saveAsNew && (
                 <a className="dropdown-item" onClick={this.props.saveAsNew}>
                   {_T("Save as new...")}

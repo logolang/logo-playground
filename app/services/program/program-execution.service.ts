@@ -14,8 +14,6 @@ export class ProgramExecutionService {
     return this._code;
   }
   public codeChangesStream = new Subject<{ code: string; source: "internal" | "external" }>();
-  public programName: string;
-  public programId: string;
   public runCommands = new Subject<string>();
   public stopCommands = new Subject<void>();
   public focusCommands = new Subject<void>();
@@ -27,9 +25,7 @@ export class ProgramExecutionService {
     /**/
   }
 
-  setProgram = (programId: string, programName: string, code: string) => {
-    this.programId = programId;
-    this.programName = programName;
+  setProgram = (code: string) => {
     this.updateCode(code, "internal");
   };
 
