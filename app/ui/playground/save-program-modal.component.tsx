@@ -14,11 +14,10 @@ interface IComponentState {
 }
 
 interface IComponentProps {
-  code: string;
-  programId: string;
   programName: string;
+  code: string;
+  onSave(programName: string, code: string): Promise<void>;
   onClose(): void;
-  onSave(attributes: IProgramToSaveAttributes): Promise<void>;
 }
 
 export class SaveProgramModalComponent extends React.Component<IComponentProps, IComponentState> {
@@ -80,11 +79,11 @@ export class SaveProgramModalComponent extends React.Component<IComponentProps, 
     const attrs: IProgramToSaveAttributes = {
       name: this.state.programName,
       code: this.props.code,
-      programId: this.props.programId
+      programId: ""
     };
 
     try {
-      await this.props.onSave(attrs);
+      await this.props.onSave(this.state.programName, this.props.code);
       this.props.onClose();
     } catch (ex) {
       const message = ex.toString();

@@ -1,8 +1,15 @@
 import { IProgramsRepository } from "app/services/gallery/personal-gallery-localstorage.repository";
 import { ProgramModel } from "app/services/program/program.model";
 import { ProgramExecutionService } from "app/services/program/program-execution.service";
-import { IUserDataService } from "app/services/customizations/user-data.service";
 import { ensure } from "app/utils/syntax-helpers";
+
+const defaultPlaygroundProgram = `
+;This is LOGO program sample
+forward 50
+right 90
+forward 100
+arc 360 50
+`;
 
 export enum ProgramStorageType {
   samples = "samples",
@@ -20,23 +27,39 @@ export class ProgramManagementService {
   constructor(
     private examplesRepository: IProgramsRepository,
     private personalRepository: IProgramsRepository,
-    private executionService: ProgramExecutionService,
-    private userDataService: IUserDataService
+    private executionService: ProgramExecutionService
   ) {}
 
   loadProgram = async (storageType?: ProgramStorageType, programId?: string): Promise<ProgramModel> => {
+    let program: ProgramModel | undefined = undefined;
+
     if (!storageType || !programId) {
-      const code = await this.userDataService.getPlaygroundCode();
-      return new ProgramModel("", "", "logo", code, "");
+      program = new ProgramModel("", "", "logo", defaultPlaygroundProgram, "");
+    } else {
+      switch (storageType) {
+        case ProgramStorageType.samples:
+          program = await this.examplesRepository.get(programId);
+          break;
+        case ProgramStorageType.gallery:
+          program = await this.personalRepository.get(programId);
+          break;
+        case ProgramStorageType.gist:
+          throw new Error("Not implemented");
+      }
     }
-    switch (storageType) {
-      case ProgramStorageType.samples:
-        return this.examplesRepository.get(programId);
-      case ProgramStorageType.gallery:
-        return this.personalRepository.get(programId);
-      case ProgramStorageType.gist:
-        throw new Error("Not implemented");
+
+    if (!program) {
+      throw new Error("Could not load the program");
     }
+    /*
+    const programLocalId = programId || "";
+    const userData = await this.userDataService.getData();
+    if (userData.codeLocalStorage) {
+      const localCode = userData.codeLocalStorage[programLocalId];
+      program.code = localCode;
+      program.hasUnsavedModifications = true;
+    }*/
+    return program;
   };
 
   saveProgram = async (programAttributes: IProgramToSaveAttributes): Promise<ProgramModel> => {

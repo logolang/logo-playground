@@ -9,16 +9,12 @@ import { as } from "app/utils/syntax-helpers";
 import { lazyInject } from "app/di";
 import { Routes } from "app/routes";
 import { _T } from "app/services/customizations/localization.service";
-import {
-  UserCustomizationsProvider,
-  IUserCustomizationsData
-} from "app/services/customizations/user-customizations-provider";
 
 import { ProgramExecutionService } from "app/services/program/program-execution.service";
 import { INotificationService } from "app/services/infrastructure/notification.service";
 import { TitleService } from "app/services/infrastructure/title.service";
 import { INavigationService } from "app/services/infrastructure/navigation.service";
-import { IUserDataService } from "app/services/customizations/user-data.service";
+import { IUserSettingsService, IUserSettings } from "app/services/customizations/user-settings.service";
 
 import { MainMenuComponent } from "app/ui/main-menu.component";
 import { GoldenLayoutConfig, GoldenLayoutComponent, IPanelConfig } from "app/ui/_shared/golden-layout.component";
@@ -32,12 +28,16 @@ import {
   ITutorialLoadedData
 } from "app/ui/tutorials/tutorial-view.component";
 import { ProgramModel } from "app/services/program/program.model";
+import { ThemesService, Theme } from "app/services/customizations/themes.service";
+import { TurtlesService } from "app/services/customizations/turtles.service";
 
 interface IComponentState {
   isLoading: boolean;
   layoutReRenderIncrement: number;
   pageLayoutConfig?: GoldenLayoutConfig;
-  userCustomizations?: IUserCustomizationsData;
+  userSettings?: IUserSettings;
+  theme?: Theme;
+  turtleImage?: HTMLImageElement;
 }
 
 interface IComponentProps extends RouteComponentProps<ITutorialPageRouteParams> {}
@@ -51,8 +51,9 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
   @lazyInject(INotificationService) private notificationService: INotificationService;
   @lazyInject(INavigationService) private navService: INavigationService;
   @lazyInject(TitleService) private titleService: TitleService;
-  @lazyInject(IUserDataService) private userDataService: IUserDataService;
-  @lazyInject(UserCustomizationsProvider) private userCustomizationsProvider: UserCustomizationsProvider;
+  @lazyInject(IUserSettingsService) private userSerttingsService: IUserSettingsService;
+  @lazyInject(ThemesService) private themesService: ThemesService;
+  @lazyInject(TurtlesService) private turtlesService: TurtlesService;
 
   private executionService = new ProgramExecutionService();
   private tutorialLoadRequest = new Subject<ITutorialRequestData>();
@@ -143,22 +144,21 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
   };
 
   async loadData(props: IComponentProps) {
-    const userCustomizations = await callActionSafe(this.errorHandler, async () =>
-      this.userCustomizationsProvider.getCustomizationsData()
-    );
-    if (!userCustomizations) {
+    const userSettings = await callActionSafe(this.errorHandler, async () => this.userSerttingsService.get());
+    if (!userSettings) {
       return;
     }
 
     const layoutConfig = this.defaultLayoutConfig;
 
-    const lastTutorialInfo = await callActionSafe(this.errorHandler, async () =>
-      this.userDataService.getCurrentTutorialInfo()
-    );
-    if (!lastTutorialInfo) {
-      return;
-    }
+    const lastTutorialInfo = userSettings.currentTutorialInfo || {
+      code: "",
+      tutorialName: "",
+      step: 0
+    };
     const initialCode = lastTutorialInfo.code;
+    const theme = this.themesService.getTheme(userSettings.themeName);
+    const turtleImage = this.turtlesService.getTurtleImage(userSettings.turtleId);
 
     const tutorialIdToLoad = props.match.params.tutorialId;
     const stepIndex = this.parseStepIndexFromParam(props.match.params.stepIndex);
@@ -178,7 +178,9 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
       isLoading: false,
       layoutReRenderIncrement: this.state.layoutReRenderIncrement + 1,
       pageLayoutConfig: layoutConfig,
-      userCustomizations: userCustomizations
+      userSettings,
+      turtleImage,
+      theme
     });
 
     const tutorialInfo: ITutorialRequestData = {
@@ -223,7 +225,8 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
       <div className="ex-page-container">
         <MainMenuComponent />
         <div className="ex-page-content">
-          {this.state.userCustomizations &&
+          {this.state.userSettings &&
+          this.state.theme &&
           this.state.pageLayoutConfig && [
             <GoldenLayoutComponent
               key={this.state.layoutReRenderIncrement}
@@ -246,10 +249,11 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
                   componentName: "code-panel",
                   componentType: CodePanelComponent,
                   props: {
-                    editorTheme: this.state.userCustomizations.codeEditorTheme,
+                    editorTheme: this.state.theme.codeEditorThemeName,
                     executionService: this.executionService,
                     managementService: {} as any, //this.managementService
-                    program: new ProgramModel("0", "tutorial", "logo", "", "")
+                    program: new ProgramModel("0", "tutorial", "logo", "", ""),
+                    isFromGallery: false
                   }
                 }),
                 as<IPanelConfig<OutputPanelComponent, IOutputPanelComponentProps>>({
@@ -263,9 +267,9 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
                       stopCommands: this.executionService.stopCommands,
                       makeScreenshotCommands: this.executionService.makeScreenshotCommands,
                       onIsRunningChanged: this.executionService.onIsRunningChanged,
-                      isDarkTheme: this.state.userCustomizations.isDark,
-                      customTurtleImage: this.state.userCustomizations.turtleImage,
-                      customTurtleSize: this.state.userCustomizations.turtleSize
+                      isDarkTheme: this.state.theme.isDark,
+                      customTurtleImage: this.state.turtleImage,
+                      customTurtleSize: this.state.userSettings.turtleSize
                     }
                   }
                 })

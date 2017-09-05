@@ -8,7 +8,7 @@ export interface Theme {
 }
 
 @injectable()
-export class ThemeCustomizationsService {
+export class ThemesService {
   private readonly themes: Theme[] = [
     {
       name: "Default",

@@ -14,10 +14,6 @@ import { OutputPanelComponent, IOutputPanelComponentProps } from "app/ui/playgro
 
 import { _T } from "app/services/customizations/localization.service";
 import { lazyInject } from "app/di";
-import {
-  UserCustomizationsProvider,
-  IUserCustomizationsData
-} from "app/services/customizations/user-customizations-provider";
 import { ProgramsSamplesRepository } from "app/services/gallery/gallery-samples.repository";
 import { ProgramModel } from "app/services/program/program.model";
 import { ProgramExecutionService } from "app/services/program/program-execution.service";
@@ -27,18 +23,22 @@ import {
   ProgramsLocalStorageRepository,
   IProgramsRepository
 } from "app/services/gallery/personal-gallery-localstorage.repository";
-import { IUserDataService } from "app/services/customizations/user-data.service";
+import { IUserSettingsService, IUserSettings } from "app/services/customizations/user-settings.service";
 
 import { ProgramStorageType, ProgramManagementService } from "app/services/program/program-management.service";
 
 import "./playground-page.component.scss";
+import { ThemesService, Theme } from "app/services/customizations/themes.service";
+import { TurtlesService } from "app/services/customizations/turtles.service";
 
 interface IComponentState {
   isLoading: boolean;
-  userCustomizations?: IUserCustomizationsData;
+  userSettings?: IUserSettings;
   layoutReRenderIncrement: number;
   pageLayoutConfig?: GoldenLayoutConfig;
   program?: ProgramModel;
+  turtleImage?: HTMLImageElement;
+  theme?: Theme;
 }
 
 export interface IPlaygroundPageRouteParams {
@@ -55,14 +55,14 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
   @lazyInject(TitleService) private titleService: TitleService;
   @lazyInject(ProgramsLocalStorageRepository) private programsRepo: IProgramsRepository;
   @lazyInject(ProgramsSamplesRepository) private programSamples: IProgramsRepository;
-  @lazyInject(IUserDataService) private userDataService: IUserDataService;
-  @lazyInject(UserCustomizationsProvider) private userCustomizationsProvider: UserCustomizationsProvider;
+  @lazyInject(IUserSettingsService) private userSettingsService: IUserSettingsService;
+  @lazyInject(ThemesService) private themesService: ThemesService;
+  @lazyInject(TurtlesService) private turtlesService: TurtlesService;
   private executionService = new ProgramExecutionService();
   private managementService = new ProgramManagementService(
     this.programSamples,
     this.programsRepo,
-    this.executionService,
-    this.userDataService
+    this.executionService
   );
 
   private errorHandler = (err: string) => {
@@ -127,26 +127,23 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
 
   layoutChanged = async (newLayout: GoldenLayoutConfig): Promise<void> => {
     this.setState({ pageLayoutConfig: newLayout });
-    await this.userDataService.setPlaygroundLayoutJSON(JSON.stringify(newLayout));
+    await this.userSettingsService.update({
+      playgroundLayoutJSON: JSON.stringify(newLayout)
+    });
   };
 
   async loadData(props: IComponentProps) {
     this.setState({ isLoading: true });
 
-    const userCustomizations = await callActionSafe(this.errorHandler, async () =>
-      this.userCustomizationsProvider.getCustomizationsData()
-    );
-    if (!userCustomizations) {
+    const userSettings = await callActionSafe(this.errorHandler, async () => this.userSettingsService.get());
+    if (!userSettings) {
       return;
     }
 
     let layoutConfig = this.defaultLayoutConfig;
     if (!this.state.pageLayoutConfig) {
-      const pageLayoutJSON = await callActionSafe(this.errorHandler, async () =>
-        this.userDataService.getPlaygroundLayoutJSON()
-      );
       try {
-        layoutConfig = JSON.parse(pageLayoutJSON || "");
+        layoutConfig = JSON.parse(userSettings.playgroundLayoutJSON || "");
       } catch (ex) {
         /*nothing*/
       }
@@ -161,11 +158,16 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
       return;
     }
 
+    const theme = this.themesService.getTheme(userSettings.themeName);
+    const turtleImage = this.turtlesService.getTurtleImage(userSettings.turtleId);
+
     this.executionService.setProgram(programModel.id, programModel.name, programModel.code);
     this.setState({
       isLoading: false,
       program: programModel,
-      userCustomizations: userCustomizations,
+      userSettings,
+      theme,
+      turtleImage,
       pageLayoutConfig: layoutConfig,
       layoutReRenderIncrement: this.state.layoutReRenderIncrement + 1
     });
@@ -179,7 +181,8 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
         <MainMenuComponent />
         <div className="ex-page-content">
           {this.state.program &&
-          this.state.userCustomizations &&
+          this.state.userSettings &&
+          this.state.theme &&
           this.state.pageLayoutConfig && [
             <GoldenLayoutComponent
               key={this.state.layoutReRenderIncrement}
@@ -191,8 +194,9 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
                   componentName: "code-panel",
                   componentType: CodePanelComponent,
                   props: {
+                    isFromGallery: this.props.match.params.storageType === ProgramStorageType.gallery,
                     program: this.state.program,
-                    editorTheme: this.state.userCustomizations.codeEditorTheme,
+                    editorTheme: this.state.theme.codeEditorThemeName,
                     executionService: this.executionService,
                     managementService: this.managementService
                   }
@@ -208,9 +212,9 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
                       stopCommands: this.executionService.stopCommands,
                       makeScreenshotCommands: this.executionService.makeScreenshotCommands,
                       onIsRunningChanged: this.executionService.onIsRunningChanged,
-                      isDarkTheme: this.state.userCustomizations.isDark,
-                      customTurtleImage: this.state.userCustomizations.turtleImage,
-                      customTurtleSize: this.state.userCustomizations.turtleSize
+                      isDarkTheme: this.state.theme.isDark,
+                      customTurtleImage: this.state.turtleImage,
+                      customTurtleSize: this.state.userSettings.turtleSize
                     }
                   }
                 })

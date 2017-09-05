@@ -16,18 +16,14 @@ import { FileSelectorComponent } from "app/ui/_generic/file-selector.component";
 import { lazyInject } from "app/di";
 import { Routes } from "app/routes";
 import { UserInfo } from "app/services/login/user-info";
-import { TurtleCustomizationsService } from "app/services/customizations/turtle-customizations.service";
-import {
-  IUserCustomizationsData,
-  UserCustomizationsProvider
-} from "app/services/customizations/user-customizations-provider";
-import { Theme, ThemeCustomizationsService } from "app/services/customizations/theme-customizations.service";
+import { TurtlesService } from "app/services/customizations/turtles.service";
+import { Theme, ThemesService } from "app/services/customizations/themes.service";
 import { ProgramsExportImportService } from "app/services/gallery/programs-export-import.service";
 import { LocalizationService, ILocaleInfo, _T } from "app/services/customizations/localization.service";
 import { ICurrentUserService } from "app/services/login/current-user.service";
 import { TitleService } from "app/services/infrastructure/title.service";
 import { INavigationService } from "app/services/infrastructure/navigation.service";
-import { IUserSettingsService } from "app/services/customizations/user-settings.service";
+import { IUserSettingsService, IUserSettings } from "app/services/customizations/user-settings.service";
 import { INotificationService } from "app/services/infrastructure/notification.service";
 import {
   ProgramsLocalStorageRepository,
@@ -40,7 +36,8 @@ interface IComponentState {
   programCount: number;
   currentLocale?: ILocaleInfo;
   theme?: Theme;
-  userCustomizations?: IUserCustomizationsData;
+  userSettings?: IUserSettings;
+  turtleImage?: HTMLImageElement;
 }
 
 interface IComponentProps extends RouteComponentProps<void> {}
@@ -55,14 +52,14 @@ const codeSamples = [
 ];
 
 export class UserProfileComponent extends React.Component<IComponentProps, IComponentState> {
-  @lazyInject(ICurrentUserService) private currentUser: ICurrentUserService;
   @lazyInject(TitleService) private titleService: TitleService;
   @lazyInject(INavigationService) private navService: INavigationService;
-  @lazyInject(ThemeCustomizationsService) private themeService: ThemeCustomizationsService;
-  @lazyInject(UserCustomizationsProvider) private userCustomizationsProvider: UserCustomizationsProvider;
-  @lazyInject(TurtleCustomizationsService) private turtleCustomizationService: TurtleCustomizationsService;
-  @lazyInject(IUserSettingsService) private userSettingsService: IUserSettingsService;
   @lazyInject(INotificationService) private notificationService: INotificationService;
+
+  @lazyInject(ICurrentUserService) private currentUser: ICurrentUserService;
+  @lazyInject(IUserSettingsService) private userSettingsService: IUserSettingsService;
+  @lazyInject(ThemesService) private themeService: ThemesService;
+  @lazyInject(TurtlesService) private turtleCustomizationService: TurtlesService;
   @lazyInject(LocalizationService) private localizationService: LocalizationService;
   @lazyInject(ProgramsLocalStorageRepository) private programsReporitory: IProgramsRepository;
 
@@ -96,20 +93,21 @@ export class UserProfileComponent extends React.Component<IComponentProps, IComp
   }
 
   private async loadData() {
-    const [programs, userCustomizations, userSettings] = await Promise.all([
+    const [programs, userSettings] = await Promise.all([
       callActionSafe(this.errorHandler, async () => this.programsReporitory.getAll()),
-      callActionSafe(this.errorHandler, async () => this.userCustomizationsProvider.getCustomizationsData()),
       callActionSafe(this.errorHandler, async () => this.userSettingsService.get())
     ]);
-    if (programs && userCustomizations && userSettings) {
+    if (programs && userSettings) {
       const theme = this.themeService.getTheme(userSettings.themeName);
-      const locale = this.localizationService.getLocaleById(userCustomizations.localeId);
+      const locale = this.localizationService.getLocaleById(userSettings.localeId);
+      const turtleImage = this.turtleCustomizationService.getTurtleImage(userSettings.turtleId);
 
       this.setState({
-        userCustomizations: userCustomizations,
+        userSettings: userSettings,
         theme: theme,
-        programCount: programs.length,
-        currentLocale: locale
+        currentLocale: locale,
+        turtleImage: turtleImage,
+        programCount: programs.length
       });
     }
   }
@@ -145,10 +143,10 @@ export class UserProfileComponent extends React.Component<IComponentProps, IComp
           <br />
           <PageHeaderComponent title={_T("User settings")} />
 
-          {this.state.currentLocale &&
-            this.state.theme &&
-            this.state.userCustomizations &&
-            this.state.userInfo &&
+          {this.state.userSettings &&
+          this.state.currentLocale &&
+          this.state.theme &&
+          this.state.userInfo && (
             <div className="tile is-ancestor">
               <div className="tile is-6 is-vertical is-parent">
                 <div className="tile is-child box">
@@ -161,9 +159,7 @@ export class UserProfileComponent extends React.Component<IComponentProps, IComp
                 </div>
                 <div className="tile is-child box">
                   <div className="field">
-                    <label className="label">
-                      {_T("Language")}
-                    </label>
+                    <label className="label">{_T("Language")}</label>
                     <div className="control">
                       <div className="select">
                         <select
@@ -196,9 +192,7 @@ export class UserProfileComponent extends React.Component<IComponentProps, IComp
                   </div>
 
                   <div className="field">
-                    <label className="label">
-                      {_T("User interface theme")}
-                    </label>
+                    <label className="label">{_T("User interface theme")}</label>
                     <div className="control">
                       <div className="select">
                         <select
@@ -234,15 +228,13 @@ export class UserProfileComponent extends React.Component<IComponentProps, IComp
                     </div>
                   </div>
 
-                  <label className="label">
-                    {_T("Turtle")}
-                  </label>
+                  <label className="label">{_T("Turtle")}</label>
                   <div className="field is-grouped">
                     <div className="control">
                       <div className="select">
                         <select
                           id="turtleSelector"
-                          value={this.state.userCustomizations.turtleId}
+                          value={this.state.userSettings.turtleId}
                           onChange={async event => {
                             const value = event.target.value;
                             await this.userSettingsService.update({ turtleId: value });
@@ -264,7 +256,7 @@ export class UserProfileComponent extends React.Component<IComponentProps, IComp
                       <div className="select">
                         <select
                           id="turtleSelector"
-                          value={this.state.userCustomizations.turtleSize}
+                          value={this.state.userSettings.turtleSize}
                           onChange={async event => {
                             const value = parseInt(event.target.value, 10);
                             await this.userSettingsService.update({ turtleSize: value });
@@ -272,29 +264,17 @@ export class UserProfileComponent extends React.Component<IComponentProps, IComp
                             this.setRandomCode();
                           }}
                         >
-                          <option value={20}>
-                            {_T("Extra Small")}
-                          </option>
-                          <option value={32}>
-                            {_T("Small")}
-                          </option>
-                          <option value={40}>
-                            {_T("Medium")}
-                          </option>
-                          <option value={52}>
-                            {_T("Large")}
-                          </option>
-                          <option value={72}>
-                            {_T("Huge")}
-                          </option>
+                          <option value={20}>{_T("Extra Small")}</option>
+                          <option value={32}>{_T("Small")}</option>
+                          <option value={40}>{_T("Medium")}</option>
+                          <option value={52}>{_T("Large")}</option>
+                          <option value={72}>{_T("Huge")}</option>
                         </select>
                       </div>
                     </div>
                   </div>
 
-                  <label className="label">
-                    {_T("Personal library")}
-                  </label>
+                  <label className="label">{_T("Personal library")}</label>
                   <p className="help">
                     <span>
                       {_T("You have %d program", {
@@ -319,19 +299,20 @@ export class UserProfileComponent extends React.Component<IComponentProps, IComp
                 <div className="tile is-child box">
                   {[
                     <LogoExecutorComponent
-                      key={`${JSON.stringify(this.state.userCustomizations)}`} //this is a hack to force component to be created each render in order to not handle prop change event
+                      key={`${JSON.stringify(this.state.userSettings)}`} //this is a hack to force component to be created each render in order to not handle prop change event
                       height={400}
                       onIsRunningChanged={this.onIsRunningChanged}
                       runCommands={this.runCode}
                       stopCommands={new Subject<void>()}
-                      customTurtleImage={this.state.userCustomizations.turtleImage}
-                      customTurtleSize={this.state.userCustomizations.turtleSize}
-                      isDarkTheme={this.state.userCustomizations.isDark}
+                      customTurtleImage={this.state.turtleImage}
+                      customTurtleSize={this.state.userSettings.turtleSize}
+                      isDarkTheme={this.state.theme.isDark}
                     />
                   ]}
                 </div>
               </div>
-            </div>}
+            </div>
+          )}
         </div>
       </div>
     );

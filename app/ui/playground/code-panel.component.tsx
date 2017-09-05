@@ -22,6 +22,7 @@ export interface ICodePanelComponentProps {
   executionService: ProgramExecutionService;
   managementService: ProgramManagementService;
   program: ProgramModel;
+  isFromGallery: boolean;
 }
 
 interface IComponentState {
@@ -82,7 +83,7 @@ export class CodePanelComponent extends React.Component<ICodePanelComponentProps
           stopProgram={execService.stopCurrentProgram}
           exportImage={this.exportScreenshot}
           saveAsNew={this.showSaveDialog}
-          saveCurrent={this.saveCurrentProgram}
+          saveCurrent={this.props.isFromGallery ? this.saveCurrentProgram : undefined}
         />
         {React.createElement(
           CodeInputLogoComponent,
@@ -109,7 +110,6 @@ export class CodePanelComponent extends React.Component<ICodePanelComponentProps
         <SaveProgramModalComponent
           code={this.props.executionService.code}
           programName={this.props.executionService.programName}
-          programId={""}
           onClose={() => {
             this.setState({ isSaveModalActive: false });
           }}
@@ -124,8 +124,12 @@ export class CodePanelComponent extends React.Component<ICodePanelComponentProps
     this.setState({ isSaveModalActive: true });
   };
 
-  saveProgramAsCallback = async (attrs: IProgramToSaveAttributes): Promise<void> => {
-    await this.props.managementService.saveProgram(attrs);
+  saveProgramAsCallback = async (programName: string, code: string): Promise<void> => {
+    await this.props.managementService.saveProgram({
+      name: programName,
+      code: code,
+      programId: ""
+    });
     this.notificationService.push({
       type: "info",
       title: "Success",
@@ -140,10 +144,22 @@ export class CodePanelComponent extends React.Component<ICodePanelComponentProps
       programId: this.props.executionService.programId
     };
     await this.props.managementService.saveProgram(attrs);
+    this.notificationService.push({
+      title: _T("Message"),
+      message: _T("Program has been saved successfully."),
+      type: "primary"
+    });
   };
 
   exportScreenshot = async () => {
     const data = await this.props.executionService.getScreenshot(false);
+    if (!data) {
+      this.notificationService.push({
+        title: _T("Message"),
+        message: _T("Screenshot is not available because program has not been executed yet."),
+        type: "primary"
+      });
+    }
     this.setState({ screenshotDataToSave: data });
   };
 }

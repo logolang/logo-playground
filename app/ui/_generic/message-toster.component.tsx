@@ -3,7 +3,7 @@ import { Observable, Subscription } from "rxjs/Rx";
 
 import "./message-toster.component.scss";
 
-type TosterMessageType = "danger" | "info" | "success" | "warning";
+type TosterMessageType = "danger" | "info" | "success" | "warning" | "primary";
 
 interface ITosterMessage {
   title?: string | JSX.Element;

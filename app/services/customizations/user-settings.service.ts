@@ -12,15 +12,23 @@ export interface IUserSettings {
   turtleSize: number;
   themeName: string;
   localeId: string;
+  currentTutorialInfo?: ICurrentTutorialInfo;
+  playgroundLayoutJSON?: string;
+  tutorialsLayoutJSON?: string;
 }
 
-@injectable()
-export /**
+export interface ICurrentTutorialInfo {
+  tutorialName: string;
+  step: number;
+  code: string;
+}
+
+@injectable() /**
  * This service is to store and get user settings
  * This settings will be probably synchronized to some central settings storage, so User will be able to have them same on all computers and browsers
  * Currently using local browser storage
  */
-class UserSettingsBrowserLocalStorageService implements IUserSettingsService {
+export class UserSettingsBrowserLocalStorageService implements IUserSettingsService {
   private localStorage: LocalStorageService<IUserSettings>;
   private currentData: IUserSettings;
 

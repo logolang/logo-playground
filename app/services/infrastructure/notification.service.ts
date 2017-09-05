@@ -1,7 +1,7 @@
 import { Observable, Subject } from "rxjs/Rx";
 import { injectable } from "app/di";
 
-type NotificationType = "danger" | "info" | "success" | "warning";
+type NotificationType = "danger" | "info" | "success" | "warning" | "primary";
 
 interface INotification {
   title?: string | JSX.Element;
