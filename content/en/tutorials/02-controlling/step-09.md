@@ -1,5 +1,3 @@
-# The Color of the Pen
-
 The turtle can draw in different 15 colors.
 
 | Color number | Color name | Color                                                                              |

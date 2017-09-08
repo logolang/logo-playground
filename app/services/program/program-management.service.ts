@@ -8,19 +8,13 @@ import {
 import { ProgramModel } from "app/services/program/program.model";
 import { ProgramsSamplesRepository } from "app/services/gallery/gallery-samples.repository";
 import { ILocalTempCodeStorage } from "app/services/program/local-temp-code.storage";
-
-const defaultPlaygroundProgram = `
-;This is LOGO program sample
-forward 50
-right 90
-forward 100
-arc 360 50
-`;
+import { TutorialsCodeRepository } from "app/services/tutorials/tutorials-code.repository";
 
 export enum ProgramStorageType {
   samples = "samples",
   gallery = "gallery",
-  gist = "gist"
+  gist = "gist",
+  tutorial = "tutorial"
 }
 
 export interface IProgramToSaveAttributes {
@@ -32,12 +26,20 @@ export interface IProgramToSaveAttributes {
 @injectable()
 export class ProgramManagementService {
   constructor(
-    @inject(ProgramsSamplesRepository) private examplesRepository: IProgramsRepository,
-    @inject(ProgramsLocalStorageRepository) private personalRepository: IProgramsRepository,
-    @inject(ILocalTempCodeStorage) private localTempStorage: ILocalTempCodeStorage
+    @inject(ProgramsSamplesRepository)
+    private examplesRepository: IProgramsRepository,
+    @inject(ProgramsLocalStorageRepository)
+    private personalRepository: IProgramsRepository,
+    @inject(TutorialsCodeRepository)
+    private tutorialsRepository: IProgramsRepository,
+    @inject(ILocalTempCodeStorage)
+    private localTempStorage: ILocalTempCodeStorage
   ) {}
 
-  loadProgram = async (storageType?: ProgramStorageType, programId?: string): Promise<ProgramModel> => {
+  loadProgram = async (
+    programId?: string,
+    storageType?: ProgramStorageType
+  ): Promise<ProgramModel> => {
     const program = await this.loadProgramFromStorage(storageType, programId);
 
     const tempCode = await this.localTempStorage.getCode(programId || "");
@@ -52,30 +54,54 @@ export class ProgramManagementService {
     this.localTempStorage.setCode(programId, code);
   };
 
-  revertLocalTempChanges = async (programModel: ProgramModel): Promise<string> => {
-    const program = await this.loadProgramFromStorage(programModel.storageType, programModel.id);
+  revertLocalTempChanges = async (
+    programModel: ProgramModel
+  ): Promise<string> => {
+    const program = await this.loadProgramFromStorage(
+      programModel.storageType,
+      programModel.id
+    );
     await this.saveTempProgram(program.id, "");
     return program.code;
   };
 
-  saveProgramAs = async (code: string, screenshot: string, program: ProgramModel): Promise<ProgramModel> => {
+  saveProgramAs = async (
+    code: string,
+    screenshot: string,
+    program: ProgramModel
+  ): Promise<ProgramModel> => {
     const programName = program.name;
     if (!programName || !programName.trim()) {
       throw new Error("Program name is required.");
     }
     const allProgs = await this.personalRepository.getAll();
-    const progWithSameName = allProgs.find(p => p.name.trim().toLowerCase() === programName.trim().toLowerCase());
+    const progWithSameName = allProgs.find(
+      p => p.name.trim().toLowerCase() === programName.trim().toLowerCase()
+    );
     if (progWithSameName) {
-      throw new Error("Program with this name is already stored in library. Please enter different name.");
+      throw new Error(
+        "Program with this name is already stored in library. Please enter different name."
+      );
     }
     const addedProgram = this.personalRepository.add(
-      new ProgramModel("", ProgramStorageType.gallery, programName, "logo", code, screenshot)
+      new ProgramModel(
+        "",
+        ProgramStorageType.gallery,
+        programName,
+        "logo",
+        code,
+        screenshot
+      )
     );
     await this.saveTempProgram(program.id, "");
     return addedProgram;
   };
 
-  saveProgram = async (code: string, screenshot: string, program: ProgramModel): Promise<ProgramModel> => {
+  saveProgram = async (
+    code: string,
+    screenshot: string,
+    program: ProgramModel
+  ): Promise<ProgramModel> => {
     if (program.id && program.storageType === ProgramStorageType.gallery) {
       const prog = await this.personalRepository.get(program.id);
       prog.screenshot = screenshot;
@@ -88,11 +114,14 @@ export class ProgramManagementService {
     throw new Error("Program is from wrong source");
   };
 
-  private async loadProgramFromStorage(storageType?: ProgramStorageType, programId?: string): Promise<ProgramModel> {
+  private async loadProgramFromStorage(
+    storageType?: ProgramStorageType,
+    programId?: string
+  ): Promise<ProgramModel> {
     let program: ProgramModel | undefined = undefined;
 
     if (!storageType || !programId) {
-      program = new ProgramModel("", undefined, "", "logo", defaultPlaygroundProgram, "");
+      program = new ProgramModel("", undefined, "", "logo", "", "");
     } else {
       switch (storageType) {
         case ProgramStorageType.samples:
@@ -105,6 +134,10 @@ export class ProgramManagementService {
           break;
         case ProgramStorageType.gist:
           throw new Error("Not implemented");
+        case ProgramStorageType.tutorial:
+          program = await this.tutorialsRepository.get(programId);
+          program.storageType = ProgramStorageType.tutorial;
+          break;
       }
     }
 

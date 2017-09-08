@@ -17,7 +17,10 @@ import {
 } from "app/services/program/program-management.service";
 
 import { ShareScreenshotModalComponent } from "app/ui/playground/share-screenshot-modal.component";
-import { CodeInputLogoComponent, ICodeInputComponentProps } from "app/ui/_shared/code-input-logo.component";
+import {
+  CodeInputLogoComponent,
+  ICodeInputComponentProps
+} from "app/ui/_shared/code-input-logo.component";
 import { SaveProgramModalComponent } from "app/ui/playground/save-program-modal.component";
 import { ProgramControlsMenuComponent } from "app/ui/playground/program-controls-menu.component";
 import { AlertMessageComponent } from "app/ui/_generic/alert-message.component";
@@ -38,10 +41,15 @@ interface IComponentState {
   screenshotDataToSave: string;
 }
 
-export class CodePanelComponent extends React.Component<ICodePanelComponentProps, IComponentState> {
-  @lazyInject(INotificationService) private notificationService: INotificationService;
+export class CodePanelComponent extends React.Component<
+  ICodePanelComponentProps,
+  IComponentState
+> {
+  @lazyInject(INotificationService)
+  private notificationService: INotificationService;
   @lazyInject(INavigationService) private navigationService: INavigationService;
-  @lazyInject(ProgramManagementService) private managementService: ProgramManagementService;
+  @lazyInject(ProgramManagementService)
+  private managementService: ProgramManagementService;
   private subscriptions: ISubscription[] = [];
   private saveTempCodeTimer: any = undefined;
 
@@ -95,9 +103,15 @@ export class CodePanelComponent extends React.Component<ICodePanelComponentProps
           stopProgram={execService.stopCurrentProgram}
           exportImage={this.exportScreenshot}
           saveAsNew={this.showSaveDialog}
-          saveCurrent={this.props.saveCurrentEnabled ? this.saveCurrentProgram : undefined}
+          saveCurrent={
+            this.props.saveCurrentEnabled ? this.saveCurrentProgram : undefined
+          }
           revertChanges={
-            this.state.hasLocalTempChanges && this.props.program.id ? this.revertCurrentProgram : undefined
+            this.state.hasLocalTempChanges && this.props.program.id ? (
+              this.revertCurrentProgram
+            ) : (
+              undefined
+            )
           }
         />
         <CodeInputLogoComponent
@@ -111,7 +125,10 @@ export class CodePanelComponent extends React.Component<ICodePanelComponentProps
         {this.state.hasLocalTempChanges &&
         this.props.program.id && (
           <div className="alert-not-stored-container">
-            <AlertMessageComponent message={_T("You have local changes in this program. ")} type="warning" />
+            <AlertMessageComponent
+              message={_T("You have local changes in this program. ")}
+              type="warning"
+            />
           </div>
         )}
       </div>
@@ -119,7 +136,6 @@ export class CodePanelComponent extends React.Component<ICodePanelComponentProps
   }
 
   onCodeChanged = (newCode: string) => {
-    console.log("code changed", newCode);
     this.props.executionService.updateCode(newCode, "internal");
     if (this.saveTempCodeTimer) {
       clearTimeout(this.saveTempCodeTimer);
@@ -129,7 +145,7 @@ export class CodePanelComponent extends React.Component<ICodePanelComponentProps
       if (!this.state.hasLocalTempChanges) {
         this.setState({ hasLocalTempChanges: true });
       }
-    }, 3000);
+    }, 500);
   };
 
   renderSaveModal(): JSX.Element | null {
@@ -152,7 +168,10 @@ export class CodePanelComponent extends React.Component<ICodePanelComponentProps
     this.setState({ isSaveModalActive: true });
   };
 
-  saveProgramAsCallback = async (programName: string, code: string): Promise<void> => {
+  saveProgramAsCallback = async (
+    programName: string,
+    code: string
+  ): Promise<void> => {
     const screenshot = await this.props.executionService.getScreenshot(true);
     const attrs: IProgramToSaveAttributes = {
       name: programName,
@@ -168,7 +187,11 @@ export class CodePanelComponent extends React.Component<ICodePanelComponentProps
       code,
       screenshot
     );
-    const newProgram = await this.managementService.saveProgramAs(code, screenshot, programModel);
+    const newProgram = await this.managementService.saveProgramAs(
+      code,
+      screenshot,
+      programModel
+    );
     this.notificationService.push({
       type: "info",
       title: "Success",
@@ -177,14 +200,21 @@ export class CodePanelComponent extends React.Component<ICodePanelComponentProps
     this.setState({ hasLocalTempChanges: false });
     if (this.props.navigateAutomaticallyAfterSaveAs) {
       this.navigationService.navigate({
-        route: Routes.playgroundCode.build({ programId: newProgram.id, storageType: ProgramStorageType.gallery })
+        route: Routes.playgroundCode.build({
+          programId: newProgram.id,
+          storageType: ProgramStorageType.gallery
+        })
       });
     }
   };
 
   saveCurrentProgram = async () => {
     const screenshot = await this.props.executionService.getScreenshot(true);
-    await this.managementService.saveProgram(this.props.executionService.code, screenshot, this.props.program);
+    await this.managementService.saveProgram(
+      this.props.executionService.code,
+      screenshot,
+      this.props.program
+    );
     this.notificationService.push({
       type: "primary",
       title: _T("Message"),
@@ -194,7 +224,9 @@ export class CodePanelComponent extends React.Component<ICodePanelComponentProps
   };
 
   revertCurrentProgram = async () => {
-    const code = await this.managementService.revertLocalTempChanges(this.props.program);
+    const code = await this.managementService.revertLocalTempChanges(
+      this.props.program
+    );
     this.props.executionService.updateCode(code, "external");
     this.setState({ hasLocalTempChanges: false });
   };
@@ -204,7 +236,9 @@ export class CodePanelComponent extends React.Component<ICodePanelComponentProps
     if (!data) {
       this.notificationService.push({
         title: _T("Message"),
-        message: _T("Screenshot is not available because program has not been executed yet."),
+        message: _T(
+          "Screenshot is not available because program has not been executed yet."
+        ),
         type: "primary"
       });
     }

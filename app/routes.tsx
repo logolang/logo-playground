@@ -1,6 +1,11 @@
 import * as React from "react";
 
-import { HashRouter as Router, Route, Switch, Redirect } from "react-router-dom";
+import {
+  HashRouter as Router,
+  Route,
+  Switch,
+  Redirect
+} from "react-router-dom";
 import { RouteInfo } from "app/utils/route-info";
 
 import { UserProfileComponent } from "app/ui/user-profile.component";
@@ -17,11 +22,15 @@ import { LoginComponent } from "app/ui/login.component";
 import { lazyInject } from "app/di";
 import { INavigationService } from "app/services/infrastructure/navigation.service";
 import { INotificationService } from "app/services/infrastructure/notification.service";
-import { TutorialsPageComponent, ITutorialPageRouteParams } from "app/ui/tutorials/tutorials-page.component";
+import {
+  TutorialsPageComponent,
+  ITutorialPageRouteParams
+} from "app/ui/tutorials/tutorials-page.component";
 
 export class Routes extends React.Component<object, object> {
   @lazyInject(INavigationService) private navigationService: INavigationService;
-  @lazyInject(INotificationService) private notificationService: INotificationService;
+  @lazyInject(INotificationService)
+  private notificationService: INotificationService;
 
   private router: any;
 
@@ -36,23 +45,56 @@ export class Routes extends React.Component<object, object> {
     return (
       <Router ref={router => (this.router = router)}>
         <div>
-          <MessageTosterComponent events={this.notificationService.getObservable()} />
+          <MessageTosterComponent
+            events={this.notificationService.getObservable()}
+          />
           <Switch>
-            <Route path={Routes.loginRoot.relativePath} component={LoginComponent} />
+            <Route
+              path={Routes.loginRoot.relativePath}
+              component={LoginComponent}
+            />
 
-            <Route path={Routes.galleryRoot.relativePath} component={GalleryComponent} />
+            <Route
+              path={Routes.galleryRoot.relativePath}
+              component={GalleryComponent}
+            />
 
-            <Route path={Routes.settingsRoot.relativePath} component={UserProfileComponent} />
+            <Route
+              path={Routes.settingsRoot.relativePath}
+              component={UserProfileComponent}
+            />
 
-            <Route path={Routes.aboutRoot.relativePath} component={AboutComponent} />
+            <Route
+              path={Routes.aboutRoot.relativePath}
+              component={AboutComponent}
+            />
 
-            <Route exact path={Routes.playgroundRoot.relativePath} component={PlaygroundPageComponent} />
-            <Route exact path={Routes.playgroundCode.relativePath} component={PlaygroundPageComponent} />
+            <Route
+              exact
+              path={Routes.playgroundRoot.relativePath}
+              component={PlaygroundPageComponent}
+            />
+            <Route
+              exact
+              path={Routes.playgroundCode.relativePath}
+              component={PlaygroundPageComponent}
+            />
 
-            <Route path={Routes.documentationRoot.relativePath} component={DocumentationComponent} />
+            <Route
+              path={Routes.documentationRoot.relativePath}
+              component={DocumentationComponent}
+            />
 
-            <Route exact path={Routes.tutorialsRoot.relativePath} component={TutorialsPageComponent} />
-            <Route exact path={Routes.tutorialSpecified.relativePath} component={TutorialsPageComponent} />
+            <Route
+              exact
+              path={Routes.tutorialsRoot.relativePath}
+              component={TutorialsPageComponent}
+            />
+            <Route
+              exact
+              path={Routes.tutorialSpecified.relativePath}
+              component={TutorialsPageComponent}
+            />
 
             <Redirect from="/" to={Routes.galleryRoot.relativePath} />
 
@@ -78,15 +120,21 @@ export class Routes extends React.Component<object, object> {
     "/code/:storageType/:programId"
   );
 
-  static readonly playgroundRoot = new RouteInfo(Routes.root, "/code/playground");
+  static readonly playgroundRoot = new RouteInfo(
+    Routes.root,
+    "/code/playground"
+  );
 
-  static readonly playgroundLoadFromGist = new RouteInfo<{ gistId: string }>(Routes.playgroundCode, "/gist/:gistId");
+  static readonly playgroundLoadFromGist = new RouteInfo<{ gistId: string }>(
+    Routes.playgroundCode,
+    "/gist/:gistId"
+  );
 
   static readonly documentationRoot = new RouteInfo(Routes.root, "/doc");
 
   static readonly tutorialsRoot = new RouteInfo(Routes.root, "/tutorials");
   static readonly tutorialSpecified = new RouteInfo<ITutorialPageRouteParams>(
     Routes.tutorialsRoot,
-    "/:tutorialId/:stepIndex"
+    "/:tutorialId/:stepId"
   );
 }

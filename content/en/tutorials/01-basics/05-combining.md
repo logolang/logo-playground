@@ -1,5 +1,3 @@
-# Combining commands
-
 With Logo you can type in a few commands in one command row, one after the other.
 You need to put a space between one command and the next.
 For example: ```forward 50 left 90```
