@@ -8,46 +8,27 @@ import { callActionSafe } from "app/utils/async-helpers";
 import { subscribeLoadDataOnPropsParamsChange } from "app/utils/react-helpers";
 
 import { MainMenuComponent } from "app/ui/main-menu.component";
-import {
-  GoldenLayoutComponent,
-  IPanelConfig,
-  GoldenLayoutConfig
-} from "app/ui/_shared/golden-layout.component";
-import {
-  CodePanelComponent,
-  ICodePanelComponentProps
-} from "app/ui/playground/code-panel.component";
-import {
-  OutputPanelComponent,
-  IOutputPanelComponentProps
-} from "app/ui/playground/output-panel.component";
+import { GoldenLayoutComponent, IPanelConfig, GoldenLayoutConfig } from "app/ui/_shared/golden-layout.component";
+import { CodePanelComponent, ICodePanelComponentProps } from "app/ui/playground/code-panel.component";
+import { OutputPanelComponent, IOutputPanelComponentProps } from "app/ui/playground/output-panel.component";
 
 import { _T } from "app/services/customizations/localization.service";
 import { lazyInject } from "app/di";
 import { ProgramsSamplesRepository } from "app/services/gallery/gallery-samples.repository";
 import { ProgramModel } from "app/services/program/program.model";
-import { ProgramExecutionService } from "app/services/program/program-execution.service";
+import { ProgramExecutionContext } from "app/services/program/program-execution.context";
 import { INotificationService } from "app/services/infrastructure/notification.service";
 import { TitleService } from "app/services/infrastructure/title.service";
 import {
   ProgramsLocalStorageRepository,
   IProgramsRepository
 } from "app/services/gallery/personal-gallery-localstorage.repository";
-import {
-  IUserSettingsService,
-  IUserSettings
-} from "app/services/customizations/user-settings.service";
+import { IUserSettingsService, IUserSettings } from "app/services/customizations/user-settings.service";
 
-import {
-  ProgramStorageType,
-  ProgramManagementService
-} from "app/services/program/program-management.service";
+import { ProgramStorageType, ProgramManagementService } from "app/services/program/program-management.service";
 
 import "./playground-page.component.scss";
-import {
-  ThemesService,
-  Theme
-} from "app/services/customizations/themes.service";
+import { ThemesService, Theme } from "app/services/customizations/themes.service";
 import { TurtlesService } from "app/services/customizations/turtles.service";
 
 interface IComponentState {
@@ -73,23 +54,16 @@ arc 360 50
 
 export { ProgramStorageType };
 
-interface IComponentProps
-  extends RouteComponentProps<IPlaygroundPageRouteParams> {}
+interface IComponentProps extends RouteComponentProps<IPlaygroundPageRouteParams> {}
 
-export class PlaygroundPageComponent extends React.Component<
-  IComponentProps,
-  IComponentState
-> {
-  @lazyInject(INotificationService)
-  private notificationService: INotificationService;
+export class PlaygroundPageComponent extends React.Component<IComponentProps, IComponentState> {
+  @lazyInject(INotificationService) private notificationService: INotificationService;
   @lazyInject(TitleService) private titleService: TitleService;
-  @lazyInject(ProgramManagementService)
-  private programManagementService: ProgramManagementService;
-  @lazyInject(IUserSettingsService)
-  private userSettingsService: IUserSettingsService;
+  @lazyInject(ProgramManagementService) private programManagementService: ProgramManagementService;
+  @lazyInject(IUserSettingsService) private userSettingsService: IUserSettingsService;
   @lazyInject(ThemesService) private themesService: ThemesService;
   @lazyInject(TurtlesService) private turtlesService: TurtlesService;
-  private executionService = new ProgramExecutionService();
+  private executionService = new ProgramExecutionContext();
 
   private errorHandler = (err: string) => {
     this.notificationService.push({ message: err, type: "danger" });
@@ -138,11 +112,10 @@ export class PlaygroundPageComponent extends React.Component<
   async componentDidMount() {
     this.titleService.setDocumentTitle(_T("Playground"));
     await this.loadData(this.props);
-    this.executionService.initHotkeys();
   }
 
   componentWillUnmount() {
-    this.executionService.disposeHotkeys();
+    /***/
   }
 
   layoutChanged = async (newLayoutJSON: string): Promise<void> => {
@@ -154,9 +127,7 @@ export class PlaygroundPageComponent extends React.Component<
   async loadData(props: IComponentProps) {
     this.setState({ isLoading: true });
 
-    const userSettings = await callActionSafe(this.errorHandler, async () =>
-      this.userSettingsService.get()
-    );
+    const userSettings = await callActionSafe(this.errorHandler, async () => this.userSettingsService.get());
     if (!userSettings) {
       return;
     }
@@ -175,11 +146,8 @@ export class PlaygroundPageComponent extends React.Component<
     }
 
     const theme = this.themesService.getTheme(userSettings.themeName);
-    const turtleImage = this.turtlesService.getTurtleImage(
-      userSettings.turtleId
-    );
+    const turtleImage = this.turtlesService.getTurtleImage(userSettings.turtleId);
 
-    this.executionService.setProgram(programModel.code);
     this.setState({
       isLoading: false,
       program: programModel,
@@ -198,57 +166,48 @@ export class PlaygroundPageComponent extends React.Component<
         <MainMenuComponent />
         <div className="ex-page-content">
           {this.state.program &&
-          this.state.userSettings &&
-          this.state.theme && (
-            <GoldenLayoutComponent
-              initialLayoutConfigJSON={this.state.pageLayoutConfigJSON || ""}
-              defaultLayoutConfigJSON={this.defaultLayoutConfigJSON}
-              onLayoutChange={this.layoutChanged}
-              panelsReloadCheck={(oldPanels, newPanels) => {
-                return (
-                  oldPanels[0].props.program.id !==
-                  newPanels[0].props.program.id
-                );
-              }}
-              panels={[
-                as<IPanelConfig<CodePanelComponent, ICodePanelComponentProps>>({
-                  title: this.state.program.name || _T("Playground"),
-                  componentName: "code-panel",
-                  componentType: CodePanelComponent,
-                  props: {
-                    saveCurrentEnabled:
-                      this.props.match.params.storageType ===
-                      ProgramStorageType.gallery,
-                    program: this.state.program,
-                    editorTheme: this.state.theme.codeEditorThemeName,
-                    executionService: this.executionService,
-                    navigateAutomaticallyAfterSaveAs: true
-                  }
-                }),
-                as<
-                  IPanelConfig<OutputPanelComponent, IOutputPanelComponentProps>
-                >({
-                  title: "Output",
-                  componentName: "output-panel",
-                  componentType: OutputPanelComponent,
-                  props: {
-                    logoExecutorProps: {
-                      height: 300,
-                      runCommands: this.executionService.runCommands,
-                      stopCommands: this.executionService.stopCommands,
-                      makeScreenshotCommands: this.executionService
-                        .makeScreenshotCommands,
-                      onIsRunningChanged: this.executionService
-                        .onIsRunningChanged,
-                      isDarkTheme: this.state.theme.isDark,
-                      customTurtleImage: this.state.turtleImage,
-                      customTurtleSize: this.state.userSettings.turtleSize
+            this.state.userSettings &&
+            this.state.theme && (
+              <GoldenLayoutComponent
+                initialLayoutConfigJSON={this.state.pageLayoutConfigJSON || ""}
+                defaultLayoutConfigJSON={this.defaultLayoutConfigJSON}
+                onLayoutChange={this.layoutChanged}
+                panelsReloadCheck={(oldPanels, newPanels) => {
+                  return oldPanels[0].props.program.id !== newPanels[0].props.program.id;
+                }}
+                panels={[
+                  as<IPanelConfig<CodePanelComponent, ICodePanelComponentProps>>({
+                    title: this.state.program.name || _T("Playground"),
+                    componentName: "code-panel",
+                    componentType: CodePanelComponent,
+                    props: {
+                      saveCurrentEnabled: this.props.match.params.storageType === ProgramStorageType.gallery,
+                      program: this.state.program,
+                      editorTheme: this.state.theme.codeEditorThemeName,
+                      executionService: this.executionService,
+                      navigateAutomaticallyAfterSaveAs: true
                     }
-                  }
-                })
-              ]}
-            />
-          )}
+                  }),
+                  as<IPanelConfig<OutputPanelComponent, IOutputPanelComponentProps>>({
+                    title: "Output",
+                    componentName: "output-panel",
+                    componentType: OutputPanelComponent,
+                    props: {
+                      logoExecutorProps: {
+                        height: 300,
+                        runCommands: this.executionService.runCommands,
+                        stopCommands: this.executionService.stopCommands,
+                        makeScreenshotCommands: this.executionService.makeScreenshotCommands,
+                        onIsRunningChanged: this.executionService.onIsRunningChanged,
+                        isDarkTheme: this.state.theme.isDark,
+                        customTurtleImage: this.state.turtleImage,
+                        customTurtleSize: this.state.userSettings.turtleSize
+                      }
+                    }
+                  })
+                ]}
+              />
+            )}
         </div>
       </div>
     );

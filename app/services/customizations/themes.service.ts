@@ -21,11 +21,41 @@ export class ThemesService {
       ]
     },
     {
+      name: "Litera",
+      isDark: false,
+      codeEditorThemeName: "eclipse",
+      styleLinks: [
+        "content/css/bulma/bulmaswatch.litera.min.css",
+        "content/css/codemirror/themes/eclipse.css",
+        "content/css/golden-layout/goldenlayout-light-theme.css"
+      ]
+    },
+    {
       name: "Slate",
       isDark: true,
       codeEditorThemeName: "abcdef",
       styleLinks: [
         "content/css/bulma/bulmaswatch.slate.min.css",
+        "content/css/codemirror/themes/abcdef.css",
+        "content/css/golden-layout/goldenlayout-dark-theme.css"
+      ]
+    },
+    {
+      name: "Yeti",
+      isDark: false,
+      codeEditorThemeName: "eclipse",
+      styleLinks: [
+        "content/css/bulma/bulmaswatch.yeti.min.css",
+        "content/css/codemirror/themes/eclipse.css",
+        "content/css/golden-layout/goldenlayout-light-theme.css"
+      ]
+    },
+    {
+      name: "Cyborg",
+      isDark: true,
+      codeEditorThemeName: "abcdef",
+      styleLinks: [
+        "content/css/bulma/bulmaswatch.cyborg.min.css",
         "content/css/codemirror/themes/abcdef.css",
         "content/css/golden-layout/goldenlayout-dark-theme.css"
       ]

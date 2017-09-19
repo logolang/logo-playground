@@ -1,5 +1,7 @@
 import * as React from "react";
 import { ISubscription } from "rxjs/Subscription";
+import { Observable } from "rxjs/Observable";
+import * as keymaster from "keymaster";
 
 import { as } from "app/utils/syntax-helpers";
 import { lazyInject } from "app/di";
@@ -9,7 +11,7 @@ import { Routes } from "app/routes";
 import { ProgramModel } from "app/services/program/program.model";
 import { INotificationService } from "app/services/infrastructure/notification.service";
 import { INavigationService } from "app/services/infrastructure/navigation.service";
-import { ProgramExecutionService } from "app/services/program/program-execution.service";
+import { ProgramExecutionContext } from "app/services/program/program-execution.context";
 import {
   ProgramManagementService,
   IProgramToSaveAttributes,
@@ -17,10 +19,7 @@ import {
 } from "app/services/program/program-management.service";
 
 import { ShareScreenshotModalComponent } from "app/ui/playground/share-screenshot-modal.component";
-import {
-  CodeInputLogoComponent,
-  ICodeInputComponentProps
-} from "app/ui/_shared/code-input-logo.component";
+import { CodeInputLogoComponent, ICodeInputComponentProps } from "app/ui/_shared/code-input-logo.component";
 import { SaveProgramModalComponent } from "app/ui/playground/save-program-modal.component";
 import { ProgramControlsMenuComponent } from "app/ui/playground/program-controls-menu.component";
 import { AlertMessageComponent } from "app/ui/_generic/alert-message.component";
@@ -29,27 +28,25 @@ import "./code-panel.component.scss";
 
 export interface ICodePanelComponentProps {
   editorTheme: string;
-  executionService: ProgramExecutionService;
+  executionService: ProgramExecutionContext;
   program: ProgramModel;
   saveCurrentEnabled: boolean;
   navigateAutomaticallyAfterSaveAs: boolean;
+  externalCodeChanges?: Observable<string>;
+  doNotShowLocalChangesIndicator?: boolean;
 }
 
 interface IComponentState {
   isSaveModalActive: boolean;
   hasLocalTempChanges: boolean;
   screenshotDataToSave: string;
+  code: string;
 }
 
-export class CodePanelComponent extends React.Component<
-  ICodePanelComponentProps,
-  IComponentState
-> {
-  @lazyInject(INotificationService)
-  private notificationService: INotificationService;
+export class CodePanelComponent extends React.Component<ICodePanelComponentProps, IComponentState> {
+  @lazyInject(INotificationService) private notificationService: INotificationService;
   @lazyInject(INavigationService) private navigationService: INavigationService;
-  @lazyInject(ProgramManagementService)
-  private managementService: ProgramManagementService;
+  @lazyInject(ProgramManagementService) private managementService: ProgramManagementService;
   private subscriptions: ISubscription[] = [];
   private saveTempCodeTimer: any = undefined;
 
@@ -58,7 +55,8 @@ export class CodePanelComponent extends React.Component<
     this.state = {
       isSaveModalActive: false,
       screenshotDataToSave: "",
-      hasLocalTempChanges: this.props.program.hasTempLocalModifications
+      hasLocalTempChanges: this.props.program.hasTempLocalModifications,
+      code: this.props.program.code
     };
   }
 
@@ -69,18 +67,27 @@ export class CodePanelComponent extends React.Component<
         this.setState({});
       })
     );
-    this.subscriptions.push(
-      this.props.executionService.codeChangesStream.subscribe(change => {
-        if (change.source === "external") {
-          this.setState({});
-        }
-      })
-    );
+    if (this.props.externalCodeChanges) {
+      this.subscriptions.push(
+        this.props.externalCodeChanges.subscribe(newCode => {
+          this.onCodeChanged(newCode);
+        })
+      );
+    }
+    keymaster("f8, f9", () => {
+      this.onRunProgram();
+      return false;
+    });
   }
 
   componentWillUnmount() {
     this.subscriptions.forEach(s => s.unsubscribe());
+    keymaster.unbind("f8, f9");
   }
+
+  onRunProgram = (): void => {
+    this.props.executionService.executeProgram(this.state.code);
+  };
 
   render(): JSX.Element {
     const execService = this.props.executionService;
@@ -99,44 +106,36 @@ export class CodePanelComponent extends React.Component<
         <ProgramControlsMenuComponent
           isRunning={execService.isRunning}
           existingProgramName={this.props.program.name}
-          runProgram={execService.runCurrentProgram}
-          stopProgram={execService.stopCurrentProgram}
+          runProgram={this.onRunProgram}
+          stopProgram={execService.stopProgram}
           exportImage={this.exportScreenshot}
           saveAsNew={this.showSaveDialog}
-          saveCurrent={
-            this.props.saveCurrentEnabled ? this.saveCurrentProgram : undefined
-          }
+          saveCurrent={this.props.saveCurrentEnabled ? this.saveCurrentProgram : undefined}
           revertChanges={
-            this.state.hasLocalTempChanges && this.props.program.id ? (
-              this.revertCurrentProgram
-            ) : (
-              undefined
-            )
+            this.state.hasLocalTempChanges && this.props.program.id ? this.revertCurrentProgram : undefined
           }
         />
         <CodeInputLogoComponent
           className="code-input-container"
           editorTheme={this.props.editorTheme}
-          code={execService.code}
+          code={this.state.code}
           focusCommands={execService.focusCommands}
           onChanged={this.onCodeChanged}
-          onHotkey={execService.runCurrentProgram}
+          onHotkey={this.onRunProgram}
         />
         {this.state.hasLocalTempChanges &&
-        this.props.program.id && (
-          <div className="alert-not-stored-container">
-            <AlertMessageComponent
-              message={_T("You have local changes in this program. ")}
-              type="warning"
-            />
-          </div>
-        )}
+          this.props.program.id &&
+          !this.props.doNotShowLocalChangesIndicator && (
+            <div className="alert-not-stored-container">
+              <AlertMessageComponent message={_T("You have local changes in this program. ")} type="warning" />
+            </div>
+          )}
       </div>
     );
   }
 
   onCodeChanged = (newCode: string) => {
-    this.props.executionService.updateCode(newCode, "internal");
+    this.setState({ code: newCode });
     if (this.saveTempCodeTimer) {
       clearTimeout(this.saveTempCodeTimer);
     }
@@ -152,7 +151,6 @@ export class CodePanelComponent extends React.Component<
     if (this.state.isSaveModalActive) {
       return (
         <SaveProgramModalComponent
-          code={this.props.executionService.code}
           programName={this.props.program.name}
           onClose={() => {
             this.setState({ isSaveModalActive: false });
@@ -168,29 +166,13 @@ export class CodePanelComponent extends React.Component<
     this.setState({ isSaveModalActive: true });
   };
 
-  saveProgramAsCallback = async (
-    programName: string,
-    code: string
-  ): Promise<void> => {
+  saveProgramAsCallback = async (newProgramName: string): Promise<void> => {
     const screenshot = await this.props.executionService.getScreenshot(true);
-    const attrs: IProgramToSaveAttributes = {
-      name: programName,
-      code: code,
-      programId: ""
-    };
-    const originalProgram = this.props.program;
-    const programModel = new ProgramModel(
-      originalProgram.id,
-      originalProgram.storageType,
-      programName,
-      originalProgram.lang,
-      code,
-      screenshot
-    );
     const newProgram = await this.managementService.saveProgramAs(
-      code,
+      newProgramName,
       screenshot,
-      programModel
+      this.state.code,
+      this.props.program
     );
     this.notificationService.push({
       type: "info",
@@ -210,11 +192,7 @@ export class CodePanelComponent extends React.Component<
 
   saveCurrentProgram = async () => {
     const screenshot = await this.props.executionService.getScreenshot(true);
-    await this.managementService.saveProgram(
-      this.props.executionService.code,
-      screenshot,
-      this.props.program
-    );
+    await this.managementService.saveProgram(screenshot, this.state.code, this.props.program);
     this.notificationService.push({
       type: "primary",
       title: _T("Message"),
@@ -224,11 +202,8 @@ export class CodePanelComponent extends React.Component<
   };
 
   revertCurrentProgram = async () => {
-    const code = await this.managementService.revertLocalTempChanges(
-      this.props.program
-    );
-    this.props.executionService.updateCode(code, "external");
-    this.setState({ hasLocalTempChanges: false });
+    const code = await this.managementService.revertLocalTempChanges(this.props.program);
+    this.setState({ hasLocalTempChanges: false, code: code });
   };
 
   exportScreenshot = async () => {
@@ -236,9 +211,7 @@ export class CodePanelComponent extends React.Component<
     if (!data) {
       this.notificationService.push({
         title: _T("Message"),
-        message: _T(
-          "Screenshot is not available because program has not been executed yet."
-        ),
+        message: _T("Screenshot is not available because program has not been executed yet."),
         type: "primary"
       });
     }

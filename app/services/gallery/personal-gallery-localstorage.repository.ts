@@ -2,6 +2,7 @@ import { RandomHelper } from "app/utils/random-helper";
 import { injectable, inject } from "app/di";
 import { ICurrentUserService } from "app/services/login/current-user.service";
 import { ProgramModel } from "app/services/program/program.model";
+import { ProgramModelConverter } from "app/services/program/program-model.converter";
 
 export interface IProgramsRepository {
   getAll(): Promise<ProgramModel[]>;
@@ -49,13 +50,13 @@ export class ProgramsLocalStorageRepository implements IProgramsRepository {
       program.dateCreated = new Date();
       program.dateLastEdited = new Date();
     }
-    this.storage.setItem(this.getStorageKey(program.id), program.toJson());
+    this.storage.setItem(this.getStorageKey(program.id), ProgramModelConverter.toJson(program));
     return program;
   }
 
   async update(program: ProgramModel): Promise<ProgramModel> {
     program.dateLastEdited = new Date();
-    this.storage.setItem(this.getStorageKey(program.id), program.toJson());
+    this.storage.setItem(this.getStorageKey(program.id), ProgramModelConverter.toJson(program));
     return program;
   }
 
@@ -80,7 +81,7 @@ export class ProgramsLocalStorageRepository implements IProgramsRepository {
     const data = this.storage.getItem(storageKey);
     if (data) {
       try {
-        const program = ProgramModel.fromJson(JSON.parse(data));
+        const program = ProgramModelConverter.fromJson(JSON.parse(data));
         return program;
       } catch (ex) {
         console.error("Error during parsing the program", data, ex);

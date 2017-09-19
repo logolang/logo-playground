@@ -11,20 +11,10 @@
   },
   "files.exclude": {
     "**/.git": true,
-    "**/node_modules": true
-  },
-  "prettier.tabWidth": 2,
-  "prettier.printWidth": 120,
-  "prettier.trailingComma": "none",
-  "prettier.singleQuote": false,
-  "prettier.bracketSpacing": true,
-  "prettier.jsxBracketSameLine": false,
-  "prettier.useTabs": false,
-
-  "files.exclude": {
+    "**/node_modules": true,
     ".atl-cache*": true,
-    "node": true,
-    "dist": true,
-    "reports": true
+    "**/node": true,
+    "**/dist": true,
+    "**/reports": true
   }
 }

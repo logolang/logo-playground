@@ -1,19 +1,11 @@
 import { Subject, BehaviorSubject } from "rxjs/Rx";
-import * as keymaster from "keymaster";
-
-import { ProgramStorageType } from "app/services/program/program-management.service";
 
 export interface ICreateScreenshotCommand {
   isSmall: boolean;
   whenReady: (data: string) => void;
 }
 
-export class ProgramExecutionService {
-  private _code = "";
-  public get code(): string {
-    return this._code;
-  }
-  public codeChangesStream = new Subject<{ code: string; source: "internal" | "external" }>();
+export class ProgramExecutionContext {
   public runCommands = new Subject<string>();
   public stopCommands = new Subject<void>();
   public focusCommands = new Subject<void>();
@@ -25,37 +17,17 @@ export class ProgramExecutionService {
     /**/
   }
 
-  setProgram = (code: string) => {
-    this.updateCode(code, "internal");
-  };
-
-  updateCode = (newCode: string, source: "internal" | "external") => {
-    this._code = newCode;
-    this.codeChangesStream.next({ code: newCode, source: source });
-  };
-
   get isRunning() {
     return this.onIsRunningChanged.getValue();
   }
 
-  initHotkeys = () => {
-    keymaster("f8, f9", () => {
-      this.runCurrentProgram();
-      return false;
-    });
-  };
-
-  disposeHotkeys = () => {
-    keymaster.unbind("f8, f9");
-  };
-
-  runCurrentProgram = () => {
+  executeProgram = (code: string) => {
     this.hasProgramBeenExecutedOnce = true;
-    this.runCommands.next(this.code);
+    this.runCommands.next(code);
     this.focusCommands.next();
   };
 
-  stopCurrentProgram = () => {
+  stopProgram = () => {
     this.stopCommands.next();
     this.focusCommands.next();
   };

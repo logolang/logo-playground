@@ -15,8 +15,7 @@ interface IComponentState {
 
 interface IComponentProps {
   programName: string;
-  code: string;
-  onSave(programName: string, code: string): Promise<void>;
+  onSave(programName: string): Promise<void>;
   onClose(): void;
 }
 
@@ -78,12 +77,11 @@ export class SaveProgramModalComponent extends React.Component<IComponentProps, 
     this.setState({ isSavingInProgress: true, errorMessage: "" });
     const attrs: IProgramToSaveAttributes = {
       name: this.state.programName,
-      code: this.props.code,
       programId: ""
     };
 
     try {
-      await this.props.onSave(this.state.programName, this.props.code);
+      await this.props.onSave(this.state.programName);
       this.props.onClose();
     } catch (ex) {
       const message = ex.toString();

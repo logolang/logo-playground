@@ -18,15 +18,10 @@ interface IComponentProps {
   onCancel: () => void;
 }
 
-export class TutorialSelectModalComponent extends React.Component<
-  IComponentProps,
-  IComponentState
-> {
+export class TutorialSelectModalComponent extends React.Component<IComponentProps, IComponentState> {
   constructor(props: IComponentProps) {
     super(props);
-    const selectedTutorial = this.props.tutorials.find(
-      t => t.id === this.props.currentTutorialId
-    );
+    const selectedTutorial = this.props.tutorials.find(t => t.id === this.props.currentTutorialId);
     if (!selectedTutorial) {
       throw new Error("Tutorial is not found " + this.props.currentTutorialId);
     }
@@ -49,13 +44,7 @@ export class TutorialSelectModalComponent extends React.Component<
   render(): JSX.Element | null {
     const selectedTutorial = this.state.currentSelectedTutorial;
     return (
-      <ModalComponent
-        show
-        width="medium"
-        withoutFooter
-        title={_T("Choose a tutorial")}
-        onCancel={this.props.onCancel}
-      >
+      <ModalComponent show width="medium" withoutFooter title={_T("Choose a tutorial")} onCancel={this.props.onCancel}>
         <div className="tutorial-select-modal-component">
           <div className="columns">
             <div className="column is-5">
@@ -92,8 +81,7 @@ export class TutorialSelectModalComponent extends React.Component<
                   <ul>
                     {selectedTutorial.steps.map(s => (
                       <li key={s.id}>
-                        {s.id === this.props.currentStepId &&
-                        selectedTutorial.id === this.props.currentTutorialId ? (
+                        {s.id === this.props.currentStepId && selectedTutorial.id === this.props.currentTutorialId ? (
                           <strong>{s.name}</strong>
                         ) : (
                           <span>{s.name}</span>
@@ -103,19 +91,11 @@ export class TutorialSelectModalComponent extends React.Component<
                   </ul>
                   <br />
                   {selectedTutorial.id === this.props.currentTutorialId ? (
-                    <button
-                      type="button"
-                      className="button is-primary"
-                      onClick={() => this.start()}
-                    >
+                    <button type="button" className="button is-info" onClick={() => this.start()}>
                       {_T("Continue")}
                     </button>
                   ) : (
-                    <button
-                      type="button"
-                      className="button is-primary"
-                      onClick={() => this.start()}
-                    >
+                    <button type="button" className="button is-info" onClick={() => this.start()}>
                       {_T("Start")}
                     </button>
                   )}
