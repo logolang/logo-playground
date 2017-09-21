@@ -34,39 +34,51 @@ export class TutorialSelectModalComponent extends React.Component<IComponentProp
     this.setState({
       currentSelectedTutorial: tutorial
     });
-    //this.props.onSelect(tutorialId);
   };
 
   start() {
-    this.props.onSelect(this.state.currentSelectedTutorial);
+    if (this.state.currentSelectedTutorial.id === this.props.currentTutorialId) {
+      this.props.onCancel();
+    } else {
+      this.props.onSelect(this.state.currentSelectedTutorial);
+    }
   }
 
   render(): JSX.Element | null {
     const selectedTutorial = this.state.currentSelectedTutorial;
     return (
-      <ModalComponent show width="medium" withoutFooter title={_T("Choose a tutorial")} onCancel={this.props.onCancel}>
+      <ModalComponent
+        show
+        width="medium"
+        title={_T("Choose a tutorial")}
+        onCancel={this.props.onCancel}
+        actionButtonText={selectedTutorial.id === this.props.currentTutorialId ? _T("Continue") : _T("Start")}
+        onConfirm={async () => {
+          this.start();
+        }}
+      >
         <div className="tutorial-select-modal-component">
           <div className="columns">
-            <div className="column is-5">
+            <div className="column is-5 tutorial-pick-menu-container">
               <aside className="menu">
                 <p className="menu-label">General</p>
                 <ul className="menu-list">
                   {this.props.tutorials.map((t, i) => (
-                    <li key={t.id}>
+                    <li key={i}>
                       <a
                         className={cn({
                           "is-active": t.id === selectedTutorial.id
                         })}
                         onClick={() => this.onSelect(t)}
                       >
-                        {t.label}
+                        {this.props.currentTutorialId === t.id ? <strong>{t.label}</strong> : <span>{t.label}</span>}
                       </a>
                     </li>
                   ))}
                 </ul>
               </aside>
             </div>
-            <div className="column is-7">
+            <div className="column is-7 tutorial-description-container">
               <div className="card">
                 <div className="card-content">
                   <p className="title">{selectedTutorial.label}</p>
@@ -78,7 +90,7 @@ export class TutorialSelectModalComponent extends React.Component<IComponentProp
                   )}
                   <p>{selectedTutorial.description}</p>
                   <br />
-                  <ul>
+                  <ul className="steps-list">
                     {selectedTutorial.steps.map(s => (
                       <li key={s.id}>
                         {s.id === this.props.currentStepId && selectedTutorial.id === this.props.currentTutorialId ? (
@@ -89,16 +101,6 @@ export class TutorialSelectModalComponent extends React.Component<IComponentProp
                       </li>
                     ))}
                   </ul>
-                  <br />
-                  {selectedTutorial.id === this.props.currentTutorialId ? (
-                    <button type="button" className="button is-info" onClick={() => this.start()}>
-                      {_T("Continue")}
-                    </button>
-                  ) : (
-                    <button type="button" className="button is-info" onClick={() => this.start()}>
-                      {_T("Start")}
-                    </button>
-                  )}
                 </div>
               </div>
             </div>
