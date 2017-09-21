@@ -9,7 +9,6 @@ interface IComponentProps {
   runProgram: () => void;
   stopProgram: () => void;
   existingProgramName?: string;
-  saveCurrent?: () => void;
   revertChanges?: () => void;
   saveAsNew?: () => void;
   exportImage: () => void;
@@ -48,17 +47,11 @@ export class ProgramControlsMenuComponent extends React.Component<IComponentProp
         <div className="dropdown is-right is-hoverable is-borderless">
           <div className="dropdown-trigger">
             <button className="button is-light" aria-haspopup="true" aria-controls="dropdown-menu6">
-              <i className="fa fa-bars" aria-hidden="true" />
+              <i className="fa fa-ellipsis-h" aria-hidden="true" />
             </button>
           </div>
           <div className="dropdown-menu" id="dropdown-menu6" role="menu">
             <div className="dropdown-content">
-              {this.props.existingProgramName &&
-              this.props.saveCurrent && (
-                <a className="dropdown-item" onClick={this.props.saveCurrent}>
-                  <span>{_T("Save program '%s'", { value: this.props.existingProgramName })}</span>
-                </a>
-              )}
               {this.props.revertChanges && (
                 <a
                   className="dropdown-item"
@@ -66,17 +59,29 @@ export class ProgramControlsMenuComponent extends React.Component<IComponentProp
                     this.props.revertChanges && this.props.revertChanges();
                   }}
                 >
+                  <i className="fa fa-undo" aria-hidden="true" />
+                  &nbsp;&nbsp;
                   {_T("Revert changes")}
                 </a>
               )}
-
+              {this.props.revertChanges && <hr className="dropdown-divider" />}
               {this.props.saveAsNew && (
                 <a className="dropdown-item" onClick={this.props.saveAsNew}>
-                  {_T("Save as new...")}
+                  <i className="fa fa-file-code-o" aria-hidden="true" />
+                  &nbsp;&nbsp;
+                  {_T("Save to personal library")}
                 </a>
               )}
+              <a className="dropdown-item">
+                <i className="fa fa-share-alt" aria-hidden="true" />
+                &nbsp;&nbsp;
+                {_T("Share")}
+              </a>
+              <hr className="dropdown-divider" />
               <a className="dropdown-item" onClick={this.props.exportImage}>
-                <span>{_T("Take Screenshot")}</span>
+                <i className="fa fa-camera" aria-hidden="true" />
+                &nbsp;&nbsp;
+                {_T("Take screenshot")}
               </a>
             </div>
           </div>

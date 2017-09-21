@@ -110,7 +110,6 @@ export class CodePanelComponent extends React.Component<ICodePanelComponentProps
           stopProgram={execService.stopProgram}
           exportImage={this.exportScreenshot}
           saveAsNew={this.showSaveDialog}
-          saveCurrent={this.props.saveCurrentEnabled ? this.saveCurrentProgram : undefined}
           revertChanges={
             this.state.hasLocalTempChanges && this.props.program.id ? this.revertCurrentProgram : undefined
           }
@@ -168,7 +167,7 @@ export class CodePanelComponent extends React.Component<ICodePanelComponentProps
 
   saveProgramAsCallback = async (newProgramName: string): Promise<void> => {
     const screenshot = await this.props.executionService.getScreenshot(true);
-    const newProgram = await this.managementService.saveProgramAs(
+    const newProgram = await this.managementService.saveProgramToLibrary(
       newProgramName,
       screenshot,
       this.state.code,
@@ -188,17 +187,6 @@ export class CodePanelComponent extends React.Component<ICodePanelComponentProps
         })
       });
     }
-  };
-
-  saveCurrentProgram = async () => {
-    const screenshot = await this.props.executionService.getScreenshot(true);
-    await this.managementService.saveProgram(screenshot, this.state.code, this.props.program);
-    this.notificationService.push({
-      type: "primary",
-      title: _T("Message"),
-      message: _T("Program has been saved successfully.")
-    });
-    this.setState({ hasLocalTempChanges: false });
   };
 
   revertCurrentProgram = async () => {

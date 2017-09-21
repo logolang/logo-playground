@@ -10,6 +10,12 @@ html {
   right: 0;
 }
 
+.navbar-mobile-fix {
+  @media screen and (max-width: 1008px) {
+    min-height: inherit;
+  }
+}
+
 /* Application specific styles */
 .ex-app-logo {
   background-image: url(../images/logo_black.png);

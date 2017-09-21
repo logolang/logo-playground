@@ -53,7 +53,7 @@ export class ProgramManagementService {
     return program.code;
   };
 
-  saveProgramAs = async (
+  saveProgramToLibrary = async (
     newProgramName: string,
     newScreenshot: string,
     newCode: string,
@@ -76,19 +76,6 @@ export class ProgramManagementService {
     const addedProgram = this.personalRepository.add(newProgram);
     await this.saveTempProgram(program.id, "");
     return addedProgram;
-  };
-
-  saveProgram = async (newScreenshot: string, newCode: string, program: ProgramModel): Promise<ProgramModel> => {
-    if (program.id && program.storageType === ProgramStorageType.gallery) {
-      const prog = await this.personalRepository.get(program.id);
-      prog.screenshot = newScreenshot;
-      prog.code = newCode;
-      prog.name = program.name;
-      const savedProgram = await this.personalRepository.update(prog);
-      await this.saveTempProgram(program.id, "");
-      return savedProgram;
-    }
-    throw new Error("Program is from wrong source");
   };
 
   private async loadProgramFromStorage(storageType?: ProgramStorageType, programId?: string): Promise<ProgramModel> {
