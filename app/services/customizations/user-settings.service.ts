@@ -4,7 +4,9 @@ import { ICurrentUserService } from "app/services/login/current-user.service";
 
 export abstract class IUserSettingsService {
   abstract get(): Promise<IUserSettings>;
-  abstract update<K extends keyof IUserSettings>(update: Pick<IUserSettings, K>): Promise<void>;
+  abstract update<K extends keyof IUserSettings>(
+    update: Pick<IUserSettings, K>
+  ): Promise<void>;
 }
 
 export interface IUserSettings {
@@ -12,21 +14,33 @@ export interface IUserSettings {
   turtleSize: number;
   themeName: string;
   localeId: string;
+  currentTutorialInfo?: ICurrentTutorialInfo;
+  playgroundLayoutJSON?: string;
+  tutorialsLayoutJSON?: string;
 }
 
-@injectable()
-export /**
+export interface ICurrentTutorialInfo {
+  tutorialId: string;
+  stepId: string;
+}
+
+@injectable() /**
  * This service is to store and get user settings
  * This settings will be probably synchronized to some central settings storage, so User will be able to have them same on all computers and browsers
  * Currently using local browser storage
  */
-class UserSettingsBrowserLocalStorageService implements IUserSettingsService {
+export class UserSettingsBrowserLocalStorageService
+  implements IUserSettingsService {
   private localStorage: LocalStorageService<IUserSettings>;
   private currentData: IUserSettings;
 
-  constructor(@inject(ICurrentUserService) private currentUser: ICurrentUserService) {
+  constructor(
+    @inject(ICurrentUserService) private currentUser: ICurrentUserService
+  ) {
     const userId = this.currentUser.getLoginStatus().userInfo.attributes.email;
-    this.localStorage = new LocalStorageService<IUserSettings>(`logo-sandbox-${userId}-settings`, {} as any);
+    this.localStorage = new LocalStorageService<
+      IUserSettings
+    >(`logo-sandbox-${userId}-settings`, {} as any);
     const localStorageValue = this.localStorage.getValue();
 
     //Apply default values
@@ -43,7 +57,9 @@ class UserSettingsBrowserLocalStorageService implements IUserSettingsService {
     return this.currentData;
   }
 
-  async update<K extends keyof IUserSettings>(update: Pick<IUserSettings, K>): Promise<void> {
+  async update<K extends keyof IUserSettings>(
+    update: Pick<IUserSettings, K>
+  ): Promise<void> {
     Object.assign(this.currentData, update);
     return this.saveDataToStorage();
   }

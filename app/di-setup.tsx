@@ -1,29 +1,57 @@
-﻿import { container } from "app/di";
+import { container } from "app/di";
 
-import { AjaxService, IAjaxService } from "app/services/infrastructure/ajax-service";
+import {
+  AjaxService,
+  IAjaxService
+} from "app/services/infrastructure/ajax-service";
 import { AppConfigLoader } from "app/services/config/app-config-loader";
-import { CurrentUserService, ICurrentUserService } from "app/services/login/current-user.service";
-import { LocalizedContentLoader, ILocalizedContentLoader } from "app/services/infrastructure/localized-content-loader";
-import { TutorialsContentService, ITutorialsContentService } from "app/services/tutorials/tutorials-content-service";
+import {
+  CurrentUserService,
+  ICurrentUserService
+} from "app/services/login/current-user.service";
+import {
+  LocalizedContentLoader,
+  ILocalizedContentLoader
+} from "app/services/infrastructure/localized-content-loader";
+import {
+  TutorialsContentService,
+  ITutorialsContentService
+} from "app/services/tutorials/tutorials-content-service";
 import { ProgramsLocalStorageRepository } from "app/services/gallery/personal-gallery-localstorage.repository";
-import { UserDataBrowserLocalStorageService, IUserDataService } from "app/services/customizations/user-data.service";
+import {
+  LocalTempCodeStorage,
+  ILocalTempCodeStorage
+} from "app/services/program/local-temp-code.storage";
 import {
   UserSettingsBrowserLocalStorageService,
   IUserSettingsService
 } from "app/services/customizations/user-settings.service";
-import { NotificationService, INotificationService } from "app/services/infrastructure/notification.service";
+import {
+  NotificationService,
+  INotificationService
+} from "app/services/infrastructure/notification.service";
 import { TitleService } from "app/services/infrastructure/title.service";
-import { LocalizationService, _T } from "app/services/customizations/localization.service";
-import { NavigationService, INavigationService } from "app/services/infrastructure/navigation.service";
-import { ImageUploadImgurService, ImageUploadService } from "app/services/infrastructure/image-upload-imgur.service";
+import {
+  LocalizationService,
+  _T
+} from "app/services/customizations/localization.service";
+import {
+  NavigationService,
+  INavigationService
+} from "app/services/infrastructure/navigation.service";
+import {
+  ImageUploadImgurService,
+  ImageUploadService
+} from "app/services/infrastructure/image-upload-imgur.service";
 import { IAppInfo } from "app/services/infrastructure/app-info";
 import { AppConfig } from "app/services/config/app-config";
-import { ThemeCustomizationsService } from "app/services/customizations/theme-customizations.service";
-import { TurtleCustomizationsService } from "app/services/customizations/turtle-customizations.service";
-import { UserCustomizationsProvider } from "app/services/customizations/user-customizations-provider";
+import { ThemesService } from "app/services/customizations/themes.service";
+import { TurtlesService } from "app/services/customizations/turtles.service";
 import { ProgramsSamplesRepository } from "app/services/gallery/gallery-samples.repository";
 import { GoogleAuthService } from "app/services/login/google-auth.service";
 import { LoginService, ILoginService } from "app/services/login/login.service";
+import { ProgramManagementService } from "app/services/program/program-management.service";
+import { TutorialsCodeRepository } from "app/services/tutorials/tutorials-code.repository";
 
 export class DependecyInjectionSetup {
   static async setup() {
@@ -41,16 +69,24 @@ export class DependecyInjectionSetup {
     const authService = new GoogleAuthService(
       "388088822786-2okb2ch7pov7d6oqk8chrq33u0ed0kfr.apps.googleusercontent.com"
     );
-    const loginService = new LoginService(authService, container.get(ICurrentUserService));
+    const loginService = new LoginService(
+      authService,
+      container.get(ICurrentUserService)
+    );
     container.bind(ILoginService).toConstantValue(loginService);
     await loginService.tryLoginUserAutomatically();
 
-    container.bind(IUserDataService).to(UserDataBrowserLocalStorageService);
-    container.bind(IUserSettingsService).to(UserSettingsBrowserLocalStorageService);
-
+    container
+      .bind(IUserSettingsService)
+      .to(UserSettingsBrowserLocalStorageService);
     const userSettings = await container.get(IUserSettingsService).get();
 
-    const contentLoader = new LocalizedContentLoader(container.get(IAjaxService), userSettings.localeId);
+    container.bind(ILocalTempCodeStorage).to(LocalTempCodeStorage);
+
+    const contentLoader = new LocalizedContentLoader(
+      container.get(IAjaxService),
+      userSettings.localeId
+    );
     container.bind(ILocalizedContentLoader).toConstantValue(contentLoader);
 
     const localizationData = await contentLoader.getFileContent("messages.po");
@@ -72,11 +108,14 @@ export class DependecyInjectionSetup {
     );
     container.bind(ImageUploadService).toConstantValue(imageUploadService);
 
-    container.bind(ThemeCustomizationsService).to(ThemeCustomizationsService);
-    container.bind(TurtleCustomizationsService).to(TurtleCustomizationsService);
-    container.bind(UserCustomizationsProvider).to(UserCustomizationsProvider);
+    container.bind(ThemesService).to(ThemesService);
+    container.bind(TurtlesService).to(TurtlesService);
 
-    container.bind(ProgramsLocalStorageRepository).to(ProgramsLocalStorageRepository);
+    container
+      .bind(ProgramsLocalStorageRepository)
+      .to(ProgramsLocalStorageRepository);
     container.bind(ProgramsSamplesRepository).to(ProgramsSamplesRepository);
+    container.bind(TutorialsCodeRepository).to(TutorialsCodeRepository);
+    container.bind(ProgramManagementService).to(ProgramManagementService);
   }
 }

@@ -5,13 +5,16 @@ import { injectable, inject } from "app/di";
 export interface ITutorialInfo {
   id: string;
   label: string;
-  steps: number;
+  steps: ITutorialStepInfo[];
   description: string;
 }
 
-export interface ITutorialStep {
+export interface ITutorialStepInfo {
+  id: string;
   name: string;
-  index: number;
+}
+
+export interface ITutorialStepContent {
   content: string;
   initialCode: string;
   resultCode: string;
@@ -22,14 +25,20 @@ export interface ITutorialStep {
  */
 export abstract class ITutorialsContentService {
   abstract getTutorialsList(): Promise<ITutorialInfo[]>;
-  abstract getSteps(tutorialId: string): Promise<ITutorialStep[]>;
+  abstract getStep(
+    tutorialId: string,
+    stepId: string
+  ): Promise<ITutorialStepContent>;
 }
 
 @injectable()
 export class TutorialsContentService implements ITutorialsContentService {
   private tutorialInfos: ITutorialInfo[] = [];
 
-  constructor(@inject(ILocalizedContentLoader) private contentLoader: ILocalizedContentLoader) {}
+  constructor(
+    @inject(ILocalizedContentLoader)
+    private contentLoader: ILocalizedContentLoader
+  ) {}
 
   private getIdFromIndex(index: number): string {
     const id = (index + 1).toString();
@@ -39,7 +48,9 @@ export class TutorialsContentService implements ITutorialsContentService {
   async getTutorialsList(): Promise<ITutorialInfo[]> {
     if (this.tutorialInfos.length == 0) {
       try {
-        const result = await this.contentLoader.getFileContent("tutorials/index.json");
+        const result = await this.contentLoader.getFileContent(
+          "tutorials/index.json"
+        );
         const data = JSON.parse(result);
         this.tutorialInfos = data.tutorials;
       } catch (ex) {
@@ -49,47 +60,37 @@ export class TutorialsContentService implements ITutorialsContentService {
     return this.tutorialInfos;
   }
 
-  async getSteps(tutorialId: string): Promise<ITutorialStep[]> {
-    const tutorial = this.tutorialInfos.find(t => t.id === tutorialId);
-    if (!tutorial) {
-      return [];
-    }
-    const stepContentPromises: Promise<string>[] = [];
-    for (let stepIndex = 0; stepIndex < tutorial.steps; ++stepIndex) {
-      stepContentPromises.push(
-        this.contentLoader.getFileContent(`tutorials/${tutorialId}/step-${this.getIdFromIndex(stepIndex)}.md`)
-      );
-    }
+  async getStep(
+    tutorialId: string,
+    stepId: string
+  ): Promise<ITutorialStepContent> {
+    let stepContent = await this.contentLoader.getFileContent(
+      `tutorials/${tutorialId}/${stepId}.md`
+    );
     const md = new markdown({
       html: true // Enable HTML tags in source;
     });
-    const allStepsContent = await Promise.all(stepContentPromises);
-    const steps = allStepsContent.map((stepContent, index) => {
-      const resultCodeRegex = /```result[\s\S]*```/g;
-      let matches = stepContent.match(resultCodeRegex);
-      let resultCode = "";
-      if (matches && matches.length > 0) {
-        resultCode = matches[0].replace(/```result|```/g, "").trim() + "\r\n";
-        stepContent = stepContent.replace(resultCodeRegex, "");
-      }
+    const resultCodeRegex = /```result[\s\S]*```/g;
+    let matches = stepContent.match(resultCodeRegex);
+    let resultCode = "";
+    if (matches && matches.length > 0) {
+      resultCode = matches[0].replace(/```result|```/g, "").trim() + "\r\n";
+      stepContent = stepContent.replace(resultCodeRegex, "");
+    }
 
-      const initCodeRegex = /```init[\s\S]*```/g;
-      matches = stepContent.match(resultCodeRegex);
-      let initCode = "";
-      if (matches && matches.length > 0) {
-        initCode = matches[0].replace(/```init|```/g, "");
-        stepContent = stepContent.replace(initCodeRegex, "");
-      }
+    const initCodeRegex = /```init[\s\S]*```/g;
+    matches = stepContent.match(initCodeRegex);
+    let initCode = "";
+    if (matches && matches.length > 0) {
+      initCode = matches[0].replace(/```init|```/g, "");
+      stepContent = stepContent.replace(initCodeRegex, "");
+    }
 
-      const tutorialStep: ITutorialStep = {
-        name: "Step " + (index + 1),
-        content: md.render(stepContent),
-        initialCode: initCode,
-        resultCode: resultCode,
-        index: index
-      };
-      return tutorialStep;
-    });
-    return steps;
+    const tutorialStep: ITutorialStepContent = {
+      content: md.render(stepContent),
+      initialCode: initCode.trim(),
+      resultCode: resultCode.trim()
+    };
+    return tutorialStep;
   }
 }

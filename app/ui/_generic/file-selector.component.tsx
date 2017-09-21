@@ -65,7 +65,7 @@ export class FileSelectorComponent extends React.Component<IComponentProps, ICom
     return (
       <button
         type="button"
-        className={cn("btn btn-default", this.props.className)}
+        className={cn("button", this.props.className)}
         onClick={() => {
           this.fileInputEl && this.fileInputEl.click();
         }}

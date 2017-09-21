@@ -1,24 +1,10 @@
 import * as React from "react";
 import { RouteComponentProps } from "react-router-dom";
-import { Subject, Subscription } from "rxjs";
+import { Subject } from "rxjs";
 
 import { subscribeLoadDataOnPropsParamsChange } from "app/utils/react-helpers";
 import { callActionSafe } from "app/utils/async-helpers";
 import { as } from "app/utils/syntax-helpers";
-
-import { lazyInject } from "app/di";
-import { Routes } from "app/routes";
-import { _T } from "app/services/customizations/localization.service";
-import {
-  UserCustomizationsProvider,
-  IUserCustomizationsData
-} from "app/services/customizations/user-customizations-provider";
-
-import { ProgramExecutionService } from "app/services/program/program-execution.service";
-import { INotificationService } from "app/services/infrastructure/notification.service";
-import { TitleService } from "app/services/infrastructure/title.service";
-import { INavigationService } from "app/services/infrastructure/navigation.service";
-import { IUserDataService } from "app/services/customizations/user-data.service";
 
 import { MainMenuComponent } from "app/ui/main-menu.component";
 import { GoldenLayoutConfig, GoldenLayoutComponent, IPanelConfig } from "app/ui/_shared/golden-layout.component";
@@ -32,34 +18,53 @@ import {
   ITutorialLoadedData
 } from "app/ui/tutorials/tutorial-view.component";
 
+import { lazyInject } from "app/di";
+import { Routes } from "app/routes";
+import { _T } from "app/services/customizations/localization.service";
+import { INotificationService } from "app/services/infrastructure/notification.service";
+import { TitleService } from "app/services/infrastructure/title.service";
+import { INavigationService } from "app/services/infrastructure/navigation.service";
+import { IUserSettingsService, IUserSettings } from "app/services/customizations/user-settings.service";
+import { ProgramModel } from "app/services/program/program.model";
+import { ThemesService, Theme } from "app/services/customizations/themes.service";
+import { TurtlesService } from "app/services/customizations/turtles.service";
+import { ProgramExecutionContext } from "app/services/program/program-execution.context";
+import { ProgramManagementService, ProgramStorageType } from "app/services/program/program-management.service";
+import { ITutorialsContentService, ITutorialInfo } from "app/services/tutorials/tutorials-content-service";
+
 interface IComponentState {
   isLoading: boolean;
-  layoutReRenderIncrement: number;
-  pageLayoutConfig?: GoldenLayoutConfig;
-  userCustomizations?: IUserCustomizationsData;
+  pageLayoutConfigJSON?: string;
+  userSettings?: IUserSettings;
+  theme?: Theme;
+  turtleImage?: HTMLImageElement;
+  tutorials?: ITutorialInfo[];
+  tutorialId?: string;
+  stepId?: string;
+  program?: ProgramModel;
 }
 
 interface IComponentProps extends RouteComponentProps<ITutorialPageRouteParams> {}
 
 export interface ITutorialPageRouteParams {
   tutorialId: string;
-  stepIndex: string;
+  stepId: string;
 }
 
 export class TutorialsPageComponent extends React.Component<IComponentProps, IComponentState> {
   @lazyInject(INotificationService) private notificationService: INotificationService;
   @lazyInject(INavigationService) private navService: INavigationService;
   @lazyInject(TitleService) private titleService: TitleService;
-  @lazyInject(IUserDataService) private userDataService: IUserDataService;
-  @lazyInject(UserCustomizationsProvider) private userCustomizationsProvider: UserCustomizationsProvider;
+  @lazyInject(IUserSettingsService) private userSettingsService: IUserSettingsService;
+  @lazyInject(ThemesService) private themesService: ThemesService;
+  @lazyInject(TurtlesService) private turtlesService: TurtlesService;
+  @lazyInject(ProgramManagementService) private programManagementService: ProgramManagementService;
+  @lazyInject(ITutorialsContentService) private tutorialsLoader: ITutorialsContentService;
 
-  private executionService = new ProgramExecutionService();
-  private tutorialLoadRequest = new Subject<ITutorialRequestData>();
-  private tutorialLoadedStream = new Subject<ITutorialLoadedData>();
-  private tutorialNavigationStream = new Subject<ITutorialNavigationRequest>();
+  private executionService = new ProgramExecutionContext();
   private fixTheCodeStream = new Subject<string>();
 
-  private defaultLayoutConfig: GoldenLayoutConfig = {
+  private defaultLayoutConfigJSON = JSON.stringify({
     content: [
       {
         type: "row",
@@ -97,9 +102,7 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
         ]
       }
     ]
-  };
-  private layoutChangeSubject = new Subject<GoldenLayoutConfig>();
-  private subscriptions: Subscription[] = [];
+  });
 
   private errorHandler = (err: string) => {
     this.notificationService.push({ message: err, type: "danger" });
@@ -114,8 +117,7 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
 
   buildDefaultState(props: IComponentProps): IComponentState {
     const state: IComponentState = {
-      isLoading: true,
-      layoutReRenderIncrement: 0
+      isLoading: true
     };
     return state;
   }
@@ -123,153 +125,168 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
   async componentDidMount() {
     this.titleService.setDocumentTitle(_T("Tutorials"));
     await this.loadData(this.props);
-    this.executionService.initHotkeys();
-    this.subscriptions.push(this.layoutChangeSubject.subscribe(this.layoutChanged));
-    this.subscriptions.push(this.tutorialNavigationStream.subscribe(this.onTutorialNavigationRequest));
-    this.subscriptions.push(this.tutorialLoadedStream.subscribe(this.onTutorialLoaded));
-    this.subscriptions.push(this.fixTheCodeStream.subscribe(this.onFixTheCodeRequest));
   }
 
   componentWillUnmount() {
-    this.executionService.disposeHotkeys();
-    this.subscriptions.forEach(s => s.unsubscribe());
+    /** */
   }
 
-  layoutChanged = (newLayout: GoldenLayoutConfig): void => {
-    this.setState({ pageLayoutConfig: newLayout });
-    console.log("hoi layout", newLayout);
-    //this.userDataService.setPlaygroundLayoutJSON(JSON.stringify(newLayout));
+  layoutChanged = (newLayoutJSON: string): void => {
+    this.userSettingsService.update({ tutorialsLayoutJSON: newLayoutJSON });
   };
 
   async loadData(props: IComponentProps) {
-    const userCustomizations = await callActionSafe(this.errorHandler, async () =>
-      this.userCustomizationsProvider.getCustomizationsData()
-    );
-    if (!userCustomizations) {
+    const userSettings = await callActionSafe(this.errorHandler, async () => this.userSettingsService.get());
+    if (!userSettings) {
       return;
     }
 
-    const layoutConfig = this.defaultLayoutConfig;
+    const lastTutorialInfo = userSettings.currentTutorialInfo || {
+      tutorialId: "",
+      stepId: ""
+    };
+    const theme = this.themesService.getTheme(userSettings.themeName);
+    const turtleImage = this.turtlesService.getTurtleImage(userSettings.turtleId);
+    const tutorials = await this.tutorialsLoader.getTutorialsList();
 
-    const lastTutorialInfo = await callActionSafe(this.errorHandler, async () =>
-      this.userDataService.getCurrentTutorialInfo()
-    );
-    if (!lastTutorialInfo) {
-      return;
-    }
-    const initialCode = lastTutorialInfo.code;
-
-    const tutorialIdToLoad = props.match.params.tutorialId;
-    const stepIndex = this.parseStepIndexFromParam(props.match.params.stepIndex);
-    if (!tutorialIdToLoad) {
-      if (lastTutorialInfo.tutorialName) {
+    const tutorialId = props.match.params.tutorialId;
+    const stepId = props.match.params.stepId;
+    if (!tutorialId || !stepId) {
+      if (lastTutorialInfo.tutorialId && lastTutorialInfo.stepId) {
         this.navService.navigate({
           route: Routes.tutorialSpecified.build({
-            tutorialId: lastTutorialInfo.tutorialName,
-            stepIndex: this.formatStepIndexToParam(lastTutorialInfo.step)
+            tutorialId: lastTutorialInfo.tutorialId,
+            stepId: lastTutorialInfo.stepId
+          })
+        });
+        return;
+      } else {
+        this.navService.navigate({
+          route: Routes.tutorialSpecified.build({
+            tutorialId: tutorials[0].id,
+            stepId: tutorials[0].steps[0].id
           })
         });
         return;
       }
     }
 
-    this.setState({
-      isLoading: false,
-      layoutReRenderIncrement: this.state.layoutReRenderIncrement + 1,
-      pageLayoutConfig: layoutConfig,
-      userCustomizations: userCustomizations
+    const program = await this.programManagementService.loadProgram(
+      tutorialId + ":" + stepId,
+      ProgramStorageType.tutorial
+    );
+
+    this.userSettingsService.update({
+      currentTutorialInfo: {
+        tutorialId,
+        stepId
+      }
     });
 
-    const tutorialInfo: ITutorialRequestData = {
-      tutorialId: tutorialIdToLoad,
-      stepIndex: stepIndex,
-      code: initialCode
-    };
-    this.tutorialLoadRequest.next(tutorialInfo);
+    this.setState({
+      isLoading: false,
+      pageLayoutConfigJSON: userSettings.tutorialsLayoutJSON,
+      userSettings,
+      turtleImage,
+      theme,
+      tutorials,
+      tutorialId,
+      stepId,
+      program
+    });
   }
 
-  private parseStepIndexFromParam(stepIndexFromParam: string) {
-    const stepIndex = parseInt(stepIndexFromParam, 10);
-    if (isNaN(stepIndex)) {
-      return 0;
+  onFixTheCode = (code: string) => {
+    if (this.state.program) {
+      this.programManagementService.saveTempProgram(this.state.program.id, "");
+      this.fixTheCodeStream.next(code);
     }
-    return stepIndex - 1;
-  }
+  };
 
-  private formatStepIndexToParam(stepIndex: number): string {
-    return (stepIndex + 1).toString();
-  }
-
-  onTutorialNavigationRequest = (request: ITutorialNavigationRequest) => {
+  onNavigateRequest = async (tutorialId: string, stepId: string) => {
+    if (this.state.program) {
+      await this.programManagementService.revertLocalTempChanges(this.state.program);
+    }
     this.navService.navigate({
       route: Routes.tutorialSpecified.build({
-        tutorialId: request.tutorialId,
-        stepIndex: this.formatStepIndexToParam(request.stepIndex)
+        tutorialId: tutorialId,
+        stepId: stepId
       })
     });
   };
 
-  onTutorialLoaded = (tutorial: ITutorialLoadedData) => {
-    /**Nothing here yet */
-  };
-
-  onFixTheCodeRequest = (code: string) => {
-    this.executionService.updateCode(code, "external");
-  };
-
   render(): JSX.Element {
     return (
-      <div>
+      <div className="ex-page-container">
         <MainMenuComponent />
-
-        {this.state.userCustomizations &&
-        this.state.pageLayoutConfig && [
-          <GoldenLayoutComponent
-            key={this.state.layoutReRenderIncrement}
-            layoutConfig={this.state.pageLayoutConfig}
-            onLayoutChange={this.layoutChangeSubject}
-            panels={[
-              as<IPanelConfig<TutorialViewComponent, ITutorialViewComponentProps>>({
-                title: _T("Tutorial"),
-                componentName: "tutorial-panel",
-                componentType: TutorialViewComponent,
-                props: {
-                  tutorialLoadRequest: this.tutorialLoadRequest,
-                  tutorialLoadedStream: this.tutorialLoadedStream,
-                  tutorialNavigationStream: this.tutorialNavigationStream,
-                  fixTheCodeStream: this.fixTheCodeStream
-                }
-              }),
-              as<IPanelConfig<CodePanelComponent, ICodePanelComponentProps>>({
-                title: _T("Code"),
-                componentName: "code-panel",
-                componentType: CodePanelComponent,
-                props: {
-                  editorTheme: this.state.userCustomizations.codeEditorTheme,
-                  executionService: this.executionService,
-                  managementService: {} as any //this.managementService
-                }
-              }),
-              as<IPanelConfig<OutputPanelComponent, IOutputPanelComponentProps>>({
-                title: "Output",
-                componentName: "output-panel",
-                componentType: OutputPanelComponent,
-                props: {
-                  logoExecutorProps: {
-                    height: 300,
-                    runCommands: this.executionService.runCommands,
-                    stopCommands: this.executionService.stopCommands,
-                    makeScreenshotCommands: this.executionService.makeScreenshotCommands,
-                    onIsRunningChanged: this.executionService.onIsRunningChanged,
-                    isDarkTheme: this.state.userCustomizations.isDark,
-                    customTurtleImage: this.state.userCustomizations.turtleImage,
-                    customTurtleSize: this.state.userCustomizations.turtleSize
+        <div className="ex-page-content">
+          {this.state.userSettings &&
+            this.state.theme &&
+            this.state.tutorials &&
+            this.state.tutorialId &&
+            this.state.stepId &&
+            this.state.program && (
+              <GoldenLayoutComponent
+                initialLayoutConfigJSON={this.state.pageLayoutConfigJSON || ""}
+                defaultLayoutConfigJSON={this.defaultLayoutConfigJSON}
+                onLayoutChange={this.layoutChanged}
+                panelsReloadCheck={(oldPanels, newPanels) => {
+                  if (
+                    oldPanels[0].props.currentStepId !== newPanels[0].props.currentStepId ||
+                    oldPanels[0].props.currentTutorialId !== newPanels[0].props.currentTutorialId
+                  ) {
+                    return true;
                   }
-                }
-              })
-            ]}
-          />
-        ]}
+                  return false;
+                }}
+                panels={[
+                  as<IPanelConfig<TutorialViewComponent, ITutorialViewComponentProps>>({
+                    title: _T("Tutorial"),
+                    componentName: "tutorial-panel",
+                    componentType: TutorialViewComponent,
+                    props: {
+                      onFixTheCode: this.onFixTheCode,
+                      onNavigateRequest: this.onNavigateRequest,
+                      currentStepId: this.state.stepId,
+                      currentTutorialId: this.state.tutorialId,
+                      tutorials: this.state.tutorials
+                    }
+                  }),
+                  as<IPanelConfig<CodePanelComponent, ICodePanelComponentProps>>({
+                    title: _T("Code"),
+                    componentName: "code-panel",
+                    componentType: CodePanelComponent,
+                    props: {
+                      editorTheme: this.state.theme.codeEditorThemeName,
+                      executionService: this.executionService,
+                      program: this.state.program,
+                      saveCurrentEnabled: false,
+                      navigateAutomaticallyAfterSaveAs: false,
+                      externalCodeChanges: this.fixTheCodeStream,
+                      doNotShowLocalChangesIndicator: true
+                    }
+                  }),
+                  as<IPanelConfig<OutputPanelComponent, IOutputPanelComponentProps>>({
+                    title: "Output",
+                    componentName: "output-panel",
+                    componentType: OutputPanelComponent,
+                    props: {
+                      logoExecutorProps: {
+                        height: 300,
+                        runCommands: this.executionService.runCommands,
+                        stopCommands: this.executionService.stopCommands,
+                        makeScreenshotCommands: this.executionService.makeScreenshotCommands,
+                        onIsRunningChanged: this.executionService.onIsRunningChanged,
+                        isDarkTheme: this.state.theme.isDark,
+                        customTurtleImage: this.state.turtleImage,
+                        customTurtleSize: this.state.userSettings.turtleSize
+                      }
+                    }
+                  })
+                ]}
+              />
+            )}
+        </div>
       </div>
     );
   }

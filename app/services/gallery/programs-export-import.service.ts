@@ -1,5 +1,6 @@
 import { ProgramModel } from "app/services/program/program.model";
 import { IProgramsRepository } from "app/services/gallery/personal-gallery-localstorage.repository";
+import { ProgramModelConverter } from "app/services/program/program-model.converter";
 
 function getIncrementalName(name: string, checkExist: (name: string) => boolean) {
   let counter = 1;
@@ -25,7 +26,7 @@ export class ProgramsExportImportService {
     for (const importingProgramRaw of importingPrograms) {
       let importingProgram: ProgramModel | undefined = undefined;
       try {
-        importingProgram = ProgramModel.fromJson(importingProgramRaw);
+        importingProgram = ProgramModelConverter.fromJson(importingProgramRaw);
       } catch (err) {
         /*suppress error*/
       }

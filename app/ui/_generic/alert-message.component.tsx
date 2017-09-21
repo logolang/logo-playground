@@ -1,10 +1,8 @@
 import * as React from "react";
 
-import { Alert } from "react-bootstrap";
-
 import "./alert-message.component.scss";
 
-type messageType = "info" | "danger" | "warning" | "success";
+type messageType = "primary" | "info" | "danger" | "warning" | "success";
 
 interface IComponentProps {
   type?: messageType;
@@ -15,19 +13,6 @@ interface IComponentProps {
 }
 
 export class AlertMessageComponent extends React.Component<IComponentProps, {}> {
-  private getIconClass(type: messageType) {
-    switch (type) {
-      case "info":
-        return "glyphicon-info-sign";
-      case "success":
-        return "glyphicon glyphicon-ok-sign";
-      case "danger":
-        return "glyphicon-exclamation-sign";
-      case "warning":
-        return "glyphicon-exclamation-sign";
-    }
-  }
-
   render(): JSX.Element | null {
     const type = this.props.type || "danger";
     let message = this.props.message || "";
@@ -44,31 +29,14 @@ export class AlertMessageComponent extends React.Component<IComponentProps, {}> 
 
     if (message || title) {
       return (
-        <Alert className={`ex-customized-alert`} bsStyle={type} onDismiss={this.props.onDismiss}>
-          <div className="media ex-margin-top-zero">
-            <div className="media-left">
-              <span className="text-nowrap">
-                <span className={`ex-icon-container glyphicon ${this.getIconClass(type)}`} aria-hidden="true" />
-                <span>&nbsp;</span>
-              </span>
+        <div>
+          <article className={"message is-" + type}>
+            <div className="message-body">
+              {title && <p className="subtitle">{title}</p>}
+              {message && (preformatted ? <pre>{message}</pre> : <p>{message}</p>)}
             </div>
-            <div className="media-body ex-vertical-align-middle">
-              {title &&
-                <h4 className="media-heading ex-margin-zero">
-                  <span>
-                    {title}
-                  </span>
-                </h4>}
-              {title && message && <p />}
-              {message &&
-                (preformatted
-                  ? <pre>
-                      {message}
-                    </pre>
-                  : message)}
-            </div>
-          </div>
-        </Alert>
+          </article>
+        </div>
       );
     }
     return null;

@@ -1,8 +1,9 @@
 import { ProgramModel } from "app/services/program/program.model";
 import { IProgramsRepository } from "app/services/gallery/personal-gallery-localstorage.repository";
 import { injectable } from "app/di";
+import { ProgramModelConverter } from "app/services/program/program-model.converter";
 
-const data = require("./gallery-samples.json").map((rec: any) => ProgramModel.fromJson(rec)) as ProgramModel[];
+const data = require("./gallery-samples.json").map((rec: any) => ProgramModelConverter.fromJson(rec)) as ProgramModel[];
 data.sort((p1, p2) => {
   return p1.dateLastEdited > p2.dateLastEdited ? -1 : 1;
 });

@@ -67,16 +67,16 @@ export class LogoOutputGraphics {
     turtle.height = height;
   }
 
-  createScreenshot(preview: boolean): string {
+  createScreenshot(isThumbnail: boolean): string {
     const canvasElt = $(this.sandBoxSelector) as HTMLCanvasElement;
     if (canvasElt) {
-      return preview ? this.prepareScreenshot(canvasElt) : canvasElt.toDataURL();
+      return isThumbnail ? this.prepareThumbnail(canvasElt) : canvasElt.toDataURL();
     }
     return "";
   }
 
   // The crop and resize function
-  private prepareScreenshot(canvas: HTMLCanvasElement): string {
+  private prepareThumbnail(canvas: HTMLCanvasElement): string {
     const targetRect = {
       width: 200,
       height: 150

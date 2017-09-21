@@ -1,0 +1,18 @@
+.tutorial-select-modal-component {
+  height: 400px;
+  @media screen and (min-width: 1008px) {
+    .tutorial-pick-menu-container {
+      overflow: auto;
+      height: 400px;
+    }
+    .tutorial-description-container {
+      overflow: auto;
+      height: 400px;
+    }
+  }
+
+  .steps-list {
+    list-style: decimal;
+    padding-left: 32px;
+  }
+}

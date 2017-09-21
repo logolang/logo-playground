@@ -1,51 +1,44 @@
-@import './bootstrap-overrides.scss';
-@import './ux-extensions.scss';
-#menu-user-dropdown {
-    margin: 0;
-    padding: 0;
-    border: 0;
+@import "./ux-extensions.scss";
+
+html {
+  overflow-y: hidden;
 }
 
+/* Bulma extensions */
+.navbar-dropdown.is-right {
+  left: auto;
+  right: 0;
+}
+
+.navbar-mobile-fix {
+  @media screen and (max-width: 1008px) {
+    min-height: inherit;
+  }
+}
+
+/* Application specific styles */
 .ex-app-logo {
-    background-image: url(../images/logo_black.png);
-    background-repeat: no-repeat;
-    background-position: center;
-    width: 100px;
+  background-image: url(../images/logo_black.png);
+  background-repeat: no-repeat;
+  background-position: center;
+  width: 60px;
+  height: 32px;
 }
 
-.dark-navbar {
-    .ex-app-logo {
-        background-image: url(../images/logo_white.png);
-    }
+.is-dark {
+  .ex-app-logo {
+    background-image: url(../images/logo_white.png);
+  }
 }
 
 .ex-page-container {
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
-.ex-scroll-outer {
-    display: flex;
-    overflow-y: auto;
-}
-
-.ex-flex-direction-column {
-    flex-direction: column;
-}
-
-.ex-flex-direction-row {
-    flex-direction: row;
-}
-
-.ex-display-flex {
-    display: flex;
-}
-
-.ex-flex-block {
-    flex: 0 1 100%
-}
-
-.ex-overflow-hidden {
-    overflow: hidden;
+.ex-page-content {
+  display: flex;
+  overflow-y: auto;
+  flex: auto;
 }

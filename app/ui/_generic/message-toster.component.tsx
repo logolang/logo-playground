@@ -1,16 +1,14 @@
 import * as React from "react";
-import { Collapse } from "react-bootstrap";
 import { Observable, Subscription } from "rxjs/Rx";
-
-import { AlertMessageComponent } from "app/ui/_generic/alert-message.component";
 
 import "./message-toster.component.scss";
 
-type TosterMessageType = "danger" | "info" | "success" | "warning";
+type TosterMessageType = "danger" | "info" | "success" | "warning" | "primary";
 
 interface ITosterMessage {
   title?: string | JSX.Element;
   message: string | JSX.Element;
+  detailedMessage?: string | JSX.Element;
   type?: TosterMessageType;
   closeTimeout?: number;
 }
@@ -27,7 +25,6 @@ interface IComponentProps {
 
 interface IComponentState {
   messages: IMessageData[];
-  offsetLeft: number;
 }
 
 export class MessageTosterComponent extends React.Component<IComponentProps, IComponentState> {
@@ -37,8 +34,7 @@ export class MessageTosterComponent extends React.Component<IComponentProps, ICo
   constructor(props: IComponentProps) {
     super(props);
     this.state = {
-      messages: [],
-      offsetLeft: 40
+      messages: []
     };
   }
 
@@ -47,21 +43,19 @@ export class MessageTosterComponent extends React.Component<IComponentProps, ICo
   }
 
   onMessage = (message: ITosterMessage) => {
-    let offsetLeft = this.state.offsetLeft;
-    const container = window.document.querySelector(".container") as HTMLElement;
-    if (container) {
-      offsetLeft = container.offsetLeft;
-    }
-
     console.log("got a message!", message);
     const newMessageData: IMessageData = {
       id: (++this.id).toString(),
       message: message,
       open: false
     };
-    this.setState(s => ({ messages: [...s.messages, newMessageData], offsetLeft: offsetLeft }));
-    if (message.closeTimeout) {
-      setTimeout(this.handleAlertDismiss(newMessageData), message.closeTimeout);
+    this.setState(s => ({ messages: [...s.messages, newMessageData] }));
+    let closeTimeout = message.closeTimeout;
+    if (closeTimeout === undefined) {
+      closeTimeout = message.type === "danger" ? 0 : 3000;
+    }
+    if (closeTimeout) {
+      setTimeout(this.handleAlertDismiss(newMessageData), closeTimeout);
     }
 
     setTimeout(() => {
@@ -72,11 +66,7 @@ export class MessageTosterComponent extends React.Component<IComponentProps, ICo
 
   handleAlertDismiss = (message: IMessageData) => {
     return () => {
-      message.open = false;
-      this.setState(s => s);
-      setTimeout(() => {
-        this.setState(s => ({ messages: s.messages.filter(m => m !== message) }));
-      }, 400);
+      this.setState(s => ({ messages: s.messages.filter(m => m !== message) }));
     };
   };
 
@@ -88,19 +78,26 @@ export class MessageTosterComponent extends React.Component<IComponentProps, ICo
 
   render(): JSX.Element {
     return (
-      <div className="message-toster" style={{ left: this.state.offsetLeft + 12 + "px" }}>
+      <div className="message-toster">
         {this.state.messages.map(m => {
           return (
-            <Collapse timeout={200} in={m.open} key={m.id}>
-              <div>
-                <AlertMessageComponent
-                  onDismiss={this.handleAlertDismiss(m)}
-                  type={m.message.type}
-                  title={m.message.title}
-                  message={m.message.message}
-                />
-              </div>
-            </Collapse>
+            <div key={m.id}>
+              <article className={"message is-" + m.message.type}>
+                <div className="message-header">
+                  <p>{m.message.title}</p>
+                  <button className="delete" aria-label="delete" onClick={this.handleAlertDismiss(m)} />
+                </div>
+                <div className="message-body">
+                  <p>{m.message.message}</p>
+                  {m.message.detailedMessage && (
+                    <p>
+                      <strong>Details: </strong>
+                      {m.message.detailedMessage}
+                    </p>
+                  )}
+                </div>
+              </article>
+            </div>
           );
         })}
       </div>

@@ -43,6 +43,7 @@ export class CodeInputLogoComponent extends React.Component<ICodeInputComponentP
   componentWillReceiveProps(nextProps: ICodeInputComponentProps) {
     if (this.cm) {
       if (nextProps.code != this.currentCode) {
+        this.currentCode = nextProps.code;
         this.cm.setValue(nextProps.code);
       }
     }
@@ -52,25 +53,25 @@ export class CodeInputLogoComponent extends React.Component<ICodeInputComponentP
     const textArea = this.refs["text-area"] as HTMLTextAreaElement;
 
     const BRACKETS = "()[]{}";
-    this.cm = codemirror.fromTextArea(
-      textArea,
-      {
-        mode: "logo",
-        autoCloseBrackets: { pairs: BRACKETS, explode: BRACKETS },
-        matchBrackets: true,
-        lineComment: ";",
-        lineNumbers: true,
-        lineWrapping: true,
-        theme: this.props.editorTheme
-      } as any
-    );
+    this.cm = codemirror.fromTextArea(textArea, {
+      mode: "logo",
+      autoCloseBrackets: { pairs: BRACKETS, explode: BRACKETS },
+      matchBrackets: true,
+      lineComment: ";",
+      lineNumbers: true,
+      lineWrapping: true,
+      theme: this.props.editorTheme
+    } as any);
     this.cm.setSize("100%", "100%");
+    this.currentCode = this.props.code;
+    this.cm.setValue(this.props.code);
     this.cm.on("change", () => {
       const newVal = this.cm.getValue();
-      this.currentCode = newVal;
-      this.props.onChanged(newVal);
+      if (this.currentCode != newVal) {
+        this.currentCode = newVal;
+        this.props.onChanged(newVal);
+      }
     });
-    this.cm.setValue(this.props.code);
     if (this.props.onHotkey) {
       const map = {
         F8: () => {

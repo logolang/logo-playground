@@ -1,9 +1,6 @@
 import * as React from "react";
-import * as Color from "color";
-import { Nav, Navbar, NavDropdown, MenuItem, NavItem } from "react-bootstrap";
-import { LinkContainer } from "react-router-bootstrap";
-
-import { NavbarUsercardComponent } from "app/ui/_generic/navbar-usercard.component";
+import { Link } from "react-router-dom";
+import * as cn from "classnames";
 
 import { lazyInject } from "app/di";
 import { Routes } from "app/routes";
@@ -11,10 +8,8 @@ import { _T } from "app/services/customizations/localization.service";
 import { ICurrentUserService } from "app/services/login/current-user.service";
 import { ILoginService } from "app/services/login/login.service";
 
-let globalIsDarkNavbar = false;
-
 interface IComponentState {
-  isDarkBgNavBar: boolean;
+  isMenuToggled?: boolean;
 }
 
 interface IComponentProps {
@@ -28,9 +23,7 @@ export class MainMenuComponent extends React.Component<IComponentProps, ICompone
   constructor(props: IComponentProps) {
     super(props);
 
-    this.state = {
-      isDarkBgNavBar: globalIsDarkNavbar
-    };
+    this.state = {};
   }
 
   menuLogOutClick = async () => {
@@ -39,125 +32,71 @@ export class MainMenuComponent extends React.Component<IComponentProps, ICompone
     window.location.reload(true);
   };
 
-  componentDidMount() {
-    setTimeout(() => {
-      const mainBar = document.getElementById("main-nav-bar");
-      if (mainBar) {
-        const isDarkBgNavBar =
-          Color(window.getComputedStyle(mainBar, undefined).backgroundColor || "white").luminosity() < 0.3;
-        if (this.state.isDarkBgNavBar !== isDarkBgNavBar) {
-          globalIsDarkNavbar = isDarkBgNavBar;
-          this.setState({ isDarkBgNavBar: isDarkBgNavBar });
-        }
-      }
-    }, 100);
-  }
-
   render(): JSX.Element {
     const loginStatus = this.currentUser.getLoginStatus();
-
+    const userPic = loginStatus.userInfo.attributes.imageUrl || require("./images/user-32-pic.png");
     return (
-      <div className={`${this.state.isDarkBgNavBar ? "dark-navbar" : "light-navbar"}`}>
-        <Navbar collapseOnSelect fixedTop fluid id="main-nav-bar">
-          <Navbar.Header>
-            <Navbar.Brand>
-              <a href="#" className="ex-app-logo" />
-            </Navbar.Brand>
-            <Navbar.Toggle />
-          </Navbar.Header>
-          <Navbar.Collapse>
-            <Nav>
-              <LinkContainer to={Routes.galleryRoot.build({})}>
-                <NavItem>
-                  <span>
-                    {_T("Gallery")}
-                  </span>
-                </NavItem>
-              </LinkContainer>
-              <LinkContainer to={Routes.documentationRoot.build({})}>
-                <NavItem>
-                  <span>
-                    {_T("Documentation")}
-                  </span>
-                </NavItem>
-              </LinkContainer>
-              <LinkContainer to={Routes.tutorialsRoot.build({})}>
-                <NavItem>
-                  <span>
-                    {_T("Tutorials")}
-                  </span>
-                </NavItem>
-              </LinkContainer>
-              <LinkContainer to={Routes.playgroundRoot.build({ storageType: "playground", programId: "0" })}>
-                <NavItem>
-                  <span>
-                    {_T("Playground")}
-                  </span>
-                </NavItem>
-              </LinkContainer>
-            </Nav>
+      <nav className="navbar navbar-mobile-fix">
+        <div className="navbar-brand">
+          <span className="navbar-item">
+            <span className="ex-app-logo" />
+          </span>
 
-            {this.props.children}
+          <div
+            className={cn("navbar-burger burger", { "is-active": this.state.isMenuToggled })}
+            onClick={() => {
+              this.setState({ isMenuToggled: !this.state.isMenuToggled });
+            }}
+          >
+            <span />
+            <span />
+            <span />
+          </div>
+        </div>
 
-            <Nav pullRight>
-              <NavDropdown
-                id="menu-user-dropdown"
-                bsClass="dropdown"
-                noCaret
-                title={
-                  (
-                    <NavbarUsercardComponent
-                      userName={loginStatus.userInfo.attributes.name}
-                      avatarImageUrl={loginStatus.userInfo.attributes.imageUrl}
-                      caret={true}
-                    />
-                  ) as any
-                }
-              >
-                {!loginStatus.isLoggedIn &&
-                  <LinkContainer to={Routes.loginRoot.build({})}>
-                    <MenuItem>
-                      <span className="glyphicon glyphicon-log-in" aria-hidden="true" />
-                      <span>
-                        &nbsp;&nbsp;{_T("Log in")}
-                      </span>
-                    </MenuItem>
-                  </LinkContainer>}
-                {!loginStatus.isLoggedIn && <MenuItem divider />}
-                <LinkContainer to={Routes.settingsRoot.build({})}>
-                  <MenuItem>
-                    <span className="glyphicon glyphicon-user" aria-hidden="true" />
-                    <span>
-                      &nbsp;&nbsp;{_T("User profile")}
-                    </span>
-                  </MenuItem>
-                </LinkContainer>
-                <LinkContainer to={Routes.aboutRoot.build({})}>
-                  <MenuItem>
-                    <span className="glyphicon glyphicon-info-sign" aria-hidden="true" />
-                    <span>
-                      &nbsp;&nbsp;{_T("About...")}
-                    </span>
-                  </MenuItem>
-                </LinkContainer>
-                {loginStatus.isLoggedIn && <MenuItem divider />}
-                {loginStatus.isLoggedIn &&
-                  <MenuItem onClick={this.menuLogOutClick}>
-                    <span className="glyphicon glyphicon-log-out" aria-hidden="true" />
-                    <span>
-                      &nbsp;&nbsp;{_T("Log out")}
-                    </span>
-                  </MenuItem>}
-              </NavDropdown>
-            </Nav>
-
-            {this.props.pullRightChildren}
-          </Navbar.Collapse>
-        </Navbar>
-
-        {/*This dummy navbar is to provide correct top margin for page content*/}
-        <nav className="navbar ex-margin-bottom-zero" />
-      </div>
+        <div className={cn("navbar-menu", { "is-active": this.state.isMenuToggled })}>
+          <div className="navbar-start">
+            <Link className="navbar-item" to={Routes.galleryRoot.build({})}>
+              {_T("Gallery")}
+            </Link>
+            <Link className="navbar-item" to={Routes.documentationRoot.build({})}>
+              {_T("Documentation")}
+            </Link>
+            <Link className="navbar-item" to={Routes.tutorialsRoot.build({})}>
+              {_T("Tutorials")}
+            </Link>
+            <Link className="navbar-item" to={Routes.playgroundRoot.build({})}>
+              {_T("Playground")}
+            </Link>
+          </div>
+          <div className="navbar-end">
+            <div className="navbar-item has-dropdown is-hoverable">
+              <span className="navbar-link is-active">
+                <img src={userPic} />
+              </span>
+              <div className="navbar-dropdown is-right">
+                <Link className="navbar-item" to={Routes.settingsRoot.build({})}>
+                  {_T("User profile")}
+                </Link>
+                <Link className="navbar-item" to={Routes.aboutRoot.build({})}>
+                  {_T("About...")}
+                </Link>
+                <hr className="navbar-divider" />
+                {!loginStatus.isLoggedIn && (
+                  <Link className="navbar-item" to={Routes.loginRoot.build({})}>
+                    {_T("Log in")}
+                  </Link>
+                )}
+                {loginStatus.isLoggedIn && (
+                  <a href="#" className="navbar-item" onClick={this.menuLogOutClick}>
+                    {_T("Log out")}
+                  </a>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </nav>
     );
   }
 }
