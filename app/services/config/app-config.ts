@@ -18,7 +18,7 @@ export class AppConfig {
     services: IAppServicesDetails
 
     public static buildFromConfigData(configFile: any): AppConfig {
-        let appConfig = configFile as AppConfig;
+        const appConfig = configFile as AppConfig;
         AppConfig.setDefaultValues(appConfig);
         AppConfig.validate(appConfig);
         return appConfig;

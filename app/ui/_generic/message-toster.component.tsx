@@ -1,110 +1,106 @@
-import * as React from 'react';
-import * as moment from 'moment'
-import { Observable, Subject, Subscription } from 'rxjs/Rx';
-import { Button, ButtonGroup, Nav, Navbar, NavDropdown, MenuItem, NavItem, DropdownButton, Modal, OverlayTrigger, SplitButton, Alert, Collapse, Fade } from 'react-bootstrap';
+import * as React from "react";
+import { Observable, Subscription } from "rxjs/Rx";
 
-import { AlertMessageComponent } from "app/ui/_generic/alert-message.component";
+import "./message-toster.component.scss";
 
-import './message-toster.component.scss'
-
-type TosterMessageType = "danger" | "info" | "success" | "warning"
+type TosterMessageType = "danger" | "info" | "success" | "warning" | "primary";
 
 interface ITosterMessage {
-    title: string | JSX.Element
-    message: string | JSX.Element
-    type?: TosterMessageType
-    closeTimeout?: number
+  title?: string | JSX.Element;
+  message: string | JSX.Element;
+  detailedMessage?: string | JSX.Element;
+  type?: TosterMessageType;
+  closeTimeout?: number;
 }
 
 interface IMessageData {
-    id: string
-    message: ITosterMessage
-    open: boolean;
+  id: string;
+  message: ITosterMessage;
+  open: boolean;
 }
 
 interface IComponentProps {
-    events: Observable<ITosterMessage>
+  events: Observable<ITosterMessage>;
 }
 
 interface IComponentState {
-    messages: IMessageData[]
-    offsetLeft: number
+  messages: IMessageData[];
 }
 
 export class MessageTosterComponent extends React.Component<IComponentProps, IComponentState> {
-    private messageSubscription: Subscription | undefined;
-    private id: number = 1;
+  private messageSubscription: Subscription | undefined;
+  private id: number = 1;
 
-    constructor(props: IComponentProps) {
-        super(props);
-        this.state = {
-            messages: [],
-            offsetLeft: 40
-        }
+  constructor(props: IComponentProps) {
+    super(props);
+    this.state = {
+      messages: []
+    };
+  }
+
+  componentDidMount() {
+    this.messageSubscription = this.props.events.subscribe(this.onMessage);
+  }
+
+  onMessage = (message: ITosterMessage) => {
+    console.log("got a message!", message);
+    const newMessageData: IMessageData = {
+      id: (++this.id).toString(),
+      message: message,
+      open: false
+    };
+    this.setState(s => ({ messages: [...s.messages, newMessageData] }));
+    let closeTimeout = message.closeTimeout;
+    if (closeTimeout === undefined) {
+      closeTimeout = message.type === "danger" ? 0 : 3000;
+    }
+    if (closeTimeout) {
+      setTimeout(this.handleAlertDismiss(newMessageData), closeTimeout);
     }
 
-    componentDidMount() {
-        this.messageSubscription = this.props.events.subscribe(this.onMessage)
+    setTimeout(() => {
+      newMessageData.open = true;
+      this.setState(s => s);
+    }, 0);
+  };
+
+  handleAlertDismiss = (message: IMessageData) => {
+    return () => {
+      this.setState(s => ({ messages: s.messages.filter(m => m !== message) }));
+    };
+  };
+
+  componentWillUnmount() {
+    if (this.messageSubscription) {
+      this.messageSubscription.unsubscribe();
     }
+  }
 
-    onMessage = (message: ITosterMessage) => {
-        let offsetLeft = this.state.offsetLeft;
-        const container = window.document.querySelector('.container') as HTMLElement;
-        if (container) {
-            offsetLeft = container.offsetLeft;
-        }
-
-        console.log('got a message!', message);
-        const newMessageData: IMessageData = {
-            id: (++this.id).toString(),
-            message: message,
-            open: false,
-        };
-        this.setState(s => ({ messages: [...s.messages, newMessageData], offsetLeft: offsetLeft }));
-        if (message.closeTimeout) {
-            setTimeout(this.handleAlertDismiss(newMessageData), message.closeTimeout);
-        }
-
-        setTimeout(() => {
-            newMessageData.open = true
-            this.setState(s => s);
-        }, 0)
-    }
-
-    handleAlertDismiss = (message: IMessageData) => {
-        return () => {
-            message.open = false;
-            this.setState(s => s);
-            setTimeout(() => {
-                this.setState(s => ({ messages: s.messages.filter(m => m !== message) }));
-            }, 400);
-        }
-    }
-
-    componentWillUnmount() {
-        if (this.messageSubscription) {
-            this.messageSubscription.unsubscribe();
-        }
-    }
-
-    render(): JSX.Element {
-        return (
-            <div className="message-toster" style={{ left: this.state.offsetLeft + 12 + 'px' }}>
-                {
-                    this.state.messages.map(m => {
-                        return <Collapse timeout={200} in={m.open} key={m.id}>
-                            <div>
-                                <AlertMessageComponent
-                                    onDismiss={this.handleAlertDismiss(m)}
-                                    type={m.message.type}
-                                    title={m.message.title}
-                                    message={m.message.message}>
-                                </AlertMessageComponent>
-                            </div>
-                        </Collapse>
-                    })
-                }
+  render(): JSX.Element {
+    return (
+      <div className="message-toster">
+        {this.state.messages.map(m => {
+          return (
+            <div key={m.id}>
+              <article className={"message is-" + m.message.type}>
+                <div className="message-header">
+                  <p>{m.message.title}</p>
+                  <button className="delete" aria-label="delete" onClick={this.handleAlertDismiss(m)} />
+                </div>
+                <div className="message-body">
+                  <p>{m.message.message}</p>
+                  {m.message.detailedMessage && (
+                    <p>
+                      <strong>Details: </strong>
+                      {m.message.detailedMessage}
+                    </p>
+                  )}
+                </div>
+              </article>
             </div>
-        );
-    }
+          );
+        })}
+      </div>
+    );
+  }
 }

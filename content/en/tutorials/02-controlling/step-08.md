@@ -1,5 +1,3 @@
-# Wider line
-
 Let's play a little bit more with the pen width.
 
 Set the pen to double the width of the line it drew before. Draw a line that is 60 points long.

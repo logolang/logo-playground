@@ -1,17 +1,20 @@
 {
-    "editor.wordBasedSuggestions": false,
-    "typescript.tsdk": "./node_modules/typescript/lib",
-    "json.schemas": [],
-    "search.exclude": {
-        "**/node_modules": true,
-        "**/reports": true,
-        "**/dist": true,
-        "**/lib": true
-    },
-    "files.exclude": {
-        "**/.git": true,
-        "**/node_modules": true
-    },
-    "prettier.tabWidth": 4,
-    "prettier.printWidth": 120
+  "editor.wordBasedSuggestions": false,
+  "typescript.check.tscVersion": false,
+  "typescript.tsdk": "./node_modules/typescript/lib",
+  "json.schemas": [],
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/reports": true,
+    "**/dist": true,
+    "**/lib": true
+  },
+  "files.exclude": {
+    "**/.git": true,
+    "**/node_modules": true,
+    ".atl-cache*": true,
+    "**/node": true,
+    "**/dist": true,
+    "**/reports": true
+  }
 }

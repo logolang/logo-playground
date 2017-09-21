@@ -1,5 +1,3 @@
-# Summary
-
 In this small lesson you have fully mastered printing using turtle graphics. Now you have knowledge how to:
 1. Print your text as a label.
 2. Control label direction.

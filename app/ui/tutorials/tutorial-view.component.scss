@@ -1,0 +1,8 @@
+.tutorial-view-panel {
+  height: inherit;
+  width: inherit;
+  overflow: auto;
+  .tutorial-content {
+    margin: 10px;
+  }
+}

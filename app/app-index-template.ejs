@@ -9,65 +9,70 @@
 
     <link href="content/favicon.ico" rel="icon" type="image/x-icon" />
 
-    <link href="https://fonts.googleapis.com/css?family=Inconsolata:400,700&amp;subset=latin-ext" rel="stylesheet"> 
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inconsolata:400,700&amp;subset=latin-ext">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 
     <script src="https://apis.google.com/js/platform.js"></script>
 </head>
 <%
     var packageJson = require('../package.json');
 %>
-<body>
-    <link href="content/css/codemirror/codemirror.css" rel="stylesheet">
-    <link href="content/css/golden-layout/goldenlayout-base.css" rel="stylesheet">
 
-    <script type="text/javascript">
-        var bootstrapThemeName = "default";
-        var codemirrorThemeName = "eclipse";
-        var goldenlayoutThemeName = "light";
-        try{
-            window.appThemeNameLocalStorageKey = '<%= packageJson.name %>-<%= packageJson.version %>-theme-storage';
-            console.log('storagekey', window.appThemeNameLocalStorageKey);
-            var storedTheme = window.localStorage.getItem(window.appThemeNameLocalStorageKey);
-            if (storedTheme){
-                var theme = JSON.parse(storedTheme);
-                bootstrapThemeName = theme.bootstrap;
-                codemirrorThemeName = theme.codemirror;
-                goldenlayoutThemeName = theme.goldenlayout;
+    <body>
+        <link href="content/css/codemirror/codemirror.css" rel="stylesheet">
+        <link href="content/css/golden-layout/goldenlayout-base.css" rel="stylesheet">
 
-                if (theme.isDark){
-                    document.body.className = document.body.className + "is-dark";
+        <script type="text/javascript">
+            var theme = {
+                isDark: false,
+                styleLinks: [
+                    "content/css/bulma/bulmaswatch.default.min.css",
+                    "content/css/codemirror/themes/eclipse.css",
+                    "content/css/golden-layout/goldenlayout-light-theme.css"
+                ]
+            };
+            try {
+                window.appThemeNameLocalStorageKey = '<%= packageJson.name %>-<%= packageJson.version %>-theme-storage';
+                console.log('storagekey', window.appThemeNameLocalStorageKey);
+                var storedTheme = window.localStorage.getItem(window.appThemeNameLocalStorageKey);
+                if (storedTheme) {
+                    var parsedTheme = JSON.parse(storedTheme);
+                    if (parsedTheme.styleLinks && Array.isArray(parsedTheme.styleLinks)) {
+                        theme = parsedTheme;
+                    }
+                    if (theme.isDark) {
+                        document.body.className = document.body.className + "is-dark";
+                    }
                 }
             }
-        } 
-        catch(ex){
-        }
+            catch (ex) {
+            }
 
-        function injectCssLink(linkUrl){
-            var link = document.createElement('link');
-            link.setAttribute('rel', 'stylesheet');
-            link.setAttribute('type', 'text/css');
-            link.setAttribute('href', linkUrl + '?<%= global.appGitVersion%>');
-            document.getElementsByTagName('head')[0].appendChild(link);
-        }
-        injectCssLink('content/css/bootstrap/bootstrap.' + bootstrapThemeName + '.min.css');
-        injectCssLink('content/css/codemirror/themes/' + codemirrorThemeName + '.css');
-        injectCssLink('content/css/golden-layout/goldenlayout-' + goldenlayoutThemeName + '-theme.css');
-    </script>
+            function injectCssLink(linkUrl) {
+                var link = document.createElement('link');
+                link.setAttribute('rel', 'stylesheet');
+                link.setAttribute('type', 'text/css');
+                link.setAttribute('href', linkUrl + '?<%= global.appGitVersion%>');
+                document.getElementsByTagName('head')[0].appendChild(link);
+            }
+            theme.styleLinks.forEach(x => injectCssLink(x));
+        </script>
 
-   <div id="app-container">
-   </div>
+        <div id="app-container">
+        </div>
 
-   <script src="vendor.js?<%= global.appGitVersion%>"></script>
+        <script src="vendor.js?<%= global.appGitVersion%>"></script>
 
-   <% for (var css in htmlWebpackPlugin.files.css) { %>
-    <link href="<%= htmlWebpackPlugin.files.css[css]+'?'+global.appGitVersion %>" rel="stylesheet">
-   <% } %>
-   <% for (var chunk in htmlWebpackPlugin.files.chunks) { %>
-    <script src="<%= htmlWebpackPlugin.files.chunks[chunk].entry+'?'+global.appGitVersion %>"></script>
-   <% } %>
+        <% for (var css in htmlWebpackPlugin.files.css) { %>
+            <link href="<%= htmlWebpackPlugin.files.css[css]+'?'+global.appGitVersion %>" rel="stylesheet" />
+            <% } %>
+                <% for (var chunk in htmlWebpackPlugin.files.chunks) { %>
+                    <script src="<%= htmlWebpackPlugin.files.chunks[chunk].entry+'?'+global.appGitVersion %>"></script>
+                    <% } %>
 
-   <script>
-     app.run();
-   </script>   
-</body>
+                        <script>
+                            app.run();
+                        </script>
+    </body>
+
 </html>

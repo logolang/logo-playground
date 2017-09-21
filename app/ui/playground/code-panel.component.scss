@@ -1,8 +1,22 @@
 .code-panel-container {
+  position: relative;
+  height: 100%;
+  .code-input-container {
     height: 100%;
-    .code-input-container {
-        height: 100%;
-        position: relative;
-        overflow: hidden;
-    }
+    position: relative;
+    overflow: hidden;
+  }
+  .program-controls-menu-component {
+    position: absolute;
+    right: 32px;
+    top: 4px;
+    z-index: 3;
+  }
+  .alert-not-stored-container {
+    position: absolute;
+    bottom: 10px;
+    right: 32px;
+    z-index: 4;
+    margin-left: 80px;
+  }
 }

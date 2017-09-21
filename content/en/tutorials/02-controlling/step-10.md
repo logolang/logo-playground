@@ -1,5 +1,3 @@
-# Cogratulations!
-
 You have completed the **Controlling the Turtle and Pen** tutorial. What have you learned:
 
 1. Turtle can lift pen up and put it back down.

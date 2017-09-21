@@ -1,36 +1,36 @@
-import { ProgramModel } from "app/services/gallery/program.model";
+import { ProgramModel } from "app/services/program/program.model";
 import { IProgramsRepository } from "app/services/gallery/personal-gallery-localstorage.repository";
 import { injectable } from "app/di";
+import { ProgramModelConverter } from "app/services/program/program-model.converter";
 
-const data = require('./gallery-samples.json').map((rec: any) => ProgramModel.fromJson(rec)) as ProgramModel[];
-data.sort((p1, p2) => { return p1.dateLastEdited > p2.dateLastEdited ? -1 : 1 });
+const data = require("./gallery-samples.json").map((rec: any) => ProgramModelConverter.fromJson(rec)) as ProgramModel[];
+data.sort((p1, p2) => {
+  return p1.dateLastEdited > p2.dateLastEdited ? -1 : 1;
+});
 
 @injectable()
 export class ProgramsSamplesRepository implements IProgramsRepository {
-    constructor() {
-    }
+  async getAll(): Promise<ProgramModel[]> {
+    return data;
+  }
 
-    async getAll(): Promise<ProgramModel[]> {
-        return data;
+  async get(id: string): Promise<ProgramModel> {
+    const p = data.find(d => d.id === id);
+    if (!p) {
+      throw new Error(`Program with id ${id} is not found`);
     }
+    return p;
+  }
 
-    async get(id: string): Promise<ProgramModel> {
-        const p = data.find(d => d.id === id);
-        if (!p) {
-            throw new Error(`Program with id ${id} is not found`);
-        }
-        return p;
-    }
+  async add(program: ProgramModel): Promise<ProgramModel> {
+    throw new Error();
+  }
 
-    async add(program: ProgramModel): Promise<ProgramModel> {
-        throw new Error();
-    }
+  async update(program: ProgramModel): Promise<ProgramModel> {
+    throw new Error();
+  }
 
-    async update(program: ProgramModel): Promise<void> {
-        throw new Error();
-    }
-
-    async remove(id: string): Promise<void> {
-        throw new Error();
-    }
+  async remove(id: string): Promise<void> {
+    throw new Error();
+  }
 }

@@ -1,31 +1,27 @@
-import * as React from 'react';
-import * as jquery from 'jquery'
-import { Subject } from 'rxjs'
+import * as React from "react";
 
-import { LogoExecutorComponent, ILogoExecutorComponentProps } from 'app/ui/_shared/logo-executor.component';
+import { LogoExecutorComponent, ILogoExecutorComponentProps } from "app/ui/_shared/logo-executor.component";
 
-import './output-panel.component.scss'
+import "./output-panel.component.scss";
 
-interface IComponentState {
-}
+interface IComponentState {}
 
 export interface IOutputPanelComponentProps {
-    logoExecutorProps: ILogoExecutorComponentProps
+  logoExecutorProps: ILogoExecutorComponentProps;
 }
 
 export class OutputPanelComponent extends React.Component<IOutputPanelComponentProps, IComponentState> {
-    constructor(props: IOutputPanelComponentProps) {
-        super(props);
+  constructor(props: IOutputPanelComponentProps) {
+    super(props);
 
-        this.state = {
-        }
-    }
+    this.state = {};
+  }
 
-    render(): JSX.Element {
-        return (
-            <div className="output-container">
-                {React.createElement(LogoExecutorComponent, this.props.logoExecutorProps)}
-            </div>
-        );
-    }
+  render(): JSX.Element {
+    return (
+      <div className="output-container">
+        {React.createElement(LogoExecutorComponent, this.props.logoExecutorProps)}
+      </div>
+    );
+  }
 }
