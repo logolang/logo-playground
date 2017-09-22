@@ -10,6 +10,7 @@ import { ProgramsSamplesRepository } from "app/services/gallery/gallery-samples.
 import { ILocalTempCodeStorage } from "app/services/program/local-temp-code.storage";
 import { TutorialsCodeRepository } from "app/services/tutorials/tutorials-code.repository";
 import { ProgramModelConverter } from "app/services/program/program-model.converter";
+import { GistSharedProgramsRepository } from "app/services/program/gist-shared-programs.repository";
 
 export enum ProgramStorageType {
   samples = "samples",
@@ -29,7 +30,8 @@ export class ProgramManagementService {
     @inject(ProgramsSamplesRepository) private examplesRepository: IProgramsRepository,
     @inject(ProgramsLocalStorageRepository) private personalRepository: IProgramsRepository,
     @inject(TutorialsCodeRepository) private tutorialsRepository: IProgramsRepository,
-    @inject(ILocalTempCodeStorage) private localTempStorage: ILocalTempCodeStorage
+    @inject(ILocalTempCodeStorage) private localTempStorage: ILocalTempCodeStorage,
+    @inject(GistSharedProgramsRepository) private gistRepositpry: GistSharedProgramsRepository
   ) {}
 
   loadProgram = async (programId?: string, storageType?: ProgramStorageType): Promise<ProgramModel> => {
@@ -94,7 +96,9 @@ export class ProgramManagementService {
           program.storageType = ProgramStorageType.gallery;
           break;
         case ProgramStorageType.gist:
-          throw new Error("Not implemented");
+          program = await this.gistRepositpry.get(programId);
+          program.storageType = ProgramStorageType.gist;
+          break;
         case ProgramStorageType.tutorial:
           program = await this.tutorialsRepository.get(programId);
           program.storageType = ProgramStorageType.tutorial;
