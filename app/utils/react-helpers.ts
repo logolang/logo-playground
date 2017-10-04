@@ -8,10 +8,10 @@ interface IsLoadingState {
   isLoading?: boolean;
 }
 
-interface ComponentWithDynamicDataLoad<S extends IsLoadingState, P extends IParamsProps> extends React.Component<P, S> {
+interface ComponentWithDynamicDataLoad<S extends IsLoadingState, P> extends React.Component<P, S> {
   loadData: (props: P) => Promise<void>;
   buildDefaultState(props: P): S;
-  props: Readonly<{ children?: React.ReactNode }> & Readonly<P>;
+  props: P;
 }
 
 /**
@@ -24,6 +24,24 @@ export function subscribeLoadDataOnPropsParamsChange<S extends IsLoadingState, P
   (component as any).componentWillReceiveProps = async (newProps: P) => {
     // console.log('componentWillReceiveProps params', component.props.params, newProps.params);
     if (JSON.stringify(component.props.match.params) != JSON.stringify(newProps.match.params)) {
+      const newState = component.buildDefaultState(newProps);
+      newState.isLoading = true;
+      component.setState(newState);
+      await component.loadData(newProps);
+    }
+  };
+}
+
+/**
+ * Adds componentWillReceiveProps handler to component. If props params will be different it will execute loadData function.
+ * This happens if URL in browser is changed and the same component receives new route, for instance history navigation event.
+ */
+export function subscribeLoadDataOnPropsChange<S extends IsLoadingState, P extends {}>(
+  component: ComponentWithDynamicDataLoad<S, P>
+) {
+  (component as any).componentWillReceiveProps = async (newProps: P) => {
+    // console.log('componentWillReceiveProps params', component.props.params, newProps.params);
+    if (JSON.stringify(component.props) != JSON.stringify(newProps)) {
       const newState = component.buildDefaultState(newProps);
       newState.isLoading = true;
       component.setState(newState);

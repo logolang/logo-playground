@@ -196,9 +196,8 @@ export class CodePanelComponent extends React.Component<ICodePanelComponentProps
     this.setState({ hasLocalTempChanges: false });
     if (this.props.navigateAutomaticallyAfterSaveAs) {
       this.navigationService.navigate({
-        route: Routes.playgroundCode.build({
-          programId: newProgram.id,
-          storageType: ProgramStorageType.gallery
+        route: Routes.codeLibrary.build({
+          id: newProgram.id
         })
       });
     }

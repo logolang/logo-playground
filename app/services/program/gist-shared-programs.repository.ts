@@ -4,6 +4,7 @@ import { DictionaryLike } from "app/utils/syntax-helpers";
 import { stay } from "app/utils/async-helpers";
 import { RandomHelper } from "app/utils/random-helper";
 import { ProgramModel } from "app/services/program/program.model";
+import { Routes } from "app/routes";
 
 const gistApiBaseUrl = "https://api.github.com/";
 
@@ -88,7 +89,9 @@ export class GistSharedProgramsRepository {
     if (response.ok) {
       const result = (await response.json()) as SingleGistResponse;
       const id = result.id;
-      return "http://localhost:8085/#/code/gist/" + id;
+      return (
+        window.location.href.substr(0, window.location.href.indexOf("#")) + "#" + Routes.codeGist.build({ id: id })
+      );
     } else {
       console.error(await response.text());
     }

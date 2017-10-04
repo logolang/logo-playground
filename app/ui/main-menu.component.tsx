@@ -65,7 +65,7 @@ export class MainMenuComponent extends React.Component<IComponentProps, ICompone
             <Link className="navbar-item" to={Routes.tutorialsRoot.build({})}>
               {_T("Tutorials")}
             </Link>
-            <Link className="navbar-item" to={Routes.playgroundRoot.build({})}>
+            <Link className="navbar-item" to={Routes.playground.build({})}>
               {_T("Playground")}
             </Link>
           </div>

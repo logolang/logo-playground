@@ -5,7 +5,7 @@ import { ISubscription } from "rxjs/Subscription";
 
 import { as } from "app/utils/syntax-helpers";
 import { callActionSafe } from "app/utils/async-helpers";
-import { subscribeLoadDataOnPropsParamsChange } from "app/utils/react-helpers";
+import { subscribeLoadDataOnPropsParamsChange, subscribeLoadDataOnPropsChange } from "app/utils/react-helpers";
 
 import { MainMenuComponent } from "app/ui/main-menu.component";
 import { GoldenLayoutComponent, IPanelConfig, GoldenLayoutConfig } from "app/ui/_shared/golden-layout.component";
@@ -40,7 +40,7 @@ interface IComponentState {
   theme?: Theme;
 }
 
-export interface IPlaygroundPageRouteParams {
+export interface IComponentProps {
   storageType: ProgramStorageType;
   programId?: string;
 }
@@ -53,8 +53,6 @@ arc 360 50
 `;
 
 export { ProgramStorageType };
-
-interface IComponentProps extends RouteComponentProps<IPlaygroundPageRouteParams> {}
 
 export class PlaygroundPageComponent extends React.Component<IComponentProps, IComponentState> {
   @lazyInject(INotificationService) private notificationService: INotificationService;
@@ -99,7 +97,7 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
   constructor(props: IComponentProps) {
     super(props);
     this.state = this.buildDefaultState(this.props);
-    subscribeLoadDataOnPropsParamsChange(this);
+    subscribeLoadDataOnPropsChange(this);
   }
 
   buildDefaultState(props: IComponentProps): IComponentState {
@@ -132,8 +130,8 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
       return;
     }
 
-    const programId = props.match.params.programId;
-    const storageType = props.match.params.storageType;
+    const programId = props.programId;
+    const storageType = props.storageType;
     const programModel = await callActionSafe(this.errorHandler, async () =>
       this.programManagementService.loadProgram(programId, storageType)
     );
@@ -187,7 +185,7 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
                     componentName: "code-panel",
                     componentType: CodePanelComponent,
                     props: {
-                      saveCurrentEnabled: this.props.match.params.storageType === ProgramStorageType.gallery,
+                      saveCurrentEnabled: this.props.storageType === ProgramStorageType.gallery,
                       program: this.state.program,
                       editorTheme: this.state.theme.codeEditorThemeName,
                       executionService: this.executionService,
