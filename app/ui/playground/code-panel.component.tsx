@@ -222,7 +222,7 @@ export class CodePanelComponent extends React.Component<ICodePanelComponentProps
   };
 
   shareProgram = async () => {
-    const data = await this.props.executionService.getScreenshot(false);
+    const data = await this.props.executionService.getScreenshot(true);
     this.setState({ isShareModalActive: true, screenshotDataToSave: data });
   };
 }

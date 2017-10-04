@@ -3,6 +3,7 @@ import * as cn from "classnames";
 
 import { AlertMessageComponent } from "app/ui/_generic/alert-message.component";
 import { ModalComponent } from "app/ui/_generic/modal.component";
+import { InputCopyToClipboardComponent } from "app/ui/_generic/input-copy-to-clipboard.component";
 
 import { _T } from "app/services/customizations/localization.service";
 import { IProgramToSaveAttributes } from "app/services/program/program-management.service";
@@ -55,32 +56,28 @@ export class ShareProgramModalComponent extends React.Component<IComponentProps,
           </div>
         )}
 
-        {this.props.imageBase64 && (
-          <figure className="image is-128x128">
-            <img src={this.props.imageBase64} />
-          </figure>
-        )}
-
-        {this.state.publishedUrl ? (
-          <div>{this.state.publishedUrl}</div>
-        ) : (
+        <div className="field">
+          <label className="label">{_T("Program name")}</label>
+          <div className="control">
+            <input
+              readOnly={!!this.state.publishedUrl}
+              type="text"
+              className="input"
+              id="program-name-in-share-dialog"
+              placeholder={_T("Please enter the name for your program")}
+              autoFocus
+              value={this.state.programName}
+              onChange={event => {
+                this.setState({ programName: event.target.value });
+              }}
+            />
+          </div>
+        </div>
+        <br />
+        {this.state.publishedUrl && (
           <div>
-            <div className="field">
-              <label className="label">{_T("Program name")}</label>
-              <div className="control">
-                <input
-                  type="text"
-                  className="input"
-                  id="program-name-in-share-dialog"
-                  placeholder={_T("Please enter the name for your program")}
-                  autoFocus
-                  value={this.state.programName}
-                  onChange={event => {
-                    this.setState({ programName: event.target.value });
-                  }}
-                />
-              </div>
-            </div>
+            <label className="label">{_T("Public url")}</label>
+            <InputCopyToClipboardComponent text={this.state.publishedUrl} />
           </div>
         )}
       </ModalComponent>
