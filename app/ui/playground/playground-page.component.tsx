@@ -158,6 +158,12 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
     });
 
     this.titleService.setDocumentTitle(programModel.name);
+
+    if (programModel.storageType) {
+      setTimeout(() => {
+        this.executionService.executeProgram(programModel.code);
+      }, 500);
+    }
   }
 
   render(): JSX.Element {
