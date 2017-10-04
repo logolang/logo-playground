@@ -19,6 +19,7 @@ import {
 } from "app/services/program/program-management.service";
 
 import { ShareScreenshotModalComponent } from "app/ui/playground/share-screenshot-modal.component";
+import { ShareProgramModalComponent } from "app/ui/playground/share-program-modal.component";
 import { CodeInputLogoComponent, ICodeInputComponentProps } from "app/ui/_shared/code-input-logo.component";
 import { SaveProgramModalComponent } from "app/ui/playground/save-program-modal.component";
 import { ProgramControlsMenuComponent } from "app/ui/playground/program-controls-menu.component";
@@ -38,6 +39,8 @@ export interface ICodePanelComponentProps {
 
 interface IComponentState {
   isSaveModalActive: boolean;
+  isShareModalActive: boolean;
+  isTakeScreenshotModalActive: boolean;
   hasLocalTempChanges: boolean;
   screenshotDataToSave: string;
   code: string;
@@ -54,6 +57,8 @@ export class CodePanelComponent extends React.Component<ICodePanelComponentProps
     super(props);
     this.state = {
       isSaveModalActive: false,
+      isShareModalActive: false,
+      isTakeScreenshotModalActive: false,
       screenshotDataToSave: "",
       hasLocalTempChanges: this.props.program.hasTempLocalModifications,
       code: this.props.program.code
@@ -94,11 +99,20 @@ export class CodePanelComponent extends React.Component<ICodePanelComponentProps
     return (
       <div className="code-panel-container">
         {this.renderSaveModal()}
-        {this.state.screenshotDataToSave && (
+        {this.state.isTakeScreenshotModalActive && (
           <ShareScreenshotModalComponent
             imageBase64={this.state.screenshotDataToSave}
             onClose={() => {
-              this.setState({ screenshotDataToSave: "" });
+              this.setState({ isTakeScreenshotModalActive: false });
+            }}
+          />
+        )}
+        {this.state.isShareModalActive && (
+          <ShareProgramModalComponent
+            programModel={this.props.program}
+            imageBase64={this.state.screenshotDataToSave}
+            onClose={() => {
+              this.setState({ isShareModalActive: false });
             }}
           />
         )}
@@ -110,6 +124,7 @@ export class CodePanelComponent extends React.Component<ICodePanelComponentProps
           stopProgram={execService.stopProgram}
           exportImage={this.exportScreenshot}
           saveAsNew={this.showSaveDialog}
+          onShareProgram={this.shareProgram}
           revertChanges={
             this.state.hasLocalTempChanges && this.props.program.id ? this.revertCurrentProgram : undefined
           }
@@ -181,9 +196,8 @@ export class CodePanelComponent extends React.Component<ICodePanelComponentProps
     this.setState({ hasLocalTempChanges: false });
     if (this.props.navigateAutomaticallyAfterSaveAs) {
       this.navigationService.navigate({
-        route: Routes.playgroundCode.build({
-          programId: newProgram.id,
-          storageType: ProgramStorageType.gallery
+        route: Routes.codeLibrary.build({
+          id: newProgram.id
         })
       });
     }
@@ -203,6 +217,11 @@ export class CodePanelComponent extends React.Component<ICodePanelComponentProps
         type: "primary"
       });
     }
-    this.setState({ screenshotDataToSave: data });
+    this.setState({ isTakeScreenshotModalActive: true, screenshotDataToSave: data });
+  };
+
+  shareProgram = async () => {
+    const data = await this.props.executionService.getScreenshot(true);
+    this.setState({ isShareModalActive: true, screenshotDataToSave: data });
   };
 }

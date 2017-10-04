@@ -110,7 +110,10 @@ export class GalleryComponent extends React.Component<IComponentProps, IComponen
   }
 
   renderProgramCard(p: ProgramModel, storageType: ProgramStorageType, deleteBox: boolean): JSX.Element {
-    const link = Routes.playgroundCode.build({ programId: p.id, storageType: storageType });
+    const link =
+      storageType === ProgramStorageType.gallery
+        ? Routes.codeLibrary.build({ id: p.id })
+        : Routes.codeExample.build({ id: p.id });
     return (
       <div key={p.id} className="card program-card">
         <div className="card-image">

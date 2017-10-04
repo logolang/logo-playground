@@ -11,6 +11,7 @@ interface IComponentProps {
   existingProgramName?: string;
   revertChanges?: () => void;
   saveAsNew?: () => void;
+  onShareProgram: () => void;
   exportImage: () => void;
 }
 
@@ -72,7 +73,7 @@ export class ProgramControlsMenuComponent extends React.Component<IComponentProp
                   {_T("Save to personal library")}
                 </a>
               )}
-              <a className="dropdown-item">
+              <a className="dropdown-item" onClick={this.props.onShareProgram}>
                 <i className="fa fa-share-alt" aria-hidden="true" />
                 &nbsp;&nbsp;
                 {_T("Share")}
