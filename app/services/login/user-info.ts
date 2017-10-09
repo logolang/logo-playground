@@ -3,6 +3,11 @@ export class UserInfo {
   attributes: UserAttributes;
 }
 
+export enum AuthProvider {
+  google = "Google",
+  none = "None"
+}
+
 export class UserAttributes {
-  constructor(public name: string, public email: string, public imageUrl: string) {}
+  constructor(public authProvider: AuthProvider, public name: string, public email: string, public imageUrl: string) {}
 }

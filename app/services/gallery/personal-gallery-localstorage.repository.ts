@@ -4,16 +4,15 @@ import { ICurrentUserService } from "app/services/login/current-user.service";
 import { ProgramModel } from "app/services/program/program.model";
 import { ProgramModelConverter } from "app/services/program/program-model.converter";
 
-export interface IProgramsRepository {
-  getAll(): Promise<ProgramModel[]>;
-  get(id: string): Promise<ProgramModel>;
-  add(program: ProgramModel): Promise<ProgramModel>;
-  update(program: ProgramModel): Promise<ProgramModel>;
-  remove(id: string): Promise<void>;
+export abstract class IUserLibraryRepository {
+  abstract getAll(): Promise<ProgramModel[]>;
+  abstract get(id: string): Promise<ProgramModel>;
+  abstract add(program: ProgramModel): Promise<ProgramModel>;
+  abstract remove(id: string): Promise<void>;
 }
 
 @injectable()
-export class ProgramsLocalStorageRepository implements IProgramsRepository {
+export class ProgramsLocalStorageRepository implements IUserLibraryRepository {
   storage: Storage = window.localStorage;
   constructor(@inject(ICurrentUserService) private currentUser: ICurrentUserService) {}
 
@@ -43,19 +42,10 @@ export class ProgramsLocalStorageRepository implements IProgramsRepository {
   }
 
   async add(program: ProgramModel): Promise<ProgramModel> {
-    if (!program.id) {
-      program.id = RandomHelper.getRandomObjectId(32);
-    }
-    if (program.dateCreated.getTime() === 0) {
-      program.dateCreated = new Date();
-      program.dateLastEdited = new Date();
-    }
-    this.storage.setItem(this.getStorageKey(program.id), ProgramModelConverter.toJson(program));
-    return program;
-  }
-
-  async update(program: ProgramModel): Promise<ProgramModel> {
+    program.id = RandomHelper.getRandomObjectId(32);
+    program.dateCreated = new Date();
     program.dateLastEdited = new Date();
+
     this.storage.setItem(this.getStorageKey(program.id), ProgramModelConverter.toJson(program));
     return program;
   }

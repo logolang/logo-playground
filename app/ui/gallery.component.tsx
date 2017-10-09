@@ -14,10 +14,10 @@ import { Routes } from "app/routes";
 import { _T } from "app/services/customizations/localization.service";
 import {
   ProgramsLocalStorageRepository,
-  IProgramsRepository
+  IUserLibraryRepository
 } from "app/services/gallery/personal-gallery-localstorage.repository";
 import { ProgramModel } from "app/services/program/program.model";
-import { ProgramsSamplesRepository } from "app/services/gallery/gallery-samples.repository";
+import { GallerySamplesRepository, IGallerySamplesRepository } from "app/services/gallery/gallery-samples.repository";
 import { ProgramStorageType } from "app/services/program/program-management.service";
 import { ICurrentUserService } from "app/services/login/current-user.service";
 import { TitleService } from "app/services/infrastructure/title.service";
@@ -38,8 +38,8 @@ interface IComponentProps extends RouteComponentProps<void> {}
 export class GalleryComponent extends React.Component<IComponentProps, IComponentState> {
   @lazyInject(ICurrentUserService) private currentUser: ICurrentUserService;
   @lazyInject(TitleService) private titleService: TitleService;
-  @lazyInject(ProgramsLocalStorageRepository) private programsRepo: IProgramsRepository;
-  @lazyInject(ProgramsSamplesRepository) private samplesRepo: IProgramsRepository;
+  @lazyInject(IUserLibraryRepository) private programsRepo: IUserLibraryRepository;
+  @lazyInject(IGallerySamplesRepository) private samplesRepo: IGallerySamplesRepository;
 
   readonly noScreenshot = require("./images/no.image.png") as string;
 

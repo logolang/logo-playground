@@ -14,15 +14,11 @@ import { OutputPanelComponent, IOutputPanelComponentProps } from "app/ui/playgro
 
 import { _T } from "app/services/customizations/localization.service";
 import { lazyInject } from "app/di";
-import { ProgramsSamplesRepository } from "app/services/gallery/gallery-samples.repository";
+import { GallerySamplesRepository } from "app/services/gallery/gallery-samples.repository";
 import { ProgramModel } from "app/services/program/program.model";
 import { ProgramExecutionContext } from "app/services/program/program-execution.context";
 import { INotificationService } from "app/services/infrastructure/notification.service";
 import { TitleService } from "app/services/infrastructure/title.service";
-import {
-  ProgramsLocalStorageRepository,
-  IProgramsRepository
-} from "app/services/gallery/personal-gallery-localstorage.repository";
 import { IUserSettingsService, IUserSettings } from "app/services/customizations/user-settings.service";
 
 import { ProgramStorageType, ProgramManagementService } from "app/services/program/program-management.service";
