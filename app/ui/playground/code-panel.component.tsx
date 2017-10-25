@@ -182,7 +182,7 @@ export class CodePanelComponent extends React.Component<ICodePanelComponentProps
 
   saveProgramAsCallback = async (newProgramName: string): Promise<void> => {
     const screenshot = await this.props.executionService.getScreenshot(true);
-    const newProgram = await this.managementService.saveProgramToLibrary(
+    const newProgramId = await this.managementService.saveProgramToLibrary(
       newProgramName,
       screenshot,
       this.state.code,
@@ -197,7 +197,7 @@ export class CodePanelComponent extends React.Component<ICodePanelComponentProps
     if (this.props.navigateAutomaticallyAfterSaveAs) {
       this.navigationService.navigate({
         route: Routes.codeLibrary.build({
-          id: newProgram.id
+          id: newProgramId
         })
       });
     }

@@ -26,10 +26,12 @@ import { INavigationService } from "app/services/infrastructure/navigation.servi
 import { IUserSettingsService, IUserSettings } from "app/services/customizations/user-settings.service";
 import { INotificationService } from "app/services/infrastructure/notification.service";
 import { IUserLibraryRepository } from "app/services/gallery/personal-gallery-localstorage.repository";
+import { ProgramsHtmlSerializerService } from "app/services/gallery/programs-html-serializer.service";
 
 interface IComponentState {
   userInfo: UserInfo;
   isSavingInProgress: boolean;
+  isImportingInProgress?: boolean;
   programCount: number;
   currentLocale?: ILocaleInfo;
   theme?: Theme;
@@ -110,17 +112,23 @@ export class UserProfileComponent extends React.Component<IComponentProps, IComp
   }
 
   private doExport = async () => {
-    const data = await callActionSafe(this.errorHandler, async () =>
+    const programs = await callActionSafe(this.errorHandler, async () =>
       this.exportInportService.exportAll(this.programsReporitory)
     );
-    const blob = new Blob([data], { type: "text/plain;charset=utf-8" });
-    FileSaver.saveAs(blob, `logo-sandbox-personal-gallery.json`);
+    if (programs) {
+      const html = new ProgramsHtmlSerializerService().serialize(programs);
+      const blob = new Blob([html], { type: "text/plain;charset=utf-8" });
+      FileSaver.saveAs(blob, `my-logo-programs.html`);
+    }
   };
 
   private onImport = async (fileInfo: File, content: string) => {
-    const added = await callActionSafe(this.errorHandler, async () =>
-      this.exportInportService.importAll(this.programsReporitory, content)
-    );
+    this.setState({ isImportingInProgress: true });
+    const added = await callActionSafe(this.errorHandler, async () => {
+      const programs = new ProgramsHtmlSerializerService().parse(content);
+      return this.exportInportService.importAll(this.programsReporitory, programs);
+    });
+    this.setState({ isImportingInProgress: false });
     if (added !== undefined) {
       await this.loadData();
       this.notificationService.push({
@@ -287,7 +295,11 @@ export class UserProfileComponent extends React.Component<IComponentProps, IComp
                         </a>
                       </p>
                       <p className="control">
-                        <FileSelectorComponent buttonText={_T("Import")} onFileTextContentReady={this.onImport} />
+                        <FileSelectorComponent
+                          className={cn({ "is-loading": this.state.isImportingInProgress })}
+                          buttonText={_T("Import")}
+                          onFileTextContentReady={this.onImport}
+                        />
                       </p>
                     </div>
                   </div>

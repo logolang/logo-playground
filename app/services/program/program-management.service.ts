@@ -57,7 +57,7 @@ export class ProgramManagementService {
     newScreenshot: string,
     newCode: string,
     program: ProgramModel
-  ): Promise<ProgramModel> => {
+  ): Promise<string> => {
     if (!newProgramName || !newProgramName.trim()) {
       throw new Error("Program name is required.");
     }
@@ -72,9 +72,11 @@ export class ProgramManagementService {
       newCode,
       newScreenshot
     );
-    const addedProgram = this.personalRepository.add(newProgram);
-    await this.saveTempProgram(program.id, "");
-    return addedProgram;
+    await this.personalRepository.add([newProgram]);
+    if (program.id) {
+      await this.saveTempProgram(program.id, "");
+    }
+    return newProgram.id;
   };
 
   private async loadProgramFromStorage(storageType?: ProgramStorageType, programId?: string): Promise<ProgramModel> {

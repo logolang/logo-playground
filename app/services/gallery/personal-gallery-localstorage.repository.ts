@@ -7,7 +7,7 @@ import { ProgramModelConverter } from "app/services/program/program-model.conver
 export abstract class IUserLibraryRepository {
   abstract getAll(): Promise<ProgramModel[]>;
   abstract get(id: string): Promise<ProgramModel>;
-  abstract add(program: ProgramModel): Promise<ProgramModel>;
+  abstract add(programs: ProgramModel[]): Promise<void>;
   abstract remove(id: string): Promise<void>;
 }
 
@@ -41,13 +41,15 @@ export class ProgramsLocalStorageRepository implements IUserLibraryRepository {
     throw new Error(`Program with id ${id} is not found`);
   }
 
-  async add(program: ProgramModel): Promise<ProgramModel> {
-    program.id = RandomHelper.getRandomObjectId(32);
-    program.dateCreated = new Date();
-    program.dateLastEdited = new Date();
-
-    this.storage.setItem(this.getStorageKey(program.id), ProgramModelConverter.toJson(program));
-    return program;
+  async add(programs: ProgramModel[]): Promise<void> {
+    for (const program of programs) {
+      if (!program.id) {
+        program.id = RandomHelper.getRandomObjectId(32);
+      }
+      program.dateCreated = new Date();
+      program.dateLastEdited = new Date();
+      this.storage.setItem(this.getStorageKey(program.id), ProgramModelConverter.toJson(program));
+    }
   }
 
   async remove(id: string): Promise<void> {

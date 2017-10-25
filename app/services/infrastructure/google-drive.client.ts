@@ -4,6 +4,7 @@ export interface IGoogleFileInfo {
   name: string;
   id: string;
   md5Checksum: string;
+  trashed: boolean;
 }
 
 export interface IGoogleFilesListResponse {
@@ -19,10 +20,11 @@ export class GoogleDriveClient {
     return globalGapi;
   }
 
-  public async listFiles(): Promise<IGoogleFilesListResponse> {
+  public async listFiles(query: string): Promise<IGoogleFilesListResponse> {
     const response = await this.gapi.client.drive.files.list({
-      fields: "nextPageToken, files(id, name, md5Checksum)",
-      pageSize: 100
+      fields: "nextPageToken, files(id, name, md5Checksum, trashed)",
+      pageSize: 100,
+      q: query
     });
     const result: IGoogleFilesListResponse = response.result;
     return result;
@@ -43,10 +45,10 @@ export class GoogleDriveClient {
     throw new Error("Google drive read error");
   }
 
-  public async uploadNewFile(fileName: string, fileContent: string): Promise<void> {
+  public async uploadNewFile(fileName: string, fileContent: string, fileContentType: string): Promise<void> {
     const authToken = this.gapi.client.getToken();
     const formBoundary = "__" + RandomHelper.getRandomObjectId(32) + "__";
-    const requestBody = this.createFileUploadBody(formBoundary, fileName, fileContent);
+    const requestBody = this.createFileUploadBody(formBoundary, fileName, fileContent, fileContentType);
     const url = "https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart";
     await fetch(url, {
       method: "POST",
@@ -60,10 +62,15 @@ export class GoogleDriveClient {
     });
   }
 
-  public async updateFile(fileId: string, fileName: string, fileContent: string): Promise<void> {
+  public async updateFile(
+    fileId: string,
+    fileName: string,
+    fileContent: string,
+    fileContentType: string
+  ): Promise<void> {
     const authToken = this.gapi.client.getToken();
     const formBoundary = "__" + RandomHelper.getRandomObjectId(32) + "__";
-    const requestBody = this.createFileUploadBody(formBoundary, fileName, fileContent);
+    const requestBody = this.createFileUploadBody(formBoundary, fileName, fileContent, fileContentType);
     const url = `https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=multipart`;
     await fetch(url, {
       method: "PATCH",
@@ -77,13 +84,18 @@ export class GoogleDriveClient {
     });
   }
 
-  private createFileUploadBody(formBoundary: string, fileName: string, fileContent: string): string {
+  private createFileUploadBody(
+    formBoundary: string,
+    fileName: string,
+    fileContent: string,
+    fileContentType: string
+  ): string {
     let formData = "";
     formData += "--" + formBoundary + "\n";
     formData += "Content-Type: application/json; charset=UTF-8\n\n";
     formData += JSON.stringify({ name: fileName });
     formData += "\n--" + formBoundary + "\n";
-    formData += "Content-Type: text/plain; charset=UTF-8\n\n";
+    formData += "Content-Type: " + fileContentType + "\n\n";
     formData += fileContent;
     formData += "\n\n--" + formBoundary + "--\n";
     return formData;
