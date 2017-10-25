@@ -9,7 +9,6 @@ export class ProgramsHtmlSerializerService {
     const bodyXml = serialized.substring(bodyStartIndex, bodyEndIndex - 1);
     const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(bodyXml, "application/xml");
-    console.log(xmlDoc);
 
     const articles = xmlDoc.querySelectorAll(".logo-program");
     for (let i = 0; i < articles.length; ++i) {
