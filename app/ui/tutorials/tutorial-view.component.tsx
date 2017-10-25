@@ -12,8 +12,8 @@ import {
 } from "app/services/tutorials/tutorials-content-service";
 import { _T } from "app/services/customizations/localization.service";
 import { TutorialSelectModalComponent } from "app/ui/tutorials/tutorial-select-modal.component";
-import { PageLoadingIndicatorComponent } from "app/ui/_generic/page-loading-indicator.component";
 import { ModalComponent } from "app/ui/_generic/modal.component";
+import { LoadingComponent } from "app/ui/_generic/loading.component";
 
 import "./tutorial-view.component.scss";
 
@@ -115,7 +115,7 @@ export class TutorialViewComponent extends React.Component<ITutorialViewComponen
 
     return (
       <div className="tutorial-view-panel">
-        {this.state.isLoading && <PageLoadingIndicatorComponent isLoading={true} />}
+        <LoadingComponent isLoading={this.state.isLoading} />
         {!this.state.isLoading &&
           this.state.currentStepInfo &&
           this.state.currentStepContent &&
