@@ -161,7 +161,7 @@ export class TutorialViewComponent extends React.Component<ITutorialViewComponen
                       <span className="icon">
                         <i className="fa fa-arrow-left" aria-hidden="true" />
                       </span>
-                      <span>Back</span>
+                      <span>{_T("Back")}</span>
                     </button>
                   )}
                 </p>

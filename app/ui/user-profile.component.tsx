@@ -25,14 +25,13 @@ import { TitleService } from "app/services/infrastructure/title.service";
 import { INavigationService } from "app/services/infrastructure/navigation.service";
 import { IUserSettingsService, IUserSettings } from "app/services/customizations/user-settings.service";
 import { INotificationService } from "app/services/infrastructure/notification.service";
-import {
-  ProgramsLocalStorageRepository,
-  IProgramsRepository
-} from "app/services/gallery/personal-gallery-localstorage.repository";
+import { IUserLibraryRepository } from "app/services/gallery/personal-gallery-localstorage.repository";
+import { ProgramsHtmlSerializerService } from "app/services/gallery/programs-html-serializer.service";
 
 interface IComponentState {
   userInfo: UserInfo;
   isSavingInProgress: boolean;
+  isImportingInProgress?: boolean;
   programCount: number;
   currentLocale?: ILocaleInfo;
   theme?: Theme;
@@ -61,7 +60,7 @@ export class UserProfileComponent extends React.Component<IComponentProps, IComp
   @lazyInject(ThemesService) private themeService: ThemesService;
   @lazyInject(TurtlesService) private turtleCustomizationService: TurtlesService;
   @lazyInject(LocalizationService) private localizationService: LocalizationService;
-  @lazyInject(ProgramsLocalStorageRepository) private programsReporitory: IProgramsRepository;
+  @lazyInject(IUserLibraryRepository) private programsReporitory: IUserLibraryRepository;
 
   private onIsRunningChanged = new Subject<boolean>();
   private runCode = new BehaviorSubject<string>("");
@@ -113,17 +112,23 @@ export class UserProfileComponent extends React.Component<IComponentProps, IComp
   }
 
   private doExport = async () => {
-    const data = await callActionSafe(this.errorHandler, async () =>
+    const programs = await callActionSafe(this.errorHandler, async () =>
       this.exportInportService.exportAll(this.programsReporitory)
     );
-    const blob = new Blob([data], { type: "text/plain;charset=utf-8" });
-    FileSaver.saveAs(blob, `logo-sandbox-personal-gallery.json`);
+    if (programs) {
+      const html = new ProgramsHtmlSerializerService().serialize(programs);
+      const blob = new Blob([html], { type: "text/plain;charset=utf-8" });
+      FileSaver.saveAs(blob, `my-logo-programs.html`);
+    }
   };
 
   private onImport = async (fileInfo: File, content: string) => {
-    const added = await callActionSafe(this.errorHandler, async () =>
-      this.exportInportService.importAll(this.programsReporitory, content)
-    );
+    this.setState({ isImportingInProgress: true });
+    const added = await callActionSafe(this.errorHandler, async () => {
+      const programs = new ProgramsHtmlSerializerService().parse(content);
+      return this.exportInportService.importAll(this.programsReporitory, programs);
+    });
+    this.setState({ isImportingInProgress: false });
     if (added !== undefined) {
       await this.loadData();
       this.notificationService.push({
@@ -144,175 +149,179 @@ export class UserProfileComponent extends React.Component<IComponentProps, IComp
           <PageHeaderComponent title={_T("User settings")} />
 
           {this.state.userSettings &&
-          this.state.currentLocale &&
-          this.state.theme &&
-          this.state.userInfo && (
-            <div className="tile is-ancestor">
-              <div className="tile is-6 is-vertical is-parent">
-                <div className="tile is-child box">
-                  <p>
-                    <strong>{_T("Name")}:</strong> {this.state.userInfo.attributes.name}
-                  </p>
-                  <p>
-                    <strong>{_T("Email")}:</strong> {this.state.userInfo.attributes.email}
-                  </p>
+            this.state.currentLocale &&
+            this.state.theme &&
+            this.state.userInfo && (
+              <div className="tile is-ancestor">
+                <div className="tile is-6 is-vertical is-parent">
+                  <div className="tile is-child box">
+                    <p>
+                      <strong>{_T("Name")}:</strong> {this.state.userInfo.attributes.name}
+                    </p>
+                    <p>
+                      <strong>{_T("Email")}:</strong> {this.state.userInfo.attributes.email}
+                    </p>
+                  </div>
+                  <div className="tile is-child box">
+                    <div className="field">
+                      <label className="label">{_T("Language")}</label>
+                      <div className="control">
+                        <div className="select">
+                          <select
+                            id="localeselector"
+                            value={this.state.currentLocale.id}
+                            onChange={event => {
+                              const selectedLocation = this.localizationService
+                                .getSupportedLocales()
+                                .find(loc => loc.id === event.target.value);
+                              if (selectedLocation) {
+                                setTimeout(async () => {
+                                  await this.userSettingsService.update({ localeId: selectedLocation.id });
+                                  // refresh browser window
+                                  window.location.reload(true);
+                                }, 0);
+                              }
+                              return {};
+                            }}
+                          >
+                            {this.localizationService.getSupportedLocales().map(loc => {
+                              return (
+                                <option key={loc.id} value={loc.id}>
+                                  {loc.name}
+                                </option>
+                              );
+                            })}
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="field">
+                      <label className="label">{_T("User interface theme")}</label>
+                      <div className="control">
+                        <div className="select">
+                          <select
+                            id="themeselector"
+                            value={this.state.theme.name}
+                            onChange={event => {
+                              const selectedTheme = this.themeService
+                                .getAllThemes()
+                                .find(t => t.name === event.target.value);
+                              if (selectedTheme) {
+                                setTimeout(async () => {
+                                  await this.userSettingsService.update({ themeName: selectedTheme.name });
+                                  window.localStorage.setItem(
+                                    (window as any).appThemeNameLocalStorageKey,
+                                    JSON.stringify(selectedTheme)
+                                  );
+                                  // refresh browser window
+                                  window.location.reload(true);
+                                }, 0);
+                              }
+                              return {};
+                            }}
+                          >
+                            {this.themeService.getAllThemes().map(t => {
+                              return (
+                                <option key={t.name} value={t.name}>
+                                  {t.name}
+                                </option>
+                              );
+                            })}
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+
+                    <label className="label">{_T("Turtle")}</label>
+                    <div className="field is-grouped">
+                      <div className="control">
+                        <div className="select">
+                          <select
+                            id="turtleSelector"
+                            value={this.state.userSettings.turtleId}
+                            onChange={async event => {
+                              const value = event.target.value;
+                              await this.userSettingsService.update({ turtleId: value });
+                              await this.loadData();
+                              this.setRandomCode();
+                            }}
+                          >
+                            {this.turtleCustomizationService.getAllTurtles().map(t => {
+                              return (
+                                <option key={t.id} value={t.id}>
+                                  {t.getName()}
+                                </option>
+                              );
+                            })}
+                          </select>
+                        </div>
+                      </div>
+                      <div className="control">
+                        <div className="select">
+                          <select
+                            id="turtleSelector"
+                            value={this.state.userSettings.turtleSize}
+                            onChange={async event => {
+                              const value = parseInt(event.target.value, 10);
+                              await this.userSettingsService.update({ turtleSize: value });
+                              await this.loadData();
+                              this.setRandomCode();
+                            }}
+                          >
+                            <option value={20}>{_T("Extra Small")}</option>
+                            <option value={32}>{_T("Small")}</option>
+                            <option value={40}>{_T("Medium")}</option>
+                            <option value={52}>{_T("Large")}</option>
+                            <option value={72}>{_T("Huge")}</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+
+                    <label className="label">{_T("Personal library")}</label>
+                    <p className="help">
+                      <span>
+                        {_T("You have %d program", {
+                          plural: "You have %d programs",
+                          value: this.state.programCount
+                        })}
+                      </span>
+                    </p>
+                    <div className="field is-grouped is-grouped-multiline">
+                      <p className="control">
+                        <a className="button" onClick={this.doExport}>
+                          {_T("Export")}
+                        </a>
+                      </p>
+                      <p className="control">
+                        <FileSelectorComponent
+                          className={cn({ "is-loading": this.state.isImportingInProgress })}
+                          buttonText={_T("Import")}
+                          onFileTextContentReady={this.onImport}
+                        />
+                      </p>
+                    </div>
+                  </div>
                 </div>
-                <div className="tile is-child box">
-                  <div className="field">
-                    <label className="label">{_T("Language")}</label>
-                    <div className="control">
-                      <div className="select">
-                        <select
-                          id="localeselector"
-                          value={this.state.currentLocale.id}
-                          onChange={event => {
-                            const selectedLocation = this.localizationService
-                              .getSupportedLocales()
-                              .find(loc => loc.id === event.target.value);
-                            if (selectedLocation) {
-                              setTimeout(async () => {
-                                await this.userSettingsService.update({ localeId: selectedLocation.id });
-                                // refresh browser window
-                                window.location.reload(true);
-                              }, 0);
-                            }
-                            return {};
-                          }}
-                        >
-                          {this.localizationService.getSupportedLocales().map(loc => {
-                            return (
-                              <option key={loc.id} value={loc.id}>
-                                {loc.name}
-                              </option>
-                            );
-                          })}
-                        </select>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="field">
-                    <label className="label">{_T("User interface theme")}</label>
-                    <div className="control">
-                      <div className="select">
-                        <select
-                          id="themeselector"
-                          value={this.state.theme.name}
-                          onChange={event => {
-                            const selectedTheme = this.themeService
-                              .getAllThemes()
-                              .find(t => t.name === event.target.value);
-                            if (selectedTheme) {
-                              setTimeout(async () => {
-                                await this.userSettingsService.update({ themeName: selectedTheme.name });
-                                window.localStorage.setItem(
-                                  (window as any).appThemeNameLocalStorageKey,
-                                  JSON.stringify(selectedTheme)
-                                );
-                                // refresh browser window
-                                window.location.reload(true);
-                              }, 0);
-                            }
-                            return {};
-                          }}
-                        >
-                          {this.themeService.getAllThemes().map(t => {
-                            return (
-                              <option key={t.name} value={t.name}>
-                                {t.name}
-                              </option>
-                            );
-                          })}
-                        </select>
-                      </div>
-                    </div>
-                  </div>
-
-                  <label className="label">{_T("Turtle")}</label>
-                  <div className="field is-grouped">
-                    <div className="control">
-                      <div className="select">
-                        <select
-                          id="turtleSelector"
-                          value={this.state.userSettings.turtleId}
-                          onChange={async event => {
-                            const value = event.target.value;
-                            await this.userSettingsService.update({ turtleId: value });
-                            await this.loadData();
-                            this.setRandomCode();
-                          }}
-                        >
-                          {this.turtleCustomizationService.getAllTurtles().map(t => {
-                            return (
-                              <option key={t.id} value={t.id}>
-                                {t.getName()}
-                              </option>
-                            );
-                          })}
-                        </select>
-                      </div>
-                    </div>
-                    <div className="control">
-                      <div className="select">
-                        <select
-                          id="turtleSelector"
-                          value={this.state.userSettings.turtleSize}
-                          onChange={async event => {
-                            const value = parseInt(event.target.value, 10);
-                            await this.userSettingsService.update({ turtleSize: value });
-                            await this.loadData();
-                            this.setRandomCode();
-                          }}
-                        >
-                          <option value={20}>{_T("Extra Small")}</option>
-                          <option value={32}>{_T("Small")}</option>
-                          <option value={40}>{_T("Medium")}</option>
-                          <option value={52}>{_T("Large")}</option>
-                          <option value={72}>{_T("Huge")}</option>
-                        </select>
-                      </div>
-                    </div>
-                  </div>
-
-                  <label className="label">{_T("Personal library")}</label>
-                  <p className="help">
-                    <span>
-                      {_T("You have %d program", {
-                        plural: "You have %d programs",
-                        value: this.state.programCount
-                      })}
-                    </span>
-                  </p>
-                  <div className="field is-grouped is-grouped-multiline">
-                    <p className="control">
-                      <a className="button" onClick={this.doExport}>
-                        {_T("Export")}
-                      </a>
-                    </p>
-                    <p className="control">
-                      <FileSelectorComponent buttonText={_T("Import")} onFileTextContentReady={this.onImport} />
-                    </p>
+                <div className="tile is-parent">
+                  <div className="tile is-child box">
+                    {[
+                      <LogoExecutorComponent
+                        key={`${JSON.stringify(this.state.userSettings)}`} //this is a hack to force component to be created each render in order to not handle prop change event
+                        height={400}
+                        onIsRunningChanged={this.onIsRunningChanged}
+                        runCommands={this.runCode}
+                        stopCommands={new Subject<void>()}
+                        customTurtleImage={this.state.turtleImage}
+                        customTurtleSize={this.state.userSettings.turtleSize}
+                        isDarkTheme={this.state.theme.isDark}
+                      />
+                    ]}
                   </div>
                 </div>
               </div>
-              <div className="tile is-parent">
-                <div className="tile is-child box">
-                  {[
-                    <LogoExecutorComponent
-                      key={`${JSON.stringify(this.state.userSettings)}`} //this is a hack to force component to be created each render in order to not handle prop change event
-                      height={400}
-                      onIsRunningChanged={this.onIsRunningChanged}
-                      runCommands={this.runCode}
-                      stopCommands={new Subject<void>()}
-                      customTurtleImage={this.state.turtleImage}
-                      customTurtleSize={this.state.userSettings.turtleSize}
-                      isDarkTheme={this.state.theme.isDark}
-                    />
-                  ]}
-                </div>
-              </div>
-            </div>
-          )}
+            )}
         </div>
       </div>
     );

@@ -1,21 +1,20 @@
 import { ProgramModel } from "app/services/program/program.model";
-import { IProgramsRepository } from "app/services/gallery/personal-gallery-localstorage.repository";
 import { injectable, inject } from "app/di";
 import { ICurrentUserService } from "app/services/login/current-user.service";
 import { TutorialsContentService, ITutorialsContentService } from "app/services/tutorials/tutorials-content-service";
 import { ProgramStorageType } from "app/services/program/program-management.service";
 import { ProgramModelConverter } from "app/services/program/program-model.converter";
 
+export abstract class ITutorialsSamplesRepository {
+  abstract get(id: string): Promise<ProgramModel>;
+}
+
 @injectable()
-export class TutorialsCodeRepository implements IProgramsRepository {
+export class TutorialsCodeRepository implements ITutorialsSamplesRepository {
   constructor(
     @inject(ICurrentUserService) private currentUser: ICurrentUserService,
     @inject(ITutorialsContentService) private tutorialsContentService: TutorialsContentService
   ) {}
-
-  async getAll(): Promise<ProgramModel[]> {
-    throw new Error("not implemented");
-  }
 
   async get(id: string): Promise<ProgramModel> {
     // id is expected to be in TutorialId:StepId format
@@ -34,17 +33,5 @@ export class TutorialsCodeRepository implements IProgramsRepository {
     );
     program.id = id;
     return program;
-  }
-
-  async add(program: ProgramModel): Promise<ProgramModel> {
-    throw new Error("not implemented");
-  }
-
-  async update(program: ProgramModel): Promise<ProgramModel> {
-    throw new Error("not implemented");
-  }
-
-  async remove(id: string): Promise<void> {
-    throw new Error("not implemented");
   }
 }

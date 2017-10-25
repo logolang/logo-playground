@@ -1,5 +1,5 @@
 import { Observable, Subject } from "rxjs/Rx";
-import { UserInfo } from "app/services/login/user-info";
+import { UserInfo, AuthProvider } from "app/services/login/user-info";
 import { injectable } from "app/di";
 
 export interface LoginStatus {
@@ -11,6 +11,7 @@ export const NotLoggenInStatus: LoginStatus = Object.freeze({
   isLoggedIn: false,
   userInfo: {
     attributes: {
+      authProvider: AuthProvider.none,
       email: "",
       imageUrl: "",
       name: "Guest"

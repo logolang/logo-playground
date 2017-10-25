@@ -2,6 +2,8 @@ import * as React from "react";
 import { LoginStatus, NotLoggenInStatus } from "app/services/login/current-user.service";
 import { Subject } from "rxjs/Subject";
 import { IAuthService } from "app/services/login/auth.service";
+import { AuthProvider } from "app/services/login/user-info";
+import { _T } from "app/services/customizations/localization.service";
 
 export class GoogleAuthService implements IAuthService {
   private isSignedIn: boolean = false;
@@ -24,50 +26,64 @@ export class GoogleAuthService implements IAuthService {
       return;
     }
 
-    let isResolved = false;
-    const promise = new Promise<void>(resolve => {
-      gapi.load("auth2", () => {
-        const auth2 = gapi.auth2.init({
-          client_id: this.googleClientId,
-          scope: "profile email"
-        });
-
-        // Listen for changes to current user.
-        auth2.currentUser.listen((googleUser: any) => {
-          const profile = googleUser.getBasicProfile();
-          if (profile) {
-            const loginStatus: LoginStatus = {
-              isLoggedIn: true,
-              userInfo: {
-                attributes: {
-                  email: profile.getEmail(),
-                  imageUrl: profile.getImageUrl(),
-                  name: profile.getName()
-                },
-                id: profile.getId()
-              }
-            };
-            this.isSignedIn = true;
-            this.loginStatus = loginStatus;
-            this.loginStatusSubject.next(this.loginStatus);
-            if (!isResolved) {
-              isResolved = true;
-              resolve();
-            }
-          } else {
-            this.isSignedIn = false;
-            this.loginStatus = NotLoggenInStatus;
-            this.loginStatusSubject.next(this.loginStatus);
-            if (!isResolved) {
-              isResolved = true;
-              resolve();
-            }
-          }
-        });
+    return new Promise<void>((resolve, reject) => {
+      gapi.load("client:auth2", async () => {
+        try {
+          await this.initGoogleAuth(gapi);
+          resolve();
+        } catch (ex) {
+          reject(ex);
+        }
       });
     });
-    return promise;
   }
+
+  private initGoogleAuth = async (gapi: any): Promise<void> => {
+    const auth2 = await gapi.client
+      .init({
+        clientId: this.googleClientId,
+        scope: "profile email https://www.googleapis.com/auth/drive.appdata https://www.googleapis.com/auth/drive.file",
+        discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"]
+      })
+      .then();
+
+    const auth = gapi.auth2.getAuthInstance();
+
+    //Get current user
+    const googleUser = auth.currentUser.get();
+    this.updateSigninStatus(googleUser);
+
+    // Listen for changes to current user.
+    auth.currentUser.listen((googleUser: any) => {
+      console.log("4");
+      this.updateSigninStatus(googleUser);
+    });
+  };
+
+  private updateSigninStatus = (googleUser: any) => {
+    const profile = googleUser && googleUser.getBasicProfile();
+    if (profile) {
+      const loginStatus: LoginStatus = {
+        isLoggedIn: true,
+        userInfo: {
+          attributes: {
+            authProvider: AuthProvider.google,
+            email: profile.getEmail(),
+            imageUrl: profile.getImageUrl(),
+            name: profile.getName()
+          },
+          id: profile.getId()
+        }
+      };
+      this.isSignedIn = true;
+      this.loginStatus = loginStatus;
+      this.loginStatusSubject.next(this.loginStatus);
+    } else {
+      this.isSignedIn = false;
+      this.loginStatus = NotLoggenInStatus;
+      this.loginStatusSubject.next(this.loginStatus);
+    }
+  };
 
   async signOut(): Promise<void> {
     if (this.isSignedIn) {
@@ -77,30 +93,26 @@ export class GoogleAuthService implements IAuthService {
     }
   }
 
+  async signIn(): Promise<void> {
+    const gapi = (window as any).gapi;
+    const auth2 = gapi.auth2.getAuthInstance();
+    return auth2.signIn();
+  }
+
   renderLoginUI(): JSX.Element {
     return (
-      <div
-        key="google-auth"
-        id="google-btn-signin2"
-        className="g-signin2"
-        data-width="300"
-        data-height="200"
-        data-longtitle="true"
-      />
+      <div key="login-elem-google">
+        <button type="button" className="button is-info" onClick={async () => this.signIn()}>
+          <span className="icon">
+            <i className="fa fa-google" aria-hidden="true" />
+          </span>
+          <span>{_T("Login with Google")}</span>
+        </button>
+      </div>
     );
   }
 
   async initLoginUI(): Promise<void> {
-    const gapi = (window as any).gapi;
-    if (gapi) {
-      gapi.signin2.render("google-btn-signin2", {
-        client_id: this.googleClientId,
-        scope: "profile email",
-        width: 240,
-        height: 50,
-        longtitle: true,
-        theme: "dark"
-      });
-    }
+    /** Nothing here */
   }
 }

@@ -1,14 +1,11 @@
 import { injectable, inject } from "app/di";
 import { ensure } from "app/utils/syntax-helpers";
 
-import {
-  IProgramsRepository,
-  ProgramsLocalStorageRepository
-} from "app/services/gallery/personal-gallery-localstorage.repository";
+import { IUserLibraryRepository } from "app/services/gallery/personal-gallery-localstorage.repository";
 import { ProgramModel } from "app/services/program/program.model";
-import { ProgramsSamplesRepository } from "app/services/gallery/gallery-samples.repository";
+import { GallerySamplesRepository, IGallerySamplesRepository } from "app/services/gallery/gallery-samples.repository";
 import { ILocalTempCodeStorage } from "app/services/program/local-temp-code.storage";
-import { TutorialsCodeRepository } from "app/services/tutorials/tutorials-code.repository";
+import { TutorialsCodeRepository, ITutorialsSamplesRepository } from "app/services/tutorials/tutorials-code.repository";
 import { ProgramModelConverter } from "app/services/program/program-model.converter";
 import { GistSharedProgramsRepository } from "app/services/program/gist-shared-programs.repository";
 
@@ -27,9 +24,9 @@ export interface IProgramToSaveAttributes {
 @injectable()
 export class ProgramManagementService {
   constructor(
-    @inject(ProgramsSamplesRepository) private examplesRepository: IProgramsRepository,
-    @inject(ProgramsLocalStorageRepository) private personalRepository: IProgramsRepository,
-    @inject(TutorialsCodeRepository) private tutorialsRepository: IProgramsRepository,
+    @inject(IGallerySamplesRepository) private examplesRepository: IGallerySamplesRepository,
+    @inject(IUserLibraryRepository) private personalRepository: IUserLibraryRepository,
+    @inject(ITutorialsSamplesRepository) private tutorialsRepository: ITutorialsSamplesRepository,
     @inject(ILocalTempCodeStorage) private localTempStorage: ILocalTempCodeStorage,
     @inject(GistSharedProgramsRepository) private gistRepositpry: GistSharedProgramsRepository
   ) {}
@@ -60,7 +57,7 @@ export class ProgramManagementService {
     newScreenshot: string,
     newCode: string,
     program: ProgramModel
-  ): Promise<ProgramModel> => {
+  ): Promise<string> => {
     if (!newProgramName || !newProgramName.trim()) {
       throw new Error("Program name is required.");
     }
@@ -75,9 +72,11 @@ export class ProgramManagementService {
       newCode,
       newScreenshot
     );
-    const addedProgram = this.personalRepository.add(newProgram);
-    await this.saveTempProgram(program.id, "");
-    return addedProgram;
+    await this.personalRepository.add([newProgram]);
+    if (program.id) {
+      await this.saveTempProgram(program.id, "");
+    }
+    return newProgram.id;
   };
 
   private async loadProgramFromStorage(storageType?: ProgramStorageType, programId?: string): Promise<ProgramModel> {

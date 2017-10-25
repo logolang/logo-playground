@@ -5,7 +5,10 @@ import { AppConfigLoader } from "app/services/config/app-config-loader";
 import { CurrentUserService, ICurrentUserService } from "app/services/login/current-user.service";
 import { LocalizedContentLoader, ILocalizedContentLoader } from "app/services/infrastructure/localized-content-loader";
 import { TutorialsContentService, ITutorialsContentService } from "app/services/tutorials/tutorials-content-service";
-import { ProgramsLocalStorageRepository } from "app/services/gallery/personal-gallery-localstorage.repository";
+import {
+  ProgramsLocalStorageRepository,
+  IUserLibraryRepository
+} from "app/services/gallery/personal-gallery-localstorage.repository";
 import { LocalTempCodeStorage, ILocalTempCodeStorage } from "app/services/program/local-temp-code.storage";
 import {
   UserSettingsBrowserLocalStorageService,
@@ -20,12 +23,14 @@ import { IAppInfo } from "app/services/infrastructure/app-info";
 import { AppConfig } from "app/services/config/app-config";
 import { ThemesService } from "app/services/customizations/themes.service";
 import { TurtlesService } from "app/services/customizations/turtles.service";
-import { ProgramsSamplesRepository } from "app/services/gallery/gallery-samples.repository";
+import { GallerySamplesRepository, IGallerySamplesRepository } from "app/services/gallery/gallery-samples.repository";
 import { GoogleAuthService } from "app/services/login/google-auth.service";
 import { LoginService, ILoginService } from "app/services/login/login.service";
 import { ProgramManagementService } from "app/services/program/program-management.service";
-import { TutorialsCodeRepository } from "app/services/tutorials/tutorials-code.repository";
+import { TutorialsCodeRepository, ITutorialsSamplesRepository } from "app/services/tutorials/tutorials-code.repository";
 import { GistSharedProgramsRepository } from "app/services/program/gist-shared-programs.repository";
+import { AuthProvider } from "app/services/login/user-info";
+import { ProgramsGoogleDriveRepository } from "app/services/gallery/personal-gallery-googledrive.repository";
 
 export class DependecyInjectionSetup {
   static async setup() {
@@ -43,9 +48,10 @@ export class DependecyInjectionSetup {
     const authService = new GoogleAuthService(
       "388088822786-2okb2ch7pov7d6oqk8chrq33u0ed0kfr.apps.googleusercontent.com"
     );
-    const loginService = new LoginService(authService, container.get(ICurrentUserService));
-    container.bind(ILoginService).toConstantValue(loginService);
-    await loginService.tryLoginUserAutomatically();
+    const currentUserServiceInst = container.get(ICurrentUserService);
+    const loginServiceInst = new LoginService(authService, currentUserServiceInst);
+    container.bind(ILoginService).toConstantValue(loginServiceInst);
+    await loginServiceInst.tryLoginUserAutomatically();
 
     container.bind(IUserSettingsService).to(UserSettingsBrowserLocalStorageService);
     const userSettings = await container.get(IUserSettingsService).get();
@@ -77,9 +83,17 @@ export class DependecyInjectionSetup {
     container.bind(ThemesService).to(ThemesService);
     container.bind(TurtlesService).to(TurtlesService);
 
-    container.bind(ProgramsLocalStorageRepository).to(ProgramsLocalStorageRepository);
-    container.bind(ProgramsSamplesRepository).to(ProgramsSamplesRepository);
-    container.bind(TutorialsCodeRepository).to(TutorialsCodeRepository);
+    switch (currentUserServiceInst.getLoginStatus().userInfo.attributes.authProvider) {
+      case AuthProvider.none:
+        container.bind(IUserLibraryRepository).to(ProgramsLocalStorageRepository);
+        break;
+      case AuthProvider.google:
+        container.bind(IUserLibraryRepository).to(ProgramsGoogleDriveRepository);
+        break;
+    }
+
+    container.bind(IGallerySamplesRepository).to(GallerySamplesRepository);
+    container.bind(ITutorialsSamplesRepository).to(TutorialsCodeRepository);
     container.bind(ProgramManagementService).to(ProgramManagementService);
     container.bind(GistSharedProgramsRepository).to(GistSharedProgramsRepository);
   }
