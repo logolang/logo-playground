@@ -5,9 +5,9 @@ import { MainMenuComponent } from "app/ui/main-menu.component";
 import { PageHeaderComponent } from "app/ui/_generic/page-header.component";
 import { ModalComponent, IDialogCallbackResult } from "app/ui/_generic/modal.component";
 import { DateTimeStampComponent } from "app/ui/_generic/date-time-stamp.component";
-import { ProgressIndicatorComponent } from "app/ui/_generic/progress-indicator.component";
 import { NoDataComponent } from "app/ui/_generic/no-data.component";
 import { AlertMessageComponent } from "app/ui/_generic/alert-message.component";
+import { LoadingComponent } from "app/ui/_generic/loading.component";
 
 import { lazyInject } from "app/di";
 import { Routes } from "app/routes";
@@ -61,12 +61,15 @@ export class GalleryComponent extends React.Component<IComponentProps, IComponen
   }
 
   async loadData() {
-    this.setState({ isLoading: true });
-    const programs = await this.programsRepo.getAll();
     const samples = await this.samplesRepo.getAll();
     this.setState({
-      programs: programs,
-      samples: samples,
+      samples: samples
+    });
+
+    this.setState({ isLoading: true });
+    const programs = await this.programsRepo.getAll();
+    this.setState({
+      programs,
       isLoading: false
     });
   }
@@ -89,19 +92,21 @@ export class GalleryComponent extends React.Component<IComponentProps, IComponen
             <br />
             <PageHeaderComponent title={_T("Gallery")} />
             <br />
+
+            <p className="subtitle">Your personal library</p>
+            <LoadingComponent isLoading={this.state.isLoading} />
             {this.state.programs.length > 0 && (
-              <div>
-                <p className="subtitle">Your personal library</p>
-                <div className="program-cards-container">
-                  {this.state.programs.map(pr => this.renderProgramCard(pr, ProgramStorageType.gallery, true))}
-                </div>
-                <br />
+              <div className="program-cards-container">
+                {this.state.programs.map(pr => this.renderProgramCard(pr, ProgramStorageType.gallery, true))}
               </div>
             )}
+            <br />
+
             <p className="subtitle">Samples</p>
             <div className="program-cards-container">
               {this.state.samples.map(pr => this.renderProgramCard(pr, ProgramStorageType.samples, false))}
             </div>
+
             {this.renderDeleteModal()}
           </div>
         </div>

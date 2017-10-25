@@ -6,6 +6,7 @@ import { ProgramModelConverter } from "app/services/program/program-model.conver
 import { IUserLibraryRepository } from "app/services/gallery/personal-gallery-localstorage.repository";
 import { GoogleDriveClient, IGoogleFileInfo } from "app/services/infrastructure/google-drive.client";
 import { ProgramsHtmlSerializerService } from "app/services/gallery/programs-html-serializer.service";
+import { stay } from "app/utils/async-helpers";
 
 const storageFileName = "logo-personal-library.html";
 const storageFileContentType = "text/html; charset=UTF-8";
@@ -13,13 +14,14 @@ const storageFileContentType = "text/html; charset=UTF-8";
 interface IStoredData {
   fileId: string;
   fileHash: string;
-  content: string;
+  programs: ProgramModel[];
 }
 
 @injectable()
 export class ProgramsGoogleDriveRepository implements IUserLibraryRepository {
   private googleDriveClient = new GoogleDriveClient();
   private serializationService = new ProgramsHtmlSerializerService();
+  private cachedData: IStoredData | undefined = undefined;
 
   constructor(@inject(ICurrentUserService) private currentUser: ICurrentUserService) {
     this.googleDriveClient = new GoogleDriveClient();
@@ -27,8 +29,7 @@ export class ProgramsGoogleDriveRepository implements IUserLibraryRepository {
 
   async getAll(): Promise<ProgramModel[]> {
     const data = await this.getStoredData();
-    const programs = this.serializationService.parse(data.content);
-    return programs;
+    return data.programs;
   }
 
   async get(id: string): Promise<ProgramModel> {
@@ -42,8 +43,7 @@ export class ProgramsGoogleDriveRepository implements IUserLibraryRepository {
 
   async add(programs: ProgramModel[]): Promise<void> {
     const storedData = await this.getStoredData();
-    const existingPrograms = this.serializationService.parse(storedData.content);
-    const programsToStore = [...existingPrograms];
+    const programsToStore = [...storedData.programs];
     for (const program of programs) {
       if (!program.id) {
         program.id = RandomHelper.getRandomObjectId(32);
@@ -68,8 +68,7 @@ export class ProgramsGoogleDriveRepository implements IUserLibraryRepository {
 
   async remove(id: string): Promise<void> {
     const storedData = await this.getStoredData();
-    const programs = this.serializationService.parse(storedData.content);
-    const programsToStore = programs.filter(p => p.id !== id);
+    const programsToStore = storedData.programs.filter(p => p.id !== id);
     const serializedData = this.serializationService.serialize(programsToStore);
     if (storedData.fileId) {
       await this.googleDriveClient.updateFile(
@@ -89,15 +88,24 @@ export class ProgramsGoogleDriveRepository implements IUserLibraryRepository {
       return {
         fileId: "",
         fileHash: "",
-        content: ""
+        programs: []
       };
     }
+    //await stay(300000);
+
+    if (this.cachedData && this.cachedData.fileHash === storageFileInfo.md5Checksum) {
+      return this.cachedData;
+    }
+
     const storedContent = await this.googleDriveClient.downloadFileContent(storageFileInfo.id);
-    return {
+    const programs = this.serializationService.parse(storedContent);
+    const data = {
       fileId: storageFileInfo.id,
       fileHash: storageFileInfo.md5Checksum,
-      content: storedContent
+      programs
     };
+    this.cachedData = data;
+    return data;
   }
 
   private async getStorageFileInfo(): Promise<IGoogleFileInfo | undefined> {

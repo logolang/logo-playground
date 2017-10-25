@@ -1,14 +1,14 @@
 import * as React from "react";
 import * as cn from "classnames";
 
-import "./progress-indicator.component.scss";
+import "./loading.component.scss";
 
 interface IComponentProps {
   isLoading?: boolean;
   className?: string;
 }
 
-export class ProgressIndicatorComponent extends React.Component<IComponentProps, {}> {
+export class LoadingComponent extends React.Component<IComponentProps, {}> {
   render(): JSX.Element | null {
     if (this.props.isLoading) {
       return (

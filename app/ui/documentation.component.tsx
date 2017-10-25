@@ -4,7 +4,6 @@ import { RouteComponentProps } from "react-router-dom";
 import { callActionSafe } from "app/utils/async-helpers";
 
 import { MainMenuComponent } from "app/ui/main-menu.component";
-import { PageLoadingIndicatorComponent } from "app/ui/_generic/page-loading-indicator.component";
 
 import { lazyInject } from "app/di";
 import { _T } from "app/services/customizations/localization.service";
@@ -61,10 +60,8 @@ export class DocumentationComponent extends React.Component<IComponentProps, ICo
         <MainMenuComponent />
         <div className="ex-page-content">
           <div className="container">
-            <PageLoadingIndicatorComponent isLoading={this.state.isLoading}>
-              <div className="doc-section" dangerouslySetInnerHTML={{ __html: this.state.content }} />
-              <br />
-            </PageLoadingIndicatorComponent>
+            <div className="doc-section" dangerouslySetInnerHTML={{ __html: this.state.content }} />
+            <br />
           </div>
         </div>
       </div>

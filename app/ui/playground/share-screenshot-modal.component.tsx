@@ -1,7 +1,7 @@
 import * as React from "react";
 
 import { AlertMessageComponent } from "app/ui/_generic/alert-message.component";
-import { ProgressIndicatorComponent } from "app/ui/_generic/progress-indicator.component";
+import { LoadingComponent } from "app/ui/_generic/loading.component";
 import { ModalComponent } from "app/ui/_generic/modal.component";
 import { InputCopyToClipboardComponent } from "app/ui/_generic/input-copy-to-clipboard.component";
 
@@ -53,7 +53,7 @@ export class ShareScreenshotModalComponent extends React.Component<IComponentPro
   render(): JSX.Element | null {
     return (
       <ModalComponent show withoutFooter title={_T("Screenshot")} onCancel={this.props.onClose}>
-        {this.state.isSavingInProgress && <ProgressIndicatorComponent isLoading={this.state.isSavingInProgress} />}
+        <LoadingComponent isLoading={this.state.isSavingInProgress} />
         {this.state.errorMessage && <AlertMessageComponent message={this.state.errorMessage} type="danger" />}
         {this.state.imgUrl && (
           <div className="share-screenshot-modal-component">
