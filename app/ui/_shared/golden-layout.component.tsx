@@ -24,16 +24,10 @@ interface IComponentProps {
   defaultLayoutConfigJSON: string;
   initialLayoutConfigJSON: string;
   onLayoutChange(newConfigJSON: string): void;
-  panelsReloadCheck(
-    oldPanels: IPanelConfig<any, any>[],
-    newPanels: IPanelConfig<any, any>[]
-  ): boolean;
+  panelsReloadCheck(oldPanels: IPanelConfig<any, any>[], newPanels: IPanelConfig<any, any>[]): boolean;
 }
 
-export class GoldenLayoutComponent extends React.Component<
-  IComponentProps,
-  IComponentState
-> {
+export class GoldenLayoutComponent extends React.Component<IComponentProps, IComponentState> {
   private layout: goldenLayout;
   private stateChangedTimer: any;
   private stateLastJSON: string;
@@ -53,25 +47,22 @@ export class GoldenLayoutComponent extends React.Component<
   }
 
   initLayout(props: IComponentProps) {
-    try {
-      this.initLayoutWithConfig(props, props.initialLayoutConfigJSON);
-    } catch (ex) {
-      this.initLayoutWithConfig(props, props.defaultLayoutConfigJSON);
-    }
+    setTimeout(() => {
+      try {
+        this.initLayoutWithConfig(props, props.initialLayoutConfigJSON);
+      } catch (ex) {
+        this.initLayoutWithConfig(props, props.defaultLayoutConfigJSON);
+      }
+    }, 0);
   }
 
   initLayoutWithConfig(props: IComponentProps, configJSON: string) {
     if (!configJSON) {
       throw new Error("config should be not empty JSON");
     }
-    const config = this.layout
-      ? this.layout.toConfig()
-      : JSON.parse(configJSON);
+    const config = this.layout ? this.layout.toConfig() : JSON.parse(configJSON);
     for (const panel of props.panels) {
-      const panelConfig = this.getGoldenLayoutConfigItem(
-        panel.componentName,
-        config
-      );
+      const panelConfig = this.getGoldenLayoutConfigItem(panel.componentName, config);
       (panelConfig as any).props = panel.props;
       (panelConfig as any).componentState = {};
     }
@@ -96,10 +87,7 @@ export class GoldenLayoutComponent extends React.Component<
 
   private setPanelTitles(props: IComponentProps) {
     for (const panel of props.panels) {
-      const panelContentItem = this.findGoldenLayoutContentItem(
-        this.layout.root,
-        panel.componentName
-      );
+      const panelContentItem = this.findGoldenLayoutContentItem(this.layout.root, panel.componentName);
       if (!panelContentItem) {
         console.log("Error: cannot find panel in layout: " + panelContentItem);
         return;
@@ -119,10 +107,7 @@ export class GoldenLayoutComponent extends React.Component<
     const config = this.layout.toConfig();
     // erase props from config layout
     for (const panel of this.props.panels) {
-      const panelConfig = this.findGoldenLayoutConfigItem(
-        panel.componentName,
-        config.content
-      );
+      const panelConfig = this.findGoldenLayoutConfigItem(panel.componentName, config.content);
       if (panelConfig) {
         (panelConfig as any).props = undefined;
         (panelConfig as any).componentState = undefined;
@@ -150,10 +135,7 @@ export class GoldenLayoutComponent extends React.Component<
     return <div className="golden-layout-component" ref="container" />;
   }
 
-  private getGoldenLayoutConfigItem(
-    type: string,
-    config: goldenLayout.Config
-  ): goldenLayout.ItemConfigType {
+  private getGoldenLayoutConfigItem(type: string, config: goldenLayout.Config): goldenLayout.ItemConfigType {
     const item = this.findGoldenLayoutConfigItem(type, config.content);
     if (item) {
       return item;
@@ -193,10 +175,7 @@ export class GoldenLayoutComponent extends React.Component<
           return item;
         }
         if (item.content) {
-          const res = this.findGoldenLayoutConfigItem(
-            componentName,
-            item.content
-          );
+          const res = this.findGoldenLayoutConfigItem(componentName, item.content);
           if (res) {
             return res;
           }
