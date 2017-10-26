@@ -272,7 +272,6 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
                     componentType: OutputPanelComponent,
                     props: {
                       logoExecutorProps: {
-                        height: 300,
                         runCommands: this.executionService.runCommands,
                         stopCommands: this.executionService.stopCommands,
                         makeScreenshotCommands: this.executionService.makeScreenshotCommands,
