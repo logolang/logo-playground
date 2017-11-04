@@ -1,4 +1,4 @@
-﻿var webpack = require("webpack");
+var webpack = require("webpack");
 var HtmlWebpackPlugin = require("html-webpack-plugin");
 var WebpackNotifierPlugin = require("webpack-notifier");
 var CopyWebpackPlugin = require("copy-webpack-plugin");
@@ -63,9 +63,9 @@ module.exports = function(env) {
           test: /\.tsx?$/,
           loader: "awesome-typescript-loader",
           options: {
-            target: isDevBuild ? "esnext" : "es5",
+            target: isDevBuild ? "ES2017" : "es5",
             useCache: true,
-            cacheDirectory: isDevBuild ? ".atl-cache.esnext" : ".atl-cache.es5"
+            cacheDirectory: isDevBuild ? ".atl-cache.es2017" : ".atl-cache.es5"
           }
         },
         { test: /\.(png|jpg|jpeg|gif|svg)$/, loader: "url-loader", options: { limit: 200000 } },
