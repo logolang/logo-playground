@@ -36,8 +36,21 @@ export class GoldenLayoutComponent extends React.Component<IComponentProps, ICom
     super(props);
   }
 
+  shouldComponentUpdate() {
+    return false;
+  }
+
   componentDidMount() {
     this.initLayout(this.props);
+    window.addEventListener("resize", this.onWindowResize);
+  }
+
+  componentWillUnmount() {
+    //console.log('page-layout unmount')
+    if (this.layout) {
+      this.layout.destroy();
+    }
+    window.removeEventListener("resize", this.onWindowResize);
   }
 
   componentWillReceiveProps(nextProps: IComponentProps) {
@@ -45,6 +58,12 @@ export class GoldenLayoutComponent extends React.Component<IComponentProps, ICom
       this.initLayout(nextProps);
     }
   }
+
+  onWindowResize = () => {
+    if (this.layout) {
+      this.layout.updateSize();
+    }
+  };
 
   initLayout(props: IComponentProps) {
     setTimeout(() => {
@@ -119,17 +138,6 @@ export class GoldenLayoutComponent extends React.Component<IComponentProps, ICom
       this.props.onLayoutChange(json);
     }
   };
-
-  componentWillUnmount() {
-    //console.log('page-layout unmount')
-    if (this.layout) {
-      this.layout.destroy();
-    }
-  }
-
-  shouldComponentUpdate() {
-    return false;
-  }
 
   render(): JSX.Element {
     return <div className="golden-layout-component" ref="container" />;

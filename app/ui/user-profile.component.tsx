@@ -309,7 +309,6 @@ export class UserProfileComponent extends React.Component<IComponentProps, IComp
                     {[
                       <LogoExecutorComponent
                         key={`${JSON.stringify(this.state.userSettings)}`} //this is a hack to force component to be created each render in order to not handle prop change event
-                        height={400}
                         onIsRunningChanged={this.onIsRunningChanged}
                         runCommands={this.runCode}
                         stopCommands={new Subject<void>()}

@@ -1,8 +1,7 @@
 import "app/../lib/logojs/floodfill.js";
 import "app/../lib/logojs/turtle.js";
-import * as jquery from "jquery";
 
-function $(s: any) {
+function $(s: string) {
   return document.querySelector(s);
 }
 
@@ -14,12 +13,11 @@ export class LogoOutputGraphics {
   constructor(
     private sandBoxSelector: string,
     private turtleSelector: string,
-    private overlaySelector: string,
     private turtleCustomImage?: HTMLImageElement,
     private turtleSize?: number
   ) {}
 
-  initTurtle(): any {
+  initTurtle() {
     const CanvasTurtle: any = (window as any)["CanvasTurtle"];
     const canvas_element = $(this.sandBoxSelector) as HTMLCanvasElement;
     const canvas_ctx = canvas_element.getContext("2d");
@@ -33,14 +31,7 @@ export class LogoOutputGraphics {
       customTurtleSize: this.turtleSize
     };
 
-    this.turtle = new CanvasTurtle(
-      canvas_ctx,
-      turtle_ctx,
-      this.width,
-      this.height,
-      $(this.overlaySelector),
-      turtleOptions
-    );
+    this.turtle = new CanvasTurtle(canvas_ctx, turtle_ctx, this.width, this.height, null, turtleOptions);
     return this.turtle;
   }
 
@@ -59,8 +50,8 @@ export class LogoOutputGraphics {
     }
     this.width = width;
     this.height = height;
-    const sandbox = jquery(this.sandBoxSelector).eq(0)[0] as HTMLCanvasElement;
-    const turtle = jquery(this.turtleSelector).eq(0)[0] as HTMLCanvasElement;
+    const sandbox = $(this.sandBoxSelector) as HTMLCanvasElement;
+    const turtle = $(this.turtleSelector) as HTMLCanvasElement;
     sandbox.width = width;
     sandbox.height = height;
     turtle.width = width;

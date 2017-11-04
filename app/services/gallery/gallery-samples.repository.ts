@@ -23,6 +23,7 @@ export class GallerySamplesRepository implements IGallerySamplesRepository {
     if (!p) {
       throw new Error(`Program with id ${id} is not found`);
     }
-    return p;
+    // return clone of program object - so original will be intact in memory if updates happen
+    return { ...p };
   }
 }
