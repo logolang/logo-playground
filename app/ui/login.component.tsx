@@ -5,7 +5,8 @@ import { Subscription } from "rxjs/Subscription";
 import { MainMenuComponent } from "app/ui/main-menu.component";
 import { PageHeaderComponent } from "app/ui/_generic/page-header.component";
 
-import { lazyInject } from "app/di";
+import { resolveInject } from "app/di";
+import { DependecyInjectionSetup } from "app/di-setup";
 import { Routes } from "app/routes";
 import { _T } from "app/services/customizations/localization.service";
 import { ICurrentUserService } from "app/services/login/current-user.service";
@@ -18,10 +19,10 @@ interface IComponentState {}
 interface IComponentProps extends RouteComponentProps<void> {}
 
 export class LoginComponent extends React.Component<IComponentProps, IComponentState> {
-  @lazyInject(ICurrentUserService) private currentUser: ICurrentUserService;
-  @lazyInject(ILoginService) private loginService: ILoginService;
-  @lazyInject(TitleService) private titleService: TitleService;
-  @lazyInject(INavigationService) private navService: INavigationService;
+  private currentUser = resolveInject(ICurrentUserService);
+  private loginService = resolveInject(ILoginService);
+  private titleService = resolveInject(TitleService);
+  private navService = resolveInject(INavigationService);
 
   private subscriptions: Subscription[] = [];
 
@@ -35,7 +36,8 @@ export class LoginComponent extends React.Component<IComponentProps, IComponentS
     this.subscriptions.push(
       this.currentUser.loginStatusObservable.subscribe(status => {
         if (status) {
-          setTimeout(() => {
+          setTimeout(async () => {
+            await DependecyInjectionSetup.reset();
             this.navService.navigate({ route: Routes.root.build({}) });
           }, 400);
         }

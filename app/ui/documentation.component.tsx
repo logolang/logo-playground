@@ -5,7 +5,7 @@ import { callActionSafe } from "app/utils/async-helpers";
 
 import { MainMenuComponent } from "app/ui/main-menu.component";
 
-import { lazyInject } from "app/di";
+import { resolveInject } from "app/di";
 import { _T } from "app/services/customizations/localization.service";
 import { INotificationService } from "app/services/infrastructure/notification.service";
 import { TitleService } from "app/services/infrastructure/title.service";
@@ -21,9 +21,9 @@ interface IComponentState {
 interface IComponentProps extends RouteComponentProps<void> {}
 
 export class DocumentationComponent extends React.Component<IComponentProps, IComponentState> {
-  @lazyInject(INotificationService) private notificationService: INotificationService;
-  @lazyInject(TitleService) private titleService: TitleService;
-  @lazyInject(ILocalizedContentLoader) private contentLoader: ILocalizedContentLoader;
+  private notificationService = resolveInject(INotificationService);
+  private titleService = resolveInject(TitleService);
+  private contentLoader = resolveInject(ILocalizedContentLoader);
 
   private errorHandler = (err: string) => {
     this.notificationService.push({ message: err, type: "danger" });

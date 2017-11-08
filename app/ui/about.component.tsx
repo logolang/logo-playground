@@ -5,7 +5,7 @@ import { MainMenuComponent } from "app/ui/main-menu.component";
 import { PageHeaderComponent } from "app/ui/_generic/page-header.component";
 
 import { _T } from "app/services/customizations/localization.service";
-import { lazyInject } from "app/di";
+import { resolveInject } from "app/di";
 import { TitleService } from "app/services/infrastructure/title.service";
 import { IAppInfo } from "app/services/infrastructure/app-info";
 
@@ -14,8 +14,8 @@ interface IComponentState {}
 interface IComponentProps extends RouteComponentProps<void> {}
 
 export class AboutComponent extends React.Component<IComponentProps, IComponentState> {
-  @lazyInject(TitleService) private titleService: TitleService;
-  @lazyInject(IAppInfo) private appInfo: IAppInfo;
+  private titleService = resolveInject(TitleService);
+  private appInfo = resolveInject(IAppInfo);
 
   constructor(props: IComponentProps) {
     super(props);

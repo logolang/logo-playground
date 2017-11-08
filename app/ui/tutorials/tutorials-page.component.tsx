@@ -18,7 +18,7 @@ import {
   ITutorialLoadedData
 } from "app/ui/tutorials/tutorial-view.component";
 
-import { lazyInject } from "app/di";
+import { resolveInject } from "app/di";
 import { Routes } from "app/routes";
 import { _T } from "app/services/customizations/localization.service";
 import { INotificationService } from "app/services/infrastructure/notification.service";
@@ -52,14 +52,14 @@ export interface ITutorialPageRouteParams {
 }
 
 export class TutorialsPageComponent extends React.Component<IComponentProps, IComponentState> {
-  @lazyInject(INotificationService) private notificationService: INotificationService;
-  @lazyInject(INavigationService) private navService: INavigationService;
-  @lazyInject(TitleService) private titleService: TitleService;
-  @lazyInject(IUserSettingsService) private userSettingsService: IUserSettingsService;
-  @lazyInject(ThemesService) private themesService: ThemesService;
-  @lazyInject(TurtlesService) private turtlesService: TurtlesService;
-  @lazyInject(ProgramManagementService) private programManagementService: ProgramManagementService;
-  @lazyInject(ITutorialsContentService) private tutorialsLoader: ITutorialsContentService;
+  private notificationService = resolveInject(INotificationService);
+  private navService = resolveInject(INavigationService);
+  private titleService = resolveInject(TitleService);
+  private userSettingsService = resolveInject(IUserSettingsService);
+  private themesService = resolveInject(ThemesService);
+  private turtlesService = resolveInject(TurtlesService);
+  private programManagementService = resolveInject(ProgramManagementService);
+  private tutorialsLoader = resolveInject(ITutorialsContentService);
 
   private executionService = new ProgramExecutionContext();
   private fixTheCodeStream = new Subject<string>();

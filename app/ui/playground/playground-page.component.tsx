@@ -13,7 +13,7 @@ import { CodePanelComponent, ICodePanelComponentProps } from "app/ui/playground/
 import { OutputPanelComponent, IOutputPanelComponentProps } from "app/ui/playground/output-panel.component";
 
 import { _T } from "app/services/customizations/localization.service";
-import { lazyInject } from "app/di";
+import { resolveInject } from "app/di";
 import { GallerySamplesRepository } from "app/services/gallery/gallery-samples.repository";
 import { ProgramModel } from "app/services/program/program.model";
 import { ProgramExecutionContext } from "app/services/program/program-execution.context";
@@ -51,12 +51,12 @@ arc 360 50
 export { ProgramStorageType };
 
 export class PlaygroundPageComponent extends React.Component<IComponentProps, IComponentState> {
-  @lazyInject(INotificationService) private notificationService: INotificationService;
-  @lazyInject(TitleService) private titleService: TitleService;
-  @lazyInject(ProgramManagementService) private programManagementService: ProgramManagementService;
-  @lazyInject(IUserSettingsService) private userSettingsService: IUserSettingsService;
-  @lazyInject(ThemesService) private themesService: ThemesService;
-  @lazyInject(TurtlesService) private turtlesService: TurtlesService;
+  private notificationService = resolveInject(INotificationService);
+  private titleService = resolveInject(TitleService);
+  private programManagementService = resolveInject(ProgramManagementService);
+  private userSettingsService = resolveInject(IUserSettingsService);
+  private themesService = resolveInject(ThemesService);
+  private turtlesService = resolveInject(TurtlesService);
   private executionService = new ProgramExecutionContext();
 
   private errorHandler = (err: string) => {

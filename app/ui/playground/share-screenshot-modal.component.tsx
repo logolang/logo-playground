@@ -6,7 +6,7 @@ import { ModalComponent } from "app/ui/_generic/modal.component";
 import { InputCopyToClipboardComponent } from "app/ui/_generic/input-copy-to-clipboard.component";
 
 import { _T } from "app/services/customizations/localization.service";
-import { lazyInject } from "app/di";
+import { resolveInject } from "app/di";
 import { ImageUploadService } from "app/services/infrastructure/image-upload-imgur.service";
 
 import "./share-screenshot-modal.component.scss";
@@ -23,7 +23,7 @@ interface IComponentProps {
 }
 
 export class ShareScreenshotModalComponent extends React.Component<IComponentProps, IComponentState> {
-  @lazyInject(ImageUploadService) private imageUploadService: ImageUploadService;
+  private imageUploadService = resolveInject(ImageUploadService);
 
   constructor(props: IComponentProps) {
     super(props);

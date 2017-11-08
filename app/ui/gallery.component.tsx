@@ -9,7 +9,7 @@ import { NoDataComponent } from "app/ui/_generic/no-data.component";
 import { AlertMessageComponent } from "app/ui/_generic/alert-message.component";
 import { LoadingComponent } from "app/ui/_generic/loading.component";
 
-import { lazyInject } from "app/di";
+import { resolveInject } from "app/di";
 import { Routes } from "app/routes";
 import { _T } from "app/services/customizations/localization.service";
 import {
@@ -36,10 +36,10 @@ interface IComponentState {
 interface IComponentProps extends RouteComponentProps<void> {}
 
 export class GalleryComponent extends React.Component<IComponentProps, IComponentState> {
-  @lazyInject(ICurrentUserService) private currentUser: ICurrentUserService;
-  @lazyInject(TitleService) private titleService: TitleService;
-  @lazyInject(IUserLibraryRepository) private programsRepo: IUserLibraryRepository;
-  @lazyInject(IGallerySamplesRepository) private samplesRepo: IGallerySamplesRepository;
+  private currentUser = resolveInject(ICurrentUserService);
+  private titleService = resolveInject(TitleService);
+  private programsRepo = resolveInject(IUserLibraryRepository);
+  private samplesRepo = resolveInject(IGallerySamplesRepository);
 
   readonly noScreenshot = require("./images/no.image.png") as string;
 

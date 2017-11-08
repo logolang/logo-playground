@@ -43,25 +43,24 @@ export class DependecyInjectionSetup {
     const appConfig = await appConfigLoader.loadData();
     container.bind(AppConfig).toConstantValue(appConfig);
 
-    container.bind(ICurrentUserService).to(CurrentUserService);
-    //TODO: use google API key from config file
-    const authService = new GoogleAuthService(
-      "388088822786-2okb2ch7pov7d6oqk8chrq33u0ed0kfr.apps.googleusercontent.com"
-    );
-    const currentUserServiceInst = container.get(ICurrentUserService);
-    const loginServiceInst = new LoginService(authService, currentUserServiceInst);
-    container.bind(ILoginService).toConstantValue(loginServiceInst);
-    await loginServiceInst.tryLoginUserAutomatically();
+    const authService = new GoogleAuthService(appConfig.services.googleClientId);
+    const currentUserService = new CurrentUserService();
+    const loginService = new LoginService(authService, currentUserService);
 
-    container.bind(IUserSettingsService).to(UserSettingsBrowserLocalStorageService);
-    const userSettings = await container.get(IUserSettingsService).get();
+    container.bind(ICurrentUserService).toConstantValue(currentUserService);
+    container.bind(ILoginService).toConstantValue(loginService);
+    await loginService.tryLoginUserAutomatically();
+
+    const userSettingsService = new UserSettingsBrowserLocalStorageService(currentUserService);
+    container.bind(IUserSettingsService).toConstantValue(userSettingsService);
+    const userSettings = await userSettingsService.get();
 
     container.bind(ILocalTempCodeStorage).to(LocalTempCodeStorage);
 
-    const contentLoader = new LocalizedContentLoader(container.get(IAjaxService), userSettings.localeId);
-    container.bind(ILocalizedContentLoader).toConstantValue(contentLoader);
+    const localizedContentLoader = new LocalizedContentLoader(container.get(IAjaxService), userSettings.localeId);
+    container.bind(ILocalizedContentLoader).toConstantValue(localizedContentLoader);
 
-    const localizationData = await contentLoader.getFileContent("messages.po");
+    const localizationData = await localizedContentLoader.getFileContent("messages.po");
     const localizationService = new LocalizationService();
     localizationService.initLocale(localizationData);
     container.bind(LocalizationService).toConstantValue(localizationService);
@@ -83,7 +82,7 @@ export class DependecyInjectionSetup {
     container.bind(ThemesService).to(ThemesService);
     container.bind(TurtlesService).to(TurtlesService);
 
-    switch (currentUserServiceInst.getLoginStatus().userInfo.attributes.authProvider) {
+    switch (currentUserService.getLoginStatus().userInfo.attributes.authProvider) {
       case AuthProvider.none:
         container.bind(IUserLibraryRepository).to(ProgramsLocalStorageRepository);
         break;
@@ -96,5 +95,11 @@ export class DependecyInjectionSetup {
     container.bind(ITutorialsSamplesRepository).to(TutorialsCodeRepository);
     container.bind(ProgramManagementService).to(ProgramManagementService);
     container.bind(GistSharedProgramsRepository).to(GistSharedProgramsRepository);
+  }
+
+  static async reset() {
+    container.unload();
+    container.unbindAll();
+    await this.setup();
   }
 }

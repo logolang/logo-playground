@@ -1,8 +1,9 @@
 {
-    "$schema": "./config.schema.json",
-    "services": {
-        "appApiUrl": "",
-        "imgurServiceUrl": "https://api.imgur.com/3/image",
-        "imgurServiceClientID": "50870757d3c7777"
-    }
+  "$schema": "./config.schema.json",
+  "services": {
+    "appApiUrl": "",
+    "imgurServiceUrl": "https://api.imgur.com/3/image",
+    "imgurServiceClientID": "50870757d3c7777",
+    "googleClientId": "388088822786-2okb2ch7pov7d6oqk8chrq33u0ed0kfr.apps.googleusercontent.com"
+  }
 }

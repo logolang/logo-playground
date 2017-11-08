@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { lazyInject } from "app/di";
+import { resolveInject } from "app/di";
 import { Routes } from "app/routes";
 import { INavigationService } from "app/services/infrastructure/navigation.service";
 import { INotificationService } from "app/services/infrastructure/notification.service";
@@ -51,8 +51,8 @@ interface IComponentState {
 }
 
 export class TutorialViewComponent extends React.Component<ITutorialViewComponentProps, IComponentState> {
-  @lazyInject(ITutorialsContentService) private tutorialsLoader: ITutorialsContentService;
-  @lazyInject(INotificationService) private notificationService: INotificationService;
+  private tutorialsLoader = resolveInject(ITutorialsContentService);
+  private notificationService = resolveInject(INotificationService);
 
   constructor(props: ITutorialViewComponentProps) {
     super(props);

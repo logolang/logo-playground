@@ -2,7 +2,8 @@ import * as React from "react";
 import { Link } from "react-router-dom";
 import * as cn from "classnames";
 
-import { lazyInject } from "app/di";
+import { resolveInject } from "app/di";
+import { DependecyInjectionSetup } from "app/di-setup";
 import { Routes } from "app/routes";
 import { _T } from "app/services/customizations/localization.service";
 import { ICurrentUserService } from "app/services/login/current-user.service";
@@ -17,8 +18,8 @@ interface IComponentProps {
 }
 
 export class MainMenuComponent extends React.Component<IComponentProps, IComponentState> {
-  @lazyInject(ILoginService) private loginService: ILoginService;
-  @lazyInject(ICurrentUserService) private currentUser: ICurrentUserService;
+  private loginService = resolveInject(ILoginService);
+  private currentUser = resolveInject(ICurrentUserService);
 
   constructor(props: IComponentProps) {
     super(props);
@@ -28,6 +29,7 @@ export class MainMenuComponent extends React.Component<IComponentProps, ICompone
 
   menuLogOutClick = async () => {
     await this.loginService.signOut();
+    await DependecyInjectionSetup.reset();
     // refresh browser window
     window.location.reload(true);
   };
