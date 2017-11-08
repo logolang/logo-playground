@@ -1,20 +1,21 @@
-var webpack = require("webpack");
-var HtmlWebpackPlugin = require("html-webpack-plugin");
-var WebpackNotifierPlugin = require("webpack-notifier");
-var CopyWebpackPlugin = require("copy-webpack-plugin");
-var ExtractTextPlugin = require("extract-text-webpack-plugin");
-var GitRevisionPlugin = require("git-revision-webpack-plugin");
-var BundleAnalyzerPlugin = require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
+const webpack = require("webpack");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const WebpackNotifierPlugin = require("webpack-notifier");
+const CopyWebpackPlugin = require("copy-webpack-plugin");
+const ExtractTextPlugin = require("extract-text-webpack-plugin");
+const GitRevisionPlugin = require("git-revision-webpack-plugin");
+const BundleAnalyzerPlugin = require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
+const WatchIgnorePlugin = webpack.WatchIgnorePlugin;
 
 // `CheckerPlugin` is optional. Use it if you want async error reporting.
 // We need this plugin to detect a `--watch` mode. It may be removed later
 // after https://github.com/webpack/webpack/issues/3460 will be resolved.
 const { CheckerPlugin } = require("awesome-typescript-loader");
 
-var packageJson = require("./package.json");
+const packageJson = require("./package.json");
 
-let extractTextPlugin = new ExtractTextPlugin("[name].css");
-var gitRevisionPlugin = new GitRevisionPlugin();
+const extractTextPlugin = new ExtractTextPlugin("[name].css");
+const gitRevisionPlugin = new GitRevisionPlugin();
 global.appGitVersion = gitRevisionPlugin.version();
 
 let path = require("path");
@@ -23,6 +24,7 @@ module.exports = function(env) {
   env = env || {};
   const isProduction = !!env.prod;
   const isDevBuild = !isProduction;
+  const isTSLintEnabled = env.tslint_enabled === "true"; // Due to long checking time this is disabled by default.
 
   console.log(`building app bundle with webpack. production mode:${isProduction}`);
 
@@ -52,15 +54,6 @@ module.exports = function(env) {
       rules: [
         {
           test: /\.tsx?$/,
-          loader: "tslint-loader",
-          enforce: "pre",
-          options: {
-            //typeCheck: true,
-            fix: true
-          }
-        },
-        {
-          test: /\.tsx?$/,
           loader: "awesome-typescript-loader",
           options: {
             target: isDevBuild ? "ES2017" : "es5",
@@ -71,16 +64,25 @@ module.exports = function(env) {
         { test: /\.(png|jpg|jpeg|gif|svg)$/, loader: "url-loader", options: { limit: 200000 } },
         { test: /\.json$/, loader: "json-loader" },
         { test: /\.(txt|html|md|po)$/, loader: "raw-loader" },
-        isDevBuild
-          ? { test: /\.css$/, loaders: ["style-loader", "css-loader"] }
-          : { test: /\.css$/, loader: extractTextPlugin.extract(["css-loader"]) },
-        isDevBuild
-          ? { test: /\.(scss|sass)$/, loaders: ["style-loader", "css-loader", "sass-loader"] }
-          : { test: /\.(scss|sass)$/, loader: extractTextPlugin.extract(["css-loader", "sass-loader"]) }
-      ]
+        isDevBuild && { test: /\.css$/, loaders: ["style-loader", "css-loader"] },
+        isDevBuild && { test: /\.(scss|sass)$/, loaders: ["style-loader", "css-loader", "sass-loader"] },
+        !isDevBuild && { test: /\.css$/, loader: extractTextPlugin.extract(["css-loader"]) },
+        !isDevBuild && { test: /\.(scss|sass)$/, loader: extractTextPlugin.extract(["css-loader", "sass-loader"]) },
+        isTSLintEnabled && {
+          test: /\.tsx$/,
+          enforce: "pre",
+          loader: "tslint-loader",
+          options: {
+            typeCheck: true,
+            fix: true
+          }
+        }
+      ].filter(x => !!x)
     },
 
     plugins: [
+      new WatchIgnorePlugin([path.resolve(__dirname, "./dist/")]),
+
       new CheckerPlugin(),
 
       new webpack.DllReferencePlugin({
@@ -149,15 +151,6 @@ module.exports = function(env) {
         })
     ].filter(x => !!x),
 
-    externals: {
-      /**
-       * These 3 stub externals are here to silenty skip errors during bundling Enzyme package
-       * They are not actually needed - only referenced in conditionals to support obsolete react 0.13
-       */
-      "react/addons": "undefined",
-      "react/lib/ReactContext": "undefined",
-      "react/lib/ExecutionEnvironment": "undefined"
-    },
     stats: { modules: false },
     performance: { hints: false },
     devServer: {

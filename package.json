@@ -17,6 +17,7 @@
     "coverage-report-html": "istanbul report --include reports/coverage/coverage.json --dir reports/coverage html",
     "coverage-report-clover": "istanbul report --include reports/coverage/coverage.json --dir reports/coverage clover",
     "start": "npm run build-vendor-dev && webpack-dev-server",
+    "start-tslint": "npm run build-vendor-dev && webpack-dev-server --env.tslint_enabled=true",
     "build-war": "node tools/make-war.js",
     "utr": "tsc tools/update-translations.ts --lib dom,es6 --target es5 && node tools/update-translations.js"
   },
