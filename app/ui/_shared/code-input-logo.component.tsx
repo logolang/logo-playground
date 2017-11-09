@@ -23,12 +23,13 @@ export interface ICodeInputComponentProps {
   onHotkey?: (key: string) => void;
   onChanged: (code: string) => void;
   editorTheme: string;
+  containerResized?: Observable<void>;
 }
 
 export class CodeInputLogoComponent extends React.Component<ICodeInputComponentProps, IComponentState> {
   cm: codemirror.EditorFromTextArea;
   currentCode: string;
-  focusCommandsSubscription: Subscription | undefined;
+  subsriptions: Subscription[] = [];
 
   constructor(props: ICodeInputComponentProps) {
     super(props);
@@ -85,16 +86,23 @@ export class CodeInputLogoComponent extends React.Component<ICodeInputComponentP
     }
 
     if (this.props.focusCommands) {
-      this.focusCommandsSubscription = this.props.focusCommands.subscribe(() => {
-        this.cm.focus();
-      });
+      this.subsriptions.push(
+        this.props.focusCommands.subscribe(() => {
+          this.cm.focus();
+        })
+      );
+    }
+    if (this.props.containerResized) {
+      this.subsriptions.push(
+        this.props.containerResized.subscribe(() => {
+          this.cm.refresh();
+        })
+      );
     }
   }
 
   componentWillUnmount() {
-    if (this.focusCommandsSubscription) {
-      this.focusCommandsSubscription.unsubscribe();
-    }
+    this.subsriptions.forEach(s => s.unsubscribe());
   }
 
   render(): JSX.Element {

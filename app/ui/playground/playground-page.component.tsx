@@ -7,25 +7,24 @@ import { as } from "app/utils/syntax-helpers";
 import { callActionSafe } from "app/utils/async-helpers";
 import { subscribeLoadDataOnPropsParamsChange, subscribeLoadDataOnPropsChange } from "app/utils/react-helpers";
 
-import { MainMenuComponent } from "app/ui/main-menu.component";
-import { GoldenLayoutComponent, IPanelConfig, GoldenLayoutConfig } from "app/ui/_shared/golden-layout.component";
-import { CodePanelComponent, ICodePanelComponentProps } from "app/ui/playground/code-panel.component";
-import { OutputPanelComponent, IOutputPanelComponentProps } from "app/ui/playground/output-panel.component";
-
 import { _T } from "app/services/customizations/localization.service";
-import { lazyInject } from "app/di";
+import { resolveInject } from "app/di";
 import { GallerySamplesRepository } from "app/services/gallery/gallery-samples.repository";
 import { ProgramModel } from "app/services/program/program.model";
 import { ProgramExecutionContext } from "app/services/program/program-execution.context";
 import { INotificationService } from "app/services/infrastructure/notification.service";
 import { TitleService } from "app/services/infrastructure/title.service";
 import { IUserSettingsService, IUserSettings } from "app/services/customizations/user-settings.service";
-
+import { ThemesService, Theme } from "app/services/customizations/themes.service";
+import { TurtlesService } from "app/services/customizations/turtles.service";
 import { ProgramStorageType, ProgramManagementService } from "app/services/program/program-management.service";
 
 import "./playground-page.component.scss";
-import { ThemesService, Theme } from "app/services/customizations/themes.service";
-import { TurtlesService } from "app/services/customizations/turtles.service";
+import { MainMenuComponent } from "app/ui/main-menu.component";
+import { GoldenLayoutComponent, IPanelConfig, GoldenLayoutConfig } from "app/ui/_shared/golden-layout.component";
+import { CodePanelComponent, ICodePanelComponentProps } from "app/ui/playground/code-panel.component";
+import { OutputPanelComponent, IOutputPanelComponentProps } from "app/ui/playground/output-panel.component";
+import { LoadingComponent } from "app/ui/_generic/loading.component";
 
 interface IComponentState {
   isLoading: boolean;
@@ -51,13 +50,14 @@ arc 360 50
 export { ProgramStorageType };
 
 export class PlaygroundPageComponent extends React.Component<IComponentProps, IComponentState> {
-  @lazyInject(INotificationService) private notificationService: INotificationService;
-  @lazyInject(TitleService) private titleService: TitleService;
-  @lazyInject(ProgramManagementService) private programManagementService: ProgramManagementService;
-  @lazyInject(IUserSettingsService) private userSettingsService: IUserSettingsService;
-  @lazyInject(ThemesService) private themesService: ThemesService;
-  @lazyInject(TurtlesService) private turtlesService: TurtlesService;
+  private notificationService = resolveInject(INotificationService);
+  private titleService = resolveInject(TitleService);
+  private programManagementService = resolveInject(ProgramManagementService);
+  private userSettingsService = resolveInject(IUserSettingsService);
+  private themesService = resolveInject(ThemesService);
+  private turtlesService = resolveInject(TurtlesService);
   private executionService = new ProgramExecutionContext();
+  private layoutChangedSubject = new Subject<void>();
 
   private errorHandler = (err: string) => {
     this.notificationService.push({ message: err, type: "danger" });
@@ -116,6 +116,7 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
     await this.userSettingsService.update({
       playgroundLayoutJSON: newLayoutJSON
     });
+    this.layoutChangedSubject.next();
   };
 
   async loadData(props: IComponentProps) {
@@ -165,6 +166,7 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
       <div className="ex-page-container">
         <MainMenuComponent />
         <div className="ex-page-content">
+          <LoadingComponent fullPage isLoading={this.state.isLoading} />
           {this.state.program &&
             this.state.userSettings &&
             this.state.theme && (
@@ -177,7 +179,8 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
                 }}
                 panels={[
                   as<IPanelConfig<CodePanelComponent, ICodePanelComponentProps>>({
-                    title: this.state.program.name || _T("Playground"),
+                    title:
+                      `<i class="fa fa-code" aria-hidden="true"></i> ` + (this.state.program.name || _T("Playground")),
                     componentName: "code-panel",
                     componentType: CodePanelComponent,
                     props: {
@@ -185,11 +188,12 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
                       program: this.state.program,
                       editorTheme: this.state.theme.codeEditorThemeName,
                       executionService: this.executionService,
-                      navigateAutomaticallyAfterSaveAs: true
+                      navigateAutomaticallyAfterSaveAs: true,
+                      containerResized: this.layoutChangedSubject
                     }
                   }),
                   as<IPanelConfig<OutputPanelComponent, IOutputPanelComponentProps>>({
-                    title: "Output",
+                    title: `<i class="fa fa-television" aria-hidden="true"></i> ` + _T("Output"),
                     componentName: "output-panel",
                     componentType: OutputPanelComponent,
                     props: {

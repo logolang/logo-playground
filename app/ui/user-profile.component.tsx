@@ -13,7 +13,7 @@ import { MainMenuComponent } from "app/ui/main-menu.component";
 import { LogoExecutorComponent } from "app/ui/_shared/logo-executor.component";
 import { FileSelectorComponent } from "app/ui/_generic/file-selector.component";
 
-import { lazyInject } from "app/di";
+import { resolveInject } from "app/di";
 import { Routes } from "app/routes";
 import { UserInfo } from "app/services/login/user-info";
 import { TurtlesService } from "app/services/customizations/turtles.service";
@@ -51,16 +51,15 @@ const codeSamples = [
 ];
 
 export class UserProfileComponent extends React.Component<IComponentProps, IComponentState> {
-  @lazyInject(TitleService) private titleService: TitleService;
-  @lazyInject(INavigationService) private navService: INavigationService;
-  @lazyInject(INotificationService) private notificationService: INotificationService;
-
-  @lazyInject(ICurrentUserService) private currentUser: ICurrentUserService;
-  @lazyInject(IUserSettingsService) private userSettingsService: IUserSettingsService;
-  @lazyInject(ThemesService) private themeService: ThemesService;
-  @lazyInject(TurtlesService) private turtleCustomizationService: TurtlesService;
-  @lazyInject(LocalizationService) private localizationService: LocalizationService;
-  @lazyInject(IUserLibraryRepository) private programsReporitory: IUserLibraryRepository;
+  private titleService = resolveInject(TitleService);
+  private navService = resolveInject(INavigationService);
+  private notificationService = resolveInject(INotificationService);
+  private currentUser = resolveInject(ICurrentUserService);
+  private userSettingsService = resolveInject(IUserSettingsService);
+  private themeService = resolveInject(ThemesService);
+  private turtleCustomizationService = resolveInject(TurtlesService);
+  private localizationService = resolveInject(LocalizationService);
+  private programsReporitory = resolveInject(IUserLibraryRepository);
 
   private onIsRunningChanged = new Subject<boolean>();
   private runCode = new BehaviorSubject<string>("");

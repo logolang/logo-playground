@@ -10,14 +10,14 @@ import { GalleryComponent } from "app/ui/gallery.component";
 import { PlaygroundPageComponent, ProgramStorageType } from "app/ui/playground/playground-page.component";
 import { DocumentationComponent } from "app/ui/documentation.component";
 import { LoginComponent } from "app/ui/login.component";
-import { lazyInject } from "app/di";
+import { resolveInject } from "app/di";
 import { INavigationService } from "app/services/infrastructure/navigation.service";
 import { INotificationService } from "app/services/infrastructure/notification.service";
 import { TutorialsPageComponent, ITutorialPageRouteParams } from "app/ui/tutorials/tutorials-page.component";
 
 export class Routes extends React.Component<object, object> {
-  @lazyInject(INavigationService) private navigationService: INavigationService;
-  @lazyInject(INotificationService) private notificationService: INotificationService;
+  private navigationService = resolveInject(INavigationService);
+  private notificationService = resolveInject(INotificationService);
 
   private router: any;
 

@@ -28,9 +28,18 @@
 }
 
 .ex-loading-indicator {
-  width: 75px;
+  width: 120px;
   margin-left: auto;
   margin-right: auto;
-  padding-top: 40px;
-  padding-bottom: 60px;
+  padding-left: 30px;
+  padding-top: 50px;
+  padding-bottom: 50px;
+}
+
+.ex-loading-indicator-fullpage {
+  position: absolute;
+  right: 0;
+  left: 0;
+  margin-top: 200px;
+  z-index: 100;
 }

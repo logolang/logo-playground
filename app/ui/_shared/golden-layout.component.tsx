@@ -90,6 +90,9 @@ export class GoldenLayoutComponent extends React.Component<IComponentProps, ICom
       showPopoutIcon: false,
       showCloseIcon: false
     };
+    config.dimensions = {
+      headerHeight: 32
+    };
     const element = this.refs["container"] as any;
     if (this.layout) {
       this.layout.destroy();
