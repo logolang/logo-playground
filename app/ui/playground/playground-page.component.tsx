@@ -58,6 +58,7 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
   private themesService = resolveInject(ThemesService);
   private turtlesService = resolveInject(TurtlesService);
   private executionService = new ProgramExecutionContext();
+  private layoutChangedSubject = new Subject<void>();
 
   private errorHandler = (err: string) => {
     this.notificationService.push({ message: err, type: "danger" });
@@ -116,6 +117,7 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
     await this.userSettingsService.update({
       playgroundLayoutJSON: newLayoutJSON
     });
+    this.layoutChangedSubject.next();
   };
 
   async loadData(props: IComponentProps) {
@@ -185,7 +187,8 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
                       program: this.state.program,
                       editorTheme: this.state.theme.codeEditorThemeName,
                       executionService: this.executionService,
-                      navigateAutomaticallyAfterSaveAs: true
+                      navigateAutomaticallyAfterSaveAs: true,
+                      containerResized: this.layoutChangedSubject
                     }
                   }),
                   as<IPanelConfig<OutputPanelComponent, IOutputPanelComponentProps>>({

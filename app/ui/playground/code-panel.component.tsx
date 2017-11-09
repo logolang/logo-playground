@@ -34,6 +34,7 @@ export interface ICodePanelComponentProps {
   saveCurrentEnabled: boolean;
   navigateAutomaticallyAfterSaveAs: boolean;
   externalCodeChanges?: Observable<string>;
+  containerResized?: Observable<void>;
   doNotShowLocalChangesIndicator?: boolean;
 }
 
@@ -136,6 +137,7 @@ export class CodePanelComponent extends React.Component<ICodePanelComponentProps
           focusCommands={execService.focusCommands}
           onChanged={this.onCodeChanged}
           onHotkey={this.onRunProgram}
+          containerResized={this.props.containerResized}
         />
         {this.state.hasLocalTempChanges &&
           this.props.program.id &&
