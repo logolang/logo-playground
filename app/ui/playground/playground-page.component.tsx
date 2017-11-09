@@ -179,7 +179,8 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
                 }}
                 panels={[
                   as<IPanelConfig<CodePanelComponent, ICodePanelComponentProps>>({
-                    title: this.state.program.name || _T("Playground"),
+                    title:
+                      `<i class="fa fa-code" aria-hidden="true"></i> ` + (this.state.program.name || _T("Playground")),
                     componentName: "code-panel",
                     componentType: CodePanelComponent,
                     props: {
@@ -192,7 +193,7 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
                     }
                   }),
                   as<IPanelConfig<OutputPanelComponent, IOutputPanelComponentProps>>({
-                    title: "Output",
+                    title: `<i class="fa fa-television" aria-hidden="true"></i> ` + _T("Output"),
                     componentName: "output-panel",
                     componentType: OutputPanelComponent,
                     props: {

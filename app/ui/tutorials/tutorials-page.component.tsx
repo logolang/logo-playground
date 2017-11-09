@@ -245,7 +245,7 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
                 }}
                 panels={[
                   as<IPanelConfig<TutorialViewComponent, ITutorialViewComponentProps>>({
-                    title: _T("Tutorial"),
+                    title: `<i class="fa fa-graduation-cap" aria-hidden="true"></i> ` + _T("Tutorial"),
                     componentName: "tutorial-panel",
                     componentType: TutorialViewComponent,
                     props: {
@@ -257,7 +257,7 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
                     }
                   }),
                   as<IPanelConfig<CodePanelComponent, ICodePanelComponentProps>>({
-                    title: _T("Code"),
+                    title: `<i class="fa fa-code" aria-hidden="true"></i> ` + _T("Code"),
                     componentName: "code-panel",
                     componentType: CodePanelComponent,
                     props: {
@@ -271,7 +271,7 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
                     }
                   }),
                   as<IPanelConfig<OutputPanelComponent, IOutputPanelComponentProps>>({
-                    title: "Output",
+                    title: `<i class="fa fa-television" aria-hidden="true"></i> ` + _T("Output"),
                     componentName: "output-panel",
                     componentType: OutputPanelComponent,
                     props: {

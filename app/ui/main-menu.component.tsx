@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import * as cn from "classnames";
 
 import { resolveInject } from "app/di";
@@ -58,18 +58,18 @@ export class MainMenuComponent extends React.Component<IComponentProps, ICompone
 
         <div className={cn("navbar-menu", { "is-active": this.state.isMenuToggled })}>
           <div className="navbar-start">
-            <Link className="navbar-item" to={Routes.galleryRoot.build({})}>
+            <NavLink className="navbar-item" activeClassName="is-active" to={Routes.galleryRoot.build({})}>
               {_T("Gallery")}
-            </Link>
-            <Link className="navbar-item" to={Routes.documentationRoot.build({})}>
+            </NavLink>
+            <NavLink className="navbar-item" activeClassName="is-active" to={Routes.documentationRoot.build({})}>
               {_T("Documentation")}
-            </Link>
-            <Link className="navbar-item" to={Routes.tutorialsRoot.build({})}>
+            </NavLink>
+            <NavLink className="navbar-item" activeClassName="is-active" to={Routes.tutorialsRoot.build({})}>
               {_T("Tutorials")}
-            </Link>
-            <Link className="navbar-item" to={Routes.playground.build({})}>
+            </NavLink>
+            <NavLink className="navbar-item" activeClassName="is-active" to={Routes.playground.build({})}>
               {_T("Playground")}
-            </Link>
+            </NavLink>
           </div>
           <div className="navbar-end">
             <div className="navbar-item has-dropdown is-hoverable">
@@ -77,17 +77,17 @@ export class MainMenuComponent extends React.Component<IComponentProps, ICompone
                 <img src={userPic} />
               </span>
               <div className="navbar-dropdown is-right">
-                <Link className="navbar-item" to={Routes.settingsRoot.build({})}>
+                <NavLink className="navbar-item" activeClassName="is-active" to={Routes.settingsRoot.build({})}>
                   {_T("User profile")}
-                </Link>
-                <Link className="navbar-item" to={Routes.aboutRoot.build({})}>
+                </NavLink>
+                <NavLink className="navbar-item" activeClassName="is-active" to={Routes.aboutRoot.build({})}>
                   {_T("About...")}
-                </Link>
+                </NavLink>
                 <hr className="navbar-divider" />
                 {!loginStatus.isLoggedIn && (
-                  <Link className="navbar-item" to={Routes.loginRoot.build({})}>
+                  <NavLink className="navbar-item" activeClassName="is-active" to={Routes.loginRoot.build({})}>
                     {_T("Log in")}
-                  </Link>
+                  </NavLink>
                 )}
                 {loginStatus.isLoggedIn && (
                   <a href="#" className="navbar-item" onClick={this.menuLogOutClick}>
