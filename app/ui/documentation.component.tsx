@@ -3,13 +3,14 @@ import { RouteComponentProps } from "react-router-dom";
 
 import { callActionSafe } from "app/utils/async-helpers";
 
-import { MainMenuComponent } from "app/ui/main-menu.component";
-
-import { lazyInject } from "app/di";
+import { resolveInject } from "app/di";
 import { _T } from "app/services/customizations/localization.service";
 import { INotificationService } from "app/services/infrastructure/notification.service";
 import { TitleService } from "app/services/infrastructure/title.service";
 import { ILocalizedContentLoader } from "app/services/infrastructure/localized-content-loader";
+
+import { MainMenuComponent } from "app/ui/main-menu.component";
+import { LoadingComponent } from "app/ui/_generic/loading.component";
 
 import "./documentation.component.scss";
 
@@ -21,9 +22,9 @@ interface IComponentState {
 interface IComponentProps extends RouteComponentProps<void> {}
 
 export class DocumentationComponent extends React.Component<IComponentProps, IComponentState> {
-  @lazyInject(INotificationService) private notificationService: INotificationService;
-  @lazyInject(TitleService) private titleService: TitleService;
-  @lazyInject(ILocalizedContentLoader) private contentLoader: ILocalizedContentLoader;
+  private notificationService = resolveInject(INotificationService);
+  private titleService = resolveInject(TitleService);
+  private contentLoader = resolveInject(ILocalizedContentLoader);
 
   private errorHandler = (err: string) => {
     this.notificationService.push({ message: err, type: "danger" });
@@ -60,6 +61,7 @@ export class DocumentationComponent extends React.Component<IComponentProps, ICo
         <MainMenuComponent />
         <div className="ex-page-content">
           <div className="container">
+            <LoadingComponent fullPage isLoading={this.state.isLoading} />
             <div className="doc-section" dangerouslySetInnerHTML={{ __html: this.state.content }} />
             <br />
           </div>

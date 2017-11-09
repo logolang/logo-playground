@@ -6,19 +6,7 @@ import { subscribeLoadDataOnPropsParamsChange } from "app/utils/react-helpers";
 import { callActionSafe } from "app/utils/async-helpers";
 import { as } from "app/utils/syntax-helpers";
 
-import { MainMenuComponent } from "app/ui/main-menu.component";
-import { GoldenLayoutConfig, GoldenLayoutComponent, IPanelConfig } from "app/ui/_shared/golden-layout.component";
-import { CodePanelComponent, ICodePanelComponentProps } from "app/ui/playground/code-panel.component";
-import { OutputPanelComponent, IOutputPanelComponentProps } from "app/ui/playground/output-panel.component";
-import {
-  TutorialViewComponent,
-  ITutorialViewComponentProps,
-  ITutorialNavigationRequest,
-  ITutorialRequestData,
-  ITutorialLoadedData
-} from "app/ui/tutorials/tutorial-view.component";
-
-import { lazyInject } from "app/di";
+import { resolveInject } from "app/di";
 import { Routes } from "app/routes";
 import { _T } from "app/services/customizations/localization.service";
 import { INotificationService } from "app/services/infrastructure/notification.service";
@@ -31,6 +19,19 @@ import { TurtlesService } from "app/services/customizations/turtles.service";
 import { ProgramExecutionContext } from "app/services/program/program-execution.context";
 import { ProgramManagementService, ProgramStorageType } from "app/services/program/program-management.service";
 import { ITutorialsContentService, ITutorialInfo } from "app/services/tutorials/tutorials-content-service";
+
+import { MainMenuComponent } from "app/ui/main-menu.component";
+import { GoldenLayoutConfig, GoldenLayoutComponent, IPanelConfig } from "app/ui/_shared/golden-layout.component";
+import { CodePanelComponent, ICodePanelComponentProps } from "app/ui/playground/code-panel.component";
+import { OutputPanelComponent, IOutputPanelComponentProps } from "app/ui/playground/output-panel.component";
+import {
+  TutorialViewComponent,
+  ITutorialViewComponentProps,
+  ITutorialNavigationRequest,
+  ITutorialRequestData,
+  ITutorialLoadedData
+} from "app/ui/tutorials/tutorial-view.component";
+import { LoadingComponent } from "app/ui/_generic/loading.component";
 
 interface IComponentState {
   isLoading: boolean;
@@ -52,14 +53,14 @@ export interface ITutorialPageRouteParams {
 }
 
 export class TutorialsPageComponent extends React.Component<IComponentProps, IComponentState> {
-  @lazyInject(INotificationService) private notificationService: INotificationService;
-  @lazyInject(INavigationService) private navService: INavigationService;
-  @lazyInject(TitleService) private titleService: TitleService;
-  @lazyInject(IUserSettingsService) private userSettingsService: IUserSettingsService;
-  @lazyInject(ThemesService) private themesService: ThemesService;
-  @lazyInject(TurtlesService) private turtlesService: TurtlesService;
-  @lazyInject(ProgramManagementService) private programManagementService: ProgramManagementService;
-  @lazyInject(ITutorialsContentService) private tutorialsLoader: ITutorialsContentService;
+  private notificationService = resolveInject(INotificationService);
+  private navService = resolveInject(INavigationService);
+  private titleService = resolveInject(TitleService);
+  private userSettingsService = resolveInject(IUserSettingsService);
+  private themesService = resolveInject(ThemesService);
+  private turtlesService = resolveInject(TurtlesService);
+  private programManagementService = resolveInject(ProgramManagementService);
+  private tutorialsLoader = resolveInject(ITutorialsContentService);
 
   private executionService = new ProgramExecutionContext();
   private fixTheCodeStream = new Subject<string>();
@@ -204,9 +205,11 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
   };
 
   onNavigateRequest = async (tutorialId: string, stepId: string) => {
+    console.log("Yo! navigate request");
     if (this.state.program) {
       await this.programManagementService.revertLocalTempChanges(this.state.program);
     }
+    console.log("Yo! navigate command");
     this.navService.navigate({
       route: Routes.tutorialSpecified.build({
         tutorialId: tutorialId,
@@ -220,6 +223,7 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
       <div className="ex-page-container">
         <MainMenuComponent />
         <div className="ex-page-content">
+          <LoadingComponent fullPage isLoading={this.state.isLoading} />
           {this.state.userSettings &&
             this.state.theme &&
             this.state.tutorials &&
@@ -241,7 +245,7 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
                 }}
                 panels={[
                   as<IPanelConfig<TutorialViewComponent, ITutorialViewComponentProps>>({
-                    title: _T("Tutorial"),
+                    title: `<i class="fa fa-graduation-cap" aria-hidden="true"></i> ` + _T("Tutorial"),
                     componentName: "tutorial-panel",
                     componentType: TutorialViewComponent,
                     props: {
@@ -253,7 +257,7 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
                     }
                   }),
                   as<IPanelConfig<CodePanelComponent, ICodePanelComponentProps>>({
-                    title: _T("Code"),
+                    title: `<i class="fa fa-code" aria-hidden="true"></i> ` + _T("Code"),
                     componentName: "code-panel",
                     componentType: CodePanelComponent,
                     props: {
@@ -267,7 +271,7 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
                     }
                   }),
                   as<IPanelConfig<OutputPanelComponent, IOutputPanelComponentProps>>({
-                    title: "Output",
+                    title: `<i class="fa fa-television" aria-hidden="true"></i> ` + _T("Output"),
                     componentName: "output-panel",
                     componentType: OutputPanelComponent,
                     props: {

@@ -4,7 +4,7 @@ import { Observable } from "rxjs/Observable";
 import * as keymaster from "keymaster";
 
 import { as } from "app/utils/syntax-helpers";
-import { lazyInject } from "app/di";
+import { resolveInject } from "app/di";
 
 import { _T } from "app/services/customizations/localization.service";
 import { Routes } from "app/routes";
@@ -34,6 +34,7 @@ export interface ICodePanelComponentProps {
   saveCurrentEnabled: boolean;
   navigateAutomaticallyAfterSaveAs: boolean;
   externalCodeChanges?: Observable<string>;
+  containerResized?: Observable<void>;
   doNotShowLocalChangesIndicator?: boolean;
 }
 
@@ -47,9 +48,9 @@ interface IComponentState {
 }
 
 export class CodePanelComponent extends React.Component<ICodePanelComponentProps, IComponentState> {
-  @lazyInject(INotificationService) private notificationService: INotificationService;
-  @lazyInject(INavigationService) private navigationService: INavigationService;
-  @lazyInject(ProgramManagementService) private managementService: ProgramManagementService;
+  private notificationService = resolveInject(INotificationService);
+  private navigationService = resolveInject(INavigationService);
+  private managementService = resolveInject(ProgramManagementService);
   private subscriptions: ISubscription[] = [];
   private saveTempCodeTimer: any = undefined;
 
@@ -136,6 +137,7 @@ export class CodePanelComponent extends React.Component<ICodePanelComponentProps
           focusCommands={execService.focusCommands}
           onChanged={this.onCodeChanged}
           onHotkey={this.onRunProgram}
+          containerResized={this.props.containerResized}
         />
         {this.state.hasLocalTempChanges &&
           this.props.program.id &&

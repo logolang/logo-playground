@@ -8,7 +8,7 @@ import { InputCopyToClipboardComponent } from "app/ui/_generic/input-copy-to-cli
 import { _T } from "app/services/customizations/localization.service";
 import { IProgramToSaveAttributes } from "app/services/program/program-management.service";
 import { GistSharedProgramsRepository } from "app/services/program/gist-shared-programs.repository";
-import { lazyInject } from "app/di";
+import { resolveInject } from "app/di";
 import { ProgramModel } from "app/services/program/program.model";
 import { handleAsyncError } from "app/utils/async-helpers";
 
@@ -26,7 +26,7 @@ interface IComponentProps {
 }
 
 export class ShareProgramModalComponent extends React.Component<IComponentProps, IComponentState> {
-  @lazyInject(GistSharedProgramsRepository) private gistService: GistSharedProgramsRepository;
+  private gistService = resolveInject(GistSharedProgramsRepository);
 
   constructor(props: IComponentProps) {
     super(props);

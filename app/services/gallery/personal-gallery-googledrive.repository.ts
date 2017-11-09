@@ -1,4 +1,5 @@
 import { RandomHelper } from "app/utils/random-helper";
+
 import { injectable, inject } from "app/di";
 import { ICurrentUserService } from "app/services/login/current-user.service";
 import { ProgramModel } from "app/services/program/program.model";
@@ -6,7 +7,6 @@ import { ProgramModelConverter } from "app/services/program/program-model.conver
 import { IUserLibraryRepository } from "app/services/gallery/personal-gallery-localstorage.repository";
 import { GoogleDriveClient, IGoogleFileInfo } from "app/services/infrastructure/google-drive.client";
 import { ProgramsHtmlSerializerService } from "app/services/gallery/programs-html-serializer.service";
-import { stay } from "app/utils/async-helpers";
 
 const storageFileName = "logo-personal-library.html";
 const storageFileContentType = "text/html; charset=UTF-8";
@@ -19,7 +19,7 @@ interface IStoredData {
 
 @injectable()
 export class ProgramsGoogleDriveRepository implements IUserLibraryRepository {
-  private googleDriveClient = new GoogleDriveClient();
+  private googleDriveClient: GoogleDriveClient;
   private serializationService = new ProgramsHtmlSerializerService();
   private cachedData: IStoredData | undefined = undefined;
 
@@ -91,7 +91,6 @@ export class ProgramsGoogleDriveRepository implements IUserLibraryRepository {
         programs: []
       };
     }
-    //await stay(300000);
 
     if (this.cachedData && this.cachedData.fileHash === storageFileInfo.md5Checksum) {
       return this.cachedData;
