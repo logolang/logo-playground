@@ -7,11 +7,6 @@ import { as } from "app/utils/syntax-helpers";
 import { callActionSafe } from "app/utils/async-helpers";
 import { subscribeLoadDataOnPropsParamsChange, subscribeLoadDataOnPropsChange } from "app/utils/react-helpers";
 
-import { MainMenuComponent } from "app/ui/main-menu.component";
-import { GoldenLayoutComponent, IPanelConfig, GoldenLayoutConfig } from "app/ui/_shared/golden-layout.component";
-import { CodePanelComponent, ICodePanelComponentProps } from "app/ui/playground/code-panel.component";
-import { OutputPanelComponent, IOutputPanelComponentProps } from "app/ui/playground/output-panel.component";
-
 import { _T } from "app/services/customizations/localization.service";
 import { resolveInject } from "app/di";
 import { GallerySamplesRepository } from "app/services/gallery/gallery-samples.repository";
@@ -20,12 +15,16 @@ import { ProgramExecutionContext } from "app/services/program/program-execution.
 import { INotificationService } from "app/services/infrastructure/notification.service";
 import { TitleService } from "app/services/infrastructure/title.service";
 import { IUserSettingsService, IUserSettings } from "app/services/customizations/user-settings.service";
-
+import { ThemesService, Theme } from "app/services/customizations/themes.service";
+import { TurtlesService } from "app/services/customizations/turtles.service";
 import { ProgramStorageType, ProgramManagementService } from "app/services/program/program-management.service";
 
 import "./playground-page.component.scss";
-import { ThemesService, Theme } from "app/services/customizations/themes.service";
-import { TurtlesService } from "app/services/customizations/turtles.service";
+import { MainMenuComponent } from "app/ui/main-menu.component";
+import { GoldenLayoutComponent, IPanelConfig, GoldenLayoutConfig } from "app/ui/_shared/golden-layout.component";
+import { CodePanelComponent, ICodePanelComponentProps } from "app/ui/playground/code-panel.component";
+import { OutputPanelComponent, IOutputPanelComponentProps } from "app/ui/playground/output-panel.component";
+import { LoadingComponent } from "app/ui/_generic/loading.component";
 
 interface IComponentState {
   isLoading: boolean;
@@ -167,6 +166,7 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
       <div className="ex-page-container">
         <MainMenuComponent />
         <div className="ex-page-content">
+          <LoadingComponent fullPage isLoading={this.state.isLoading} />
           {this.state.program &&
             this.state.userSettings &&
             this.state.theme && (
