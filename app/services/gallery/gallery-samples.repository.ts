@@ -1,11 +1,10 @@
-import { ProgramModel } from "app/services/program/program.model";
-import { injectable } from "app/di";
-import { ProgramModelConverter } from "app/services/program/program-model.converter";
+import { formatId } from "app/utils/formatter-helper";
 
-const data = require("./gallery-samples.json").map((rec: any) => ProgramModelConverter.fromJson(rec)) as ProgramModel[];
-data.sort((p1, p2) => {
-  return p1.dateLastEdited > p2.dateLastEdited ? -1 : 1;
-});
+import { injectable } from "app/di";
+import { ProgramModel } from "app/services/program/program.model";
+import { ProgramModelConverter } from "app/services/program/program-model.converter";
+import { IAjaxService } from "app/services/infrastructure/ajax-service";
+import { ProgramsHtmlSerializerService } from "app/services/gallery/programs-html-serializer.service";
 
 export abstract class IGallerySamplesRepository {
   abstract getAll(): Promise<ProgramModel[]>;
@@ -14,11 +13,34 @@ export abstract class IGallerySamplesRepository {
 
 @injectable()
 export class GallerySamplesRepository implements IGallerySamplesRepository {
+  private cached_programs: ProgramModel[] | undefined;
+
+  constructor(private ajax: IAjaxService) {}
+
   async getAll(): Promise<ProgramModel[]> {
+    if (this.cached_programs) {
+      return this.cached_programs;
+    }
+    const html = await this.ajax.getText(`content/samples.html`);
+    const parser = new ProgramsHtmlSerializerService();
+    const data = parser.parse(html);
+
+    for (const pr of data) {
+      // generate readable ids
+      pr.id = formatId(pr.name, id => !!data.find(p => p.id === id));
+    }
+
+    data.sort((p1, p2) => {
+      return p1.dateLastEdited > p2.dateLastEdited ? -1 : 1;
+    });
+
+    this.cached_programs = data;
+
     return data;
   }
 
   async get(id: string): Promise<ProgramModel> {
+    const data = await this.getAll();
     const p = data.find(d => d.id === id);
     if (!p) {
       throw new Error(`Program with id ${id} is not found`);

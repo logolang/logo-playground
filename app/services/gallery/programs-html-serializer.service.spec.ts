@@ -1,10 +1,32 @@
 import { ProgramsHtmlSerializerService } from "app/services/gallery/programs-html-serializer.service";
 import { ProgramModel } from "app/services/program/program.model";
 import { ProgramModelConverter } from "app/services/program/program-model.converter";
+import { ProgramStorageType } from "app/ui/playground/playground-page.component";
 
-const programs = require("./gallery-samples.json").map((rec: any) =>
-  ProgramModelConverter.fromJson(rec)
-) as ProgramModel[];
+const programs: ProgramModel[] = [
+  {
+    id: "1",
+    code: "<>!@#^$%&@#$'",
+    dateCreated: new Date(0),
+    dateLastEdited: new Date(0),
+    lang: "logo",
+    name: "prog1",
+    screenshot: "ABCABCKJSFA",
+    hasTempLocalModifications: false,
+    storageType: undefined
+  },
+  {
+    id: "2",
+    code: "<>!@#^$%&@#$'",
+    dateCreated: new Date(0),
+    dateLastEdited: new Date(0),
+    lang: "logo",
+    name: "prog1",
+    screenshot: "ABCABCKJSFA",
+    hasTempLocalModifications: false,
+    storageType: undefined
+  }
+];
 
 describe("Programs HTML serializer service", () => {
   const service = new ProgramsHtmlSerializerService();

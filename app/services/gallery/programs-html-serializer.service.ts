@@ -102,10 +102,10 @@ export class ProgramsHtmlSerializerService {
   }
 
   private encodeHtml(str: string): string {
-    const buf: string[] = [];
-    for (let i = str.length - 1; i >= 0; i--) {
-      buf.unshift(["&#", str[i].charCodeAt(0), ";"].join(""));
-    }
-    return buf.join("");
+    const div = document.createElement("div");
+    div.appendChild(document.createTextNode(str));
+    const result = div.innerHTML;
+    div.remove();
+    return result;
   }
 }
