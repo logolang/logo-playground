@@ -90,7 +90,13 @@ module.exports = function(env) {
         manifest: path.join(__dirname, "dist", "vendor-manifest.json")
       }),
 
-      new CopyWebpackPlugin([{ from: "content", to: "content" }]),
+      new CopyWebpackPlugin([
+        { from: "content", to: "content", ignore: ["**/config.json", "**/config.prod.json"] },
+        {
+          from: isProduction ? "content/config/config.prod.json" : "content/config/config.json",
+          to: "content/config/config.json"
+        }
+      ]),
 
       new webpack.DefinePlugin({
         // Custom object injected to application and contains build version and package info
