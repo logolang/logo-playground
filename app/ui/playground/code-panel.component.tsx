@@ -168,6 +168,7 @@ export class CodePanelComponent extends React.Component<ICodePanelComponentProps
       return (
         <SaveProgramModalComponent
           programName={this.props.program.name}
+          screenshot={this.state.screenshotDataToSave}
           onClose={() => {
             this.setState({ isSaveModalActive: false });
           }}
@@ -178,8 +179,9 @@ export class CodePanelComponent extends React.Component<ICodePanelComponentProps
     return null;
   }
 
-  showSaveDialog = () => {
-    this.setState({ isSaveModalActive: true });
+  showSaveDialog = async () => {
+    const screenshot = await this.props.executionService.getScreenshot(true);
+    this.setState({ isSaveModalActive: true, screenshotDataToSave: screenshot });
   };
 
   saveProgramAsCallback = async (newProgramName: string): Promise<void> => {
@@ -191,8 +193,8 @@ export class CodePanelComponent extends React.Component<ICodePanelComponentProps
       this.props.program
     );
     this.notificationService.push({
-      type: "info",
-      title: "Success",
+      type: "success",
+      title: _T("Message"),
       message: _T("Program has been saved in the library.")
     });
     this.setState({ hasLocalTempChanges: false });

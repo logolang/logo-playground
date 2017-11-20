@@ -29,6 +29,9 @@ msgstr "Песочница Лого"
 msgid "App version"
 msgstr "Версия приложения"
 
+msgid "Back"
+msgstr "Назад"
+
 msgid "Cancel"
 msgstr "Отменить"
 
@@ -41,23 +44,23 @@ msgstr "Выбрать другой учебник"
 msgid "Close"
 msgstr "Закрыть"
 
+msgid "Code"
+msgstr "Код программы"
+
 msgid "Code version"
-msgstr "Версия кода"
+msgstr "Версия программы"
 
 msgid "Continue"
 msgstr "Продолжить"
 
-msgid "Copy link to clipboard"
-msgstr "Скопировать ссылку в буфер обмена"
+msgid "Copied"
+msgstr "Скопировано"
 
-msgid "Created"
-msgstr "Дата создания"
+msgid "Copy to clipboard"
+msgstr "Скопировать в буфер обмена"
 
 msgid "Delete"
 msgstr "Удалить"
-
-msgid "Delete program"
-msgstr "Удалить программу"
 
 msgid "Do you want to delete?"
 msgstr "Вы хотите удалить?"
@@ -67,6 +70,12 @@ msgstr "Документация"
 
 msgid "Edited"
 msgstr "Дата обновления"
+
+msgid "Email"
+msgstr "Почта е-майл"
+
+msgid "Execute the program"
+msgstr "Запустить программу"
 
 msgid "Export"
 msgstr "Экспорт"
@@ -81,7 +90,7 @@ msgid "FIX_THE_CODE_WARNING"
 msgstr "Это полностью перезапишет ваш код."
 
 msgid "Fix the code?"
-msgstr "Исправить код?"
+msgstr "Исправить код программы?"
 
 msgid "Gallery"
 msgstr "Галлерея"
@@ -91,6 +100,9 @@ msgstr "Помогите - не работает!"
 
 msgid "Huge"
 msgstr "Огромный"
+
+msgid "Image"
+msgstr "Изображение"
 
 msgid "Import"
 msgstr "Импорт"
@@ -110,17 +122,20 @@ msgstr "Войти"
 msgid "Log out"
 msgstr "Выход из системы"
 
-msgid "Login"
-msgstr "Логин"
+msgid "Login with Google"
+msgstr "Войти используя Гугл-аккаунт"
 
 msgid "Medium"
 msgstr "Средний"
 
-msgid "NO_PROGRAMS_IN_PERSONAL_LIBRARY"
-msgstr "У вас еще нет программ в вашей личной библиотеке. Чтобы добавить программу, вам нужно перейти на Детскую площадку или открыть одну из раздела Образцы."
+msgid "Message"
+msgstr "Сообщение"
 
 msgid "Name"
 msgstr "Имя"
+
+msgid "No image"
+msgstr "Нет изображения"
 
 msgid "No, keep my code as is"
 msgstr "Нет, сохранить мой код как есть"
@@ -137,14 +152,20 @@ msgstr "Персональная библиотека"
 msgid "Playground"
 msgstr "Детская площадка"
 
-msgid "Please enter name for your program"
+msgid "Please enter the name for your program"
 msgstr "Введите название своей программы"
 
-msgid "Program"
-msgstr "Программа"
+msgid "Program has been saved in the library."
+msgstr "Программа сохранена успешно"
 
 msgid "Program name"
 msgstr "Название программы"
+
+msgid "Public url"
+msgstr "Публичная ссылка"
+
+msgid "Revert changes"
+msgstr "Отменить изменения"
 
 msgid "Run"
 msgstr "Выполнить"
@@ -155,14 +176,8 @@ msgstr "Образцы"
 msgid "Save"
 msgstr "Сохранить"
 
-msgid "Save as new..."
-msgstr "Сохранить как новую ..."
-
-msgid "Save program '%s'"
-msgstr "Сохранить программу '%s'"
-
-msgid "Save to Gallery..."
-msgstr "Сохранить в галерее ..."
+msgid "Save to personal library"
+msgstr "Сохранить в персональной галерее"
 
 msgid "Save your program to Gallery"
 msgstr "Сохранить вашу программу в галерее"
@@ -170,14 +185,23 @@ msgstr "Сохранить вашу программу в галерее"
 msgid "Screenshot"
 msgstr "Скриншот"
 
+msgid "Screenshot is not available because program has not been executed yet."
+msgstr "Скриншот невозможен потому что программа еще не была выполнена."
+
+msgid "Share"
+msgstr "Поделиться"
+
+msgid "Share your program"
+msgstr "Опубликовать программу"
+
 msgid "Small"
 msgstr "Маленький"
 
 msgid "Sorry, error has occured"
 msgstr "Произошла ошибка"
 
-msgid "Space for your personal programs"
-msgstr "Пространство для ваших личных программ"
+msgid "Start"
+msgstr "Старт"
 
 msgid "Step %1$s of %2$s"
 msgstr "Шаг %1$s из %2$s"
@@ -185,7 +209,10 @@ msgstr "Шаг %1$s из %2$s"
 msgid "Stop"
 msgstr "Остановить"
 
-msgid "Take Screenshot"
+msgid "Stop execution of the program"
+msgstr "Остановить выполнение программы"
+
+msgid "Take screenshot"
 msgstr "Сделать скриншот"
 
 msgid "Turtle"
@@ -209,6 +236,9 @@ msgstr "Хамелеон"
 msgid "Turtle Name tt9"
 msgstr "Принцесса"
 
+msgid "Tutorial"
+msgstr "Учебник"
+
 msgid "Tutorials"
 msgstr "Учебные пособия"
 
@@ -224,8 +254,17 @@ msgstr "Настройки пользователя"
 msgid "Yes, fix my code"
 msgstr "Да, исправить мой код"
 
+msgid "You are going to delete this program."
+msgstr "Вы собираетесь удалить эту программу"
+
 msgid "You have %d program"
 msgid_plural "You have %d programs"
 msgstr[0] "У вас %d программа"
 msgstr[1] "У вас %d программы"
 msgstr[2] "У вас %d программ"
+
+msgid "You have local changes in this program. "
+msgstr "У вас есть изменения в программе."
+
+msgid "Your personal library"
+msgstr "Персональная галерея - пространство для ваших личных программ"

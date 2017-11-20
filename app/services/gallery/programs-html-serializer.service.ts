@@ -91,7 +91,7 @@ export class ProgramsHtmlSerializerService {
     <small>${program.dateLastEdited}</small>
     <br />
     <br />
-    <img alt="Program screenshot" src="${program.screenshot || "http://via.placeholder.com/350x150?text=No+image"}"
+    ${this.getImage(program)}
     />
   </td>
   <td>
@@ -99,6 +99,13 @@ export class ProgramsHtmlSerializerService {
   </td>
 </tr>
   `;
+  }
+
+  private getImage(program: ProgramModel) {
+    if (program.screenshot) {
+      return `<img alt="Program screenshot" src="${program.screenshot}"`;
+    }
+    return "";
   }
 
   private encodeHtml(str: string): string {

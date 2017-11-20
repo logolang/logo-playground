@@ -1,11 +1,12 @@
 import * as React from "react";
 import * as cn from "classnames";
 
-import { AlertMessageComponent } from "app/ui/_generic/alert-message.component";
-import { ModalComponent } from "app/ui/_generic/modal.component";
-
 import { _T } from "app/services/customizations/localization.service";
 import { IProgramToSaveAttributes } from "app/services/program/program-management.service";
+
+import { AlertMessageComponent } from "app/ui/_generic/alert-message.component";
+import { ModalComponent } from "app/ui/_generic/modal.component";
+import { NoDataComponent } from "app/ui/_generic/no-data.component";
 
 interface IComponentState {
   errorMessage: string;
@@ -15,6 +16,7 @@ interface IComponentState {
 
 interface IComponentProps {
   programName: string;
+  screenshot: string;
   onSave(programName: string): Promise<void>;
   onClose(): void;
 }
@@ -46,6 +48,15 @@ export class SaveProgramModalComponent extends React.Component<IComponentProps, 
             <br />
           </div>
         )}
+
+        <div className="field">
+          <label className="label">{_T("Image")}</label>
+          {this.props.screenshot ? (
+            <img src={this.props.screenshot} />
+          ) : (
+            <NoDataComponent iconClass="fa-picture-o" title={_T("No image")} />
+          )}
+        </div>
 
         <div className="field">
           <label className="label">{_T("Program name")}</label>

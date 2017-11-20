@@ -30,7 +30,7 @@ export class ProgramControlsMenuComponent extends React.Component<IComponentProp
             type="button"
             className="button is-success is-borderless"
             onClick={this.props.runProgram}
-            title={_T("Execute the program (F9)")}
+            title={_T("Execute the program") + " (F9)"}
           >
             {_T("Run")}
           </button>

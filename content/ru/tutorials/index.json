@@ -1,22 +1,121 @@
 {
-    "tutorials": [
+  "tutorials": [
+    {
+      "id": "01-basics",
+      "label": "Введение и основы",
+      "description": "Введение и основы языка LOGO. Встреча с черепахой.",
+      "steps": [
         {
-            "id": "01-basics",
-            "label": "Введение и основы",
-            "description": "Введение и основы языка LOGO. Встреча с черепахой.",
-            "steps": 7
+          "name": "Черепаха Лого",
+          "id": "01-intro"
         },
         {
-            "id": "02-controlling",
-            "label": "Controlling the Turtle and Pen",
-            "description": "Basic turtle commands, working with graphics",
-            "steps": 10
+          "name": "The Turtle can Turn",
+          "id": "02-turtle-can-turn"
         },
         {
-            "id": "03-labels",
-            "label": "Cool Labels",
-            "description": "Printing nice labels using turtle graphics",
-            "steps": 7
+          "name": "Turning back",
+          "id": "03-turning-back"
+        },
+        {
+          "name": "The inverted letter L",
+          "id": "04-inverted-L"
+        },
+        {
+          "name": "Combining commands",
+          "id": "05-combining"
+        },
+        {
+          "name": "Shortcuts",
+          "id": "06-shortcuts"
+        },
+        {
+          "name": "Good job!",
+          "id": "07-finish"
         }
-    ]
+      ]
+    },
+    {
+      "id": "02-controlling",
+      "label": "Controlling the Turtle and Pen",
+      "description": "Basic turtle commands, working with graphics",
+      "steps": [
+        {
+          "name": "What is the pen?",
+          "id": "step-01"
+        },
+        {
+          "name": "Lifting the pen",
+          "id": "step-02"
+        },
+        {
+          "name": "Putting the pen back down",
+          "id": "step-03"
+        },
+        {
+          "name": "Hiding the turtle",
+          "id": "step-04"
+        },
+        {
+          "name": "Drawing with the hidden turtle",
+          "id": "step-05"
+        },
+        {
+          "name": "The turtle reappears",
+          "id": "step-06"
+        },
+        {
+          "name": "The Width of the Pen",
+          "id": "step-07"
+        },
+        {
+          "name": "Wider line",
+          "id": "step-08"
+        },
+        {
+          "name": "The Color of the Pen",
+          "id": "step-09"
+        },
+        {
+          "name": "Cogratulations!",
+          "id": "step-10"
+        }
+      ]
+    },
+    {
+      "id": "03-labels",
+      "label": "Cool Labels",
+      "description": "Printing nice labels using turtle graphics",
+      "steps": [
+        {
+          "name": "The label command",
+          "id": "step-01"
+        },
+        {
+          "name": "Bigger font",
+          "id": "step-02"
+        },
+        {
+          "name": "Label direction",
+          "id": "step-03"
+        },
+        {
+          "name": "Use colors",
+          "id": "step-04"
+        },
+        {
+          "name": "Do it wherever you want",
+          "id": "step-05"
+        },
+        {
+          "name": "Using whitespace in your text",
+          "id": "step-06"
+        },
+        {
+          "name": "Summary",
+          "id": "step-07"
+        }
+      ]
+    }
+  ]
 }

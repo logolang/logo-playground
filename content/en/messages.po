@@ -28,6 +28,9 @@ msgstr "Logo Sandbox"
 msgid "App version"
 msgstr ""
 
+msgid "Back"
+msgstr ""
+
 msgid "Cancel"
 msgstr ""
 
@@ -40,22 +43,22 @@ msgstr ""
 msgid "Close"
 msgstr ""
 
+msgid "Code"
+msgstr ""
+
 msgid "Code version"
 msgstr ""
 
 msgid "Continue"
 msgstr ""
 
-msgid "Copy link to clipboard"
+msgid "Copied"
 msgstr ""
 
-msgid "Created"
+msgid "Copy to clipboard"
 msgstr ""
 
 msgid "Delete"
-msgstr ""
-
-msgid "Delete program"
 msgstr ""
 
 msgid "Do you want to delete?"
@@ -65,6 +68,12 @@ msgid "Documentation"
 msgstr ""
 
 msgid "Edited"
+msgstr ""
+
+msgid "Email"
+msgstr ""
+
+msgid "Execute the program"
 msgstr ""
 
 msgid "Export"
@@ -91,6 +100,9 @@ msgstr ""
 msgid "Huge"
 msgstr ""
 
+msgid "Image"
+msgstr ""
+
 msgid "Import"
 msgstr ""
 
@@ -109,16 +121,19 @@ msgstr ""
 msgid "Log out"
 msgstr ""
 
-msgid "Login"
+msgid "Login with Google"
 msgstr ""
 
 msgid "Medium"
 msgstr ""
 
-msgid "NO_PROGRAMS_IN_PERSONAL_LIBRARY"
-msgstr "You do not have programs in your personal library yet. To add a program you need to go to Playground or open one from Samples section."
+msgid "Message"
+msgstr ""
 
 msgid "Name"
+msgstr ""
+
+msgid "No image"
 msgstr ""
 
 msgid "No, keep my code as is"
@@ -136,13 +151,19 @@ msgstr ""
 msgid "Playground"
 msgstr ""
 
-msgid "Please enter name for your program"
+msgid "Please enter the name for your program"
 msgstr ""
 
-msgid "Program"
+msgid "Program has been saved in the library."
 msgstr ""
 
 msgid "Program name"
+msgstr ""
+
+msgid "Public url"
+msgstr ""
+
+msgid "Revert changes"
 msgstr ""
 
 msgid "Run"
@@ -154,13 +175,7 @@ msgstr ""
 msgid "Save"
 msgstr ""
 
-msgid "Save as new..."
-msgstr ""
-
-msgid "Save program '%s'"
-msgstr ""
-
-msgid "Save to Gallery..."
+msgid "Save to personal library"
 msgstr ""
 
 msgid "Save your program to Gallery"
@@ -169,13 +184,22 @@ msgstr ""
 msgid "Screenshot"
 msgstr ""
 
+msgid "Screenshot is not available because program has not been executed yet."
+msgstr ""
+
+msgid "Share"
+msgstr ""
+
+msgid "Share your program"
+msgstr ""
+
 msgid "Small"
 msgstr ""
 
 msgid "Sorry, error has occured"
 msgstr ""
 
-msgid "Space for your personal programs"
+msgid "Start"
 msgstr ""
 
 msgid "Step %1$s of %2$s"
@@ -184,7 +208,10 @@ msgstr ""
 msgid "Stop"
 msgstr ""
 
-msgid "Take Screenshot"
+msgid "Stop execution of the program"
+msgstr ""
+
+msgid "Take screenshot"
 msgstr ""
 
 msgid "Turtle"
@@ -208,6 +235,9 @@ msgstr "Chameleon"
 msgid "Turtle Name tt9"
 msgstr "Princess"
 
+msgid "Tutorial"
+msgstr ""
+
 msgid "Tutorials"
 msgstr ""
 
@@ -223,7 +253,16 @@ msgstr "User settings"
 msgid "Yes, fix my code"
 msgstr ""
 
+msgid "You are going to delete this program."
+msgstr ""
+
 msgid "You have %d program"
 msgid_plural "You have %d programs"
 msgstr[0] ""
 msgstr[1] ""
+
+msgid "You have local changes in this program. "
+msgstr ""
+
+msgid "Your personal library"
+msgstr ""

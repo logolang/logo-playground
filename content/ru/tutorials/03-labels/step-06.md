@@ -1,5 +1,3 @@
-# Using whitespace in your text
-
 If you want to print something bigger than just one word you can notice that LOGO will give you an error.
 In this example:
 ```

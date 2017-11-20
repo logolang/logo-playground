@@ -93,7 +93,7 @@ export class GalleryComponent extends React.Component<IComponentProps, IComponen
             <PageHeaderComponent title={_T("Gallery")} />
             <br />
 
-            <p className="subtitle">Your personal library</p>
+            <p className="subtitle">{_T("Your personal library")}</p>
             <LoadingComponent isLoading={this.state.isLoading} />
             {this.state.programs.length > 0 && (
               <div className="program-cards-container">
@@ -102,7 +102,7 @@ export class GalleryComponent extends React.Component<IComponentProps, IComponen
             )}
             <br />
 
-            <p className="subtitle">Samples</p>
+            <p className="subtitle">{_T("Samples")}</p>
             <div className="program-cards-container">
               {this.state.samples.map(pr => this.renderProgramCard(pr, ProgramStorageType.samples, false))}
             </div>
@@ -129,7 +129,7 @@ export class GalleryComponent extends React.Component<IComponentProps, IComponen
               </Link>
             </figure>
           ) : (
-            <NoDataComponent iconClass="fa-picture-o" title="NO IMAGE" />
+            <NoDataComponent iconClass="fa-picture-o" title={_T("No image")} />
           )}
         </div>
         <div className="card-content">
@@ -147,7 +147,7 @@ export class GalleryComponent extends React.Component<IComponentProps, IComponen
                     this.setState({ programToDelete: p });
                   }}
                 >
-                  Delete
+                  {_T("Delete")}
                 </a>
               )}
             </div>
@@ -183,13 +183,13 @@ export class GalleryComponent extends React.Component<IComponentProps, IComponen
                       <img src={p.screenshot} />
                     </figure>
                   ) : (
-                    <NoDataComponent iconClass="fa-picture-o" title="NO IMAGE" />
+                    <NoDataComponent iconClass="fa-picture-o" title={_T("No image")} />
                   )}
                 </div>
                 <div className="media-content">
                   <p className="subtitle is-4">{p.name}</p>
                   <p className="is-6">
-                    <strong>Edited: </strong>
+                    <strong>{_T("Edited")}: </strong>
                     <DateTimeStampComponent datetime={p.dateLastEdited} />
                   </p>
                 </div>
