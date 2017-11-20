@@ -20,18 +20,17 @@ export class ImageUploadImgurService implements ImageUploadService {
     form.append("type", "base64");
     const result = await fetch(serviceUrl, {
       method: "post",
-      headers: {
+      headers: new Headers({
         Authorization: auth,
         Accept: "application/json",
         "Content-Type": "application/x-www-form-urlencoded; charset=utf-8"
-      },
+      }),
       body: form
     });
 
     if (result.ok) {
       const resultData = await result.json();
       const link = resultData.data.link;
-      console.log("Okay", link);
       return link;
     } else {
       throw handleAsyncError(result);

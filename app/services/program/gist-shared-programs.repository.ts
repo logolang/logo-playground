@@ -36,10 +36,10 @@ export class GistSharedProgramsRepository {
     const relativeUrl = version_part ? `gists/${id_part}/${version_part}` : `gists/${id_part}`;
     const response = await fetch(gistApiBaseUrl + relativeUrl, {
       method: "get",
-      headers: {
+      headers: new Headers({
         Accept: "application/json",
         "Content-Type": "application/json;charset=UTF-8"
-      }
+      })
     });
     if (response.ok) {
       const result = (await response.json()) as SingleGistResponse;
@@ -80,10 +80,10 @@ export class GistSharedProgramsRepository {
     };
     const response = await fetch(gistApiBaseUrl + "gists", {
       method: "post",
-      headers: {
+      headers: new Headers({
         Accept: "application/json",
         "Content-Type": "application/json;charset=UTF-8"
-      },
+      }),
       body: JSON.stringify(payload)
     });
     if (response.ok) {

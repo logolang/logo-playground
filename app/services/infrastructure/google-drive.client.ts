@@ -35,9 +35,9 @@ export class GoogleDriveClient {
     const url = `https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`;
     const result = await fetch(url, {
       method: "GET",
-      headers: {
+      headers: new Headers({
         Authorization: authToken.token_type + " " + authToken.access_token
-      }
+      })
     });
     if (result.ok) {
       return await result.text();
@@ -52,12 +52,12 @@ export class GoogleDriveClient {
     const url = "https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart";
     await fetch(url, {
       method: "POST",
-      headers: {
+      headers: new Headers({
         Authorization: authToken.token_type + " " + authToken.access_token,
         Accept: "application/json",
         "Content-Type": "multipart/related; boundary=" + formBoundary,
         "Content-Length": requestBody.length
-      },
+      }),
       body: requestBody
     });
   }
@@ -74,12 +74,12 @@ export class GoogleDriveClient {
     const url = `https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=multipart`;
     await fetch(url, {
       method: "PATCH",
-      headers: {
+      headers: new Headers({
         Authorization: authToken.token_type + " " + authToken.access_token,
         Accept: "application/json",
         "Content-Type": "multipart/related; boundary=" + formBoundary,
         "Content-Length": requestBody.length
-      },
+      }),
       body: requestBody
     });
   }
