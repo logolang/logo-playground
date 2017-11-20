@@ -70,7 +70,7 @@ export class ProgramsHtmlSerializerService {
                 <tbody>
                     ${programs.map(p => this.serializeProgram(p)).join("")}
                 </tbody>
-            <table>
+            </table>
         </div>
     </body>
     </html>
