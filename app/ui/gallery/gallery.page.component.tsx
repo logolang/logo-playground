@@ -22,7 +22,7 @@ import { ProgramStorageType } from "app/services/program/program-management.serv
 import { ICurrentUserService } from "app/services/login/current-user.service";
 import { TitleService } from "app/services/infrastructure/title.service";
 
-import "./gallery.component.scss";
+import "./gallery.page.component.scss";
 
 interface IComponentState {
   userName: string;
@@ -35,13 +35,11 @@ interface IComponentState {
 
 interface IComponentProps extends RouteComponentProps<void> {}
 
-export class GalleryComponent extends React.Component<IComponentProps, IComponentState> {
+export class GalleryPageComponent extends React.Component<IComponentProps, IComponentState> {
   private currentUser = resolveInject(ICurrentUserService);
   private titleService = resolveInject(TitleService);
   private programsRepo = resolveInject(IUserLibraryRepository);
   private samplesRepo = resolveInject(IGallerySamplesRepository);
-
-  readonly noScreenshot = require("./images/no.image.png") as string;
 
   constructor(props: IComponentProps) {
     super(props);

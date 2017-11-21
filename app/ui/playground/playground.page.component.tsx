@@ -19,12 +19,13 @@ import { ThemesService, Theme } from "app/services/customizations/themes.service
 import { TurtlesService } from "app/services/customizations/turtles.service";
 import { ProgramStorageType, ProgramManagementService } from "app/services/program/program-management.service";
 
-import "./playground-page.component.scss";
 import { MainMenuComponent } from "app/ui/main-menu.component";
 import { GoldenLayoutComponent, IPanelConfig, GoldenLayoutConfig } from "app/ui/_shared/golden-layout.component";
 import { CodePanelComponent, ICodePanelComponentProps } from "app/ui/playground/code-panel.component";
 import { OutputPanelComponent, IOutputPanelComponentProps } from "app/ui/playground/output-panel.component";
 import { LoadingComponent } from "app/ui/_generic/loading.component";
+
+import "./playground.page.component.scss";
 
 interface IComponentState {
   isLoading: boolean;

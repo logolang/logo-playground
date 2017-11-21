@@ -50,7 +50,7 @@ const codeSamples = [
   "repeat 10 [fd 10 rt 90 fd 10 lt 90]"
 ];
 
-export class UserProfileComponent extends React.Component<IComponentProps, IComponentState> {
+export class UserProfilePageComponent extends React.Component<IComponentProps, IComponentState> {
   private titleService = resolveInject(TitleService);
   private navService = resolveInject(INavigationService);
   private notificationService = resolveInject(INotificationService);

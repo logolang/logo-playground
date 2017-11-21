@@ -35,6 +35,9 @@ msgstr "Назад"
 msgid "Cancel"
 msgstr "Отменить"
 
+msgid "Cheat sheet"
+msgstr "Шпаргалка"
+
 msgid "Choose a tutorial"
 msgstr "Выберите учебник"
 
@@ -150,7 +153,7 @@ msgid "Personal library"
 msgstr "Персональная библиотека"
 
 msgid "Playground"
-msgstr "Детская площадка"
+msgstr "Игровая площадка"
 
 msgid "Please enter the name for your program"
 msgstr "Введите название своей программы"
