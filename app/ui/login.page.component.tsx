@@ -18,7 +18,7 @@ interface IComponentState {}
 
 interface IComponentProps extends RouteComponentProps<void> {}
 
-export class LoginComponent extends React.Component<IComponentProps, IComponentState> {
+export class LoginPageComponent extends React.Component<IComponentProps, IComponentState> {
   private currentUser = resolveInject(ICurrentUserService);
   private loginService = resolveInject(ILoginService);
   private titleService = resolveInject(TitleService);

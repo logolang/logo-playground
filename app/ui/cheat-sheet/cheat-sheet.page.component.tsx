@@ -1,5 +1,6 @@
 import * as React from "react";
 import { RouteComponentProps } from "react-router-dom";
+import * as markdown from "markdown-it";
 
 import { callActionSafe } from "app/utils/async-helpers";
 
@@ -12,16 +13,16 @@ import { ILocalizedContentLoader } from "app/services/infrastructure/localized-c
 import { MainMenuComponent } from "app/ui/main-menu.component";
 import { LoadingComponent } from "app/ui/_generic/loading.component";
 
-import "./documentation.component.scss";
+import "./cheat-sheet.page.component.scss";
 
 interface IComponentState {
   isLoading: boolean;
-  content: string;
+  content: string[];
 }
 
 interface IComponentProps extends RouteComponentProps<void> {}
 
-export class DocumentationComponent extends React.Component<IComponentProps, IComponentState> {
+export class CheatSheetPageComponent extends React.Component<IComponentProps, IComponentState> {
   private notificationService = resolveInject(INotificationService);
   private titleService = resolveInject(TitleService);
   private contentLoader = resolveInject(ILocalizedContentLoader);
@@ -36,7 +37,7 @@ export class DocumentationComponent extends React.Component<IComponentProps, ICo
 
     this.state = {
       isLoading: true,
-      content: ""
+      content: []
     };
   }
 
@@ -46,10 +47,22 @@ export class DocumentationComponent extends React.Component<IComponentProps, ICo
   }
 
   private async loadData() {
-    const content = await callActionSafe(this.errorHandler, async () =>
-      this.contentLoader.getFileContent("reference.html")
+    const contentMd = await callActionSafe(this.errorHandler, async () =>
+      this.contentLoader.getFileContent("cheat-sheet.md")
     );
-    if (content) {
+    if (contentMd) {
+      const md = new markdown({
+        html: true // Enable HTML tags in source;
+      });
+
+      const content = contentMd
+        .split(/\n#\s/g)
+        .map(p => p.trim())
+        .filter(p => !!p)
+        .map(p => md.render(p));
+
+      console.log("CCC", content);
+
       this.setState({ content: content });
     }
     this.setState({ isLoading: false });
@@ -62,7 +75,14 @@ export class DocumentationComponent extends React.Component<IComponentProps, ICo
         <div className="ex-page-content">
           <div className="container">
             <LoadingComponent fullPage isLoading={this.state.isLoading} />
-            <div className="doc-section" dangerouslySetInnerHTML={{ __html: this.state.content }} />
+            <br />
+            <div className="columns is-desktop">
+              {this.state.content.map((content, index) => (
+                <div className="column is-one-third-desktop" key={index}>
+                  <div className="doc-section content" dangerouslySetInnerHTML={{ __html: content }} />
+                </div>
+              ))}
+            </div>
             <br />
           </div>
         </div>

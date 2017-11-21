@@ -1,19 +1,21 @@
 import * as React from "react";
-
 import { HashRouter as Router, Route, Switch, Redirect } from "react-router-dom";
+
+import { resolveInject } from "app/di";
 import { RouteInfo } from "app/utils/route-info";
 
-import { UserProfileComponent } from "app/ui/user-profile.component";
 import { MessageTosterComponent } from "app/ui/_generic/message-toster.component";
-import { AboutComponent } from "app/ui/about.component";
-import { GalleryComponent } from "app/ui/gallery.component";
-import { PlaygroundPageComponent, ProgramStorageType } from "app/ui/playground/playground-page.component";
-import { DocumentationComponent } from "app/ui/documentation.component";
-import { LoginComponent } from "app/ui/login.component";
-import { resolveInject } from "app/di";
 import { INavigationService } from "app/services/infrastructure/navigation.service";
 import { INotificationService } from "app/services/infrastructure/notification.service";
-import { TutorialsPageComponent, ITutorialPageRouteParams } from "app/ui/tutorials/tutorials-page.component";
+
+import { LoginPageComponent } from "app/ui/login.page.component";
+import { GalleryPageComponent } from "app/ui/gallery/gallery.page.component";
+import { UserProfilePageComponent } from "app/ui/user-profile.page.component";
+import { InfoPageComponent } from "app/ui/info.page.component";
+import { PlaygroundPageComponent } from "app/ui/playground/playground.page.component";
+import { ProgramStorageType } from "app/services/program/program-management.service";
+import { CheatSheetPageComponent } from "app/ui/cheat-sheet/cheat-sheet.page.component";
+import { TutorialsPageComponent, ITutorialPageRouteParams } from "app/ui/tutorials/tutorials.page.component";
 
 export class Routes extends React.Component<object, object> {
   private navigationService = resolveInject(INavigationService);
@@ -34,13 +36,13 @@ export class Routes extends React.Component<object, object> {
         <div>
           <MessageTosterComponent events={this.notificationService.getObservable()} />
           <Switch>
-            <Route path={Routes.loginRoot.relativePath} component={LoginComponent} />
+            <Route path={Routes.loginRoot.relativePath} component={LoginPageComponent} />
 
-            <Route path={Routes.galleryRoot.relativePath} component={GalleryComponent} />
+            <Route path={Routes.galleryRoot.relativePath} component={GalleryPageComponent} />
 
-            <Route path={Routes.settingsRoot.relativePath} component={UserProfileComponent} />
+            <Route path={Routes.settingsRoot.relativePath} component={UserProfilePageComponent} />
 
-            <Route path={Routes.aboutRoot.relativePath} component={AboutComponent} />
+            <Route path={Routes.infoRoot.relativePath} component={InfoPageComponent} />
 
             <Route exact path={Routes.playground.relativePath} component={PlaygroundPageComponent} />
             <Route
@@ -65,7 +67,7 @@ export class Routes extends React.Component<object, object> {
               )}
             />
 
-            <Route path={Routes.documentationRoot.relativePath} component={DocumentationComponent} />
+            <Route path={Routes.cheatSheetRoot.relativePath} component={CheatSheetPageComponent} />
 
             <Route exact path={Routes.tutorialsRoot.relativePath} component={TutorialsPageComponent} />
             <Route exact path={Routes.tutorialSpecified.relativePath} component={TutorialsPageComponent} />
@@ -73,7 +75,7 @@ export class Routes extends React.Component<object, object> {
             <Redirect from="/" to={Routes.galleryRoot.relativePath} />
 
             {/* Default route will be used in case if nothing matches */}
-            <Route component={GalleryComponent} />
+            <Route component={GalleryPageComponent} />
           </Switch>
         </div>
       </Router>
@@ -84,7 +86,7 @@ export class Routes extends React.Component<object, object> {
 
   static readonly loginRoot = new RouteInfo(Routes.root, "/login");
 
-  static readonly aboutRoot = new RouteInfo(Routes.root, "/about");
+  static readonly infoRoot = new RouteInfo(Routes.root, "/info");
   static readonly settingsRoot = new RouteInfo(Routes.root, "/settings");
 
   static readonly galleryRoot = new RouteInfo(Routes.root, "/gallery");
@@ -94,7 +96,7 @@ export class Routes extends React.Component<object, object> {
   static readonly codeLibrary = new RouteInfo<{ id: string }>(Routes.root, "/library/:id");
   static readonly codeExample = new RouteInfo<{ id: string }>(Routes.root, "/example/:id");
 
-  static readonly documentationRoot = new RouteInfo(Routes.root, "/doc");
+  static readonly cheatSheetRoot = new RouteInfo(Routes.root, "/cheat-sheet");
 
   static readonly tutorialsRoot = new RouteInfo(Routes.root, "/tutorials");
   static readonly tutorialSpecified = new RouteInfo<ITutorialPageRouteParams>(

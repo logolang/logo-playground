@@ -1,7 +1,6 @@
 import { ProgramsHtmlSerializerService } from "app/services/gallery/programs-html-serializer.service";
 import { ProgramModel } from "app/services/program/program.model";
 import { ProgramModelConverter } from "app/services/program/program-model.converter";
-import { ProgramStorageType } from "app/ui/playground/playground-page.component";
 
 const programs: ProgramModel[] = [
   {

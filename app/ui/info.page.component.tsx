@@ -13,7 +13,7 @@ interface IComponentState {}
 
 interface IComponentProps extends RouteComponentProps<void> {}
 
-export class AboutComponent extends React.Component<IComponentProps, IComponentState> {
+export class InfoPageComponent extends React.Component<IComponentProps, IComponentState> {
   private titleService = resolveInject(TitleService);
   private appInfo = resolveInject(IAppInfo);
 

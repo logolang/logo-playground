@@ -61,11 +61,11 @@ export class MainMenuComponent extends React.Component<IComponentProps, ICompone
             <NavLink className="navbar-item" activeClassName="is-active" to={Routes.galleryRoot.build({})}>
               {_T("Gallery")}
             </NavLink>
-            <NavLink className="navbar-item" activeClassName="is-active" to={Routes.documentationRoot.build({})}>
-              {_T("Documentation")}
-            </NavLink>
             <NavLink className="navbar-item" activeClassName="is-active" to={Routes.tutorialsRoot.build({})}>
               {_T("Tutorials")}
+            </NavLink>
+            <NavLink className="navbar-item" activeClassName="is-active" to={Routes.cheatSheetRoot.build({})}>
+              {_T("Cheat sheet")}
             </NavLink>
             <NavLink className="navbar-item" activeClassName="is-active" to={Routes.playground.build({})}>
               {_T("Playground")}
@@ -80,7 +80,7 @@ export class MainMenuComponent extends React.Component<IComponentProps, ICompone
                 <NavLink className="navbar-item" activeClassName="is-active" to={Routes.settingsRoot.build({})}>
                   {_T("User profile")}
                 </NavLink>
-                <NavLink className="navbar-item" activeClassName="is-active" to={Routes.aboutRoot.build({})}>
+                <NavLink className="navbar-item" activeClassName="is-active" to={Routes.infoRoot.build({})}>
                   {_T("About...")}
                 </NavLink>
                 <hr className="navbar-divider" />
