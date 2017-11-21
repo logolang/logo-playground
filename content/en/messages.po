@@ -34,6 +34,9 @@ msgstr ""
 msgid "Cancel"
 msgstr ""
 
+msgid "Cheat sheet"
+msgstr ""
+
 msgid "Choose a tutorial"
 msgstr ""
 

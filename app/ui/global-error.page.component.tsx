@@ -7,7 +7,7 @@ interface IErrorComponentProps {
   error: any;
 }
 
-export class ErrorComponent extends React.Component<IErrorComponentProps, IErrorComponentState> {
+export class GlobalErrorPage extends React.Component<IErrorComponentProps, IErrorComponentState> {
   state: IErrorComponentState = {};
 
   render(): JSX.Element {
@@ -24,9 +24,7 @@ export class ErrorComponent extends React.Component<IErrorComponentProps, IError
           <strong>Error!</strong> {this.props.headerText}
         </div>
         <p>Error info:</p>
-        <pre>
-          {errorMessage}
-        </pre>
+        <pre>{errorMessage}</pre>
       </div>
     );
   }

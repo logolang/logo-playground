@@ -1,4 +1,4 @@
-﻿// Include polyfills to work in IE11
+// Include polyfills to work in IE11
 import "core-js";
 
 import * as React from "react";
@@ -7,9 +7,10 @@ import * as ReactDOM from "react-dom";
 (window as any)["React"] = React;
 (window as any)["ReactDOM"] = ReactDOM;
 
-import { ErrorComponent } from "app/ui/error.component";
 import { Routes } from "app/routes";
 import { DependecyInjectionSetup } from "app/di-setup";
+
+import { GlobalErrorPage } from "app/ui/global-error.page.component";
 
 import "app/ui/_styles/app.scss";
 
@@ -21,7 +22,7 @@ async function runApp() {
     // Render the app
     ReactDOM.render(<Routes />, appHostDomElement);
   } catch (ex) {
-    ReactDOM.render(<ErrorComponent headerText="Application failed because of error" error={ex} />, appHostDomElement);
+    ReactDOM.render(<GlobalErrorPage headerText="Application failed because of error" error={ex} />, appHostDomElement);
     throw ex;
   }
 }

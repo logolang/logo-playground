@@ -1,0 +1,14 @@
+.main-playground-menu {
+  margin-right: 100px;
+  float: right;
+  .glyphicon-play {
+    color: seagreen;
+  }
+  .glyphicon-stop {
+    color: darkred;
+  }
+  .disabled .glyphicon-stop,
+  .disabled .glyphicon-play {
+    color: inherit;
+  }
+}
