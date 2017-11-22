@@ -2,7 +2,7 @@ import * as React from "react";
 import { RouteComponentProps } from "react-router-dom";
 import * as markdown from "markdown-it";
 
-import { callActionSafe } from "app/utils/async-helpers";
+import { callActionSafe, ErrorDef } from "app/utils/error-helpers";
 
 import { resolveInject } from "app/di";
 import { _T } from "app/services/customizations/localization.service";
@@ -27,8 +27,8 @@ export class CheatSheetPageComponent extends React.Component<IComponentProps, IC
   private titleService = resolveInject(TitleService);
   private contentLoader = resolveInject(ILocalizedContentLoader);
 
-  private errorHandler = (err: string) => {
-    this.notificationService.push({ message: err, type: "danger" });
+  private errorHandler = (err: ErrorDef) => {
+    this.notificationService.push({ message: err.message, type: "danger" });
     this.setState({ isLoading: false });
   };
 

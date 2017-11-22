@@ -1,5 +1,4 @@
 import * as fetch from "isomorphic-fetch";
-import { handleAsyncError } from "app/utils/async-helpers";
 import { injectable } from "app/di";
 
 export abstract class ImageUploadService {
@@ -33,7 +32,7 @@ export class ImageUploadImgurService implements ImageUploadService {
       const link = resultData.data.link;
       return link;
     } else {
-      throw handleAsyncError(result);
+      throw result;
     }
   }
 }

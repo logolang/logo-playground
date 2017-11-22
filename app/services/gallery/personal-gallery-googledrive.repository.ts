@@ -7,8 +7,8 @@ import { ProgramModelConverter } from "app/services/program/program-model.conver
 import { IUserLibraryRepository } from "app/services/gallery/personal-gallery-localstorage.repository";
 import { GoogleDriveClient, IGoogleFileInfo } from "app/services/infrastructure/google-drive.client";
 import { ProgramsHtmlSerializerService } from "app/services/gallery/programs-html-serializer.service";
+import { AppConfig } from "app/services/config/app-config";
 
-const storageFileName = "logo-personal-library.html";
 const storageFileContentType = "text/html; charset=UTF-8";
 
 interface IStoredData {
@@ -23,7 +23,10 @@ export class ProgramsGoogleDriveRepository implements IUserLibraryRepository {
   private serializationService = new ProgramsHtmlSerializerService();
   private cachedData: IStoredData | undefined = undefined;
 
-  constructor(@inject(ICurrentUserService) private currentUser: ICurrentUserService) {
+  constructor(
+    @inject(ICurrentUserService) private currentUser: ICurrentUserService,
+    @inject(AppConfig) private appConfig: AppConfig
+  ) {
     this.googleDriveClient = new GoogleDriveClient();
   }
 
@@ -57,12 +60,16 @@ export class ProgramsGoogleDriveRepository implements IUserLibraryRepository {
     if (storedData.fileId) {
       await this.googleDriveClient.updateFile(
         storedData.fileId,
-        storageFileName,
+        this.appConfig.services.googleDriveGalleryFilename,
         serializedData,
         storageFileContentType
       );
     } else {
-      await this.googleDriveClient.uploadNewFile(storageFileName, serializedData, storageFileContentType);
+      await this.googleDriveClient.uploadNewFile(
+        this.appConfig.services.googleDriveGalleryFilename,
+        serializedData,
+        storageFileContentType
+      );
     }
   }
 
@@ -73,12 +80,16 @@ export class ProgramsGoogleDriveRepository implements IUserLibraryRepository {
     if (storedData.fileId) {
       await this.googleDriveClient.updateFile(
         storedData.fileId,
-        storageFileName,
+        this.appConfig.services.googleDriveGalleryFilename,
         serializedData,
         storageFileContentType
       );
     } else {
-      await this.googleDriveClient.uploadNewFile(storageFileName, serializedData, storageFileContentType);
+      await this.googleDriveClient.uploadNewFile(
+        this.appConfig.services.googleDriveGalleryFilename,
+        serializedData,
+        storageFileContentType
+      );
     }
   }
 
@@ -108,6 +119,7 @@ export class ProgramsGoogleDriveRepository implements IUserLibraryRepository {
   }
 
   private async getStorageFileInfo(): Promise<IGoogleFileInfo | undefined> {
+    const storageFileName = this.appConfig.services.googleDriveGalleryFilename;
     const files = await this.googleDriveClient.listFiles("name = '" + storageFileName + "' and trashed = false");
     const storageFile = files.files.find(f => f.name === storageFileName && !!f.md5Checksum && !f.trashed);
     if (!storageFile) {

@@ -28,7 +28,7 @@ export abstract class ICurrentUserService {
 
 @injectable()
 export class CurrentUserService implements ICurrentUserService {
-  private currentLoginStatus: LoginStatus | undefined;
+  private currentLoginStatus = NotLoggenInStatus;
   private loginStatusSubject = new Subject<LoginStatus>();
 
   setLoginStatus(loginStatus: LoginStatus) {
@@ -37,10 +37,7 @@ export class CurrentUserService implements ICurrentUserService {
   }
 
   getLoginStatus(): LoginStatus {
-    if (this.currentLoginStatus) {
-      return this.currentLoginStatus;
-    }
-    throw new Error("Current user credentials are not defined yet!");
+    return this.currentLoginStatus;
   }
 
   get loginStatusObservable(): Observable<LoginStatus> {
