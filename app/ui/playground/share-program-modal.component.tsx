@@ -1,16 +1,17 @@
 import * as React from "react";
 import * as cn from "classnames";
 
+import { _T } from "app/services/customizations/localization.service";
+import { resolveInject } from "app/di";
+import { ErrorDef, callActionSafe } from "app/utils/error-helpers";
+
+import { IProgramToSaveAttributes } from "app/services/program/program-management.service";
+import { GistSharedProgramsRepository } from "app/services/program/gist-shared-programs.repository";
+import { ProgramModel } from "app/services/program/program.model";
+
 import { AlertMessageComponent } from "app/ui/_generic/alert-message.component";
 import { ModalComponent } from "app/ui/_generic/modal.component";
 import { InputCopyToClipboardComponent } from "app/ui/_generic/input-copy-to-clipboard.component";
-
-import { _T } from "app/services/customizations/localization.service";
-import { IProgramToSaveAttributes } from "app/services/program/program-management.service";
-import { GistSharedProgramsRepository } from "app/services/program/gist-shared-programs.repository";
-import { resolveInject } from "app/di";
-import { ProgramModel } from "app/services/program/program.model";
-import { handleAsyncError } from "app/utils/async-helpers";
 
 interface IComponentState {
   errorMessage: string;
@@ -38,6 +39,10 @@ export class ShareProgramModalComponent extends React.Component<IComponentProps,
       publishedUrl: ""
     };
   }
+
+  private errorHandler = (err: ErrorDef) => {
+    this.setState({ errorMessage: err.message });
+  };
 
   render(): JSX.Element | null {
     return (
@@ -87,20 +92,16 @@ export class ShareProgramModalComponent extends React.Component<IComponentProps,
   saveProgramAction = async () => {
     this.setState({ isSavingInProgress: true, errorMessage: "" });
 
-    try {
-      const result = await this.gistService.post(
-        this.state.programName,
-        this.props.imageBase64,
-        this.props.programModel
-      );
+    const result = await callActionSafe(
+      this.errorHandler,
+      async () => await this.gistService.post(this.state.programName, this.props.imageBase64, this.props.programModel)
+    );
+    this.setState({
+      isSavingInProgress: false
+    });
+    if (result) {
       this.setState({
         publishedUrl: result
-      });
-    } catch (ex) {
-      const error = await handleAsyncError(ex);
-      this.setState({
-        isSavingInProgress: false,
-        errorMessage: error.message
       });
     }
   };

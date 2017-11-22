@@ -29,7 +29,7 @@ export class AlertMessageComponent extends React.Component<IComponentProps, {}> 
 
     if (message || title) {
       return (
-        <div>
+        <div className="alert-message-component">
           <article className={"message is-" + type}>
             <div className="message-body">
               {title && <p className="subtitle">{title}</p>}

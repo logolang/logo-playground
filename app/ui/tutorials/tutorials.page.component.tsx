@@ -3,7 +3,7 @@ import { RouteComponentProps } from "react-router-dom";
 import { Subject } from "rxjs";
 
 import { subscribeLoadDataOnPropsParamsChange } from "app/utils/react-helpers";
-import { callActionSafe } from "app/utils/async-helpers";
+import { callActionSafe, ErrorDef } from "app/utils/error-helpers";
 import { as } from "app/utils/syntax-helpers";
 
 import { resolveInject } from "app/di";
@@ -105,8 +105,8 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
     ]
   });
 
-  private errorHandler = (err: string) => {
-    this.notificationService.push({ message: err, type: "danger" });
+  private errorHandler = (err: ErrorDef) => {
+    this.notificationService.push({ message: err.message, type: "danger" });
     this.setState({ isLoading: false });
   };
 

@@ -12,6 +12,7 @@ export interface IAppServicesDetails {
   imgurServiceUrl: string;
   imgurServiceClientID: string;
   googleClientId: string;
+  googleDriveGalleryFilename: string;
 }
 
 @injectable()
@@ -26,16 +27,16 @@ export class AppConfig {
   }
 
   /**
-     * This function is walking through config objects and fills them with default values. 
-     */
+   * This function is walking through config objects and fills them with default values.
+   */
   private static setDefaultValues(appConfig: AppConfig) {
     // initialize optional elements:
     // not yet
   }
 
   /**
-     * This function checks that configuration is conforming to schema
-     */
+   * This function checks that configuration is conforming to schema
+   */
   private static validate(appConfig: AppConfig) {
     const validationResult = tv4.validateMultiple(appConfig, appConfigSchema);
     if (!validationResult.valid) {

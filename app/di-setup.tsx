@@ -1,4 +1,5 @@
 import { container } from "app/di";
+import { normalizeError } from "app/utils/error-helpers";
 
 import { AjaxService, IAjaxService } from "app/services/infrastructure/ajax-service";
 import { AppConfigLoader } from "app/services/config/app-config-loader";
@@ -49,7 +50,12 @@ export class DependecyInjectionSetup {
 
     container.bind(ICurrentUserService).toConstantValue(currentUserService);
     container.bind(ILoginService).toConstantValue(loginService);
-    await loginService.tryLoginUserAutomatically();
+    try {
+      await loginService.tryLoginUserAutomatically();
+    } catch (ex) {
+      const err = await normalizeError(ex);
+      console.error("Error while loggin in", err);
+    }
 
     const userSettingsService = new UserSettingsBrowserLocalStorageService(currentUserService);
     container.bind(IUserSettingsService).toConstantValue(userSettingsService);

@@ -3,12 +3,12 @@
 <head>
     <meta charset="utf-8">
     <title>Unit Tests</title>
-    <link rel="stylesheet" href="https://unpkg.com/mocha@3.1.0/mocha.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mocha@latest/mocha.css" />
 </head>
 
 <body>
     <div id="mocha"></div>
-    <script src="https://unpkg.com/mocha@3.1.0/mocha.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mocha@latest/mocha.js"></script>
     <script>
         function getParameterByName(name) {
             var match = RegExp('[?&]' + name + '=([^&]*)').exec(window.location.search);
@@ -37,14 +37,15 @@
 
         mocha.setup(mochaOpts);
     </script>
-    <script src="vendor.js?<%= global.appGitVersion%>"></script>
+    <script src="vendor.js?{{htmlWebpackPlugin.options.variables.appGitVersion}}"></script>
 </body>
 
 <script>
     console.log('wait ' + wait);
-    setTimeout(function(){
+    setTimeout(function () {
         console.log('mocha options: ', mochaOpts)
         mocha.run();
     }, wait);
 </script>
+
 </html>

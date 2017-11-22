@@ -16,7 +16,7 @@ const packageJson = require("./package.json");
 
 const extractTextPlugin = new ExtractTextPlugin("[name].css");
 const gitRevisionPlugin = new GitRevisionPlugin();
-global.appGitVersion = gitRevisionPlugin.version();
+const appGitVersion = gitRevisionPlugin.version();
 
 let path = require("path");
 
@@ -25,6 +25,8 @@ module.exports = function(env) {
   const isProduction = !!env.prod;
   const isDevBuild = !isProduction;
   const isTSLintEnabled = env.tslint_enabled === "true"; // Due to long checking time this is disabled by default.
+  const configFileName = isProduction ? "config.prod.json" : "config.json";
+  const appConfig = require("./content/config/" + configFileName);
 
   console.log(`building app bundle with webpack. production mode:${isProduction}`);
 
@@ -63,6 +65,7 @@ module.exports = function(env) {
         },
         { test: /\.(png|jpg|jpeg|gif|svg)$/, loader: "url-loader", options: { limit: 200000 } },
         { test: /\.json$/, loader: "json-loader" },
+        { test: /\.hbs$/, loader: "handlebars-loader" },
         { test: /\.(txt|html|md|po)$/, loader: "raw-loader" },
         isDevBuild && { test: /\.css$/, loaders: ["style-loader", "css-loader"] },
         isDevBuild && { test: /\.(scss|sass)$/, loaders: ["style-loader", "css-loader", "sass-loader"] },
@@ -93,7 +96,7 @@ module.exports = function(env) {
       new CopyWebpackPlugin([
         { from: "content", to: "content", ignore: ["**/config.json", "**/config.prod.json"] },
         {
-          from: isProduction ? "content/config/config.prod.json" : "content/config/config.json",
+          from: "content/config/" + configFileName,
           to: "content/config/config.json"
         }
       ]),
@@ -101,7 +104,7 @@ module.exports = function(env) {
       new webpack.DefinePlugin({
         // Custom object injected to application and contains build version and package info
         APP_WEBPACK_STATIC_INFO: JSON.stringify({
-          gitVersion: global.appGitVersion,
+          gitVersion: appGitVersion,
           buildVersion: env.buildVersion,
           name: packageJson.name,
           description: packageJson.description,
@@ -110,17 +113,25 @@ module.exports = function(env) {
       }),
 
       new HtmlWebpackPlugin({
-        template: "app/app-index-template.ejs",
+        template: "app/app-index-template.hbs",
         filename: "index.html",
         chunks: ["app"],
-        inject: false
+        inject: false,
+        variables: {
+          packageJson: packageJson,
+          appGitVersion: appGitVersion,
+          appConfig: appConfig
+        }
       }),
 
       isDevBuild &&
         new HtmlWebpackPlugin({
-          template: "tools/tests-index-template.ejs",
+          template: "tools/tests-index-template.hbs",
           filename: "tests.html",
-          chunks: ["tests"]
+          chunks: ["tests"],
+          variables: {
+            appGitVersion: appGitVersion
+          }
         }),
 
       isDevBuild && new WebpackNotifierPlugin(),

@@ -4,7 +4,7 @@ import { Subject } from "rxjs";
 import { ISubscription } from "rxjs/Subscription";
 
 import { as } from "app/utils/syntax-helpers";
-import { callActionSafe } from "app/utils/async-helpers";
+import { callActionSafe, ErrorDef } from "app/utils/error-helpers";
 import { subscribeLoadDataOnPropsParamsChange, subscribeLoadDataOnPropsChange } from "app/utils/react-helpers";
 
 import { _T } from "app/services/customizations/localization.service";
@@ -60,8 +60,8 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
   private executionService = new ProgramExecutionContext();
   private layoutChangedSubject = new Subject<void>();
 
-  private errorHandler = (err: string) => {
-    this.notificationService.push({ message: err, type: "danger" });
+  private errorHandler = (err: ErrorDef) => {
+    this.notificationService.push({ message: err.message, type: "danger" });
     this.setState({ isLoading: false });
   };
 

@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as cn from "classnames";
 import { AlertMessageComponent } from "app/ui/_generic/alert-message.component";
-import { callActionSafe } from "app/utils/async-helpers";
+import { callActionSafe } from "app/utils/error-helpers";
 
 import "./modal.component.scss";
 
@@ -57,7 +57,7 @@ export class ModalComponent extends React.Component<IComponentProps, IComponentS
       err => {
         this.setState({
           isActionInProgress: false,
-          errorMessage: err || "Error"
+          errorMessage: err.message
         });
       },
       async () => {
