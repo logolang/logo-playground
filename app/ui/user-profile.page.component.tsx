@@ -4,8 +4,9 @@ import * as FileSaver from "file-saver";
 import { Link, RouteComponentProps } from "react-router-dom";
 import { Subject, BehaviorSubject } from "rxjs";
 
-import { stay, callActionSafe } from "app/utils/async-helpers";
+import { stay } from "app/utils/async-helpers";
 import { RandomHelper } from "app/utils/random-helper";
+import { callActionSafe, ErrorDef } from "app/utils/error-helpers";
 
 import { DateTimeStampComponent } from "app/ui/_generic/date-time-stamp.component";
 import { PageHeaderComponent } from "app/ui/_generic/page-header.component";
@@ -65,8 +66,8 @@ export class UserProfilePageComponent extends React.Component<IComponentProps, I
   private runCode = new BehaviorSubject<string>("");
   private exportInportService = new ProgramsExportImportService();
 
-  private errorHandler = (err: string) => {
-    this.notificationService.push({ message: err, type: "danger" });
+  private errorHandler = (err: ErrorDef) => {
+    this.notificationService.push({ message: err.message, type: "danger" });
   };
 
   constructor(props: IComponentProps) {

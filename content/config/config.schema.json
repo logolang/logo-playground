@@ -22,9 +22,24 @@
         "googleClientId": {
           "description": "ClientID to use with Google API",
           "type": "string"
+        },
+        "googleAnalyticsTrackingId": {
+          "description": "TrackingID to use with Google Analytics API",
+          "type": "string"
+        },
+        "googleDriveGalleryFilename": {
+          "description": "Filename to use with Google Drive to store personal gallery",
+          "type": "string"
         }
       },
-      "required": ["appApiUrl", "imgurServiceUrl", "imgurServiceClientID", "googleClientId"]
+      "required": [
+        "appApiUrl",
+        "imgurServiceUrl",
+        "imgurServiceClientID",
+        "googleClientId",
+        "googleAnalyticsTrackingId",
+        "googleDriveGalleryFilename"
+      ]
     }
   },
   "required": ["services"],

@@ -1,21 +1,14 @@
-.alert.ex-customized-alert {
-    pre {
-        word-break: break-all;
-        word-wrap: break-word;
-        color: inherit;
-        background-color: transparent;
-        border: none;
-        white-space: pre-wrap;
-        margin: 0;
-        padding: 0;
-    }
-    max-height: 200px;
-    overflow: auto;
-    .media {
-        overflow: visible;
-    }
-    .ex-icon-container {
-        text-align: center;
-        font-size: 300%
-    }
+.alert-message-component {
+  pre {
+    word-break: break-all;
+    word-wrap: break-word;
+    color: inherit;
+    background-color: transparent;
+    border: none;
+    white-space: pre-wrap;
+    margin: 0;
+    padding: 0;
+  }
+  max-height: 350px;
+  overflow: auto;
 }
