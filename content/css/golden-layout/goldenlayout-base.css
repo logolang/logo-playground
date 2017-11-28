@@ -46,7 +46,7 @@
   position: absolute;
   height: 25px;
   top: -10px;
-  cursor: n-resize;
+  cursor: ns-resize;
   width: 100%;
 }
 
@@ -59,7 +59,7 @@
   position: absolute;
   width: 25px;
   left: -10px;
-  cursor: e-resize;
+  cursor: ew-resize;
   height: 100%;
 }
 

@@ -231,7 +231,14 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
       <div className="ex-page-container">
         <MainMenuComponent />
         <div className="ex-page-content">
-          <LoadingComponent fullPage isLoading={this.state.isLoading} />
+          {this.state.isLoading && (
+            <div className="golden-layout-component">
+              <div className="ex-page-content lm_content">
+                <LoadingComponent isLoading />
+              </div>
+            </div>
+          )}
+
           {this.state.userSettings &&
             this.state.theme &&
             this.state.tutorials &&
