@@ -33,6 +33,7 @@ import { GistSharedProgramsRepository } from "app/services/program/gist-shared-p
 import { AuthProvider } from "app/services/login/user-info";
 import { ProgramsGoogleDriveRepository } from "app/services/gallery/personal-gallery-googledrive.repository";
 import { IEventsTrackingService, EventsTrackingService } from "app/services/infrastructure/events-tracking.service";
+import { GoogleAnalyticsTrackerService } from "app/services/infrastructure/google-analytics-tracker.service";
 
 export class DependecyInjectionSetup {
   static async setup() {
@@ -49,7 +50,12 @@ export class DependecyInjectionSetup {
     const currentUserService = new CurrentUserService();
     const loginService = new LoginService(authService, currentUserService);
 
-    container.bind(IEventsTrackingService).to(EventsTrackingService);
+    const eventsTrackingService = new EventsTrackingService();
+    const googleTracking = new GoogleAnalyticsTrackerService();
+    eventsTrackingService.subscribe(event => {
+      googleTracking.trackEvent(event);
+    });
+    container.bind(IEventsTrackingService).toConstantValue(eventsTrackingService);
 
     container.bind(ICurrentUserService).toConstantValue(currentUserService);
     container.bind(ILoginService).toConstantValue(loginService);

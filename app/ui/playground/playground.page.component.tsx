@@ -18,6 +18,11 @@ import { IUserSettingsService, IUserSettings } from "app/services/customizations
 import { ThemesService, Theme } from "app/services/customizations/themes.service";
 import { TurtlesService } from "app/services/customizations/turtles.service";
 import { ProgramStorageType, ProgramManagementService } from "app/services/program/program-management.service";
+import {
+  IEventsTrackingService,
+  EventCategory,
+  EventAction
+} from "app/services/infrastructure/events-tracking.service";
 
 import { MainMenuComponent } from "app/ui/main-menu.component";
 import { GoldenLayoutComponent, IPanelConfig, GoldenLayoutConfig } from "app/ui/_shared/golden-layout.component";
@@ -57,6 +62,7 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
   private userSettingsService = resolveInject(IUserSettingsService);
   private themesService = resolveInject(ThemesService);
   private turtlesService = resolveInject(TurtlesService);
+  private eventsTracking = resolveInject(IEventsTrackingService);
   private executionService = new ProgramExecutionContext();
   private layoutChangedSubject = new Subject<void>();
 
@@ -139,6 +145,18 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
 
     if (!programModel.code) {
       programModel.code = defaultPlaygroundProgram;
+    }
+
+    switch (programModel.storageType) {
+      case ProgramStorageType.gist:
+        this.eventsTracking.sendEvent({ category: EventCategory.gist, action: EventAction.gistProgramOpen });
+        break;
+      case ProgramStorageType.gallery:
+        this.eventsTracking.sendEvent({
+          category: EventCategory.personalLibrary,
+          action: EventAction.galleryProgramOpen
+        });
+        break;
     }
 
     const theme = this.themesService.getTheme(userSettings.themeName);

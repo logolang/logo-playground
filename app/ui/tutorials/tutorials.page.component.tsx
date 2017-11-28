@@ -133,7 +133,7 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
     this.titleService.setDocumentTitle(_T("Tutorials"));
     await this.loadData(this.props);
 
-    this.eventsTracking.setEvent({ category: EventCategory.tutorials, action: EventAction.tutorialsOpen });
+    this.eventsTracking.sendEvent({ category: EventCategory.tutorials, action: EventAction.tutorialsOpen });
   }
 
   componentWillUnmount() {
@@ -210,7 +210,7 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
       this.programManagementService.saveTempProgram(this.state.program.id, "");
       this.fixTheCodeStream.next(code);
 
-      this.eventsTracking.setEvent({ category: EventCategory.tutorials, action: EventAction.tutorialsFixTheCode });
+      this.eventsTracking.sendEvent({ category: EventCategory.tutorials, action: EventAction.tutorialsFixTheCode });
     }
   };
 
