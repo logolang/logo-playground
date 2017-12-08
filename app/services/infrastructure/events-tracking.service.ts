@@ -26,8 +26,8 @@ export enum EventAction {
 
   // playgroundOpen = "playgroundOpen",
 
-  // programStart = "programStart",
-  // programStop = "programStop",
+  programStart = "programStart",
+  programStop = "programStop",
   // programUndo = "programUndo",
 
   screenshotShare = "screenshotShare",
