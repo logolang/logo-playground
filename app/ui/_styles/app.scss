@@ -25,17 +25,11 @@ html {
 
 /* Application specific styles */
 .ex-app-logo {
-  background-image: url(../images/logo_black.png);
+  background-image: url(../../../content/images/logo-logo.svg);
   background-repeat: no-repeat;
   background-position: center;
-  width: 60px;
-  height: 32px;
-}
-
-.is-dark {
-  .ex-app-logo {
-    background-image: url(../images/logo_white.png);
-  }
+  width: 120px;
+  height: 40px;
 }
 
 .ex-page-container {

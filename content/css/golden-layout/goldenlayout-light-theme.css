@@ -1,5 +1,5 @@
 .golden-layout-component {
-  background-color: #777;
+  background-color: #e1e1e1;
 }
 
 .lm_goldenlayout {
@@ -55,7 +55,7 @@
 }
 
 .lm_header .lm_tab {
-  background: #fafafa;
+  background: #e1e1e1;
   padding-bottom: 4px;
   margin-right: 2px;
   border: 1px solid #ccc;
@@ -68,7 +68,7 @@
 
 .lm_tab.lm_active,
 .lm_tab:hover {
-  background: #e1e1e1;
+  background: white;
 }
 
 .lm_header .lm_tab.lm_active {

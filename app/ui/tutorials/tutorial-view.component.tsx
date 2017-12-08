@@ -1,5 +1,6 @@
 import * as React from "react";
 
+import { _T } from "app/services/customizations/localization.service";
 import { resolveInject } from "app/di";
 import { Routes } from "app/routes";
 import { INavigationService } from "app/services/infrastructure/navigation.service";
@@ -10,7 +11,12 @@ import {
   ITutorialStepInfo,
   ITutorialStepContent
 } from "app/services/tutorials/tutorials-content-service";
-import { _T } from "app/services/customizations/localization.service";
+import {
+  IEventsTrackingService,
+  EventAction,
+  EventCategory
+} from "app/services/infrastructure/events-tracking.service";
+
 import { TutorialSelectModalComponent } from "app/ui/tutorials/tutorial-select-modal.component";
 import { ModalComponent } from "app/ui/_generic/modal.component";
 import { LoadingComponent } from "app/ui/_generic/loading.component";
@@ -53,6 +59,7 @@ interface IComponentState {
 export class TutorialViewComponent extends React.Component<ITutorialViewComponentProps, IComponentState> {
   private tutorialsLoader = resolveInject(ITutorialsContentService);
   private notificationService = resolveInject(INotificationService);
+  private eventsTracking = resolveInject(IEventsTrackingService);
 
   constructor(props: ITutorialViewComponentProps) {
     super(props);
@@ -228,6 +235,7 @@ export class TutorialViewComponent extends React.Component<ITutorialViewComponen
           this.setState({ showSelectionTutorials: false });
         }}
         onSelect={tutorial => {
+          this.eventsTracking.sendEvent({ category: EventCategory.tutorials, action: EventAction.tutorialsStart });
           this.setState({ showSelectionTutorials: false });
           this.props.onNavigateRequest(tutorial.id, tutorial.steps[0].id);
         }}
@@ -266,6 +274,11 @@ export class TutorialViewComponent extends React.Component<ITutorialViewComponen
   navigateToNextStep = (direction: number) => {
     return () => {
       if (this.state.currentStepInfo && this.state.currentTutorial && this.state.currentStepIndex !== undefined) {
+        this.eventsTracking.sendEvent({
+          category: EventCategory.tutorials,
+          action: direction > 0 ? EventAction.tutorialsNext : EventAction.tutorialsBack
+        });
+
         const newStepIndex = this.state.currentStepIndex + direction;
         this.props.onNavigateRequest(this.state.currentTutorial.id, this.state.currentTutorial.steps[newStepIndex].id);
       }
