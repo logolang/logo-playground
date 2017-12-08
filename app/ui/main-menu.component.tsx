@@ -36,7 +36,7 @@ export class MainMenuComponent extends React.Component<IComponentProps, ICompone
 
   render(): JSX.Element {
     const loginStatus = this.currentUser.getLoginStatus();
-    const userPic = loginStatus.userInfo.attributes.imageUrl || require("./images/user-32-pic.png");
+    const userPic = loginStatus.userInfo.attributes.imageUrl;
     return (
       <nav className="navbar navbar-mobile-fix">
         <div className="navbar-brand">
@@ -74,7 +74,13 @@ export class MainMenuComponent extends React.Component<IComponentProps, ICompone
           <div className="navbar-end">
             <div className="navbar-item has-dropdown is-hoverable">
               <span className="navbar-link is-active">
-                <img src={userPic} />
+                {userPic ? (
+                  <img src={userPic} />
+                ) : (
+                  <span>
+                    <i className="fa fa-user-o" aria-hidden="true" />
+                  </span>
+                )}
               </span>
               <div className="navbar-dropdown is-right">
                 <NavLink className="navbar-item" activeClassName="is-active" to={Routes.settingsRoot.build({})}>
