@@ -2,6 +2,7 @@ import { injectable } from "app/di";
 
 export interface Theme {
   name: string;
+  description: string;
   isDark: boolean;
   codeEditorThemeName: string;
   styleLinks: string[];
@@ -12,50 +13,132 @@ export class ThemesService {
   private readonly themes: Theme[] = [
     {
       name: "Default",
+      description: "Bulma as-is",
       isDark: false,
       codeEditorThemeName: "eclipse",
       styleLinks: [
-        "content/css/bulma/bulmaswatch.default.min.css",
+        "content/css/bulma/default/bulmaswatch.min.css",
         "content/css/codemirror/themes/eclipse.css",
         "content/css/golden-layout/goldenlayout-light-theme.css"
       ]
     },
     {
       name: "Litera",
+      description: "The medium is the message",
       isDark: false,
       codeEditorThemeName: "eclipse",
       styleLinks: [
-        "content/css/bulma/bulmaswatch.litera.min.css",
+        "content/css/bulma/litera/bulmaswatch.min.css",
         "content/css/codemirror/themes/eclipse.css",
         "content/css/golden-layout/goldenlayout-light-theme.css"
       ]
     },
     {
-      name: "Slate",
+      name: "Materia",
+      description: "Material is the metaphor",
+      isDark: false,
+      codeEditorThemeName: "eclipse",
+      styleLinks: [
+        "content/css/bulma/materia/bulmaswatch.min.css",
+        "content/css/codemirror/themes/eclipse.css",
+        "content/css/golden-layout/goldenlayout-light-theme.css"
+      ]
+    },
+    {
+      name: "Yeti",
+      description: "A friendly foundation",
+      isDark: false,
+      codeEditorThemeName: "eclipse",
+      styleLinks: [
+        "content/css/bulma/yeti/bulmaswatch.min.css",
+        "content/css/codemirror/themes/eclipse.css",
+        "content/css/golden-layout/goldenlayout-light-theme.css"
+      ]
+    },
+    {
+      name: "Cosmo",
+      description: "An ode to Metro",
+      isDark: false,
+      codeEditorThemeName: "eclipse",
+      styleLinks: [
+        "content/css/bulma/cosmo/bulmaswatch.min.css",
+        "content/css/codemirror/themes/eclipse.css",
+        "content/css/golden-layout/goldenlayout-light-theme.css"
+      ]
+    },
+    {
+      name: "Flatly",
+      description: "Flat and thick",
+      isDark: false,
+      codeEditorThemeName: "eclipse",
+      styleLinks: [
+        "content/css/bulma/flatly/bulmaswatch.min.css",
+        "content/css/codemirror/themes/eclipse.css",
+        "content/css/golden-layout/goldenlayout-light-theme.css"
+      ]
+    },
+    {
+      name: "Pulse",
+      description: "A trace of purple",
+      isDark: false,
+      codeEditorThemeName: "eclipse",
+      styleLinks: [
+        "content/css/bulma/pulse/bulmaswatch.min.css",
+        "content/css/codemirror/themes/eclipse.css",
+        "content/css/golden-layout/goldenlayout-light-theme.css"
+      ]
+    },
+    {
+      name: "Sandstone",
+      description: "A touch of warmth",
+      isDark: false,
+      codeEditorThemeName: "eclipse",
+      styleLinks: [
+        "content/css/bulma/sandstone/bulmaswatch.min.css",
+        "content/css/codemirror/themes/eclipse.css",
+        "content/css/golden-layout/goldenlayout-light-theme.css"
+      ]
+    },
+    {
+      name: "Darkly",
+      description: "Flatly in night-mode",
       isDark: true,
       codeEditorThemeName: "abcdef",
       styleLinks: [
-        "content/css/bulma/bulmaswatch.slate.min.css",
+        "content/css/bulma/darkly/bulmaswatch.min.css",
         "content/css/codemirror/themes/abcdef.css",
         "content/css/golden-layout/goldenlayout-dark-theme.css"
       ]
     },
     {
-      name: "Yeti",
-      isDark: false,
-      codeEditorThemeName: "eclipse",
-      styleLinks: [
-        "content/css/bulma/bulmaswatch.yeti.min.css",
-        "content/css/codemirror/themes/eclipse.css",
-        "content/css/golden-layout/goldenlayout-light-theme.css"
-      ]
-    },
-    {
-      name: "Cyborg",
+      name: "Superhero",
+      description: "The brave and the blue",
       isDark: true,
       codeEditorThemeName: "abcdef",
       styleLinks: [
-        "content/css/bulma/bulmaswatch.cyborg.min.css",
+        "content/css/bulma/superhero/bulmaswatch.min.css",
+        "content/css/codemirror/themes/abcdef.css",
+        "content/css/golden-layout/goldenlayout-dark-theme.css"
+      ]
+    },
+    {
+      name: "Slate",
+      description: "Shades of gunmetal gray",
+      isDark: true,
+      codeEditorThemeName: "abcdef",
+      styleLinks: [
+        "content/css/bulma/slate/bulmaswatch.min.css",
+        "content/css/codemirror/themes/abcdef.css",
+        "content/css/golden-layout/goldenlayout-dark-theme.css"
+      ]
+    },
+    {
+      name: "Nuclear",
+      description: "A dark theme with irradiated highlights",
+      isDark: true,
+      codeEditorThemeName: "abcdef",
+      styleLinks: [
+        "content/css/bulma/nuclear/bulmaswatch.min.css",
         "content/css/codemirror/themes/abcdef.css",
         "content/css/golden-layout/goldenlayout-dark-theme.css"
       ]
