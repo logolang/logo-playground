@@ -1,5 +1,5 @@
 .golden-layout-component {
-  background-color: #777;
+  background-color: #444;
 }
 
 .lm_goldenlayout {
@@ -8,7 +8,7 @@
 
 .lm_content {
   background: #222;
-  border: 1px solid #444;
+  border: 1px solid #333;
 }
 
 .lm_dragProxy .lm_content {
@@ -29,7 +29,7 @@
 }
 
 .lm_splitter {
-  background: #000;
+  background: transparent;
   opacity: 0.001;
   transition: opacity 200ms ease;
 }
@@ -37,7 +37,7 @@
 .lm_splitter:hover,
 .lm_splitter.lm_dragging {
   opacity: 1;
-  background: #444;
+  background: #777;
 }
 
 .lm_header {
@@ -62,7 +62,7 @@
 }
 
 .lm_header .lm_tab {
-  background: #111;
+  background: #444;
   padding-top: 2px;
   padding-bottom: 2px;
   margin-right: 2px;
@@ -70,7 +70,7 @@
 
 .lm_tab.lm_active,
 .lm_tab:hover {
-  background: #222;
+  background: #111;
 }
 
 .lm_header .lm_tab.lm_active {

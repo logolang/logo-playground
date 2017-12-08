@@ -32,6 +32,11 @@ import {
   ITutorialLoadedData
 } from "app/ui/tutorials/tutorial-view.component";
 import { LoadingComponent } from "app/ui/_generic/loading.component";
+import {
+  IEventsTrackingService,
+  EventCategory,
+  EventAction
+} from "app/services/infrastructure/events-tracking.service";
 
 interface IComponentState {
   isLoading: boolean;
@@ -61,6 +66,7 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
   private turtlesService = resolveInject(TurtlesService);
   private programManagementService = resolveInject(ProgramManagementService);
   private tutorialsLoader = resolveInject(ITutorialsContentService);
+  private eventsTracking = resolveInject(IEventsTrackingService);
 
   private executionService = new ProgramExecutionContext();
   private fixTheCodeStream = new Subject<string>();
@@ -126,6 +132,8 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
   async componentDidMount() {
     this.titleService.setDocumentTitle(_T("Tutorials"));
     await this.loadData(this.props);
+
+    this.eventsTracking.sendEvent({ category: EventCategory.tutorials, action: EventAction.tutorialsOpen });
   }
 
   componentWillUnmount() {
@@ -201,15 +209,15 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
     if (this.state.program) {
       this.programManagementService.saveTempProgram(this.state.program.id, "");
       this.fixTheCodeStream.next(code);
+
+      this.eventsTracking.sendEvent({ category: EventCategory.tutorials, action: EventAction.tutorialsFixTheCode });
     }
   };
 
   onNavigateRequest = async (tutorialId: string, stepId: string) => {
-    console.log("Yo! navigate request");
     if (this.state.program) {
       await this.programManagementService.revertLocalTempChanges(this.state.program);
     }
-    console.log("Yo! navigate command");
     this.navService.navigate({
       route: Routes.tutorialSpecified.build({
         tutorialId: tutorialId,
@@ -223,7 +231,14 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
       <div className="ex-page-container">
         <MainMenuComponent />
         <div className="ex-page-content">
-          <LoadingComponent fullPage isLoading={this.state.isLoading} />
+          {this.state.isLoading && (
+            <div className="golden-layout-component">
+              <div className="ex-page-content lm_content">
+                <LoadingComponent isLoading />
+              </div>
+            </div>
+          )}
+
           {this.state.userSettings &&
             this.state.theme &&
             this.state.tutorials &&
