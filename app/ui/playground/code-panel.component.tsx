@@ -17,6 +17,7 @@ import {
   IProgramToSaveAttributes,
   ProgramStorageType
 } from "app/services/program/program-management.service";
+import { EventsTrackingService, EventCategory, EventAction } from "app/services/infrastructure/events-tracking.service";
 
 import { ShareScreenshotModalComponent } from "app/ui/playground/share-screenshot-modal.component";
 import { ShareProgramModalComponent } from "app/ui/playground/share-program-modal.component";
@@ -51,6 +52,7 @@ export class CodePanelComponent extends React.Component<ICodePanelComponentProps
   private notificationService = resolveInject(INotificationService);
   private navigationService = resolveInject(INavigationService);
   private managementService = resolveInject(ProgramManagementService);
+  private eventsTracker = resolveInject(EventsTrackingService);
   private subscriptions: ISubscription[] = [];
   private saveTempCodeTimer: any = undefined;
 
@@ -91,8 +93,14 @@ export class CodePanelComponent extends React.Component<ICodePanelComponentProps
     keymaster.unbind("f8, f9");
   }
 
-  onRunProgram = (): void => {
+  onRunProgram = () => {
     this.props.executionService.executeProgram(this.state.code);
+    this.eventsTracker.sendEvent({ category: EventCategory.program, action: EventAction.programStart });
+  };
+
+  onStopProgram = () => {
+    this.props.executionService.stopProgram();
+    this.eventsTracker.sendEvent({ category: EventCategory.program, action: EventAction.programStop });
   };
 
   render(): JSX.Element {
@@ -122,7 +130,7 @@ export class CodePanelComponent extends React.Component<ICodePanelComponentProps
           isRunning={execService.isRunning}
           existingProgramName={this.props.program.name}
           runProgram={this.onRunProgram}
-          stopProgram={execService.stopProgram}
+          stopProgram={this.onStopProgram}
           exportImage={this.exportScreenshot}
           saveAsNew={this.showSaveDialog}
           onShareProgram={this.shareProgram}
