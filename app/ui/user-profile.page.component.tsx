@@ -224,7 +224,7 @@ export class UserProfilePageComponent extends React.Component<IComponentProps, I
                             {this.themeService.getAllThemes().map(t => {
                               return (
                                 <option key={t.name} value={t.name}>
-                                  {t.name}
+                                  {t.name} ({t.description})
                                 </option>
                               );
                             })}

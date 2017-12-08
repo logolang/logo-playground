@@ -39,8 +39,7 @@
             ]
         };
         try {
-            window.appThemeNameLocalStorageKey = '{{htmlWebpackPlugin.options.variables.packageJson.name}}-{{htmlWebpackPlugin.options.variables.packageJson.version}}-theme-storage';
-            console.log('storagekey', window.appThemeNameLocalStorageKey);
+            window.appThemeNameLocalStorageKey = '{{htmlWebpackPlugin.options.variables.packageJson.name}}-{{htmlWebpackPlugin.options.variables.packageJson.version}}-uitheme';
             var storedTheme = window.localStorage.getItem(window.appThemeNameLocalStorageKey);
             if (storedTheme) {
                 var parsedTheme = JSON.parse(storedTheme);
