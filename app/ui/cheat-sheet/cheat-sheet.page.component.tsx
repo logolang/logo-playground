@@ -61,8 +61,6 @@ export class CheatSheetPageComponent extends React.Component<IComponentProps, IC
         .filter(p => !!p)
         .map(p => md.render(p));
 
-      console.log("CCC", content);
-
       this.setState({ content: content });
     }
     this.setState({ isLoading: false });
