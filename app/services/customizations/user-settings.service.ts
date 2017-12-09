@@ -33,7 +33,7 @@ export class UserSettingsBrowserLocalStorageService implements IUserSettingsServ
 
   constructor(@inject(ICurrentUserService) private currentUser: ICurrentUserService) {
     const userId = this.currentUser.getLoginStatus().userInfo.attributes.email;
-    this.localStorage = new LocalStorageService<IUserSettings>(`logo-sandbox-${userId}-usersettings`, {} as any);
+    this.localStorage = new LocalStorageService<IUserSettings>(`logolang-app-settings-${userId}`, {} as any);
     const localStorageValue = this.localStorage.getValue();
 
     //Apply default values

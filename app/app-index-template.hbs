@@ -33,13 +33,13 @@
         var theme = {
             isDark: false,
             styleLinks: [
-                "content/css/bulma/bulmaswatch.default.min.css",
+                "content/css/bulma/default/bulmaswatch.min.css",
                 "content/css/codemirror/themes/eclipse.css",
                 "content/css/golden-layout/goldenlayout-light-theme.css"
             ]
         };
         try {
-            window.appThemeNameLocalStorageKey = '{{htmlWebpackPlugin.options.variables.packageJson.name}}-{{htmlWebpackPlugin.options.variables.packageJson.version}}-uitheme';
+            window.appThemeNameLocalStorageKey = 'logolang-app-uitheme';
             var storedTheme = window.localStorage.getItem(window.appThemeNameLocalStorageKey);
             if (storedTheme) {
                 var parsedTheme = JSON.parse(storedTheme);
