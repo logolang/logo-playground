@@ -2,56 +2,45 @@ import { Observable, Subject } from "rxjs/Rx";
 import { injectable } from "app/di";
 import { ISubscription } from "rxjs/Subscription";
 
-export enum EventCategory {
-  program = "program",
-  user = "user",
-  tutorials = "tutorials",
-  personalLibrary = "personalLibrary",
-  gist = "gist",
-  other = "other"
-}
-
 export enum EventAction {
-  // userLogin = "userLogin",
-  // userLogout = "userLogout",
-  // userOpenSettings = "userOpenSettings",
-  // userOpenAbout = "userOpenAbout",
-  // userOpenCheatsheet = "userOpenCheatsheet",
+  userLogin = "user.login",
+  userLogout = "user.logout",
 
-  tutorialsOpen = "tutorialsOpen",
-  tutorialsStart = "tutorialsStart",
-  tutorialsNext = "tutorialsNext",
-  tutorialsBack = "tutorialsBack",
-  tutorialsFixTheCode = "tutorialsFixTheCode",
+  programStart = "program.start",
+  programStop = "program.stop",
+  programResetChanges = "program.resetChanges",
 
-  // playgroundOpen = "playgroundOpen",
+  tutorialsOpen = "tutorials.open",
+  tutorialsStart = "tutorials.start",
+  tutorialsNext = "tutorials.next",
+  tutorialsBack = "tutorials.back",
+  tutorialsFixTheCode = "tutorials.fixTheCode",
 
-  programStart = "programStart",
-  programStop = "programStop",
-  // programUndo = "programUndo",
+  shareScreenshot = "share.screenshot",
+  shareProgramToGist = "share.programToGist",
+  openProgramFromSharedGist = "share.openFromGist",
 
-  screenshotShare = "screenshotShare",
+  openProgramFromPersonalLibrary = "personalLibrary.openProgram",
+  saveProgramToPersonalLibrary = "personalLibrary.saveProgram",
+  deleteProgramFromPersonalLibrary = "personalLibrary.deleteProgram",
 
-  galleryProgramOpen = "galleryProgramOpen",
-
-  // personalLibraryOpen = "personalLibraryOpen",
-  // personalLibrarySave = "personalLibrarySave",
-  // personalLibraryDelete = "personalLibraryDelete",
-
-  gistProgramOpen = "gistProgramOpen",
-  gistProgramShare = "gistProgramShare"
+  openPlayground = "navigation.openPlayground",
+  openGallery = "navigation.openGallery",
+  openSettings = "navigation.openSettings",
+  openAbout = "navigation.openAbout",
+  openCheatsheet = "navigation.openCheatsheet"
 }
 
 interface IEventData {
-  category: EventCategory;
-  action: EventAction;
+  category: string;
+  action: string;
   data?: string;
 }
 
 type EventHandler = (eventData: IEventData) => void;
 
 export abstract class IEventsTrackingService {
-  abstract sendEvent(event: IEventData): void;
+  abstract sendEvent(eventAction: EventAction, data?: string): void;
   abstract subscribe(handler: EventHandler): void;
 }
 
@@ -60,8 +49,12 @@ export class EventsTrackingService implements IEventsTrackingService {
   private eventsSubject = new Subject<IEventData>();
   private subscriptions: { handler: EventHandler; subscription: ISubscription }[] = [];
 
-  sendEvent(event: IEventData): void {
-    this.eventsSubject.next(event);
+  sendEvent(eventAction: EventAction, data?: string): void {
+    const [category, action] = eventAction.split(".");
+    if (!category || !action) {
+      throw new Error("Event action ID is not valid - should be in 'CATEGORY.ACTION' format");
+    }
+    this.eventsSubject.next({ category, action, data: data });
   }
 
   subscribe(handler: (eventData: IEventData) => void): void {

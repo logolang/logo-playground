@@ -21,6 +21,7 @@ import { GallerySamplesRepository, IGallerySamplesRepository } from "app/service
 import { ProgramStorageType } from "app/services/program/program-management.service";
 import { ICurrentUserService } from "app/services/login/current-user.service";
 import { TitleService } from "app/services/infrastructure/title.service";
+import { IEventsTrackingService, EventAction } from "app/services/infrastructure/events-tracking.service";
 
 import "./gallery.page.component.scss";
 
@@ -40,6 +41,7 @@ export class GalleryPageComponent extends React.Component<IComponentProps, IComp
   private titleService = resolveInject(TitleService);
   private programsRepo = resolveInject(IUserLibraryRepository);
   private samplesRepo = resolveInject(IGallerySamplesRepository);
+  private eventsTracker = resolveInject(IEventsTrackingService);
 
   constructor(props: IComponentProps) {
     super(props);
@@ -55,6 +57,7 @@ export class GalleryPageComponent extends React.Component<IComponentProps, IComp
 
   async componentDidMount() {
     this.titleService.setDocumentTitle(_T("Gallery"));
+    this.eventsTracker.sendEvent(EventAction.openGallery);
     await this.loadData();
   }
 
@@ -76,6 +79,7 @@ export class GalleryPageComponent extends React.Component<IComponentProps, IComp
     if (this.state.programToDelete) {
       this.setState({ isLoading: true });
       await this.programsRepo.remove(this.state.programToDelete.id);
+      this.eventsTracker.sendEvent(EventAction.deleteProgramFromPersonalLibrary);
     }
     await this.loadData();
     this.setState({ programToDelete: undefined });

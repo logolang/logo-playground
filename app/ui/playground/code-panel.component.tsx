@@ -17,11 +17,7 @@ import {
   IProgramToSaveAttributes,
   ProgramStorageType
 } from "app/services/program/program-management.service";
-import {
-  IEventsTrackingService,
-  EventCategory,
-  EventAction
-} from "app/services/infrastructure/events-tracking.service";
+import { IEventsTrackingService, EventAction } from "app/services/infrastructure/events-tracking.service";
 
 import { ShareScreenshotModalComponent } from "app/ui/playground/share-screenshot-modal.component";
 import { ShareProgramModalComponent } from "app/ui/playground/share-program-modal.component";
@@ -99,12 +95,12 @@ export class CodePanelComponent extends React.Component<ICodePanelComponentProps
 
   onRunProgram = () => {
     this.props.executionService.executeProgram(this.state.code);
-    this.eventsTracker.sendEvent({ category: EventCategory.program, action: EventAction.programStart });
+    this.eventsTracker.sendEvent(EventAction.programStart);
   };
 
   onStopProgram = () => {
     this.props.executionService.stopProgram();
-    this.eventsTracker.sendEvent({ category: EventCategory.program, action: EventAction.programStop });
+    this.eventsTracker.sendEvent(EventAction.programStop);
   };
 
   render(): JSX.Element {
@@ -207,9 +203,10 @@ export class CodePanelComponent extends React.Component<ICodePanelComponentProps
     this.notificationService.push({
       type: "success",
       title: _T("Message"),
-      message: _T("Program has been saved in the library.")
+      message: _T("Program has been saved in the personal library.")
     });
     this.setState({ hasLocalTempChanges: false });
+    this.eventsTracker.sendEvent(EventAction.saveProgramToPersonalLibrary);
     if (this.props.navigateAutomaticallyAfterSaveAs) {
       this.navigationService.navigate({
         route: Routes.codeLibrary.build({
@@ -221,6 +218,7 @@ export class CodePanelComponent extends React.Component<ICodePanelComponentProps
 
   revertCurrentProgram = async () => {
     const code = await this.managementService.revertLocalTempChanges(this.props.program);
+    this.eventsTracker.sendEvent(EventAction.programResetChanges);
     this.setState({ hasLocalTempChanges: false, code: code });
   };
 

@@ -28,6 +28,7 @@ import { IUserSettingsService, IUserSettings } from "app/services/customizations
 import { INotificationService } from "app/services/infrastructure/notification.service";
 import { IUserLibraryRepository } from "app/services/gallery/personal-gallery-localstorage.repository";
 import { ProgramsHtmlSerializerService } from "app/services/gallery/programs-html-serializer.service";
+import { IEventsTrackingService, EventAction } from "app/services/infrastructure/events-tracking.service";
 
 interface IComponentState {
   userInfo: UserInfo;
@@ -61,6 +62,7 @@ export class UserProfilePageComponent extends React.Component<IComponentProps, I
   private turtleCustomizationService = resolveInject(TurtlesService);
   private localizationService = resolveInject(LocalizationService);
   private programsReporitory = resolveInject(IUserLibraryRepository);
+  private eventsTracking = resolveInject(IEventsTrackingService);
 
   private onIsRunningChanged = new Subject<boolean>();
   private runCode = new BehaviorSubject<string>("");
@@ -84,6 +86,7 @@ export class UserProfilePageComponent extends React.Component<IComponentProps, I
 
   async componentDidMount() {
     this.titleService.setDocumentTitle(_T("User profile"));
+    this.eventsTracking.sendEvent(EventAction.openSettings);
     await this.loadData();
   }
 
