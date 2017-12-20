@@ -7,18 +7,20 @@ script:
 - npm test
 - npm run build
 deploy:
+  matrix:
   - provider: pages
     skip_cleanup: true
     local_dir: dist
     repo: logolang/logolang.github.io
     target_branch: master
-    github_token: $GITHUB_PAGES_DEPLOY_TOKEN # Set in travis-ci.org dashboard
+    github_token: "$GITHUB_PAGES_DEPLOY_TOKEN"
     on:
       branch: master
   - provider: heroku
     skip_cleanup: true
     app: logolang-stage
     api_key:
-      secure: $HEROKU_DEPLOY_TOKEN # Set in travis-ci.org dashboard
+      secure: HirklnAWir6O2oCWgAqjBTjJWC5bI8ERtdewZrNCWzLC8SNWIfpwFGHeTzP5jNZy3/tIPxFFXzAdqb/3WdUpWwio2fYQIBJL0Di+/x/OQop4Psqjy7wW9tG/wM/sAJDQT4J7TbomUqlsbMB0itVNfYNMcQMG7/IgZZCJS4jErUsqPVtSWeMk/DlKMX54kWD2McPFCHUPtSzRFFA7Fb4ieb2zK6hEyTj6AKHakDWKqFrxY+oGlgcHnLP66huwBS7CliDcVc3wobg3mpjSqiCgF16ZarPzWveDCKr7VPhIkoyQEm++LNADIjdcZHhmmoLZe3oZVXs7kr5u8MluRcewUojM41FzjwjiWWEyoJJJrcH2IG2BglzC7SH5XIavZviY0yAopEs5tAOiFIogKt8ZIC+tuUN0LZ1PP40IS6F+NLQGHlNrYiT/+SC8Otw2LTdUDoLWQ32CqD5YCBf6Z0yKk2M5h/qqdWfUskhQ1wwB/eJixMno61KpC3cqqMC6FSNilPSXG5Uj+U7wfr+B4KLq5GDhR3BEtga+AMoqcLbR3hdOQvZPeGasc75e6/s+QNzCp7PCDbIFWe0017JKxzB9i0B12vK5x5AsuqEVwf2NzixBR+RBdWc6icPRGJoP7nqojwMoR2qXqw46CyVJHnjGSi7WgEziUvS4ESkSyqiNFx8=
     on:
       branch: staging
+      
