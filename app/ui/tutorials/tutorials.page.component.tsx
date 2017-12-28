@@ -32,11 +32,7 @@ import {
   ITutorialLoadedData
 } from "app/ui/tutorials/tutorial-view.component";
 import { LoadingComponent } from "app/ui/_generic/loading.component";
-import {
-  IEventsTrackingService,
-  EventCategory,
-  EventAction
-} from "app/services/infrastructure/events-tracking.service";
+import { IEventsTrackingService, EventAction } from "app/services/infrastructure/events-tracking.service";
 
 interface IComponentState {
   isLoading: boolean;
@@ -133,7 +129,7 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
     this.titleService.setDocumentTitle(_T("Tutorials"));
     await this.loadData(this.props);
 
-    this.eventsTracking.sendEvent({ category: EventCategory.tutorials, action: EventAction.tutorialsOpen });
+    this.eventsTracking.sendEvent(EventAction.tutorialsOpen);
   }
 
   componentWillUnmount() {
@@ -210,7 +206,7 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
       this.programManagementService.saveTempProgram(this.state.program.id, "");
       this.fixTheCodeStream.next(code);
 
-      this.eventsTracking.sendEvent({ category: EventCategory.tutorials, action: EventAction.tutorialsFixTheCode });
+      this.eventsTracking.sendEvent(EventAction.tutorialsFixTheCode);
     }
   };
 

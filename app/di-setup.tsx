@@ -32,7 +32,11 @@ import { TutorialsCodeRepository, ITutorialsSamplesRepository } from "app/servic
 import { GistSharedProgramsRepository } from "app/services/program/gist-shared-programs.repository";
 import { AuthProvider } from "app/services/login/user-info";
 import { ProgramsGoogleDriveRepository } from "app/services/gallery/personal-gallery-googledrive.repository";
-import { IEventsTrackingService, EventsTrackingService } from "app/services/infrastructure/events-tracking.service";
+import {
+  IEventsTrackingService,
+  EventsTrackingService,
+  EventAction
+} from "app/services/infrastructure/events-tracking.service";
 import { GoogleAnalyticsTrackerService } from "app/services/infrastructure/google-analytics-tracker.service";
 
 export class DependecyInjectionSetup {
@@ -46,16 +50,22 @@ export class DependecyInjectionSetup {
     const appConfig = await appConfigLoader.loadData();
     container.bind(AppConfig).toConstantValue(appConfig);
 
-    const authService = new GoogleAuthService(appConfig.services.googleClientId);
-    const currentUserService = new CurrentUserService();
-    const loginService = new LoginService(authService, currentUserService);
-
     const eventsTrackingService = new EventsTrackingService();
     const googleTracking = new GoogleAnalyticsTrackerService();
     eventsTrackingService.subscribe(event => {
       googleTracking.trackEvent(event);
     });
     container.bind(IEventsTrackingService).toConstantValue(eventsTrackingService);
+
+    const authService = new GoogleAuthService(appConfig.services.googleClientId);
+    const currentUserService = new CurrentUserService();
+    const loginService = new LoginService(authService, currentUserService, eventsTrackingService);
+
+    currentUserService.loginStatusObservable.subscribe(loginStatus => {
+      if (loginStatus.isLoggedIn) {
+        eventsTrackingService.sendEvent(EventAction.userLogin, loginStatus.userInfo.attributes.email);
+      }
+    });
 
     container.bind(ICurrentUserService).toConstantValue(currentUserService);
     container.bind(ILoginService).toConstantValue(loginService);
