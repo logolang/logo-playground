@@ -23,7 +23,7 @@ msgid "Added programs: %d"
 msgstr ""
 
 msgid "App title"
-msgstr "Logo Sandbox"
+msgstr "Logo"
 
 msgid "App version"
 msgstr ""

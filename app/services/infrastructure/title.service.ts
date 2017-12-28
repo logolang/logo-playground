@@ -5,7 +5,7 @@ export class TitleService {
   constructor(private prefix: string) {}
 
   setDocumentTitle(title: string) {
-    document.title = title ? this.prefix + "-" + title : this.prefix;
+    document.title = title ? this.prefix + " - " + title : this.prefix;
   }
 }
 
