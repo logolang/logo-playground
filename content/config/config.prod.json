@@ -5,8 +5,8 @@
     "appApiUrl": "",
     "imgurServiceUrl": "https://api.imgur.com/3/image",
     "imgurServiceClientID": "50870757d3c7777",
-    "googleClientId": "1051176242385-uqf0d6t558d8b01km8e3e0k6kksqui6a.apps.googleusercontent.com",
+    "googleClientId": "388088822786-fpcn44pk5k9kpm3dovk0upn30d8mvje7.apps.googleusercontent.com",
     "googleAnalyticsTrackingId": "UA-110096379-1",
-    "googleDriveGalleryFilename": "logo-personal-library.html"
+    "googleDriveGalleryFilename": "my-logo-library.html"
   }
 }
