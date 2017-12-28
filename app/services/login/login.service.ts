@@ -1,5 +1,6 @@
 import { IAuthService } from "app/services/login/auth.service";
 import { NotLoggenInStatus, ICurrentUserService, LoginStatus } from "app/services/login/current-user.service";
+import { IEventsTrackingService, EventAction } from "app/services/infrastructure/events-tracking.service";
 
 export abstract class ILoginService {
   abstract tryLoginUserAutomatically(): Promise<void>;
@@ -11,7 +12,11 @@ export abstract class ILoginService {
 export class LoginService implements ILoginService {
   private currentLoginStatus = NotLoggenInStatus;
 
-  constructor(private authService: IAuthService, private currentUserService: ICurrentUserService) {
+  constructor(
+    private authService: IAuthService,
+    private currentUserService: ICurrentUserService,
+    private eventTracker: IEventsTrackingService
+  ) {
     this.authService.loginStatusObservable.subscribe(status => {
       this.currentLoginStatus = status;
       this.currentUserService.setLoginStatus(status);
@@ -31,6 +36,8 @@ export class LoginService implements ILoginService {
   }
 
   async signOut(): Promise<void> {
+    this.eventTracker.sendEvent(EventAction.userLogin, this.currentLoginStatus.userInfo.attributes.email);
+
     return this.authService.signOut();
   }
 }

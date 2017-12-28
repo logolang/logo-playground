@@ -3,11 +3,7 @@ import * as React from "react";
 import { _T } from "app/services/customizations/localization.service";
 import { resolveInject } from "app/di";
 import { ImageUploadService } from "app/services/infrastructure/image-upload-imgur.service";
-import {
-  IEventsTrackingService,
-  EventCategory,
-  EventAction
-} from "app/services/infrastructure/events-tracking.service";
+import { IEventsTrackingService, EventAction } from "app/services/infrastructure/events-tracking.service";
 
 import { AlertMessageComponent } from "app/ui/_generic/alert-message.component";
 import { LoadingComponent } from "app/ui/_generic/loading.component";
@@ -43,12 +39,8 @@ export class ShareScreenshotModalComponent extends React.Component<IComponentPro
   async componentDidMount() {
     try {
       const link = await this.imageUploadService.doUpload(this.props.imageBase64);
-      //const link = "http://bulma.io/images/placeholders/640x480.png";
 
-      this.eventsTracking.sendEvent({
-        category: EventCategory.other,
-        action: EventAction.screenshotShare
-      });
+      this.eventsTracking.sendEvent(EventAction.shareScreenshot);
 
       this.setState({
         isSavingInProgress: false,

@@ -8,11 +8,7 @@ import { ErrorDef, callActionSafe } from "app/utils/error-helpers";
 import { IProgramToSaveAttributes } from "app/services/program/program-management.service";
 import { GistSharedProgramsRepository } from "app/services/program/gist-shared-programs.repository";
 import { ProgramModel } from "app/services/program/program.model";
-import {
-  IEventsTrackingService,
-  EventCategory,
-  EventAction
-} from "app/services/infrastructure/events-tracking.service";
+import { IEventsTrackingService, EventAction } from "app/services/infrastructure/events-tracking.service";
 
 import { AlertMessageComponent } from "app/ui/_generic/alert-message.component";
 import { ModalComponent } from "app/ui/_generic/modal.component";
@@ -106,7 +102,7 @@ export class ShareProgramModalComponent extends React.Component<IComponentProps,
       isSavingInProgress: false
     });
     if (result) {
-      this.eventsTracking.sendEvent({ category: EventCategory.gist, action: EventAction.gistProgramOpen });
+      this.eventsTracking.sendEvent(EventAction.shareProgramToGist);
       this.setState({
         publishedUrl: result
       });

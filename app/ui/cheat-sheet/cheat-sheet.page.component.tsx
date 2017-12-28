@@ -9,6 +9,7 @@ import { _T } from "app/services/customizations/localization.service";
 import { INotificationService } from "app/services/infrastructure/notification.service";
 import { TitleService } from "app/services/infrastructure/title.service";
 import { ILocalizedContentLoader } from "app/services/infrastructure/localized-content-loader";
+import { EventAction, IEventsTrackingService } from "app/services/infrastructure/events-tracking.service";
 
 import { MainMenuComponent } from "app/ui/main-menu.component";
 import { LoadingComponent } from "app/ui/_generic/loading.component";
@@ -26,6 +27,7 @@ export class CheatSheetPageComponent extends React.Component<IComponentProps, IC
   private notificationService = resolveInject(INotificationService);
   private titleService = resolveInject(TitleService);
   private contentLoader = resolveInject(ILocalizedContentLoader);
+  private eventsTracking = resolveInject(IEventsTrackingService);
 
   private errorHandler = (err: ErrorDef) => {
     this.notificationService.push({ message: err.message, type: "danger" });
@@ -43,6 +45,7 @@ export class CheatSheetPageComponent extends React.Component<IComponentProps, IC
 
   async componentDidMount() {
     this.titleService.setDocumentTitle(_T("Documentation"));
+    this.eventsTracking.sendEvent(EventAction.openCheatsheet);
     await this.loadData();
   }
 

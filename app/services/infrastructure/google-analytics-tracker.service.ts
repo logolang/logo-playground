@@ -6,15 +6,16 @@ interface IEventData {
 
 export class GoogleAnalyticsTrackerService {
   trackEvent(event: IEventData): void {
-    const ga: any = (window as any)["ga"];
-    if (ga) {
-      setTimeout(() => {
-        ga("send", "event", {
+    setTimeout(() => {
+      const ga = (window as any).ga;
+      if (ga) {
+        const tracker = ga.getAll()[0];
+        tracker.send("event", {
           eventCategory: event.category,
           eventAction: event.action,
           eventLabel: event.data
         });
-      }, 0);
-    }
+      }
+    }, 0);
   }
 }
