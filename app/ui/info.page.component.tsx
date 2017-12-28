@@ -1,5 +1,6 @@
 import * as React from "react";
 import { RouteComponentProps } from "react-router-dom";
+import * as markdown from "markdown-it";
 
 import { MainMenuComponent } from "app/ui/main-menu.component";
 import { PageHeaderComponent } from "app/ui/_generic/page-header.component";
@@ -18,12 +19,20 @@ export class InfoPageComponent extends React.Component<IComponentProps, ICompone
   private titleService = resolveInject(TitleService);
   private appInfo = resolveInject(IAppInfo);
   private eventsTracking = resolveInject(IEventsTrackingService);
+  private thirdPartyCreditsMd: string;
 
   constructor(props: IComponentProps) {
     super(props);
     this.state = {};
     this.titleService.setDocumentTitle(_T("About"));
     this.eventsTracking.sendEvent(EventAction.openAbout);
+
+    const contentMd = require("CREDITS.md") as string;
+    const md = new markdown({
+      html: true // Enable HTML tags in source;
+    });
+
+    this.thirdPartyCreditsMd = md.render(contentMd);
   }
 
   render(): JSX.Element {
@@ -33,24 +42,36 @@ export class InfoPageComponent extends React.Component<IComponentProps, ICompone
         <div className="ex-page-content">
           <div className="container">
             <br />
-            <PageHeaderComponent title={_T("About")} />
+            <h1 className="title">Logo sandbox</h1>
+            <br />
+            <h2 className="subtitle">{this.appInfo.description}</h2>
             <br />
             <div className="card">
               <div className="card-content">
+                <h2 className="subtitle">Source code</h2>
+                <p>
+                  Project is hosted on{" "}
+                  <a href="https://github.com/logolang/logo-playground">
+                    <i className="fa fa-github" aria-hidden="true" /> Github
+                  </a>
+                </p>
+                <p>
+                  Deployed on <strong>{this.appInfo.builtOn}</strong>
+                </p>
+                <p>
+                  Code version <strong>{this.appInfo.gitVersion}</strong>
+                </p>
+              </div>
+            </div>
+            <div className="card">
+              <div className="card-content">
+                <h2 className="subtitle">Third-party assets</h2>
                 <div className="content">
-                  <p>{this.appInfo.description}</p>
-                  <p>
-                    <strong>{_T("Package name")}:</strong> {this.appInfo.name}
-                  </p>
-                  <p>
-                    <strong>{_T("App version")}:</strong> {this.appInfo.version}
-                  </p>
-                  <p>
-                    <strong>{_T("Code version")}:</strong> {this.appInfo.gitVersion}
-                  </p>
+                  <div dangerouslySetInnerHTML={{ __html: this.thirdPartyCreditsMd }} />
                 </div>
               </div>
             </div>
+            <br />
           </div>
         </div>
       </div>

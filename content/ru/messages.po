@@ -24,7 +24,7 @@ msgid "Added programs: %d"
 msgstr "Добавленные программы: %d"
 
 msgid "App title"
-msgstr "Песочница Лого"
+msgstr "Лого"
 
 msgid "App version"
 msgstr "Версия приложения"

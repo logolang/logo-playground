@@ -1,8 +1,8 @@
 {
   "name": "logo-sandbox",
   "version": "1.0.0",
-  "license": "SEE LICENSE IN LICENSE.txt",
-  "description": "Logo Sandbox",
+  "license": "MIT",
+  "description": "Online environment for Logo programming language",
   "scripts": {
     "precommit": "lint-staged",
     "build-vendor-dev": "webpack  --config webpack.config.vendor.js",

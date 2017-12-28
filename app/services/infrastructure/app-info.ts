@@ -5,4 +5,5 @@ export abstract class IAppInfo {
   description: string;
   version: string;
   isDevBuild: boolean;
+  builtOn: string;
 }

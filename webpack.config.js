@@ -108,7 +108,8 @@ module.exports = function(env) {
           buildVersion: env.buildVersion,
           name: packageJson.name,
           description: packageJson.description,
-          version: packageJson.version
+          version: packageJson.version,
+          builtOn: new Date().toLocaleDateString() + " " + new Date().toLocaleTimeString()
         })
       }),
 
