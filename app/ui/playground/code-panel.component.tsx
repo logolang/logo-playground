@@ -71,7 +71,7 @@ export class CodePanelComponent extends React.Component<ICodePanelComponentProps
   componentDidMount() {
     this.subscriptions.push(
       this.props.executionService.onIsRunningChanged.subscribe(() => {
-        // Update state to force a component render
+        // Update state to force a component render.
         this.setState({});
       })
     );
