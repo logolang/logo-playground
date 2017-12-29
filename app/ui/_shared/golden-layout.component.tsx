@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as $ from "jquery"; //required for goldenLayout
 import * as goldenLayout from "golden-layout";
-import { Subject } from "rxjs";
+import { Subject, BehaviorSubject } from "rxjs";
 
 import "./golden-layout.component.scss";
 
@@ -14,7 +14,7 @@ export interface IPanelConfig<T, P> {
   componentName: string;
   componentType: Newable<T>;
   props: P;
-  title: string;
+  title: BehaviorSubject<string>;
 }
 
 interface IComponentState {}
@@ -114,7 +114,10 @@ export class GoldenLayoutComponent extends React.Component<IComponentProps, ICom
         console.log("Error: cannot find panel in layout: " + panelContentItem);
         return;
       }
-      panelContentItem.setTitle(panel.title);
+      panelContentItem.setTitle(panel.title.value);
+      panel.title.subscribe(newTitle => {
+        panelContentItem.setTitle(newTitle);
+      });
     }
   }
 

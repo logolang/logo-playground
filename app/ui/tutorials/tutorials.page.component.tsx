@@ -1,6 +1,7 @@
 import * as React from "react";
 import { RouteComponentProps } from "react-router-dom";
 import { Subject } from "rxjs";
+import { BehaviorSubject } from "rxjs/BehaviorSubject";
 
 import { subscribeLoadDataOnPropsParamsChange } from "app/utils/react-helpers";
 import { callActionSafe, ErrorDef } from "app/utils/error-helpers";
@@ -192,7 +193,9 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
                 panelsReloadCheck={() => false}
                 panels={[
                   as<IPanelConfig<TutorialViewComponent, ITutorialViewComponentProps>>({
-                    title: `<i class="fa fa-graduation-cap" aria-hidden="true"></i> ` + _T("Tutorial"),
+                    title: new BehaviorSubject(
+                      `<i class="fa fa-graduation-cap" aria-hidden="true"></i> ` + _T("Tutorial")
+                    ),
                     componentName: "tutorial-panel",
                     componentType: TutorialViewComponent,
                     props: {
@@ -204,7 +207,7 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
                     }
                   }),
                   as<IPanelConfig<CodePanelComponent, ICodePanelComponentProps>>({
-                    title: `<i class="fa fa-code" aria-hidden="true"></i> ` + _T("Code"),
+                    title: new BehaviorSubject(`<i class="fa fa-code" aria-hidden="true"></i> ` + _T("Code")),
                     componentName: "code-panel",
                     componentType: CodePanelComponent,
                     props: {
@@ -213,12 +216,11 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
                       program: this.state.program,
                       saveCurrentEnabled: false,
                       navigateAutomaticallyAfterSaveAs: false,
-                      externalCodeChanges: this.codeChangesStream,
-                      doNotShowLocalChangesIndicator: true
+                      externalCodeChanges: this.codeChangesStream
                     }
                   }),
                   as<IPanelConfig<OutputPanelComponent, IOutputPanelComponentProps>>({
-                    title: `<i class="fa fa-television" aria-hidden="true"></i> ` + _T("Output"),
+                    title: new BehaviorSubject(`<i class="fa fa-television" aria-hidden="true"></i> ` + _T("Output")),
                     componentName: "output-panel",
                     componentType: OutputPanelComponent,
                     props: {

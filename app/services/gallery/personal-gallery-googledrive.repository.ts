@@ -39,7 +39,8 @@ export class ProgramsGoogleDriveRepository implements IUserLibraryRepository {
     const existingPrograms = await this.getAll();
     const pr = existingPrograms.find(p => p.id === id);
     if (pr) {
-      return pr;
+      // return clone of program object - so original will be intact in memory if updates happen
+      return { ...pr };
     }
     throw new Error("Program is not found");
   }

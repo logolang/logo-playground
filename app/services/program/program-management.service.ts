@@ -25,7 +25,7 @@ export class ProgramManagementService {
     @inject(IGallerySamplesRepository) private examplesRepository: IGallerySamplesRepository,
     @inject(IUserLibraryRepository) private personalRepository: IUserLibraryRepository,
     @inject(ILocalTempCodeStorage) private localTempStorage: ILocalTempCodeStorage,
-    @inject(GistSharedProgramsRepository) private gistRepositpry: GistSharedProgramsRepository
+    @inject(GistSharedProgramsRepository) private gistRepository: GistSharedProgramsRepository
   ) {}
 
   loadProgram = async (programId?: string, storageType?: ProgramStorageType): Promise<ProgramModel> => {
@@ -92,7 +92,7 @@ export class ProgramManagementService {
           program.storageType = ProgramStorageType.gallery;
           break;
         case ProgramStorageType.gist:
-          program = await this.gistRepositpry.get(programId);
+          program = await this.gistRepository.get(programId);
           program.storageType = ProgramStorageType.gist;
           break;
       }

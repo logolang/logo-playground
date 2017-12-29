@@ -1,6 +1,6 @@
 import * as React from "react";
 import { RouteComponentProps } from "react-router-dom";
-import { Subject } from "rxjs";
+import { Subject, BehaviorSubject } from "rxjs";
 import { ISubscription } from "rxjs/Subscription";
 
 import { as } from "app/utils/syntax-helpers";
@@ -61,6 +61,8 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
   private eventsTracking = resolveInject(IEventsTrackingService);
   private executionService = new ProgramExecutionContext();
   private layoutChangedSubject = new Subject<void>();
+  private codePanelTitle = new BehaviorSubject<string>("");
+  private outputPanelTitle = new BehaviorSubject<string>("");
 
   private errorHandler = (err: ErrorDef) => {
     this.notificationService.push({ message: err.message, type: "danger" });
@@ -122,6 +124,16 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
     this.layoutChangedSubject.next();
   };
 
+  private setCodePanelTitle(programName: string, programId: string, hasChanges: boolean) {
+    let title = `<i class="fa fa-code" aria-hidden="true"></i> ` + (programName || _T("Code"));
+    if (hasChanges && programId) {
+      title += ` <i class="fa fa-circle" aria-hidden="true" style="transform: scale(0.7, 0.7);" title="${_T(
+        "This program has changes"
+      )}"></i>`;
+    }
+    this.codePanelTitle.next(title);
+  }
+
   async loadData(props: IComponentProps) {
     this.setState({ isLoading: true });
 
@@ -157,6 +169,9 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
 
     const theme = this.themesService.getTheme(userSettings.themeName);
     const turtleImage = this.turtlesService.getTurtleImage(userSettings.turtleId);
+
+    this.setCodePanelTitle(programModel.name, programModel.id, programModel.hasTempLocalModifications);
+    this.outputPanelTitle.next(`<i class="fa fa-television" aria-hidden="true"></i> ` + _T("Output"));
 
     this.setState({
       isLoading: false,
@@ -200,8 +215,7 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
                 }}
                 panels={[
                   as<IPanelConfig<CodePanelComponent, ICodePanelComponentProps>>({
-                    title:
-                      `<i class="fa fa-code" aria-hidden="true"></i> ` + (this.state.program.name || _T("Playground")),
+                    title: this.codePanelTitle,
                     componentName: "code-panel",
                     componentType: CodePanelComponent,
                     props: {
@@ -210,11 +224,13 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
                       editorTheme: this.state.theme.codeEditorThemeName,
                       executionService: this.executionService,
                       navigateAutomaticallyAfterSaveAs: true,
-                      containerResized: this.layoutChangedSubject
+                      containerResized: this.layoutChangedSubject,
+                      hasChangesStatus: hasChanges =>
+                        this.setCodePanelTitle(this.state.program!.name, this.state.program!.id, hasChanges)
                     }
                   }),
                   as<IPanelConfig<OutputPanelComponent, IOutputPanelComponentProps>>({
-                    title: `<i class="fa fa-television" aria-hidden="true"></i> ` + _T("Output"),
+                    title: this.outputPanelTitle,
                     componentName: "output-panel",
                     componentType: OutputPanelComponent,
                     props: {

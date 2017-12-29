@@ -36,7 +36,8 @@ export class ProgramsLocalStorageRepository implements IUserLibraryRepository {
   async get(id: string): Promise<ProgramModel> {
     const program = this.getProgramFromStorage(this.getStorageKey(id));
     if (program) {
-      return program;
+      // return clone of program object - so original will be intact in memory if updates happen
+      return { ...program };
     }
     throw new Error(`Program with id ${id} is not found`);
   }
