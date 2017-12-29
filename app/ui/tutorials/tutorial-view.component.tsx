@@ -12,6 +12,7 @@ import {
   ITutorialStepContent
 } from "app/services/tutorials/tutorials-content-service";
 import { IEventsTrackingService, EventAction } from "app/services/infrastructure/events-tracking.service";
+import { ErrorDef, callActionSafe } from "app/utils/error-helpers";
 
 import { TutorialSelectModalComponent } from "app/ui/tutorials/tutorial-select-modal.component";
 import { ModalComponent } from "app/ui/_generic/modal.component";
@@ -36,10 +37,10 @@ export interface ITutorialNavigationRequest {
 
 export interface ITutorialViewComponentProps {
   onFixTheCode(newCode: string): void;
-  onNavigateRequest(tutorialId: string, stepId: string): void;
+  onLoadedTutorial(tutorialId: string, stepId: string, initCode: string): void;
   tutorials: ITutorialInfo[];
-  currentTutorialId: string;
-  currentStepId: string;
+  initialTutorialId: string;
+  initialStepId: string;
 }
 
 interface IComponentState {
@@ -67,34 +68,31 @@ export class TutorialViewComponent extends React.Component<ITutorialViewComponen
     };
   }
 
+  private errorHandler = (err: ErrorDef) => {
+    this.notificationService.push({ message: err.message, type: "danger" });
+  };
+
   async componentDidMount() {
-    await this.loadData(this.props);
+    await this.loadTutorial(this.props.initialTutorialId, this.props.initialStepId);
   }
 
-  async componentWillReceiveProps(nextProps: ITutorialViewComponentProps) {
-    if (
-      this.props.currentTutorialId !== nextProps.currentTutorialId ||
-      this.props.currentStepId !== nextProps.currentStepId
-    ) {
-      await this.loadData(nextProps);
-    }
-  }
-
-  loadData = async (props: ITutorialViewComponentProps) => {
+  loadTutorial = async (tutorialId: string, stepId: string) => {
     this.setState({ isLoading: true });
 
     //calculate stepIndex
-    const currentTutorial = this.props.tutorials.find(x => x.id === this.props.currentTutorialId);
+    const currentTutorial = this.props.tutorials.find(x => x.id === tutorialId);
     if (!currentTutorial) {
-      throw new Error("Can't find tutorial " + this.props.currentTutorialId);
+      throw new Error("Can't find tutorial " + tutorialId);
     }
-    const currentStepIndex = currentTutorial.steps.findIndex(x => x.id === this.props.currentStepId);
+    const currentStepIndex = currentTutorial.steps.findIndex(x => x.id === stepId);
     if (currentStepIndex < 0) {
-      throw new Error("Can't find step " + this.props.currentStepId);
+      throw new Error("Can't find step " + stepId);
     }
     const currentStepInfo = currentTutorial.steps[currentStepIndex];
 
-    const currentStepContent = await this.tutorialsLoader.getStep(props.currentTutorialId, props.currentStepId);
+    const currentStepContent = await callActionSafe(this.errorHandler, async () =>
+      this.tutorialsLoader.getStep(tutorialId, stepId)
+    );
     if (!currentStepContent) {
       return;
     }
@@ -106,6 +104,8 @@ export class TutorialViewComponent extends React.Component<ITutorialViewComponen
       currentTutorial,
       currentStepInfo
     });
+
+    this.props.onLoadedTutorial(tutorialId, stepId, currentStepContent.initialCode);
   };
 
   render(): JSX.Element {
@@ -225,15 +225,15 @@ export class TutorialViewComponent extends React.Component<ITutorialViewComponen
     return (
       <TutorialSelectModalComponent
         tutorials={this.props.tutorials}
-        currentTutorialId={this.props.currentTutorialId}
-        currentStepId={this.props.currentStepId}
+        currentTutorialId={this.state.currentTutorial.id}
+        currentStepId={this.state.currentStepInfo.id}
         onCancel={() => {
           this.setState({ showSelectionTutorials: false });
         }}
-        onSelect={tutorial => {
+        onSelect={async tutorial => {
           this.eventsTracking.sendEvent(EventAction.tutorialsStart);
           this.setState({ showSelectionTutorials: false });
-          this.props.onNavigateRequest(tutorial.id, tutorial.steps[0].id);
+          await this.loadTutorial(tutorial.id, tutorial.steps[0].id);
         }}
       />
     );
@@ -268,12 +268,14 @@ export class TutorialViewComponent extends React.Component<ITutorialViewComponen
   }
 
   navigateToNextStep = (direction: number) => {
-    return () => {
+    return async () => {
       if (this.state.currentStepInfo && this.state.currentTutorial && this.state.currentStepIndex !== undefined) {
         this.eventsTracking.sendEvent(direction > 0 ? EventAction.tutorialsNext : EventAction.tutorialsBack);
 
         const newStepIndex = this.state.currentStepIndex + direction;
-        this.props.onNavigateRequest(this.state.currentTutorial.id, this.state.currentTutorial.steps[newStepIndex].id);
+        const newStepId = this.state.currentTutorial.steps[newStepIndex].id;
+        this.setState({ isLoading: true });
+        await this.loadTutorial(this.state.currentTutorial.id, newStepId);
       }
     };
   };

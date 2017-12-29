@@ -28,7 +28,6 @@ import { GallerySamplesRepository, IGallerySamplesRepository } from "app/service
 import { GoogleAuthService } from "app/services/login/google-auth.service";
 import { LoginService, ILoginService } from "app/services/login/login.service";
 import { ProgramManagementService } from "app/services/program/program-management.service";
-import { TutorialsCodeRepository, ITutorialsSamplesRepository } from "app/services/tutorials/tutorials-code.repository";
 import { GistSharedProgramsRepository } from "app/services/program/gist-shared-programs.repository";
 import { AuthProvider } from "app/services/login/user-info";
 import { ProgramsGoogleDriveRepository } from "app/services/gallery/personal-gallery-googledrive.repository";
@@ -117,7 +116,6 @@ export class DependecyInjectionSetup {
     }
 
     container.bind(IGallerySamplesRepository).to(GallerySamplesRepository);
-    container.bind(ITutorialsSamplesRepository).to(TutorialsCodeRepository);
     container.bind(ProgramManagementService).to(ProgramManagementService);
     container.bind(GistSharedProgramsRepository).to(GistSharedProgramsRepository);
   }
