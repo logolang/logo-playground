@@ -60,6 +60,12 @@ export class GoldenLayoutComponent extends React.Component<IComponentProps, ICom
   }
 
   onWindowResize = () => {
+    if (window.matchMedia && window.matchMedia("only screen and (max-width: 760px)").matches) {
+      /* Skip window resizing on mobile devices - bacause we should have browser full screen anyway
+       and resizing is occuring due to on-screen keyboard toggling
+       */
+      return;
+    }
     if (this.layout) {
       this.layout.updateSize();
     }
