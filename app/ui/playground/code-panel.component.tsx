@@ -142,7 +142,6 @@ export class CodePanelComponent extends React.Component<ICodePanelComponentProps
           className="code-input-container"
           editorTheme={this.props.editorTheme}
           code={this.state.code}
-          focusCommands={execService.focusCommands}
           onChanged={this.onCodeChanged}
           onHotkey={this.onRunProgram}
           containerResized={this.props.containerResized}
