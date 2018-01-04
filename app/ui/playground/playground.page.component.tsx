@@ -25,6 +25,10 @@ import { GoldenLayoutComponent, IPanelConfig, GoldenLayoutConfig } from "app/ui/
 import { CodePanelComponent, ICodePanelComponentProps } from "app/ui/playground/code-panel.component";
 import { OutputPanelComponent, IOutputPanelComponentProps } from "app/ui/playground/output-panel.component";
 import { LoadingComponent } from "app/ui/_generic/loading.component";
+import {
+  playgroundDefaultLayout,
+  playgroundDefaultMobileLayout
+} from "app/ui/playground/playground-default-goldenlayout";
 
 import "./playground.page.component.scss";
 
@@ -49,8 +53,6 @@ forward 100
 arc 360 50
 `;
 
-export { ProgramStorageType };
-
 export class PlaygroundPageComponent extends React.Component<IComponentProps, IComponentState> {
   private notificationService = resolveInject(INotificationService);
   private titleService = resolveInject(TitleService);
@@ -69,31 +71,7 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
     this.setState({ isLoading: false });
   };
 
-  private defaultLayoutConfigJSON = JSON.stringify({
-    content: [
-      {
-        type: "row",
-        content: [
-          {
-            title: "",
-            type: "react-component",
-            component: "output-panel",
-            componentName: "output-panel",
-            width: 60,
-            isClosable: false
-          },
-          {
-            title: "",
-            type: "react-component",
-            component: "code-panel",
-            componentName: "code-panel",
-            width: 40,
-            isClosable: false
-          }
-        ]
-      }
-    ]
-  });
+  private defaultLayoutConfigJSON: string;
 
   constructor(props: IComponentProps) {
     super(props);
@@ -110,6 +88,10 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
 
   async componentDidMount() {
     this.titleService.setDocumentTitle(_T("Playground"));
+    const isMobile = window.matchMedia && window.matchMedia("only screen and (max-width: 760px)").matches;
+    this.defaultLayoutConfigJSON = isMobile
+      ? JSON.stringify(playgroundDefaultMobileLayout)
+      : JSON.stringify(playgroundDefaultLayout);
     await this.loadData(this.props);
   }
 

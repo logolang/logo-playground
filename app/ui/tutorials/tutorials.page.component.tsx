@@ -34,7 +34,7 @@ import {
 } from "app/ui/tutorials/tutorial-view.component";
 import { LoadingComponent } from "app/ui/_generic/loading.component";
 import { IEventsTrackingService, EventAction } from "app/services/infrastructure/events-tracking.service";
-import { tutorialsDefaultLayout } from "app/ui/tutorials/tutorials-default-goldenlayout";
+import { tutorialsDefaultLayout, tutorialsDefaultMobileLayout } from "app/ui/tutorials/tutorials-default-goldenlayout";
 import { ProgramModelConverter } from "app/services/program/program-model.converter";
 
 interface IComponentState {
@@ -68,7 +68,7 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
   private executionService = new ProgramExecutionContext();
   private codeChangesStream = new Subject<string>();
 
-  private defaultLayoutConfigJSON = JSON.stringify(tutorialsDefaultLayout);
+  private defaultLayoutConfigJSON: string;
 
   private errorHandler = (err: ErrorDef) => {
     this.notificationService.push({ message: err.message, type: "danger" });
@@ -85,6 +85,10 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
   async componentDidMount() {
     this.titleService.setDocumentTitle(_T("Tutorials"));
     this.eventsTracking.sendEvent(EventAction.tutorialsOpen);
+    const isMobile = window.matchMedia && window.matchMedia("only screen and (max-width: 760px)").matches;
+    this.defaultLayoutConfigJSON = isMobile
+      ? JSON.stringify(tutorialsDefaultMobileLayout)
+      : JSON.stringify(tutorialsDefaultLayout);
     await this.loadData(this.props);
   }
 

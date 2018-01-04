@@ -92,9 +92,12 @@ export class GoldenLayoutComponent extends React.Component<IComponentProps, ICom
       (panelConfig as any).componentState = {};
     }
     config.settings = {
-      showMaximiseIcon: false,
-      showPopoutIcon: false,
-      showCloseIcon: false
+      ...(config.settings || {}),
+      ...{
+        showMaximiseIcon: false,
+        showPopoutIcon: false,
+        showCloseIcon: false
+      }
     };
     config.dimensions = {
       headerHeight: 32
