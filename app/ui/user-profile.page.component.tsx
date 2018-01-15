@@ -149,170 +149,207 @@ export class UserProfilePageComponent extends React.Component<IComponentProps, I
 
   render(): JSX.Element {
     return (
-      <div>
+      <div className="ex-page-container">
         <MainMenuComponent />
-        <div className="container">
-          <br />
-          <PageHeaderComponent title={_T("User settings")} />
+        <div className="ex-page-content">
+          <div className="container">
+            <br />
+            <PageHeaderComponent title={_T("User settings")} />
 
-          {this.state.userSettings &&
-            this.state.currentLocale &&
-            this.state.theme &&
-            this.state.userInfo && (
-              <div className="tile is-ancestor">
-                <div className="tile is-6 is-vertical is-parent">
-                  <div className="tile is-child box">
-                    <p>
-                      <strong>{_T("Name")}:</strong> {this.state.userInfo.attributes.name}
-                    </p>
-                    <p>
-                      <strong>{_T("Email")}:</strong> {this.state.userInfo.attributes.email}
-                    </p>
-                  </div>
-                  <div className="tile is-child box">
-                    <div className="field">
-                      <label className="label">{_T("Language")}</label>
-                      <div className="control">
-                        <div className="select">
-                          <select
-                            id="localeselector"
-                            value={this.state.currentLocale.id}
-                            onChange={event => {
-                              const selectedLocation = this.localizationService
-                                .getSupportedLocales()
-                                .find(loc => loc.id === event.target.value);
-                              if (selectedLocation) {
-                                setTimeout(async () => {
-                                  await this.userSettingsService.update({ localeId: selectedLocation.id });
-                                  // refresh browser window
-                                  window.location.reload(true);
-                                }, 0);
-                              }
-                              return {};
-                            }}
-                          >
-                            {this.localizationService.getSupportedLocales().map(loc => {
-                              return (
-                                <option key={loc.id} value={loc.id}>
-                                  {loc.name}
-                                </option>
-                              );
-                            })}
-                          </select>
+            {this.state.userSettings &&
+              this.state.currentLocale &&
+              this.state.theme &&
+              this.state.userInfo && (
+                <div className="columns">
+                  <div className="column">
+                    <div className="card">
+                      <div className="card-content">
+                        <div className="media">
+                          {this.state.userInfo.attributes.imageUrl && (
+                            <div className="media-left">
+                              <figure className="image is-48x48">
+                                <img src={this.state.userInfo.attributes.imageUrl} alt="User image" />
+                              </figure>
+                            </div>
+                          )}
+
+                          <div className="media-content">
+                            <p className="title is-4">{this.state.userInfo.attributes.name || _T("Guest")}</p>
+                            <p className="subtitle is-6">{this.state.userInfo.attributes.email}</p>
+                          </div>
                         </div>
-                      </div>
-                    </div>
 
-                    <div className="field">
-                      <label className="label">{_T("User interface theme")}</label>
-                      <div className="control">
-                        <div className="select">
-                          <select
-                            id="themeselector"
-                            value={this.state.theme.name}
-                            onChange={event => {
-                              const selectedTheme = this.themeService
-                                .getAllThemes()
-                                .find(t => t.name === event.target.value);
-                              if (selectedTheme) {
-                                setTimeout(async () => {
-                                  await this.userSettingsService.update({ themeName: selectedTheme.name });
-                                  window.localStorage.setItem(
-                                    (window as any).appThemeNameLocalStorageKey,
-                                    JSON.stringify(selectedTheme)
+                        <div className="content">
+                          {this.currentUser.getLoginStatus().isLoggedIn ? (
+                            <>
+                              <p>
+                                {_T("You are logged in with %s authentication.", {
+                                  value: this.state.userInfo.attributes.authProvider.toLowerCase()
+                                })}
+                              </p>
+                            </>
+                          ) : (
+                            <>
+                              <p>{_T("NOT_LOGGED_IN_TEXT_BLOCK")}</p>
+                              <Link to={Routes.loginRoot.build({})} className="button is-primary">
+                                {_T("Log in")}
+                              </Link>
+                            </>
+                          )}
+                        </div>
+
+                        <br />
+
+                        <div className="field">
+                          <label className="label">{_T("Language")}</label>
+                          <div className="control">
+                            <div className="select">
+                              <select
+                                id="localeselector"
+                                value={this.state.currentLocale.id}
+                                onChange={event => {
+                                  const selectedLocation = this.localizationService
+                                    .getSupportedLocales()
+                                    .find(loc => loc.id === event.target.value);
+                                  if (selectedLocation) {
+                                    setTimeout(async () => {
+                                      await this.userSettingsService.update({ localeId: selectedLocation.id });
+                                      // refresh browser window
+                                      window.location.reload(true);
+                                    }, 0);
+                                  }
+                                  return {};
+                                }}
+                              >
+                                {this.localizationService.getSupportedLocales().map(loc => {
+                                  return (
+                                    <option key={loc.id} value={loc.id}>
+                                      {loc.name}
+                                    </option>
                                   );
-                                  // refresh browser window
-                                  window.location.reload(true);
-                                }, 0);
-                              }
-                              return {};
-                            }}
-                          >
-                            {this.themeService.getAllThemes().map(t => {
-                              return (
-                                <option key={t.name} value={t.name}>
-                                  {t.name} - {t.description}
-                                </option>
-                              );
-                            })}
-                          </select>
+                                })}
+                              </select>
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                    </div>
 
-                    <label className="label">{_T("Turtle")}</label>
-                    <div className="field is-grouped">
-                      <div className="control">
-                        <div className="select">
-                          <select
-                            id="turtleSelector"
-                            value={this.state.userSettings.turtleId}
-                            onChange={async event => {
-                              const value = event.target.value;
-                              await this.userSettingsService.update({ turtleId: value });
-                              await this.loadData();
-                              this.setRandomCode();
-                            }}
-                          >
-                            {this.turtleCustomizationService.getAllTurtles().map(t => {
-                              return (
-                                <option key={t.id} value={t.id}>
-                                  {t.getName()}
-                                </option>
-                              );
-                            })}
-                          </select>
-                        </div>
-                      </div>
-                      <div className="control">
-                        <div className="select">
-                          <select
-                            id="turtleSelector"
-                            value={this.state.userSettings.turtleSize}
-                            onChange={async event => {
-                              const value = parseInt(event.target.value, 10);
-                              await this.userSettingsService.update({ turtleSize: value });
-                              await this.loadData();
-                              this.setRandomCode();
-                            }}
-                          >
-                            <option value={20}>{_T("Extra Small")}</option>
-                            <option value={32}>{_T("Small")}</option>
-                            <option value={40}>{_T("Medium")}</option>
-                            <option value={52}>{_T("Large")}</option>
-                            <option value={72}>{_T("Huge")}</option>
-                          </select>
-                        </div>
-                      </div>
-                    </div>
+                        <br />
 
-                    <label className="label">{_T("Personal library")}</label>
-                    <p className="help">
-                      <span>
-                        {_T("You have %d program", {
-                          plural: "You have %d programs",
-                          value: this.state.programCount
-                        })}
-                      </span>
-                    </p>
-                    <div className="field is-grouped is-grouped-multiline">
-                      <p className="control">
-                        <a className="button" onClick={this.doExport}>
-                          {_T("Export")}
-                        </a>
-                      </p>
-                      <p className="control">
-                        <FileSelectorComponent
-                          className={cn({ "is-loading": this.state.isImportingInProgress })}
-                          buttonText={_T("Import")}
-                          onFileTextContentReady={this.onImport}
-                        />
-                      </p>
+                        <div className="field">
+                          <label className="label">{_T("User interface theme")}</label>
+                          <div className="control">
+                            <div className="select">
+                              <select
+                                id="themeselector"
+                                value={this.state.theme.name}
+                                onChange={event => {
+                                  const selectedTheme = this.themeService
+                                    .getAllThemes()
+                                    .find(t => t.name === event.target.value);
+                                  if (selectedTheme) {
+                                    setTimeout(async () => {
+                                      await this.userSettingsService.update({ themeName: selectedTheme.name });
+                                      window.localStorage.setItem(
+                                        (window as any).appThemeNameLocalStorageKey,
+                                        JSON.stringify(selectedTheme)
+                                      );
+                                      // refresh browser window
+                                      window.location.reload(true);
+                                    }, 0);
+                                  }
+                                  return {};
+                                }}
+                              >
+                                {this.themeService.getAllThemes().map(t => {
+                                  return (
+                                    <option key={t.name} value={t.name}>
+                                      {t.name} - {t.description}
+                                    </option>
+                                  );
+                                })}
+                              </select>
+                            </div>
+                          </div>
+                        </div>
+
+                        <br />
+
+                        <label className="label">{_T("Turtle")}</label>
+                        <div className="field is-grouped">
+                          <div className="control">
+                            <div className="select">
+                              <select
+                                id="turtleSelector"
+                                value={this.state.userSettings.turtleId}
+                                onChange={async event => {
+                                  const value = event.target.value;
+                                  await this.userSettingsService.update({ turtleId: value });
+                                  await this.loadData();
+                                  this.setRandomCode();
+                                }}
+                              >
+                                {this.turtleCustomizationService.getAllTurtles().map(t => {
+                                  return (
+                                    <option key={t.id} value={t.id}>
+                                      {t.getName()}
+                                    </option>
+                                  );
+                                })}
+                              </select>
+                            </div>
+                          </div>
+                          <div className="control">
+                            <div className="select">
+                              <select
+                                id="turtleSelector"
+                                value={this.state.userSettings.turtleSize}
+                                onChange={async event => {
+                                  const value = parseInt(event.target.value, 10);
+                                  await this.userSettingsService.update({ turtleSize: value });
+                                  await this.loadData();
+                                  this.setRandomCode();
+                                }}
+                              >
+                                <option value={20}>{_T("Extra Small")}</option>
+                                <option value={32}>{_T("Small")}</option>
+                                <option value={40}>{_T("Medium")}</option>
+                                <option value={52}>{_T("Large")}</option>
+                                <option value={72}>{_T("Huge")}</option>
+                              </select>
+                            </div>
+                          </div>
+                        </div>
+
+                        <br />
+
+                        <label className="label">{_T("Personal library")}</label>
+                        <p className="help">
+                          <span>
+                            {_T("You have %d program", {
+                              plural: "You have %d programs",
+                              value: this.state.programCount
+                            })}
+                          </span>
+                        </p>
+                        <div className="field is-grouped is-grouped-multiline">
+                          <p className="control">
+                            <a className="button" onClick={this.doExport}>
+                              {_T("Export")}
+                            </a>
+                          </p>
+                          <p className="control">
+                            <FileSelectorComponent
+                              className={cn({ "is-loading": this.state.isImportingInProgress })}
+                              buttonText={_T("Import")}
+                              onFileTextContentReady={this.onImport}
+                            />
+                          </p>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div className="tile is-parent">
-                  <div className="tile is-child box">
+
+                  <div className="column">
                     {[
                       <LogoExecutorComponent
                         key={`${JSON.stringify(this.state.userSettings)}`} //this is a hack to force component to be created each render in order to not handle prop change event
@@ -326,8 +363,8 @@ export class UserProfilePageComponent extends React.Component<IComponentProps, I
                     ]}
                   </div>
                 </div>
-              </div>
-            )}
+              )}
+          </div>
         </div>
       </div>
     );

@@ -14,7 +14,7 @@ export const NotLoggenInStatus: LoginStatus = Object.freeze({
       authProvider: AuthProvider.none,
       email: "",
       imageUrl: "",
-      name: "Guest"
+      name: ""
     },
     id: "0"
   }
