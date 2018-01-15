@@ -119,7 +119,11 @@ export class UserProfilePageComponent extends React.Component<IComponentProps, I
       this.exportInportService.exportAll(this.programsReporitory)
     );
     if (programs) {
-      const html = new ProgramsHtmlSerializerService().serialize(programs);
+      const html = await new ProgramsHtmlSerializerService().serialize(
+        programs,
+        this.currentUser.getLoginStatus().userInfo.attributes.name,
+        this.currentUser.getLoginStatus().userInfo.attributes.imageUrl
+      );
       const blob = new Blob([html], { type: "text/plain;charset=utf-8" });
       FileSaver.saveAs(blob, `my-logo-programs.html`);
     }

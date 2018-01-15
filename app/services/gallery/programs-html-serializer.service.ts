@@ -34,7 +34,8 @@ export class ProgramsHtmlSerializerService {
     return result;
   }
 
-  public serialize(programs: ProgramModel[]) {
+  public async serialize(programs: ProgramModel[], username: string, userpicUrl: string) {
+    const imageData64Url = await this.getImageBase64ByUrl(userpicUrl);
     return `<!DOCTYPE html>
     <html>
     <head>
@@ -47,7 +48,7 @@ export class ProgramsHtmlSerializerService {
                 margin: 20px 100px;
             }
 
-            h1 {
+            header {
                 padding: 10px;
                 border-bottom: 1px solid gray;
             }
@@ -64,14 +65,16 @@ export class ProgramsHtmlSerializerService {
         </style>
     </head>
     <body>
-        <div class="container">
-            <h1 class="title">Logo personal library</h1>
-            <table>
-                <tbody>
-                    ${programs.map(p => this.serializeProgram(p)).join("")}
-                </tbody>
-            </table>
-        </div>
+      <header>
+        <h1>Logo personal library</h1>
+        <h3>${username}</h3>
+        ${imageData64Url ? `<img src="${imageData64Url}"></img>` : ""}
+      </header>
+      <table>
+        <tbody>
+          ${programs.map(p => this.serializeProgram(p)).join("")}
+        </tbody>
+      </table>
     </body>
     </html>
     `;
@@ -114,5 +117,33 @@ export class ProgramsHtmlSerializerService {
     const result = div.innerHTML;
     div.remove();
     return result;
+  }
+
+  private async getImageBase64ByUrl(imgUrl: string): Promise<string> {
+    if (!imgUrl) {
+      return "";
+    }
+    return new Promise<string>((resolve, reject) => {
+      const imgElt = document.createElement("img");
+      imgElt.addEventListener("load", () => {
+        try {
+          const canvasElt = document.createElement("canvas");
+          canvasElt.width = imgElt.width;
+          canvasElt.height = imgElt.height;
+          const ctx = canvasElt.getContext("2d");
+          if (!ctx) {
+            resolve("");
+            return;
+          }
+          ctx.drawImage(imgElt, 0, 0);
+          var dataURL = canvasElt.toDataURL("image/jpeg", 0.5);
+          resolve(dataURL);
+        } catch (ex) {
+          resolve("");
+        }
+      });
+      imgElt.setAttribute("crossOrigin", "Anonymous");
+      imgElt.setAttribute("src", imgUrl);
+    });
   }
 }

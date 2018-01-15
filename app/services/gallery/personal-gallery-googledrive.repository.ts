@@ -57,7 +57,11 @@ export class ProgramsGoogleDriveRepository implements IUserLibraryRepository {
       programsToStore.push(program);
     }
 
-    const serializedData = this.serializationService.serialize(programsToStore);
+    const serializedData = await this.serializationService.serialize(
+      programsToStore,
+      this.currentUser.getLoginStatus().userInfo.attributes.name,
+      this.currentUser.getLoginStatus().userInfo.attributes.imageUrl
+    );
     if (storedData.fileId) {
       await this.googleDriveClient.updateFile(
         storedData.fileId,
@@ -77,7 +81,11 @@ export class ProgramsGoogleDriveRepository implements IUserLibraryRepository {
   async remove(id: string): Promise<void> {
     const storedData = await this.getStoredData();
     const programsToStore = storedData.programs.filter(p => p.id !== id);
-    const serializedData = this.serializationService.serialize(programsToStore);
+    const serializedData = await this.serializationService.serialize(
+      programsToStore,
+      this.currentUser.getLoginStatus().userInfo.attributes.name,
+      this.currentUser.getLoginStatus().userInfo.attributes.imageUrl
+    );
     if (storedData.fileId) {
       await this.googleDriveClient.updateFile(
         storedData.fileId,
