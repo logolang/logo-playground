@@ -67,6 +67,7 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
 
   private executionService = new ProgramExecutionContext();
   private codeChangesStream = new Subject<string>();
+  private layoutChangesStream = new Subject<void>();
 
   private defaultLayoutConfigJSON: string;
 
@@ -98,6 +99,7 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
 
   layoutChanged = (newLayoutJSON: string): void => {
     this.userSettingsService.update({ tutorialsLayoutJSON: newLayoutJSON });
+    this.layoutChangesStream.next();
   };
 
   async loadData(props: IComponentProps) {
@@ -220,7 +222,8 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
                       program: this.state.program,
                       saveCurrentEnabled: false,
                       navigateAutomaticallyAfterSaveAs: false,
-                      externalCodeChanges: this.codeChangesStream
+                      externalCodeChanges: this.codeChangesStream,
+                      containerResized: this.layoutChangesStream
                     }
                   }),
                   as<IPanelConfig<OutputPanelComponent, IOutputPanelComponentProps>>({
