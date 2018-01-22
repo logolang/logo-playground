@@ -22,6 +22,7 @@ import { ProgramStorageType } from "app/services/program/program-management.serv
 import { ICurrentUserService } from "app/services/login/current-user.service";
 import { TitleService } from "app/services/infrastructure/title.service";
 import { IEventsTrackingService, EventAction } from "app/services/infrastructure/events-tracking.service";
+import { createCompareFuntion } from "app/utils/syntax-helpers";
 
 import "./gallery.page.component.scss";
 
@@ -62,13 +63,16 @@ export class GalleryPageComponent extends React.Component<IComponentProps, IComp
   }
 
   async loadData() {
+    const sortingFunction = createCompareFuntion<ProgramModel>(x => x.dateLastEdited, "desc");
     const samples = await this.samplesRepo.getAll();
+    samples.sort(sortingFunction);
     this.setState({
       samples: samples
     });
 
     this.setState({ isLoading: true });
     const programs = await this.programsRepo.getAll();
+    programs.sort(sortingFunction);
     this.setState({
       programs,
       isLoading: false

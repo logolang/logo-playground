@@ -34,3 +34,20 @@ export type DictionaryLike<V> = { [name: string]: V };
 export function as<T>(object: T): T {
   return object;
 }
+
+export type WeightFunction<T> = (x: T) => number | string | Date;
+
+export function createCompareFuntion<T>(weightFn: WeightFunction<T>, order: "asc" | "desc" = "asc") {
+  const isAsc = order === "asc";
+  return function(x1: T, x2: T) {
+    const w1 = weightFn(x1);
+    const w2 = weightFn(x2);
+    if (w1 > w2) {
+      return isAsc ? 1 : -1;
+    }
+    if (w1 < w2) {
+      return isAsc ? -1 : 1;
+    }
+    return 0;
+  };
+}
