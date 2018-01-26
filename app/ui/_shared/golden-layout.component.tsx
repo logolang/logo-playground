@@ -3,7 +3,7 @@ import * as $ from "jquery"; //required for goldenLayout
 import * as goldenLayout from "golden-layout";
 import { Subject, BehaviorSubject } from "rxjs";
 
-import "./golden-layout.component.scss";
+import "./golden-layout.component.less";
 
 interface Newable<T> {
   new (...args: any[]): T;

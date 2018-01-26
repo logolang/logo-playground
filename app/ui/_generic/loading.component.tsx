@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as cn from "classnames";
 
-import "./loading.component.scss";
+import "./loading.component.less";
 
 interface IComponentProps {
   isLoading?: boolean;

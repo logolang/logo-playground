@@ -30,38 +30,67 @@
 
 <body>
     <script type="text/javascript">
-        var theme = {
+        var appThemeNameLocalStorageKey = 'logolang-app-uitheme';
+        var defaultTheme = {
+            name: "Default",
+            description: "Bulma as-is",
             isDark: false,
+            codeEditorThemeName: "eclipse",
             styleLinks: [
                 "content/css/bulma/default/bulmaswatch.min.css",
                 "content/css/codemirror/themes/eclipse.css",
                 "content/css/golden-layout/goldenlayout-light-theme.css"
             ]
         };
-        try {
-            window.appThemeNameLocalStorageKey = 'logolang-app-uitheme';
-            var storedTheme = window.localStorage.getItem(window.appThemeNameLocalStorageKey);
-            if (storedTheme) {
-                var parsedTheme = JSON.parse(storedTheme);
-                if (parsedTheme.styleLinks && Array.isArray(parsedTheme.styleLinks)) {
-                    theme = parsedTheme;
-                }
-                if (theme.isDark) {
-                    document.body.className = document.body.className + "is-dark";
+
+        function getActiveTheme() {
+            try {
+                var storedThemeJSON = window.localStorage.getItem(appThemeNameLocalStorageKey);
+                if (storedThemeJSON) {
+                    var parsedTheme = JSON.parse(storedThemeJSON);
+                    if (parsedTheme.styleLinks && Array.isArray(parsedTheme.styleLinks)) {
+                        return parsedTheme;
+                    }
                 }
             }
-        }
-        catch (ex) {
+            catch (ex) {
+            }
         }
 
-        function injectCssLink(linkUrl) {
+        function injectCssLink(linkUrl, themeName) {
             var link = document.createElement('link');
+            link.setAttribute('data-theme-name', themeName);
             link.setAttribute('rel', 'stylesheet');
             link.setAttribute('type', 'text/css');
             link.setAttribute('href', linkUrl + '?{{htmlWebpackPlugin.options.variables.appGitVersion}}');
             document.getElementsByTagName('head')[0].appendChild(link);
         }
-        theme.styleLinks.forEach(x => injectCssLink(x));
+
+        function activateTheme(theme, isFirstTime) {
+            window.localStorage.setItem(appThemeNameLocalStorageKey, JSON.stringify(theme));
+            document.body.className = document.body.className.replace("is-dark", "").replace("is-light", "")
+                + (theme.isDark ? "is-dark" : "is-light");
+            theme.styleLinks.forEach(x => injectCssLink(x, theme.name));
+            if (!isFirstTime) {
+                // remove old theme files
+                setTimeout(() => {
+                    var themeLinks = document.querySelectorAll("[data-theme-name]");
+                    for (var i = 0; i < themeLinks.length; ++i) {
+                        if (themeLinks[i].getAttribute("data-theme-name") !== theme.name) {
+                            themeLinks[i].remove();
+                        }
+                    }
+                }, 1000);
+            }
+        }
+        window.themeManager = {
+            activateTheme: activateTheme,
+            getActiveTheme: getActiveTheme,
+            defaultTheme: defaultTheme
+        };
+
+        var theme = getActiveTheme() || defaultTheme;
+        activateTheme(theme, true);
     </script>
 
     <div id="app-container">

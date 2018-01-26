@@ -10,7 +10,7 @@ import { LoadingComponent } from "app/ui/_generic/loading.component";
 import { ModalComponent } from "app/ui/_generic/modal.component";
 import { InputCopyToClipboardComponent } from "app/ui/_generic/input-copy-to-clipboard.component";
 
-import "./share-screenshot-modal.component.scss";
+import "./share-screenshot-modal.component.less";
 
 interface IComponentState {
   errorMessage: string;

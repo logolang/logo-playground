@@ -26,7 +26,7 @@ import { SaveProgramModalComponent } from "app/ui/playground/save-program-modal.
 import { ProgramControlsMenuComponent } from "app/ui/playground/program-controls-menu.component";
 import { AlertMessageComponent } from "app/ui/_generic/alert-message.component";
 
-import "./code-panel.component.scss";
+import "./code-panel.component.less";
 
 export interface ICodePanelComponentProps {
   editorTheme: string;

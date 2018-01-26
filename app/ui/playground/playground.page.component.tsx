@@ -30,7 +30,7 @@ import {
   playgroundDefaultMobileLayout
 } from "app/ui/playground/playground-default-goldenlayout";
 
-import "./playground.page.component.scss";
+import "./playground.page.component.less";
 
 interface IComponentState {
   isLoading: boolean;

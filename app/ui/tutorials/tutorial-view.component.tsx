@@ -18,7 +18,7 @@ import { TutorialSelectModalComponent } from "app/ui/tutorials/tutorial-select-m
 import { ModalComponent } from "app/ui/_generic/modal.component";
 import { LoadingComponent } from "app/ui/_generic/loading.component";
 
-import "./tutorial-view.component.scss";
+import "./tutorial-view.component.less";
 
 export interface ITutorialRequestData {
   tutorialId: string;

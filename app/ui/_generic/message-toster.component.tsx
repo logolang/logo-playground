@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Observable, Subscription } from "rxjs/Rx";
 
-import "./message-toster.component.scss";
+import "./message-toster.component.less";
 
 type TosterMessageType = "danger" | "info" | "success" | "warning" | "primary";
 
