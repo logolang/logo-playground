@@ -54,9 +54,23 @@ const codeSamples = [
   "pu setxy -40 -20 pd repeat 8 [fd 40 rt 360/8]",
   "repeat 10 [repeat 8 [fd 20 rt 360/8] rt 360/10]",
   "repeat 14 [fd repcount*8 rt 90]",
-  "window repeat 10 [fd 5 * repcount repeat 3 [fd 18 rt 360/3] rt 360/10]",
-  "pu setxy -20 -20 pd repeat 8 [rt 45 repeat 4 [repeat 90 [fd 1 rt 2] rt 90]]",
-  "repeat 10 [fd 10 rt 90 fd 10 lt 90]"
+  "repeat 10 [fd 5 * repcount repeat 3 [fd 18 rt 360/3] rt 360/10]",
+  "repeat 10 [fd 10 rt 90 fd 10 lt 90]",
+  `
+penup
+setxy -80 0
+repeat 10 [
+  arc 360 20
+  fd 40
+  rt 36
+]
+  `,
+  `
+  rt 18
+repeat 5 [
+	fd 100
+  	rt 144
+]`
 ];
 
 export class UserProfilePageComponent extends React.Component<IComponentProps, IComponentState> {

@@ -1,5 +1,6 @@
 import { ProgramModel } from "app/services/program/program.model";
 import { ProgramStorageType } from "app/services/program/program-management.service";
+import { createCompareFuntion } from "app/utils/syntax-helpers";
 
 export class ProgramsHtmlSerializerService {
   public parse(serialized: string): ProgramModel[] {
@@ -35,6 +36,9 @@ export class ProgramsHtmlSerializerService {
   }
 
   public async serialize(programs: ProgramModel[], username: string, userpicUrl: string) {
+    const sortingFunction = createCompareFuntion<ProgramModel>(x => x.dateLastEdited, "desc");
+    const programsSorted = [...programs].sort(sortingFunction);
+
     const imageData64Url = await this.getImageBase64ByUrl(userpicUrl);
     return `<!DOCTYPE html>
     <html>
@@ -46,6 +50,8 @@ export class ProgramsHtmlSerializerService {
         <style>  
             body {
                 margin: 20px 100px;
+                font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+                font-weight: 300;
             }
 
             header {
@@ -72,7 +78,7 @@ export class ProgramsHtmlSerializerService {
       </header>
       <table>
         <tbody>
-          ${programs.map(p => this.serializeProgram(p)).join("")}
+          ${programsSorted.map(p => this.serializeProgram(p)).join("")}
         </tbody>
       </table>
     </body>
