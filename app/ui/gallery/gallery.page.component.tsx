@@ -26,6 +26,7 @@ import { CollapsiblePanelComponent } from "app/ui/_generic/collapsible-panel.com
 import { stay } from "app/utils/async-helpers";
 
 import "./gallery.page.component.less";
+import { createCompareFuntion } from "app/utils/syntax-helpers";
 
 interface IComponentState {
   userName: string;
@@ -62,13 +63,16 @@ export class GalleryPageComponent extends React.Component<IComponentProps, IComp
   }
 
   async loadData() {
+    const sortingFunction = createCompareFuntion<ProgramModel>(x => x.dateLastEdited, "desc");
     const samples = await this.samplesRepo.getAll();
+    samples.sort(sortingFunction);
     this.setState({
       samples: samples
     });
 
     this.setState({ isLoading: true });
     const programs = await this.programsRepo.getAll();
+    programs.sort(sortingFunction);
     this.setState({
       programs,
       isLoading: false
