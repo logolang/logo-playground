@@ -1,6 +1,7 @@
 import * as React from "react";
 import { RouteComponentProps } from "react-router-dom";
 import { Subject } from "rxjs";
+import { BehaviorSubject } from "rxjs/BehaviorSubject";
 
 import { subscribeLoadDataOnPropsParamsChange } from "app/utils/react-helpers";
 import { callActionSafe, ErrorDef } from "app/utils/error-helpers";
@@ -33,10 +34,11 @@ import {
 } from "app/ui/tutorials/tutorial-view.component";
 import { LoadingComponent } from "app/ui/_generic/loading.component";
 import { IEventsTrackingService, EventAction } from "app/services/infrastructure/events-tracking.service";
+import { tutorialsDefaultLayout, tutorialsDefaultMobileLayout } from "app/ui/tutorials/tutorials-default-goldenlayout";
+import { ProgramModelConverter } from "app/services/program/program-model.converter";
 
 interface IComponentState {
   isLoading: boolean;
-  pageLayoutConfigJSON?: string;
   userSettings?: IUserSettings;
   theme?: Theme;
   turtleImage?: HTMLImageElement;
@@ -60,52 +62,14 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
   private userSettingsService = resolveInject(IUserSettingsService);
   private themesService = resolveInject(ThemesService);
   private turtlesService = resolveInject(TurtlesService);
-  private programManagementService = resolveInject(ProgramManagementService);
   private tutorialsLoader = resolveInject(ITutorialsContentService);
   private eventsTracking = resolveInject(IEventsTrackingService);
 
   private executionService = new ProgramExecutionContext();
-  private fixTheCodeStream = new Subject<string>();
+  private codeChangesStream = new Subject<string>();
+  private layoutChangesStream = new Subject<void>();
 
-  private defaultLayoutConfigJSON = JSON.stringify({
-    content: [
-      {
-        type: "row",
-        content: [
-          {
-            title: "",
-            type: "react-component",
-            component: "tutorial-panel",
-            componentName: "tutorial-panel",
-            width: 40,
-            isClosable: false
-          },
-          {
-            type: "column",
-            width: 60,
-            content: [
-              {
-                title: "",
-                type: "react-component",
-                component: "output-panel",
-                componentName: "output-panel",
-                height: 60,
-                isClosable: false
-              },
-              {
-                title: "",
-                type: "react-component",
-                component: "code-panel",
-                componentName: "code-panel",
-                height: 40,
-                isClosable: false
-              }
-            ]
-          }
-        ]
-      }
-    ]
-  });
+  private defaultLayoutConfigJSON: string;
 
   private errorHandler = (err: ErrorDef) => {
     this.notificationService.push({ message: err.message, type: "danger" });
@@ -114,22 +78,19 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
 
   constructor(props: IComponentProps) {
     super(props);
-    this.state = this.buildDefaultState(this.props);
-    subscribeLoadDataOnPropsParamsChange(this);
-  }
-
-  buildDefaultState(props: IComponentProps): IComponentState {
-    const state: IComponentState = {
+    this.state = {
       isLoading: true
     };
-    return state;
   }
 
   async componentDidMount() {
     this.titleService.setDocumentTitle(_T("Tutorials"));
-    await this.loadData(this.props);
-
     this.eventsTracking.sendEvent(EventAction.tutorialsOpen);
+    const isMobile = window.matchMedia && window.matchMedia("only screen and (max-width: 760px)").matches;
+    this.defaultLayoutConfigJSON = isMobile
+      ? JSON.stringify(tutorialsDefaultMobileLayout)
+      : JSON.stringify(tutorialsDefaultLayout);
+    await this.loadData(this.props);
   }
 
   componentWillUnmount() {
@@ -138,48 +99,63 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
 
   layoutChanged = (newLayoutJSON: string): void => {
     this.userSettingsService.update({ tutorialsLayoutJSON: newLayoutJSON });
+    this.layoutChangesStream.next();
   };
 
   async loadData(props: IComponentProps) {
+    this.setState({
+      isLoading: true
+    });
+
     const userSettings = await callActionSafe(this.errorHandler, async () => this.userSettingsService.get());
     if (!userSettings) {
       return;
     }
-
-    const lastTutorialInfo = userSettings.currentTutorialInfo || {
-      tutorialId: "",
-      stepId: ""
-    };
     const theme = this.themesService.getTheme(userSettings.themeName);
     const turtleImage = this.turtlesService.getTurtleImage(userSettings.turtleId);
-    const tutorials = await this.tutorialsLoader.getTutorialsList();
+    const tutorials = await callActionSafe(this.errorHandler, async () => this.tutorialsLoader.getTutorialsList());
+    if (!tutorials) {
+      return;
+    }
 
-    const tutorialId = props.match.params.tutorialId;
-    const stepId = props.match.params.stepId;
+    const program = ProgramModelConverter.createNewProgram(undefined, "", "", "");
+
+    let tutorialId = props.match.params.tutorialId;
+    let stepId = props.match.params.stepId;
     if (!tutorialId || !stepId) {
-      if (lastTutorialInfo.tutorialId && lastTutorialInfo.stepId) {
-        this.navService.navigate({
-          route: Routes.tutorialSpecified.build({
-            tutorialId: lastTutorialInfo.tutorialId,
-            stepId: lastTutorialInfo.stepId
-          })
-        });
-        return;
+      if (userSettings.currentTutorialInfo) {
+        tutorialId = userSettings.currentTutorialInfo.tutorialId;
+        stepId = userSettings.currentTutorialInfo.stepId;
       } else {
-        this.navService.navigate({
-          route: Routes.tutorialSpecified.build({
-            tutorialId: tutorials[0].id,
-            stepId: tutorials[0].steps[0].id
-          })
-        });
-        return;
+        tutorialId = tutorials[0].id;
+        stepId = tutorials[0].steps[0].id;
       }
     }
 
-    const program = await this.programManagementService.loadProgram(
-      tutorialId + ":" + stepId,
-      ProgramStorageType.tutorial
-    );
+    this.setState({
+      isLoading: false,
+      userSettings,
+      turtleImage,
+      theme,
+      tutorials,
+      program,
+      tutorialId,
+      stepId
+    });
+  }
+
+  onFixTheCode = (code: string) => {
+    if (this.state.program) {
+      this.codeChangesStream.next(code);
+      this.eventsTracking.sendEvent(EventAction.tutorialsFixTheCode);
+    }
+  };
+
+  onLoadedTutorial = (tutorialId: string, stepId: string, initCode: string) => {
+    if (this.state.program) {
+      this.codeChangesStream.next(initCode);
+      this.executionService.executeProgram(initCode);
+    }
 
     this.userSettingsService.update({
       currentTutorialInfo: {
@@ -188,32 +164,6 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
       }
     });
 
-    this.setState({
-      isLoading: false,
-      pageLayoutConfigJSON: userSettings.tutorialsLayoutJSON,
-      userSettings,
-      turtleImage,
-      theme,
-      tutorials,
-      tutorialId,
-      stepId,
-      program
-    });
-  }
-
-  onFixTheCode = (code: string) => {
-    if (this.state.program) {
-      this.programManagementService.saveTempProgram(this.state.program.id, "");
-      this.fixTheCodeStream.next(code);
-
-      this.eventsTracking.sendEvent(EventAction.tutorialsFixTheCode);
-    }
-  };
-
-  onNavigateRequest = async (tutorialId: string, stepId: string) => {
-    if (this.state.program) {
-      await this.programManagementService.revertLocalTempChanges(this.state.program);
-    }
     this.navService.navigate({
       route: Routes.tutorialSpecified.build({
         tutorialId: tutorialId,
@@ -235,40 +185,35 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
             </div>
           )}
 
-          {this.state.userSettings &&
+          {!this.state.isLoading &&
+            this.state.userSettings &&
             this.state.theme &&
             this.state.tutorials &&
             this.state.tutorialId &&
             this.state.stepId &&
             this.state.program && (
               <GoldenLayoutComponent
-                initialLayoutConfigJSON={this.state.pageLayoutConfigJSON || ""}
+                initialLayoutConfigJSON={this.state.userSettings.tutorialsLayoutJSON || ""}
                 defaultLayoutConfigJSON={this.defaultLayoutConfigJSON}
                 onLayoutChange={this.layoutChanged}
-                panelsReloadCheck={(oldPanels, newPanels) => {
-                  if (
-                    oldPanels[0].props.currentStepId !== newPanels[0].props.currentStepId ||
-                    oldPanels[0].props.currentTutorialId !== newPanels[0].props.currentTutorialId
-                  ) {
-                    return true;
-                  }
-                  return false;
-                }}
+                panelsReloadCheck={() => false}
                 panels={[
                   as<IPanelConfig<TutorialViewComponent, ITutorialViewComponentProps>>({
-                    title: `<i class="fa fa-graduation-cap" aria-hidden="true"></i> ` + _T("Tutorial"),
+                    title: new BehaviorSubject(
+                      `<i class="fa fa-graduation-cap" aria-hidden="true"></i> ` + _T("Tutorial")
+                    ),
                     componentName: "tutorial-panel",
                     componentType: TutorialViewComponent,
                     props: {
                       onFixTheCode: this.onFixTheCode,
-                      onNavigateRequest: this.onNavigateRequest,
-                      currentStepId: this.state.stepId,
-                      currentTutorialId: this.state.tutorialId,
+                      onLoadedTutorial: this.onLoadedTutorial,
+                      initialStepId: this.state.stepId,
+                      initialTutorialId: this.state.tutorialId,
                       tutorials: this.state.tutorials
                     }
                   }),
                   as<IPanelConfig<CodePanelComponent, ICodePanelComponentProps>>({
-                    title: `<i class="fa fa-code" aria-hidden="true"></i> ` + _T("Code"),
+                    title: new BehaviorSubject(`<i class="fa fa-code" aria-hidden="true"></i> ` + _T("Code")),
                     componentName: "code-panel",
                     componentType: CodePanelComponent,
                     props: {
@@ -277,12 +222,12 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
                       program: this.state.program,
                       saveCurrentEnabled: false,
                       navigateAutomaticallyAfterSaveAs: false,
-                      externalCodeChanges: this.fixTheCodeStream,
-                      doNotShowLocalChangesIndicator: true
+                      externalCodeChanges: this.codeChangesStream,
+                      containerResized: this.layoutChangesStream
                     }
                   }),
                   as<IPanelConfig<OutputPanelComponent, IOutputPanelComponentProps>>({
-                    title: `<i class="fa fa-television" aria-hidden="true"></i> ` + _T("Output"),
+                    title: new BehaviorSubject(`<i class="fa fa-television" aria-hidden="true"></i> ` + _T("Output")),
                     componentName: "output-panel",
                     componentType: OutputPanelComponent,
                     props: {

@@ -3,7 +3,7 @@ import * as cn from "classnames";
 import { AlertMessageComponent } from "app/ui/_generic/alert-message.component";
 import { callActionSafe } from "app/utils/error-helpers";
 
-import "./modal.component.scss";
+import "./modal.component.less";
 
 interface IComponentState {
   isActionInProgress: boolean;

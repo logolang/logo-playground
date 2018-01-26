@@ -8,7 +8,6 @@ export interface ICreateScreenshotCommand {
 export class ProgramExecutionContext {
   public runCommands = new Subject<string>();
   public stopCommands = new Subject<void>();
-  public focusCommands = new Subject<void>();
   public onIsRunningChanged = new BehaviorSubject<boolean>(false);
   public makeScreenshotCommands = new Subject<ICreateScreenshotCommand>();
   private hasProgramBeenExecutedOnce = false;
@@ -24,12 +23,10 @@ export class ProgramExecutionContext {
   executeProgram = (code: string) => {
     this.hasProgramBeenExecutedOnce = true;
     this.runCommands.next(code);
-    this.focusCommands.next();
   };
 
   stopProgram = () => {
     this.stopCommands.next();
-    this.focusCommands.next();
   };
 
   getScreenshot = async (small: boolean): Promise<string> => {

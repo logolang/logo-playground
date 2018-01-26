@@ -5,15 +5,13 @@ import { IUserLibraryRepository } from "app/services/gallery/personal-gallery-lo
 import { ProgramModel } from "app/services/program/program.model";
 import { GallerySamplesRepository, IGallerySamplesRepository } from "app/services/gallery/gallery-samples.repository";
 import { ILocalTempCodeStorage } from "app/services/program/local-temp-code.storage";
-import { TutorialsCodeRepository, ITutorialsSamplesRepository } from "app/services/tutorials/tutorials-code.repository";
 import { ProgramModelConverter } from "app/services/program/program-model.converter";
 import { GistSharedProgramsRepository } from "app/services/program/gist-shared-programs.repository";
 
 export enum ProgramStorageType {
   samples = "samples",
   gallery = "gallery",
-  gist = "gist",
-  tutorial = "tutorial"
+  gist = "gist"
 }
 
 export interface IProgramToSaveAttributes {
@@ -26,9 +24,8 @@ export class ProgramManagementService {
   constructor(
     @inject(IGallerySamplesRepository) private examplesRepository: IGallerySamplesRepository,
     @inject(IUserLibraryRepository) private personalRepository: IUserLibraryRepository,
-    @inject(ITutorialsSamplesRepository) private tutorialsRepository: ITutorialsSamplesRepository,
     @inject(ILocalTempCodeStorage) private localTempStorage: ILocalTempCodeStorage,
-    @inject(GistSharedProgramsRepository) private gistRepositpry: GistSharedProgramsRepository
+    @inject(GistSharedProgramsRepository) private gistRepository: GistSharedProgramsRepository
   ) {}
 
   loadProgram = async (programId?: string, storageType?: ProgramStorageType): Promise<ProgramModel> => {
@@ -95,12 +92,8 @@ export class ProgramManagementService {
           program.storageType = ProgramStorageType.gallery;
           break;
         case ProgramStorageType.gist:
-          program = await this.gistRepositpry.get(programId);
+          program = await this.gistRepository.get(programId);
           program.storageType = ProgramStorageType.gist;
-          break;
-        case ProgramStorageType.tutorial:
-          program = await this.tutorialsRepository.get(programId);
-          program.storageType = ProgramStorageType.tutorial;
           break;
       }
     }

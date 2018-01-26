@@ -12,14 +12,13 @@ import "node_modules/codemirror/addon/display/placeholder.js";
 
 import "app/../lib/codemirror-logo/cm-logo.js";
 
-import "./code-input-logo.component.scss";
+import "./code-input-logo.component.less";
 
 interface IComponentState {}
 
 export interface ICodeInputComponentProps {
   className?: string;
   code: string;
-  focusCommands?: Observable<void>;
   onHotkey?: (key: string) => void;
   onChanged: (code: string) => void;
   editorTheme: string;
@@ -85,13 +84,6 @@ export class CodeInputLogoComponent extends React.Component<ICodeInputComponentP
       this.cm.addKeyMap(map);
     }
 
-    if (this.props.focusCommands) {
-      this.subsriptions.push(
-        this.props.focusCommands.subscribe(() => {
-          this.cm.focus();
-        })
-      );
-    }
     if (this.props.containerResized) {
       this.subsriptions.push(
         this.props.containerResized.subscribe(() => {

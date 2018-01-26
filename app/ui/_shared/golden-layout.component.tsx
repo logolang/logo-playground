@@ -1,9 +1,9 @@
 import * as React from "react";
 import * as $ from "jquery"; //required for goldenLayout
 import * as goldenLayout from "golden-layout";
-import { Subject } from "rxjs";
+import { Subject, BehaviorSubject } from "rxjs";
 
-import "./golden-layout.component.scss";
+import "./golden-layout.component.less";
 
 interface Newable<T> {
   new (...args: any[]): T;
@@ -14,7 +14,7 @@ export interface IPanelConfig<T, P> {
   componentName: string;
   componentType: Newable<T>;
   props: P;
-  title: string;
+  title: BehaviorSubject<string>;
 }
 
 interface IComponentState {}
@@ -60,6 +60,12 @@ export class GoldenLayoutComponent extends React.Component<IComponentProps, ICom
   }
 
   onWindowResize = () => {
+    if (window.matchMedia && window.matchMedia("only screen and (max-width: 760px)").matches) {
+      /* Skip window resizing on mobile devices - bacause we should have browser full screen anyway
+       and resizing is occuring due to on-screen keyboard toggling
+       */
+      return;
+    }
     if (this.layout) {
       this.layout.updateSize();
     }
@@ -86,9 +92,12 @@ export class GoldenLayoutComponent extends React.Component<IComponentProps, ICom
       (panelConfig as any).componentState = {};
     }
     config.settings = {
-      showMaximiseIcon: false,
-      showPopoutIcon: false,
-      showCloseIcon: false
+      ...(config.settings || {}),
+      ...{
+        showMaximiseIcon: false,
+        showPopoutIcon: false,
+        showCloseIcon: false
+      }
     };
     config.dimensions = {
       headerHeight: 32
@@ -114,7 +123,10 @@ export class GoldenLayoutComponent extends React.Component<IComponentProps, ICom
         console.log("Error: cannot find panel in layout: " + panelContentItem);
         return;
       }
-      panelContentItem.setTitle(panel.title);
+      panelContentItem.setTitle(panel.title.value);
+      panel.title.subscribe(newTitle => {
+        panelContentItem.setTitle(newTitle);
+      });
     }
   }
 

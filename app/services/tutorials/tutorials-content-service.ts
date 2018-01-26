@@ -1,6 +1,7 @@
 import * as markdown from "markdown-it";
 import { ILocalizedContentLoader } from "app/services/infrastructure/localized-content-loader";
 import { injectable, inject } from "app/di";
+import { stay } from "app/utils/async-helpers";
 
 export interface ITutorialInfo {
   id: string;
@@ -25,20 +26,14 @@ export interface ITutorialStepContent {
  */
 export abstract class ITutorialsContentService {
   abstract getTutorialsList(): Promise<ITutorialInfo[]>;
-  abstract getStep(
-    tutorialId: string,
-    stepId: string
-  ): Promise<ITutorialStepContent>;
+  abstract getStep(tutorialId: string, stepId: string): Promise<ITutorialStepContent>;
 }
 
 @injectable()
 export class TutorialsContentService implements ITutorialsContentService {
   private tutorialInfos: ITutorialInfo[] = [];
 
-  constructor(
-    @inject(ILocalizedContentLoader)
-    private contentLoader: ILocalizedContentLoader
-  ) {}
+  constructor(@inject(ILocalizedContentLoader) private contentLoader: ILocalizedContentLoader) {}
 
   private getIdFromIndex(index: number): string {
     const id = (index + 1).toString();
@@ -47,26 +42,15 @@ export class TutorialsContentService implements ITutorialsContentService {
 
   async getTutorialsList(): Promise<ITutorialInfo[]> {
     if (this.tutorialInfos.length == 0) {
-      try {
-        const result = await this.contentLoader.getFileContent(
-          "tutorials/index.json"
-        );
-        const data = JSON.parse(result);
-        this.tutorialInfos = data.tutorials;
-      } catch (ex) {
-        throw ex;
-      }
+      const result = await this.contentLoader.getFileContent("tutorials/index.json");
+      const data = JSON.parse(result);
+      this.tutorialInfos = data.tutorials;
     }
     return this.tutorialInfos;
   }
 
-  async getStep(
-    tutorialId: string,
-    stepId: string
-  ): Promise<ITutorialStepContent> {
-    let stepContent = await this.contentLoader.getFileContent(
-      `tutorials/${tutorialId}/${stepId}.md`
-    );
+  async getStep(tutorialId: string, stepId: string): Promise<ITutorialStepContent> {
+    let stepContent = await this.contentLoader.getFileContent(`tutorials/${tutorialId}/${stepId}.md`);
     const md = new markdown({
       html: true // Enable HTML tags in source;
     });

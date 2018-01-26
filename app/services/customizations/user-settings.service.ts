@@ -33,13 +33,14 @@ export class UserSettingsBrowserLocalStorageService implements IUserSettingsServ
 
   constructor(@inject(ICurrentUserService) private currentUser: ICurrentUserService) {
     const userId = this.currentUser.getLoginStatus().userInfo.attributes.email;
-    this.localStorage = new LocalStorageService<IUserSettings>(`logolang-app-settings-${userId}`, {} as any);
-    const localStorageValue = this.localStorage.getValue();
+    this.localStorage = new LocalStorageService<IUserSettings>(`logolang-app-local-settings-${userId}`, {} as any);
+    const settings = this.localStorage.getValue();
 
     //Apply default values
-    localStorageValue.localeId = localStorageValue.localeId || "en";
+    settings.localeId = settings.localeId || "en";
+    settings.turtleSize = settings.turtleSize || 40;
 
-    this.currentData = localStorageValue;
+    this.currentData = settings;
   }
 
   async saveDataToStorage(): Promise<void> {

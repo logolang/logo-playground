@@ -7,7 +7,7 @@ import { LogoOutputGraphics } from "./logo-output-graphics";
 import { LogoOutputConsole } from "./logo-output-console";
 import { AlertMessageComponent } from "app/ui/_generic/alert-message.component";
 
-import "./logo-executor.component.scss";
+import "./logo-executor.component.less";
 
 export interface ICreateScreenshotCommand {
   isSmall: boolean;

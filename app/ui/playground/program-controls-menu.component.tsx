@@ -1,7 +1,10 @@
 import * as React from "react";
+import * as cn from "classnames";
 import { _T } from "app/services/customizations/localization.service";
 
-interface IComponentState {}
+interface IComponentState {
+  menuIsActive?: boolean;
+}
 
 interface IComponentProps {
   className?: string;
@@ -21,6 +24,10 @@ export class ProgramControlsMenuComponent extends React.Component<IComponentProp
 
     this.state = {};
   }
+
+  programMenuClicked = () => {
+    this.setState({ menuIsActive: !this.state.menuIsActive });
+  };
 
   render(): JSX.Element | null {
     return (
@@ -45,9 +52,14 @@ export class ProgramControlsMenuComponent extends React.Component<IComponentProp
             {_T("Stop")}
           </button>
         )}{" "}
-        <div className="dropdown is-right is-hoverable is-borderless">
+        <div className={cn("dropdown is-right is-borderless", { "is-active": this.state.menuIsActive })}>
           <div className="dropdown-trigger">
-            <button className="button is-light" aria-haspopup="true" aria-controls="dropdown-menu6">
+            <button
+              className="button is-light"
+              aria-haspopup="true"
+              aria-controls="dropdown-menu6"
+              onClick={this.programMenuClicked}
+            >
               <i className="fa fa-ellipsis-h" aria-hidden="true" />
             </button>
           </div>
@@ -57,6 +69,7 @@ export class ProgramControlsMenuComponent extends React.Component<IComponentProp
                 <a
                   className="dropdown-item"
                   onClick={() => {
+                    this.setState({ menuIsActive: false });
                     this.props.revertChanges && this.props.revertChanges();
                   }}
                 >
@@ -67,19 +80,37 @@ export class ProgramControlsMenuComponent extends React.Component<IComponentProp
               )}
               {this.props.revertChanges && <hr className="dropdown-divider" />}
               {this.props.saveAsNew && (
-                <a className="dropdown-item" onClick={this.props.saveAsNew}>
+                <a
+                  className="dropdown-item"
+                  onClick={() => {
+                    this.setState({ menuIsActive: false });
+                    this.props.saveAsNew && this.props.saveAsNew();
+                  }}
+                >
                   <i className="fa fa-file-code-o" aria-hidden="true" />
                   &nbsp;&nbsp;
                   {_T("Save to personal library")}
                 </a>
               )}
-              <a className="dropdown-item" onClick={this.props.onShareProgram}>
+              <a
+                className="dropdown-item"
+                onClick={() => {
+                  this.setState({ menuIsActive: false });
+                  this.props.onShareProgram();
+                }}
+              >
                 <i className="fa fa-share-alt" aria-hidden="true" />
                 &nbsp;&nbsp;
                 {_T("Share")}
               </a>
               <hr className="dropdown-divider" />
-              <a className="dropdown-item" onClick={this.props.exportImage}>
+              <a
+                className="dropdown-item"
+                onClick={() => {
+                  this.setState({ menuIsActive: false });
+                  this.props.exportImage();
+                }}
+              >
                 <i className="fa fa-camera" aria-hidden="true" />
                 &nbsp;&nbsp;
                 {_T("Take screenshot")}

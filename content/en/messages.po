@@ -25,9 +25,6 @@ msgstr ""
 msgid "App title"
 msgstr "Logo"
 
-msgid "App version"
-msgstr ""
-
 msgid "Back"
 msgstr ""
 
@@ -47,9 +44,6 @@ msgid "Close"
 msgstr ""
 
 msgid "Code"
-msgstr ""
-
-msgid "Code version"
 msgstr ""
 
 msgid "Continue"
@@ -73,9 +67,6 @@ msgstr ""
 msgid "Edited"
 msgstr ""
 
-msgid "Email"
-msgstr ""
-
 msgid "Execute the program"
 msgstr ""
 
@@ -96,6 +87,9 @@ msgstr ""
 
 msgid "Gallery"
 msgstr "Gallery"
+
+msgid "Guest"
+msgstr ""
 
 msgid "Help – it's not working!"
 msgstr ""
@@ -133,8 +127,8 @@ msgstr ""
 msgid "Message"
 msgstr ""
 
-msgid "Name"
-msgstr ""
+msgid "NOT_LOGGED_IN_TEXT_BLOCK"
+msgstr "You are not logged in. Your personal gallery is persisted in your browser local storage. Proceed with login if you want to synchronize your gallery."
 
 msgid "No image"
 msgstr ""
@@ -143,9 +137,6 @@ msgid "No, keep my code as is"
 msgstr ""
 
 msgid "Output"
-msgstr ""
-
-msgid "Package name"
 msgstr ""
 
 msgid "Personal library"
@@ -157,7 +148,7 @@ msgstr ""
 msgid "Please enter the name for your program"
 msgstr ""
 
-msgid "Program has been saved in the library."
+msgid "Program has been saved in the personal library."
 msgstr ""
 
 msgid "Program name"
@@ -217,6 +208,9 @@ msgstr ""
 msgid "Take screenshot"
 msgstr ""
 
+msgid "This program has changes"
+msgstr ""
+
 msgid "Turtle"
 msgstr ""
 
@@ -259,13 +253,13 @@ msgstr ""
 msgid "You are going to delete this program."
 msgstr ""
 
+msgid "You are logged in with %s authentication."
+msgstr ""
+
 msgid "You have %d program"
 msgid_plural "You have %d programs"
 msgstr[0] ""
 msgstr[1] ""
-
-msgid "You have local changes in this program. "
-msgstr ""
 
 msgid "Your personal library"
 msgstr ""

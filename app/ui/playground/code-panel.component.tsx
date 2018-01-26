@@ -26,7 +26,7 @@ import { SaveProgramModalComponent } from "app/ui/playground/save-program-modal.
 import { ProgramControlsMenuComponent } from "app/ui/playground/program-controls-menu.component";
 import { AlertMessageComponent } from "app/ui/_generic/alert-message.component";
 
-import "./code-panel.component.scss";
+import "./code-panel.component.less";
 
 export interface ICodePanelComponentProps {
   editorTheme: string;
@@ -36,7 +36,7 @@ export interface ICodePanelComponentProps {
   navigateAutomaticallyAfterSaveAs: boolean;
   externalCodeChanges?: Observable<string>;
   containerResized?: Observable<void>;
-  doNotShowLocalChangesIndicator?: boolean;
+  hasChangesStatus?: (hasChanges: boolean) => void;
 }
 
 interface IComponentState {
@@ -142,18 +142,10 @@ export class CodePanelComponent extends React.Component<ICodePanelComponentProps
           className="code-input-container"
           editorTheme={this.props.editorTheme}
           code={this.state.code}
-          focusCommands={execService.focusCommands}
           onChanged={this.onCodeChanged}
           onHotkey={this.onRunProgram}
           containerResized={this.props.containerResized}
         />
-        {this.state.hasLocalTempChanges &&
-          this.props.program.id &&
-          !this.props.doNotShowLocalChangesIndicator && (
-            <div className="alert-not-stored-container">
-              <AlertMessageComponent message={_T("You have local changes in this program. ")} type="warning" />
-            </div>
-          )}
       </div>
     );
   }
@@ -167,6 +159,7 @@ export class CodePanelComponent extends React.Component<ICodePanelComponentProps
       this.managementService.saveTempProgram(this.props.program.id, newCode);
       if (!this.state.hasLocalTempChanges) {
         this.setState({ hasLocalTempChanges: true });
+        this.props.hasChangesStatus && this.props.hasChangesStatus(true);
       }
     }, 500);
   };
@@ -220,6 +213,7 @@ export class CodePanelComponent extends React.Component<ICodePanelComponentProps
     const code = await this.managementService.revertLocalTempChanges(this.props.program);
     this.eventsTracker.sendEvent(EventAction.programResetChanges);
     this.setState({ hasLocalTempChanges: false, code: code });
+    this.props.hasChangesStatus && this.props.hasChangesStatus(false);
   };
 
   exportScreenshot = async () => {

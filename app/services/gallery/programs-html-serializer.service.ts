@@ -1,5 +1,6 @@
 import { ProgramModel } from "app/services/program/program.model";
 import { ProgramStorageType } from "app/services/program/program-management.service";
+import { createCompareFuntion } from "app/utils/syntax-helpers";
 
 export class ProgramsHtmlSerializerService {
   public parse(serialized: string): ProgramModel[] {
@@ -34,7 +35,11 @@ export class ProgramsHtmlSerializerService {
     return result;
   }
 
-  public serialize(programs: ProgramModel[]) {
+  public async serialize(programs: ProgramModel[], username: string, userpicUrl: string) {
+    const sortingFunction = createCompareFuntion<ProgramModel>(x => x.dateLastEdited, "desc");
+    const programsSorted = [...programs].sort(sortingFunction);
+
+    const imageData64Url = await this.getImageBase64ByUrl(userpicUrl);
     return `<!DOCTYPE html>
     <html>
     <head>
@@ -45,9 +50,11 @@ export class ProgramsHtmlSerializerService {
         <style>  
             body {
                 margin: 20px 100px;
+                font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+                font-weight: 300;
             }
 
-            h1 {
+            header {
                 padding: 10px;
                 border-bottom: 1px solid gray;
             }
@@ -64,14 +71,16 @@ export class ProgramsHtmlSerializerService {
         </style>
     </head>
     <body>
-        <div class="container">
-            <h1 class="title">Logo personal library</h1>
-            <table>
-                <tbody>
-                    ${programs.map(p => this.serializeProgram(p)).join("")}
-                </tbody>
-            </table>
-        </div>
+      <header>
+        <h1>Logo personal library</h1>
+        <h3>${username}</h3>
+        ${imageData64Url ? `<img src="${imageData64Url}"></img>` : ""}
+      </header>
+      <table>
+        <tbody>
+          ${programsSorted.map(p => this.serializeProgram(p)).join("")}
+        </tbody>
+      </table>
     </body>
     </html>
     `;
@@ -114,5 +123,33 @@ export class ProgramsHtmlSerializerService {
     const result = div.innerHTML;
     div.remove();
     return result;
+  }
+
+  private async getImageBase64ByUrl(imgUrl: string): Promise<string> {
+    if (!imgUrl) {
+      return "";
+    }
+    return new Promise<string>((resolve, reject) => {
+      const imgElt = document.createElement("img");
+      imgElt.addEventListener("load", () => {
+        try {
+          const canvasElt = document.createElement("canvas");
+          canvasElt.width = imgElt.width;
+          canvasElt.height = imgElt.height;
+          const ctx = canvasElt.getContext("2d");
+          if (!ctx) {
+            resolve("");
+            return;
+          }
+          ctx.drawImage(imgElt, 0, 0);
+          var dataURL = canvasElt.toDataURL("image/jpeg", 0.5);
+          resolve(dataURL);
+        } catch (ex) {
+          resolve("");
+        }
+      });
+      imgElt.setAttribute("crossOrigin", "Anonymous");
+      imgElt.setAttribute("src", imgUrl);
+    });
   }
 }

@@ -57,7 +57,7 @@ export class GoogleDriveClient {
         Accept: "application/json",
         "Content-Type": "multipart/related; boundary=" + formBoundary,
         "Content-Length": requestBody.length
-      }),
+      } as any),
       body: requestBody
     });
   }
@@ -79,7 +79,7 @@ export class GoogleDriveClient {
         Accept: "application/json",
         "Content-Type": "multipart/related; boundary=" + formBoundary,
         "Content-Length": requestBody.length
-      }),
+      } as any),
       body: requestBody
     });
   }

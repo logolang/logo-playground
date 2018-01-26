@@ -10,18 +10,9 @@ export interface Theme {
 
 @injectable()
 export class ThemesService {
+  readonly themeManager: any = (window as any).themeManager;
+
   private readonly themes: Theme[] = [
-    {
-      name: "Default",
-      description: "Bulma as-is",
-      isDark: false,
-      codeEditorThemeName: "eclipse",
-      styleLinks: [
-        "content/css/bulma/default/bulmaswatch.min.css",
-        "content/css/codemirror/themes/eclipse.css",
-        "content/css/golden-layout/goldenlayout-light-theme.css"
-      ]
-    },
     {
       name: "Litera",
       description: "The medium is the message",
@@ -146,14 +137,23 @@ export class ThemesService {
   ];
 
   getAllThemes() {
-    return this.themes;
+    return [this.themeManager.defaultTheme].concat(this.themes);
   }
 
   getTheme(themeName: string): Theme {
-    const selectedTheme = this.themes.find(t => t.name === themeName);
+    const themes = this.getAllThemes();
+    const selectedTheme = themes.find(t => t.name === themeName);
     if (selectedTheme) {
       return selectedTheme;
     }
-    return this.themes[0];
+    return themes[0];
+  }
+
+  setActiveTheme(theme: Theme) {
+    this.themeManager.activateTheme(theme, false);
+  }
+
+  getActiveTheme(): Theme | undefined {
+    return this.themeManager.getActiveTheme();
   }
 }
