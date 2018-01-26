@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import "./alert-message.component.scss";
+import "./alert-message.component.less";
 
 type messageType = "primary" | "info" | "danger" | "warning" | "success";
 

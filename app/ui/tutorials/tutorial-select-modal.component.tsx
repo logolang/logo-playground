@@ -4,7 +4,7 @@ import { ITutorialInfo } from "app/services/tutorials/tutorials-content-service"
 import { _T } from "app/services/customizations/localization.service";
 import { ModalComponent } from "app/ui/_generic/modal.component";
 
-import "./tutorial-select-modal.component.scss";
+import "./tutorial-select-modal.component.less";
 
 interface IComponentState {
   currentSelectedTutorial: ITutorialInfo;

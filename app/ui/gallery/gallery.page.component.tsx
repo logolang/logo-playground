@@ -23,7 +23,7 @@ import { ICurrentUserService } from "app/services/login/current-user.service";
 import { TitleService } from "app/services/infrastructure/title.service";
 import { IEventsTrackingService, EventAction } from "app/services/infrastructure/events-tracking.service";
 
-import "./gallery.page.component.scss";
+import "./gallery.page.component.less";
 
 interface IComponentState {
   userName: string;

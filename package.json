@@ -107,15 +107,15 @@
     "karma-mocha-reporter": "2.2.5",
     "karma-sourcemap-loader": "0.3.7",
     "karma-webpack": "2.0.9",
+    "less": "2.7.3",
+    "less-loader": "4.0.5",
     "lint-staged": "6.0.0",
     "mocha": "4.1.0",
-    "node-sass": "4.7.2",
     "pofile": "1.0.10",
     "prettier": "1.10.2",
     "raw-loader": "0.5.1",
     "react-test-renderer": "16.2.0",
     "remap-istanbul": "0.10.0",
-    "sass-loader": "6.0.6",
     "style-loader": "0.19.1",
     "tslint": "5.9.1",
     "tslint-loader": "3.5.3",
@@ -128,7 +128,7 @@
   },
   "lint-staged": {
     "linters": {
-      "*.{ts,tsx,js,json,css,scss}": ["prettier --write", "git add"]
+      "*.{ts,tsx,js,json,css,less}": ["prettier --write", "git add"]
     }
   }
 }

@@ -12,7 +12,7 @@ import "node_modules/codemirror/addon/display/placeholder.js";
 
 import "app/../lib/codemirror-logo/cm-logo.js";
 
-import "./code-input-logo.component.scss";
+import "./code-input-logo.component.less";
 
 interface IComponentState {}
 
