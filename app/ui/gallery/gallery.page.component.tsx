@@ -22,13 +22,15 @@ import { ProgramStorageType } from "app/services/program/program-management.serv
 import { ICurrentUserService } from "app/services/login/current-user.service";
 import { TitleService } from "app/services/infrastructure/title.service";
 import { IEventsTrackingService, EventAction } from "app/services/infrastructure/events-tracking.service";
+import { CollapsiblePanelComponent } from "app/ui/_generic/collapsible-panel.component";
+import { stay } from "app/utils/async-helpers";
 
 import "./gallery.page.component.less";
 
 interface IComponentState {
   userName: string;
-  programs: ProgramModel[];
-  samples: ProgramModel[];
+  programs?: ProgramModel[];
+  samples?: ProgramModel[];
   isLoading?: boolean;
   errorMessge?: string;
   programToDelete: ProgramModel | undefined;
@@ -48,8 +50,6 @@ export class GalleryPageComponent extends React.Component<IComponentProps, IComp
 
     this.state = {
       userName: this.currentUser.getLoginStatus().userInfo.attributes.name,
-      programs: [],
-      samples: [],
       programToDelete: undefined,
       isLoading: true
     };
@@ -95,18 +95,38 @@ export class GalleryPageComponent extends React.Component<IComponentProps, IComp
             <PageHeaderComponent title={_T("Gallery")} />
             <br />
 
-            <p className="subtitle">{_T("Your personal library")}</p>
-            <LoadingComponent isLoading={this.state.isLoading} />
-            {this.state.programs.length > 0 && (
-              <div className="program-cards-container">
-                {this.state.programs.map(pr => this.renderProgramCard(pr, ProgramStorageType.gallery, true))}
-              </div>
-            )}
-            <br />
+            <CollapsiblePanelComponent>
+              {!this.state.programs && (
+                <div className="columns">
+                  <div className="column" />
+                  <div className="column">
+                    <br />
+                    <br />
+                    <p>Loading...</p>
+                    <progress className="progress is-primary" value="45" max="100" />
+                    <br />
+                    <br />
+                  </div>
+                  <div className="column" />
+                </div>
+              )}
+              {this.state.programs &&
+                this.state.programs.length > 0 && (
+                  <>
+                    <p className="subtitle">{_T("Your personal library")}</p>
+                    <div className="program-cards-container">
+                      {this.state.programs.map(pr => this.renderProgramCard(pr, ProgramStorageType.gallery, true))}
+                    </div>
+
+                    <br />
+                  </>
+                )}
+            </CollapsiblePanelComponent>
 
             <p className="subtitle">{_T("Samples")}</p>
             <div className="program-cards-container">
-              {this.state.samples.map(pr => this.renderProgramCard(pr, ProgramStorageType.samples, false))}
+              {this.state.samples &&
+                this.state.samples.map(pr => this.renderProgramCard(pr, ProgramStorageType.samples, false))}
             </div>
 
             {this.renderDeleteModal()}
