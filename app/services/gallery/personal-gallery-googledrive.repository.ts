@@ -39,7 +39,8 @@ export class ProgramsGoogleDriveRepository implements IUserLibraryRepository {
     const existingPrograms = await this.getAll();
     const pr = existingPrograms.find(p => p.id === id);
     if (pr) {
-      return pr;
+      // return clone of program object - so original will be intact in memory if updates happen
+      return { ...pr };
     }
     throw new Error("Program is not found");
   }
@@ -56,7 +57,11 @@ export class ProgramsGoogleDriveRepository implements IUserLibraryRepository {
       programsToStore.push(program);
     }
 
-    const serializedData = this.serializationService.serialize(programsToStore);
+    const serializedData = await this.serializationService.serialize(
+      programsToStore,
+      this.currentUser.getLoginStatus().userInfo.attributes.name,
+      this.currentUser.getLoginStatus().userInfo.attributes.imageUrl
+    );
     if (storedData.fileId) {
       await this.googleDriveClient.updateFile(
         storedData.fileId,
@@ -76,7 +81,11 @@ export class ProgramsGoogleDriveRepository implements IUserLibraryRepository {
   async remove(id: string): Promise<void> {
     const storedData = await this.getStoredData();
     const programsToStore = storedData.programs.filter(p => p.id !== id);
-    const serializedData = this.serializationService.serialize(programsToStore);
+    const serializedData = await this.serializationService.serialize(
+      programsToStore,
+      this.currentUser.getLoginStatus().userInfo.attributes.name,
+      this.currentUser.getLoginStatus().userInfo.attributes.imageUrl
+    );
     if (storedData.fileId) {
       await this.googleDriveClient.updateFile(
         storedData.fileId,

@@ -7,6 +7,11 @@ export interface TurtleInfo {
   imageData: string;
 }
 
+export interface TurtleSize {
+  size: number;
+  description: string;
+}
+
 const allTurtles: TurtleInfo[] = [
   {
     id: "tt12",
@@ -61,5 +66,15 @@ export class TurtlesService {
     img.height = 512;
     img.src = turtleInfo.imageData;
     return img;
+  }
+
+  getTurtleSizes(): TurtleSize[] {
+    return [
+      { size: 20, description: _T("Extra Small") },
+      { size: 32, description: _T("Small") },
+      { size: 40, description: _T("Medium") },
+      { size: 52, description: _T("Large") },
+      { size: 72, description: _T("Huge") }
+    ];
   }
 }

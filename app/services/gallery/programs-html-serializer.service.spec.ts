@@ -30,14 +30,14 @@ const programs: ProgramModel[] = [
 describe("Programs HTML serializer service", () => {
   const service = new ProgramsHtmlSerializerService();
 
-  it("should serialize programs to html string", () => {
-    const serialized = service.serialize(programs);
+  it("should serialize programs to html string", async () => {
+    const serialized = await service.serialize(programs, "Olek", "");
     chai.expect(serialized).to.be.not.empty;
     chai.expect(serialized).to.contain("<html>");
   });
 
-  it("should deserialize programs to same objects", () => {
-    const serialized = service.serialize(programs);
+  it("should deserialize programs to same objects", async () => {
+    const serialized = await service.serialize(programs, "Olek", "");
     const deserialized = service.parse(serialized);
     chai.expect(deserialized).to.be.eql(programs);
   });

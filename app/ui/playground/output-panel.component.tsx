@@ -2,7 +2,7 @@ import * as React from "react";
 
 import { LogoExecutorComponent, ILogoExecutorComponentProps } from "app/ui/_shared/logo-executor.component";
 
-import "./output-panel.component.scss";
+import "./output-panel.component.less";
 
 interface IComponentState {}
 
@@ -19,9 +19,7 @@ export class OutputPanelComponent extends React.Component<IOutputPanelComponentP
 
   render(): JSX.Element {
     return (
-      <div className="output-container">
-        {React.createElement(LogoExecutorComponent, this.props.logoExecutorProps)}
-      </div>
+      <div className="output-container">{React.createElement(LogoExecutorComponent, this.props.logoExecutorProps)}</div>
     );
   }
 }

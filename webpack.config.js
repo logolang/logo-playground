@@ -68,9 +68,9 @@ module.exports = function(env) {
         { test: /\.hbs$/, loader: "handlebars-loader" },
         { test: /\.(txt|html|md|po)$/, loader: "raw-loader" },
         isDevBuild && { test: /\.css$/, loaders: ["style-loader", "css-loader"] },
-        isDevBuild && { test: /\.(scss|sass)$/, loaders: ["style-loader", "css-loader", "sass-loader"] },
+        isDevBuild && { test: /\.less$/, loaders: ["style-loader", "css-loader", "less-loader"] },
         !isDevBuild && { test: /\.css$/, loader: extractTextPlugin.extract(["css-loader"]) },
-        !isDevBuild && { test: /\.(scss|sass)$/, loader: extractTextPlugin.extract(["css-loader", "sass-loader"]) },
+        !isDevBuild && { test: /\.less$/, loader: extractTextPlugin.extract(["css-loader", "less-loader"]) },
         isTSLintEnabled && {
           test: /\.tsx$/,
           enforce: "pre",

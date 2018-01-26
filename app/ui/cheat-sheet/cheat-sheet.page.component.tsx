@@ -14,7 +14,7 @@ import { EventAction, IEventsTrackingService } from "app/services/infrastructure
 import { MainMenuComponent } from "app/ui/main-menu.component";
 import { LoadingComponent } from "app/ui/_generic/loading.component";
 
-import "./cheat-sheet.page.component.scss";
+import "./cheat-sheet.page.component.less";
 
 interface IComponentState {
   isLoading: boolean;

@@ -1,7 +1,7 @@
 // Include polyfills to work in IE11
 import "core-js";
 
-import "app/ui/_styles/app.scss";
+import "app/ui/_styles/app.less";
 
 import * as React from "react";
 import * as ReactDOM from "react-dom";

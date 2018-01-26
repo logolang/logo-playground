@@ -26,9 +26,6 @@ msgstr "Добавленные программы: %d"
 msgid "App title"
 msgstr "Лого"
 
-msgid "App version"
-msgstr "Версия приложения"
-
 msgid "Back"
 msgstr "Назад"
 
@@ -49,9 +46,6 @@ msgstr "Закрыть"
 
 msgid "Code"
 msgstr "Код программы"
-
-msgid "Code version"
-msgstr "Версия программы"
 
 msgid "Continue"
 msgstr "Продолжить"
@@ -74,9 +68,6 @@ msgstr "Документация"
 msgid "Edited"
 msgstr "Дата обновления"
 
-msgid "Email"
-msgstr "Почта е-майл"
-
 msgid "Execute the program"
 msgstr "Запустить программу"
 
@@ -97,6 +88,9 @@ msgstr "Исправить код программы?"
 
 msgid "Gallery"
 msgstr "Галлерея"
+
+msgid "Guest"
+msgstr "Гость"
 
 msgid "Help – it's not working!"
 msgstr "Помогите - не работает!"
@@ -134,8 +128,8 @@ msgstr "Средний"
 msgid "Message"
 msgstr "Сообщение"
 
-msgid "Name"
-msgstr "Имя"
+msgid "NOT_LOGGED_IN_TEXT_BLOCK"
+msgstr "Для синхронизации персональной галлереи необходимо залогиниться."
 
 msgid "No image"
 msgstr "Нет изображения"
@@ -146,9 +140,6 @@ msgstr "Нет, сохранить мой код как есть"
 msgid "Output"
 msgstr "Вывод"
 
-msgid "Package name"
-msgstr "Имя пакета"
-
 msgid "Personal library"
 msgstr "Персональная библиотека"
 
@@ -158,7 +149,7 @@ msgstr "Игровая площадка"
 msgid "Please enter the name for your program"
 msgstr "Введите название своей программы"
 
-msgid "Program has been saved in the library."
+msgid "Program has been saved in the personal library."
 msgstr "Программа сохранена успешно"
 
 msgid "Program name"
@@ -218,6 +209,9 @@ msgstr "Остановить выполнение программы"
 msgid "Take screenshot"
 msgstr "Сделать скриншот"
 
+msgid "This program has changes"
+msgstr "У вас есть изменения в программе."
+
 msgid "Turtle"
 msgstr "Черепаха"
 
@@ -260,14 +254,14 @@ msgstr "Да, исправить мой код"
 msgid "You are going to delete this program."
 msgstr "Вы собираетесь удалить эту программу"
 
+msgid "You are logged in with %s authentication."
+msgstr "Учетная запись: %s"
+
 msgid "You have %d program"
 msgid_plural "You have %d programs"
 msgstr[0] "У вас %d программа"
 msgstr[1] "У вас %d программы"
 msgstr[2] "У вас %d программ"
-
-msgid "You have local changes in this program. "
-msgstr "У вас есть изменения в программе."
 
 msgid "Your personal library"
 msgstr "Персональная галерея - пространство для ваших личных программ"

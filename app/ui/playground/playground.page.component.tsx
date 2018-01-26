@@ -1,6 +1,6 @@
 import * as React from "react";
 import { RouteComponentProps } from "react-router-dom";
-import { Subject } from "rxjs";
+import { Subject, BehaviorSubject } from "rxjs";
 import { ISubscription } from "rxjs/Subscription";
 
 import { as } from "app/utils/syntax-helpers";
@@ -25,8 +25,12 @@ import { GoldenLayoutComponent, IPanelConfig, GoldenLayoutConfig } from "app/ui/
 import { CodePanelComponent, ICodePanelComponentProps } from "app/ui/playground/code-panel.component";
 import { OutputPanelComponent, IOutputPanelComponentProps } from "app/ui/playground/output-panel.component";
 import { LoadingComponent } from "app/ui/_generic/loading.component";
+import {
+  playgroundDefaultLayout,
+  playgroundDefaultMobileLayout
+} from "app/ui/playground/playground-default-goldenlayout";
 
-import "./playground.page.component.scss";
+import "./playground.page.component.less";
 
 interface IComponentState {
   isLoading: boolean;
@@ -49,8 +53,6 @@ forward 100
 arc 360 50
 `;
 
-export { ProgramStorageType };
-
 export class PlaygroundPageComponent extends React.Component<IComponentProps, IComponentState> {
   private notificationService = resolveInject(INotificationService);
   private titleService = resolveInject(TitleService);
@@ -61,37 +63,15 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
   private eventsTracking = resolveInject(IEventsTrackingService);
   private executionService = new ProgramExecutionContext();
   private layoutChangedSubject = new Subject<void>();
+  private codePanelTitle = new BehaviorSubject<string>("");
+  private outputPanelTitle = new BehaviorSubject<string>("");
 
   private errorHandler = (err: ErrorDef) => {
     this.notificationService.push({ message: err.message, type: "danger" });
     this.setState({ isLoading: false });
   };
 
-  private defaultLayoutConfigJSON = JSON.stringify({
-    content: [
-      {
-        type: "row",
-        content: [
-          {
-            title: "",
-            type: "react-component",
-            component: "output-panel",
-            componentName: "output-panel",
-            width: 60,
-            isClosable: false
-          },
-          {
-            title: "",
-            type: "react-component",
-            component: "code-panel",
-            componentName: "code-panel",
-            width: 40,
-            isClosable: false
-          }
-        ]
-      }
-    ]
-  });
+  private defaultLayoutConfigJSON: string;
 
   constructor(props: IComponentProps) {
     super(props);
@@ -108,6 +88,10 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
 
   async componentDidMount() {
     this.titleService.setDocumentTitle(_T("Playground"));
+    const isMobile = window.matchMedia && window.matchMedia("only screen and (max-width: 760px)").matches;
+    this.defaultLayoutConfigJSON = isMobile
+      ? JSON.stringify(playgroundDefaultMobileLayout)
+      : JSON.stringify(playgroundDefaultLayout);
     await this.loadData(this.props);
   }
 
@@ -121,6 +105,16 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
     });
     this.layoutChangedSubject.next();
   };
+
+  private setCodePanelTitle(programName: string, programId: string, hasChanges: boolean) {
+    let title = `<i class="fa fa-code" aria-hidden="true"></i> ` + (programName || _T("Code"));
+    if (hasChanges && programId) {
+      title += ` <i class="fa fa-circle" aria-hidden="true" style="transform: scale(0.7, 0.7);" title="${_T(
+        "This program has changes"
+      )}"></i>`;
+    }
+    this.codePanelTitle.next(title);
+  }
 
   async loadData(props: IComponentProps) {
     this.setState({ isLoading: true });
@@ -157,6 +151,9 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
 
     const theme = this.themesService.getTheme(userSettings.themeName);
     const turtleImage = this.turtlesService.getTurtleImage(userSettings.turtleId);
+
+    this.setCodePanelTitle(programModel.name, programModel.id, programModel.hasTempLocalModifications);
+    this.outputPanelTitle.next(`<i class="fa fa-television" aria-hidden="true"></i> ` + _T("Output"));
 
     this.setState({
       isLoading: false,
@@ -200,8 +197,7 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
                 }}
                 panels={[
                   as<IPanelConfig<CodePanelComponent, ICodePanelComponentProps>>({
-                    title:
-                      `<i class="fa fa-code" aria-hidden="true"></i> ` + (this.state.program.name || _T("Playground")),
+                    title: this.codePanelTitle,
                     componentName: "code-panel",
                     componentType: CodePanelComponent,
                     props: {
@@ -210,11 +206,13 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
                       editorTheme: this.state.theme.codeEditorThemeName,
                       executionService: this.executionService,
                       navigateAutomaticallyAfterSaveAs: true,
-                      containerResized: this.layoutChangedSubject
+                      containerResized: this.layoutChangedSubject,
+                      hasChangesStatus: hasChanges =>
+                        this.setCodePanelTitle(this.state.program!.name, this.state.program!.id, hasChanges)
                     }
                   }),
                   as<IPanelConfig<OutputPanelComponent, IOutputPanelComponentProps>>({
-                    title: `<i class="fa fa-television" aria-hidden="true"></i> ` + _T("Output"),
+                    title: this.outputPanelTitle,
                     componentName: "output-panel",
                     componentType: OutputPanelComponent,
                     props: {
