@@ -61,8 +61,12 @@ export class ShareScreenshotModalComponent extends React.Component<IComponentPro
         {this.state.errorMessage && <AlertMessageComponent message={this.state.errorMessage} type="danger" />}
         {this.state.imgUrl && (
           <div className="share-screenshot-modal-component">
-            <img className="screenshot-img" src={this.state.imgUrl} />
-            <br />
+            <label className="label">Image preview</label>
+            <div className="has-text-centered">
+              <div className="box is-inline-block">
+                <img className="screenshot-img" src={this.state.imgUrl} />
+              </div>
+            </div>
             <br />
             <label className="label">Image url</label>
             <InputCopyToClipboardComponent text={this.state.imgUrl} />

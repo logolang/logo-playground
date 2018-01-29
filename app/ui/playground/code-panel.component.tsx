@@ -33,18 +33,19 @@ export interface ICodePanelComponentProps {
   executionService: ProgramExecutionContext;
   program: ProgramModel;
   saveCurrentEnabled: boolean;
-  navigateAutomaticallyAfterSaveAs: boolean;
   externalCodeChanges?: Observable<string>;
   containerResized?: Observable<void>;
   hasChangesStatus?: (hasChanges: boolean) => void;
+  onSaveAs?: (program: ProgramModel) => void;
 }
 
 interface IComponentState {
-  isSaveModalActive: boolean;
-  isShareModalActive: boolean;
-  isTakeScreenshotModalActive: boolean;
+  isSaveModalActive?: boolean;
+  isSaveAsModalActive?: boolean;
+  isShareModalActive?: boolean;
+  isTakeScreenshotModalActive?: boolean;
   hasLocalTempChanges: boolean;
-  screenshotDataToSave: string;
+  screenshotDataToSave?: string;
   code: string;
 }
 
@@ -59,10 +60,6 @@ export class CodePanelComponent extends React.Component<ICodePanelComponentProps
   constructor(props: ICodePanelComponentProps) {
     super(props);
     this.state = {
-      isSaveModalActive: false,
-      isShareModalActive: false,
-      isTakeScreenshotModalActive: false,
-      screenshotDataToSave: "",
       hasLocalTempChanges: this.props.program.hasTempLocalModifications,
       code: this.props.program.code
     };
@@ -108,9 +105,10 @@ export class CodePanelComponent extends React.Component<ICodePanelComponentProps
     return (
       <div className="code-panel-container">
         {this.renderSaveModal()}
+        {this.renderSaveAsModal()}
         {this.state.isTakeScreenshotModalActive && (
           <ShareScreenshotModalComponent
-            imageBase64={this.state.screenshotDataToSave}
+            imageBase64={this.state.screenshotDataToSave || ""}
             onClose={() => {
               this.setState({ isTakeScreenshotModalActive: false });
             }}
@@ -119,7 +117,7 @@ export class CodePanelComponent extends React.Component<ICodePanelComponentProps
         {this.state.isShareModalActive && (
           <ShareProgramModalComponent
             programModel={this.props.program}
-            imageBase64={this.state.screenshotDataToSave}
+            imageBase64={this.state.screenshotDataToSave || ""}
             onClose={() => {
               this.setState({ isShareModalActive: false });
             }}
@@ -132,7 +130,14 @@ export class CodePanelComponent extends React.Component<ICodePanelComponentProps
           runProgram={this.onRunProgram}
           stopProgram={this.onStopProgram}
           exportImage={this.exportScreenshot}
-          saveAsNew={this.showSaveDialog}
+          save={
+            this.props.program.storageType === ProgramStorageType.gallery &&
+            this.state.hasLocalTempChanges &&
+            this.props.program.id
+              ? this.showSaveDialog
+              : undefined
+          }
+          saveAsNew={this.showSaveAsDialog}
           onShareProgram={this.shareProgram}
           revertChanges={
             this.state.hasLocalTempChanges && this.props.program.id ? this.revertCurrentProgram : undefined
@@ -169,11 +174,29 @@ export class CodePanelComponent extends React.Component<ICodePanelComponentProps
       return (
         <SaveProgramModalComponent
           programName={this.props.program.name}
-          screenshot={this.state.screenshotDataToSave}
+          screenshot={this.state.screenshotDataToSave || ""}
           onClose={() => {
             this.setState({ isSaveModalActive: false });
           }}
+          onSave={this.saveProgramCallback}
+          allowRename={false}
+        />
+      );
+    }
+    return null;
+  }
+
+  renderSaveAsModal(): JSX.Element | null {
+    if (this.state.isSaveAsModalActive) {
+      return (
+        <SaveProgramModalComponent
+          programName={this.props.program.name}
+          screenshot={this.state.screenshotDataToSave || ""}
+          onClose={() => {
+            this.setState({ isSaveAsModalActive: false });
+          }}
           onSave={this.saveProgramAsCallback}
+          allowRename={true}
         />
       );
     }
@@ -185,13 +208,38 @@ export class CodePanelComponent extends React.Component<ICodePanelComponentProps
     this.setState({ isSaveModalActive: true, screenshotDataToSave: screenshot });
   };
 
-  saveProgramAsCallback = async (newProgramName: string): Promise<void> => {
+  showSaveAsDialog = async () => {
     const screenshot = await this.props.executionService.getScreenshot(true);
-    const newProgramId = await this.managementService.saveProgramToLibrary(
+    this.setState({ isSaveAsModalActive: true, screenshotDataToSave: screenshot });
+  };
+
+  saveProgramCallback = async (newProgramName: string): Promise<void> => {
+    const screenshot = await this.props.executionService.getScreenshot(true);
+    await this.managementService.saveProgramToLibrary(
       newProgramName,
       screenshot,
       this.state.code,
-      this.props.program
+      this.props.program,
+      true
+    );
+    this.notificationService.push({
+      type: "success",
+      title: _T("Message"),
+      message: _T("Program has been saved in the personal library.")
+    });
+    this.setState({ hasLocalTempChanges: false });
+    this.props.hasChangesStatus && this.props.hasChangesStatus(false);
+    this.eventsTracker.sendEvent(EventAction.saveProgramToPersonalLibrary);
+  };
+
+  saveProgramAsCallback = async (newProgramName: string): Promise<void> => {
+    const screenshot = await this.props.executionService.getScreenshot(true);
+    const newProgram = await this.managementService.saveProgramToLibrary(
+      newProgramName,
+      screenshot,
+      this.state.code,
+      this.props.program,
+      false
     );
     this.notificationService.push({
       type: "success",
@@ -200,12 +248,8 @@ export class CodePanelComponent extends React.Component<ICodePanelComponentProps
     });
     this.setState({ hasLocalTempChanges: false });
     this.eventsTracker.sendEvent(EventAction.saveProgramToPersonalLibrary);
-    if (this.props.navigateAutomaticallyAfterSaveAs) {
-      this.navigationService.navigate({
-        route: Routes.codeLibrary.build({
-          id: newProgramId
-        })
-      });
+    if (this.props.onSaveAs) {
+      this.props.onSaveAs(newProgram);
     }
   };
 

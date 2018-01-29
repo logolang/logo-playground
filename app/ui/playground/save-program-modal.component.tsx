@@ -18,6 +18,7 @@ interface IComponentProps {
   programName: string;
   screenshot: string;
   onSave(programName: string): Promise<void>;
+  allowRename: boolean;
   onClose(): void;
 }
 
@@ -42,20 +43,19 @@ export class SaveProgramModalComponent extends React.Component<IComponentProps, 
         actionButtonText={_T("Save")}
         cancelButtonText={_T("Cancel")}
       >
-        {this.state.errorMessage && (
-          <div>
-            <AlertMessageComponent message={this.state.errorMessage} />
-            <br />
-          </div>
-        )}
-
         <div className="field">
-          <label className="label">{_T("Image")}</label>
-          {this.props.screenshot ? (
-            <img src={this.props.screenshot} />
-          ) : (
-            <NoDataComponent iconClass="fa-picture-o" title={_T("No image")} />
-          )}
+          <label className="label">{_T("Gallery image")}</label>
+          <div className="has-text-centered">
+            <div className="box is-inline-block">
+              {this.props.screenshot ? (
+                <figure className="has-text-centered">
+                  <img src={this.props.screenshot} />
+                </figure>
+              ) : (
+                <NoDataComponent iconClass="fa-picture-o" title={_T("No image")} />
+              )}
+            </div>
+          </div>
         </div>
 
         <div className="field">
@@ -63,13 +63,17 @@ export class SaveProgramModalComponent extends React.Component<IComponentProps, 
           <div className="control">
             <input
               type="text"
-              className="input"
+              readOnly={!this.props.allowRename}
+              disabled={!this.props.allowRename}
+              className={cn("input", { "is-danger": !!this.state.errorMessage })}
               id="program-name-in-save-dialog"
               placeholder={_T("Please enter the name for your program")}
               autoFocus
               value={this.state.programName}
               onChange={event => {
-                this.setState({ programName: event.target.value });
+                if (this.props.allowRename) {
+                  this.setState({ programName: event.target.value });
+                }
               }}
               onKeyDown={async event => {
                 if (event.which == 13) {
@@ -78,6 +82,7 @@ export class SaveProgramModalComponent extends React.Component<IComponentProps, 
                 }
               }}
             />
+            {this.state.errorMessage && <p className="help is-danger">{this.state.errorMessage}</p>}
           </div>
         </div>
       </ModalComponent>

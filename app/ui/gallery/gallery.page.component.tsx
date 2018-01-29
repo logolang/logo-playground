@@ -151,6 +151,7 @@ export class GalleryPageComponent extends React.Component<IComponentProps, IComp
           {p.screenshot ? (
             <figure className="image is-4by3">
               <Link to={link}>
+                {/*<img src={"https://via.placeholder.com/200x150"} />*/}
                 <img src={p.screenshot} />
               </Link>
             </figure>
