@@ -121,7 +121,7 @@ export class GalleryPageComponent extends React.Component<IComponentProps, IComp
                     <div className="program-cards-container">
                       {this.state.programs.map(pr => this.renderProgramCard(pr, ProgramStorageType.gallery, true))}
                     </div>
-
+                    <br />
                     <br />
                   </>
                 )}
@@ -162,12 +162,12 @@ export class GalleryPageComponent extends React.Component<IComponentProps, IComp
         <div className="card-content">
           <div className="media">
             <div className="media-content">
-              <p className="title is-4">
+              <p className="title is-5">
                 <Link to={link}>{p.name}</Link>
               </p>
-              <p className="subtitle is-6">
+              <div className="subtitle is-7">
                 <DateTimeStampComponent datetime={p.dateLastEdited} />
-              </p>
+              </div>
               {deleteBox && (
                 <a
                   onClick={() => {
@@ -194,7 +194,7 @@ export class GalleryPageComponent extends React.Component<IComponentProps, IComp
           onConfirm={this.confirmDelete}
           actionButtonText={_T("Delete")}
           cancelButtonText={_T("Cancel")}
-          title={_T("Do you want to delete?")}
+          title={_T("Are you sure?")}
           onCancel={() => {
             this.setState({ programToDelete: undefined });
           }}
@@ -214,6 +214,7 @@ export class GalleryPageComponent extends React.Component<IComponentProps, IComp
                   )}
                 </div>
                 <div className="media-content">
+                  <br />
                   <p className="subtitle is-4">{p.name}</p>
                   <p className="is-6">
                     <strong>{_T("Edited")}: </strong>
