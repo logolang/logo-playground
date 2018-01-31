@@ -225,10 +225,7 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
                 panelsReloadCheck={(oldPanels, newPanels) => {
                   const oldProgramId = oldPanels[0].props.program.id;
                   const newProgramId = newPanels[0].props.program.id;
-                  return (
-                    newProgramId !== oldProgramId &&
-                    (this.state.program ? this.state.program.id !== newProgramId : true)
-                  );
+                  return newProgramId !== oldProgramId;
                 }}
                 panels={[
                   as<IPanelConfig<CodePanelComponent, ICodePanelComponentProps>>({
