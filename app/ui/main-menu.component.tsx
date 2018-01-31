@@ -40,9 +40,9 @@ export class MainMenuComponent extends React.Component<IComponentProps, ICompone
     return (
       <nav className="navbar navbar-mobile-fix">
         <div className="navbar-brand">
-          <span className="navbar-item">
+          <Link className="navbar-item" to={Routes.galleryRoot.build({})}>
             <span className="ex-app-logo" />
-          </span>
+          </Link>
 
           <div
             className={cn("navbar-burger burger", { "is-active": this.state.isMenuToggled })}

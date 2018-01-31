@@ -8,6 +8,7 @@ export abstract class IUserLibraryRepository {
   abstract getAll(): Promise<ProgramModel[]>;
   abstract get(id: string): Promise<ProgramModel>;
   abstract add(programs: ProgramModel[]): Promise<void>;
+  abstract save(program: ProgramModel): Promise<void>;
   abstract remove(id: string): Promise<void>;
 }
 
@@ -35,11 +36,10 @@ export class ProgramsLocalStorageRepository implements IUserLibraryRepository {
 
   async get(id: string): Promise<ProgramModel> {
     const program = this.getProgramFromStorage(this.getStorageKey(id));
-    if (program) {
-      // return clone of program object - so original will be intact in memory if updates happen
-      return { ...program };
+    if (!program) {
+      throw new Error(`Program with id ${id} is not found`);
     }
-    throw new Error(`Program with id ${id} is not found`);
+    return program;
   }
 
   async add(programs: ProgramModel[]): Promise<void> {
@@ -51,6 +51,14 @@ export class ProgramsLocalStorageRepository implements IUserLibraryRepository {
       program.dateLastEdited = new Date();
       this.storage.setItem(this.getStorageKey(program.id), ProgramModelConverter.toJson(program));
     }
+  }
+
+  async save(programToSave: ProgramModel): Promise<void> {
+    const program = await this.get(programToSave.id);
+    program.code = programToSave.code;
+    program.screenshot = programToSave.screenshot;
+    program.dateLastEdited = new Date();
+    this.storage.setItem(this.getStorageKey(program.id), ProgramModelConverter.toJson(program));
   }
 
   async remove(id: string): Promise<void> {

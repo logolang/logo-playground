@@ -221,7 +221,6 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
                       executionService: this.executionService,
                       program: this.state.program,
                       saveCurrentEnabled: false,
-                      navigateAutomaticallyAfterSaveAs: false,
                       externalCodeChanges: this.codeChangesStream,
                       containerResized: this.layoutChangesStream
                     }

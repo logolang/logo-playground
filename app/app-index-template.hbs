@@ -34,6 +34,7 @@
         var defaultTheme = {
             name: "Default",
             description: "Bulma as-is",
+            bodyClass: "is-light",
             isDark: false,
             codeEditorThemeName: "eclipse",
             styleLinks: [
@@ -68,8 +69,7 @@
 
         function activateTheme(theme, isFirstTime) {
             window.localStorage.setItem(appThemeNameLocalStorageKey, JSON.stringify(theme));
-            document.body.className = document.body.className.replace("is-dark", "").replace("is-light", "")
-                + (theme.isDark ? "is-dark" : "is-light");
+            document.body.className = theme.bodyClass;
             theme.styleLinks.forEach(x => injectCssLink(x, theme.name));
             if (!isFirstTime) {
                 // remove old theme files

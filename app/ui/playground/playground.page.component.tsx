@@ -9,10 +9,12 @@ import { subscribeLoadDataOnPropsParamsChange, subscribeLoadDataOnPropsChange } 
 
 import { _T } from "app/services/customizations/localization.service";
 import { resolveInject } from "app/di";
+import { Routes } from "app/routes";
 import { GallerySamplesRepository } from "app/services/gallery/gallery-samples.repository";
 import { ProgramModel } from "app/services/program/program.model";
 import { ProgramExecutionContext } from "app/services/program/program-execution.context";
 import { INotificationService } from "app/services/infrastructure/notification.service";
+import { INavigationService } from "app/services/infrastructure/navigation.service";
 import { TitleService } from "app/services/infrastructure/title.service";
 import { IUserSettingsService, IUserSettings } from "app/services/customizations/user-settings.service";
 import { ThemesService, Theme } from "app/services/customizations/themes.service";
@@ -55,6 +57,7 @@ arc 360 50
 
 export class PlaygroundPageComponent extends React.Component<IComponentProps, IComponentState> {
   private notificationService = resolveInject(INotificationService);
+  private navigationService = resolveInject(INavigationService);
   private titleService = resolveInject(TitleService);
   private programManagementService = resolveInject(ProgramManagementService);
   private userSettingsService = resolveInject(IUserSettingsService);
@@ -76,7 +79,6 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
   constructor(props: IComponentProps) {
     super(props);
     this.state = this.buildDefaultState(this.props);
-    subscribeLoadDataOnPropsChange(this);
   }
 
   buildDefaultState(props: IComponentProps): IComponentState {
@@ -84,6 +86,16 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
       isLoading: true
     };
     return state;
+  }
+
+  async componentWillReceiveProps(newProps: IComponentProps) {
+    if (newProps.programId != this.props.programId) {
+      if (this.state.program && this.state.program.id === newProps.programId) {
+        return;
+      }
+      this.setState({ isLoading: true });
+      await this.loadData(newProps);
+    }
   }
 
   async componentDidMount() {
@@ -106,10 +118,25 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
     this.layoutChangedSubject.next();
   };
 
+  private onSaveAs = (program: ProgramModel) => {
+    this.setCodePanelTitle(program.name, program.id, program.hasTempLocalModifications);
+    this.setState({
+      program: program
+    });
+    this.navigationService.navigate({
+      route: Routes.codeLibrary.build({
+        id: program.id
+      })
+    });
+  };
+
   private setCodePanelTitle(programName: string, programId: string, hasChanges: boolean) {
-    let title = `<i class="fa fa-code" aria-hidden="true"></i> ` + (programName || _T("Code"));
+    let title =
+      `<i class="fa fa-code" aria-hidden="true"></i> ` +
+      _T("Program") +
+      (programName ? ": <strong>" + programName + "</strong>" : "");
     if (hasChanges && programId) {
-      title += ` <i class="fa fa-circle" aria-hidden="true" style="transform: scale(0.7, 0.7);" title="${_T(
+      title += ` <i class="fa fa-asterisk" aria-hidden="true" style="transform: scale(0.7, 0.7);" title="${_T(
         "This program has changes"
       )}"></i>`;
     }
@@ -168,6 +195,9 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
 
     if (programModel.storageType) {
       setTimeout(() => {
+        if (this.executionService.isRunning) {
+          this.executionService.stopProgram();
+        }
         this.executionService.executeProgram(programModel.code);
       }, 500);
     }
@@ -193,7 +223,9 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
                 defaultLayoutConfigJSON={this.defaultLayoutConfigJSON}
                 onLayoutChange={this.layoutChanged}
                 panelsReloadCheck={(oldPanels, newPanels) => {
-                  return oldPanels[0].props.program.id !== newPanels[0].props.program.id;
+                  const oldProgramId = oldPanels[0].props.program.id;
+                  const newProgramId = newPanels[0].props.program.id;
+                  return newProgramId !== oldProgramId;
                 }}
                 panels={[
                   as<IPanelConfig<CodePanelComponent, ICodePanelComponentProps>>({
@@ -205,7 +237,7 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
                       program: this.state.program,
                       editorTheme: this.state.theme.codeEditorThemeName,
                       executionService: this.executionService,
-                      navigateAutomaticallyAfterSaveAs: true,
+                      onSaveAs: this.onSaveAs,
                       containerResized: this.layoutChangedSubject,
                       hasChangesStatus: hasChanges =>
                         this.setCodePanelTitle(this.state.program!.name, this.state.program!.id, hasChanges)

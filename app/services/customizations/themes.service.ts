@@ -3,6 +3,7 @@ import { injectable } from "app/di";
 export interface Theme {
   name: string;
   description: string;
+  bodyClass: string;
   isDark: boolean;
   codeEditorThemeName: string;
   styleLinks: string[];
@@ -16,6 +17,7 @@ export class ThemesService {
     {
       name: "Litera",
       description: "The medium is the message",
+      bodyClass: "is-light",
       isDark: false,
       codeEditorThemeName: "eclipse",
       styleLinks: [
@@ -27,6 +29,7 @@ export class ThemesService {
     {
       name: "Materia",
       description: "Material is the metaphor",
+      bodyClass: "is-light dark-navbar",
       isDark: false,
       codeEditorThemeName: "eclipse",
       styleLinks: [
@@ -38,6 +41,7 @@ export class ThemesService {
     {
       name: "Yeti",
       description: "A friendly foundation",
+      bodyClass: "is-light dark-navbar",
       isDark: false,
       codeEditorThemeName: "eclipse",
       styleLinks: [
@@ -49,6 +53,7 @@ export class ThemesService {
     {
       name: "Cosmo",
       description: "An ode to Metro",
+      bodyClass: "is-light dark-navbar",
       isDark: false,
       codeEditorThemeName: "eclipse",
       styleLinks: [
@@ -60,6 +65,7 @@ export class ThemesService {
     {
       name: "Flatly",
       description: "Flat and thick",
+      bodyClass: "is-light dark-navbar",
       isDark: false,
       codeEditorThemeName: "eclipse",
       styleLinks: [
@@ -71,6 +77,7 @@ export class ThemesService {
     {
       name: "Pulse",
       description: "A trace of purple",
+      bodyClass: "is-light dark-navbar",
       isDark: false,
       codeEditorThemeName: "eclipse",
       styleLinks: [
@@ -82,6 +89,7 @@ export class ThemesService {
     {
       name: "Sandstone",
       description: "A touch of warmth",
+      bodyClass: "is-light dark-navbar",
       isDark: false,
       codeEditorThemeName: "eclipse",
       styleLinks: [
@@ -93,6 +101,7 @@ export class ThemesService {
     {
       name: "Darkly",
       description: "Flatly in night-mode",
+      bodyClass: "is-dark dark-navbar",
       isDark: true,
       codeEditorThemeName: "abcdef",
       styleLinks: [
@@ -104,6 +113,7 @@ export class ThemesService {
     {
       name: "Superhero",
       description: "The brave and the blue",
+      bodyClass: "is-dark dark-navbar",
       isDark: true,
       codeEditorThemeName: "abcdef",
       styleLinks: [
@@ -115,6 +125,7 @@ export class ThemesService {
     {
       name: "Slate",
       description: "Shades of gunmetal gray",
+      bodyClass: "is-dark dark-navbar",
       isDark: true,
       codeEditorThemeName: "abcdef",
       styleLinks: [
@@ -126,6 +137,7 @@ export class ThemesService {
     {
       name: "Nuclear",
       description: "A dark theme with irradiated highlights",
+      bodyClass: "is-dark dark-navbar",
       isDark: true,
       codeEditorThemeName: "abcdef",
       styleLinks: [
