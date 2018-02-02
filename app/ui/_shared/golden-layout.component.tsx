@@ -4,6 +4,7 @@ import * as goldenLayout from "golden-layout";
 import { Subject, BehaviorSubject } from "rxjs";
 
 import "./golden-layout.component.less";
+import { checkIsMobileDevice } from "app/utils/device-helper";
 
 interface Newable<T> {
   new (...args: any[]): T;
@@ -21,9 +22,9 @@ interface IComponentState {}
 
 interface IComponentProps {
   panels: IPanelConfig<any, any>[];
-  defaultLayoutConfigJSON: string;
-  initialLayoutConfigJSON: string;
-  onLayoutChange(newConfigJSON: string): void;
+  defaultLayoutConfig: object;
+  initialLayoutConfig?: object;
+  onLayoutChange(newConfig: object): void;
   panelsReloadCheck(oldPanels: IPanelConfig<any, any>[], newPanels: IPanelConfig<any, any>[]): boolean;
 }
 
@@ -60,7 +61,7 @@ export class GoldenLayoutComponent extends React.Component<IComponentProps, ICom
   }
 
   onWindowResize = () => {
-    if (window.matchMedia && window.matchMedia("only screen and (max-width: 760px)").matches) {
+    if (checkIsMobileDevice()) {
       /* Skip window resizing on mobile devices - bacause we should have browser full screen anyway
        and resizing is occuring due to on-screen keyboard toggling
        */
@@ -74,18 +75,18 @@ export class GoldenLayoutComponent extends React.Component<IComponentProps, ICom
   initLayout(props: IComponentProps) {
     setTimeout(() => {
       try {
-        this.initLayoutWithConfig(props, props.initialLayoutConfigJSON);
+        this.initLayoutWithConfig(props, props.initialLayoutConfig);
       } catch (ex) {
-        this.initLayoutWithConfig(props, props.defaultLayoutConfigJSON);
+        this.initLayoutWithConfig(props, props.defaultLayoutConfig);
       }
     }, 0);
   }
 
-  initLayoutWithConfig(props: IComponentProps, configJSON: string) {
-    if (!configJSON) {
-      throw new Error("config should be not empty JSON");
+  initLayoutWithConfig(props: IComponentProps, configToApply?: object) {
+    if (!configToApply) {
+      throw new Error("configToApply should be not undefined");
     }
-    const config = this.layout ? this.layout.toConfig() : JSON.parse(configJSON);
+    const config = this.layout ? this.layout.toConfig() : configToApply;
     for (const panel of props.panels) {
       const panelConfig = this.getGoldenLayoutConfigItem(panel.componentName, config);
       (panelConfig as any).props = panel.props;
@@ -150,7 +151,7 @@ export class GoldenLayoutComponent extends React.Component<IComponentProps, ICom
     const json = JSON.stringify(config);
     if (this.stateLastJSON != json) {
       this.stateLastJSON = json;
-      this.props.onLayoutChange(json);
+      this.props.onLayoutChange(config);
     }
   };
 

@@ -130,6 +130,7 @@
   text-overflow: ellipsis;
   display: inline-block;
   overflow: hidden;
+  user-select: none;
 }
 
 .lm_header .lm_tab .lm_close_tab {

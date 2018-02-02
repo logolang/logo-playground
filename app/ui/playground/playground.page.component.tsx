@@ -31,13 +31,12 @@ import {
   playgroundDefaultLayout,
   playgroundDefaultMobileLayout
 } from "app/ui/playground/playground-default-goldenlayout";
-
-import "./playground.page.component.less";
+import { checkIsMobileDevice } from "app/utils/device-helper";
 
 interface IComponentState {
   isLoading: boolean;
   userSettings?: IUserSettings;
-  pageLayoutConfigJSON?: string;
+  pageLayoutConfig?: object;
   program?: ProgramModel;
   turtleImage?: HTMLImageElement;
   theme?: Theme;
@@ -68,13 +67,13 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
   private layoutChangedSubject = new Subject<void>();
   private codePanelTitle = new BehaviorSubject<string>("");
   private outputPanelTitle = new BehaviorSubject<string>("");
+  private isMobileDevice = checkIsMobileDevice();
+  private defaultLayoutConfig = this.isMobileDevice ? playgroundDefaultMobileLayout : playgroundDefaultLayout;
 
   private errorHandler = (err: ErrorDef) => {
     this.notificationService.push({ message: err.message, type: "danger" });
     this.setState({ isLoading: false });
   };
-
-  private defaultLayoutConfigJSON: string;
 
   constructor(props: IComponentProps) {
     super(props);
@@ -100,10 +99,6 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
 
   async componentDidMount() {
     this.titleService.setDocumentTitle(_T("Playground"));
-    const isMobile = window.matchMedia && window.matchMedia("only screen and (max-width: 760px)").matches;
-    this.defaultLayoutConfigJSON = isMobile
-      ? JSON.stringify(playgroundDefaultMobileLayout)
-      : JSON.stringify(playgroundDefaultLayout);
     await this.loadData(this.props);
   }
 
@@ -111,10 +106,16 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
     /***/
   }
 
-  layoutChanged = async (newLayoutJSON: string): Promise<void> => {
-    await this.userSettingsService.update({
-      playgroundLayoutJSON: newLayoutJSON
-    });
+  layoutChanged = async (newLayout: object): Promise<void> => {
+    await this.userSettingsService.update(
+      this.isMobileDevice
+        ? {
+            playgroundLayoutMobile: newLayout
+          }
+        : {
+            playgroundLayout: newLayout
+          }
+    );
     this.layoutChangedSubject.next();
   };
 
@@ -188,7 +189,7 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
       userSettings,
       theme,
       turtleImage,
-      pageLayoutConfigJSON: userSettings.playgroundLayoutJSON
+      pageLayoutConfig: this.isMobileDevice ? userSettings.playgroundLayoutMobile : userSettings.playgroundLayout
     });
 
     this.titleService.setDocumentTitle(programModel.name);
@@ -219,8 +220,8 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
             this.state.userSettings &&
             this.state.theme && (
               <GoldenLayoutComponent
-                initialLayoutConfigJSON={this.state.pageLayoutConfigJSON || ""}
-                defaultLayoutConfigJSON={this.defaultLayoutConfigJSON}
+                initialLayoutConfig={this.state.pageLayoutConfig}
+                defaultLayoutConfig={this.defaultLayoutConfig}
                 onLayoutChange={this.layoutChanged}
                 panelsReloadCheck={(oldPanels, newPanels) => {
                   const oldProgramId = oldPanels[0].props.program.id;
