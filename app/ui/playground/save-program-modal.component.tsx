@@ -44,21 +44,6 @@ export class SaveProgramModalComponent extends React.Component<IComponentProps, 
         cancelButtonText={_T("Cancel")}
       >
         <div className="field">
-          <label className="label">{_T("Gallery image")}</label>
-          <div className="has-text-centered">
-            <div className="box is-inline-block">
-              {this.props.screenshot ? (
-                <figure className="has-text-centered">
-                  <img src={this.props.screenshot} />
-                </figure>
-              ) : (
-                <NoDataComponent iconClass="fa-picture-o" title={_T("No image")} />
-              )}
-            </div>
-          </div>
-        </div>
-
-        <div className="field">
           <label className="label">{_T("Program name")}</label>
           <div className="control">
             <input
@@ -83,6 +68,20 @@ export class SaveProgramModalComponent extends React.Component<IComponentProps, 
               }}
             />
             {this.state.errorMessage && <p className="help is-danger">{this.state.errorMessage}</p>}
+          </div>
+        </div>
+        <div className="field">
+          <label className="label">{_T("Gallery image")}</label>
+          <div className="has-text-centered">
+            <div className="box is-inline-block">
+              {this.props.screenshot ? (
+                <figure className="has-text-centered">
+                  <img src={this.props.screenshot} />
+                </figure>
+              ) : (
+                <NoDataComponent iconClass="fa-picture-o" title={_T("No image")} />
+              )}
+            </div>
           </div>
         </div>
       </ModalComponent>

@@ -33,6 +33,8 @@ import {
 } from "app/ui/playground/playground-default-goldenlayout";
 import { checkIsMobileDevice } from "app/utils/device-helper";
 
+import "./playground.page.component.less";
+
 interface IComponentState {
   isLoading: boolean;
   userSettings?: IUserSettings;
@@ -89,9 +91,6 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
 
   async componentWillReceiveProps(newProps: IComponentProps) {
     if (newProps.programId != this.props.programId) {
-      if (this.state.program && this.state.program.id === newProps.programId) {
-        return;
-      }
       this.setState({ isLoading: true });
       await this.loadData(newProps);
     }
@@ -196,9 +195,6 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
 
     if (programModel.storageType) {
       setTimeout(() => {
-        if (this.executionService.isRunning) {
-          this.executionService.stopProgram();
-        }
         this.executionService.executeProgram(programModel.code);
       }, 500);
     }
@@ -208,12 +204,10 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
     return (
       <div className="ex-page-container">
         <MainMenuComponent />
-        <div className="ex-page-content">
+        <div className="ex-page-content playground-page-component">
           {this.state.isLoading && (
-            <div className="golden-layout-component">
-              <div className="ex-page-content lm_content">
-                <LoadingComponent isLoading />
-              </div>
+            <div className="main-loading-container">
+              <LoadingComponent isLoading />
             </div>
           )}
           {this.state.program &&

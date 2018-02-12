@@ -12,7 +12,7 @@
         gtag('config', '{{htmlWebpackPlugin.options.variables.appConfig.services.googleAnalyticsTrackingId}}');
     </script> {{/if}}
 
-    <title>Loading...</title>
+    <title>Logolang</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -28,7 +28,13 @@
     <link href="content/css/golden-layout/goldenlayout-base.css" rel="stylesheet">
 </head>
 
-<body>
+<body style="margin:0px;">
+    <div id="app-container">
+        <div style="text-align:center;margin-top:100px;">
+            <img style="width:200px;" src="content/images/logo-logo.svg" alt="logo" />
+        </div>
+    </div>
+
     <script type="text/javascript">
         var appThemeNameLocalStorageKey = 'logolang-app-uitheme';
         var defaultTheme = {
@@ -92,9 +98,6 @@
         var theme = getActiveTheme() || defaultTheme;
         activateTheme(theme, true);
     </script>
-
-    <div id="app-container">
-    </div>
 
     <script src="vendor.js?{{htmlWebpackPlugin.options.variables.appGitVersion}}"></script>
 
