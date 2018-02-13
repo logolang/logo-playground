@@ -5,7 +5,7 @@ import { createCompareFuntion } from "app/utils/syntax-helpers";
 export class ProgramsHtmlSerializerService {
   public parse(serialized: string): ProgramModel[] {
     const result: ProgramModel[] = [];
-    const bodyStartIndex = serialized.indexOf("<body>");
+    const bodyStartIndex = serialized.indexOf("<body");
     const bodyEndIndex = serialized.indexOf("</html>");
     const bodyXml = serialized.substring(bodyStartIndex, bodyEndIndex - 1);
     const parser = new DOMParser();
@@ -40,7 +40,7 @@ export class ProgramsHtmlSerializerService {
     const programsSorted = [...programs].sort(sortingFunction);
 
     const imageData64Url = await this.getImageBase64ByUrl(userpicUrl);
-    return `<!DOCTYPE html>
+    const headHtml = `<!DOCTYPE html>
     <html>
     <head>
         <title>Logo personal library</title>
@@ -70,59 +70,77 @@ export class ProgramsHtmlSerializerService {
             }
         </style>
     </head>
-    <body>
-      <header>
-        <h1>Logo personal library</h1>
-        <h3>${username}</h3>
-        ${imageData64Url ? `<img src="${imageData64Url}"></img>` : ""}
-      </header>
-      <table>
-        <tbody>
-          ${programsSorted.map(p => this.serializeProgram(p)).join("")}
-        </tbody>
-      </table>
-    </body>
-    </html>
-    `;
-  }
+`;
 
-  private serializeProgram(program: ProgramModel) {
-    return `
-<tr class="logo-program"
- data-program-id="${program.id}" 
- data-program-name="${program.name}"
- data-program-date-created="${program.dateCreated}"
- data-program-date-edited="${program.dateLastEdited}"
->
-  <td>
-    <strong>${program.name}</strong>
-    <br />
-    <small>${program.dateLastEdited}</small>
-    <br />
-    <br />
-    ${this.getImage(program)}
-    />
-  </td>
-  <td>
-    <pre>${this.encodeHtml(program.code)}</pre>
-  </td>
-</tr>
-  `;
-  }
+    const body = document.createElement("body");
+    const header = document.createElement("header");
+    body.appendChild(header);
 
-  private getImage(program: ProgramModel) {
-    if (program.screenshot) {
-      return `<img alt="Program screenshot" src="${program.screenshot}"`;
+    const header_h1 = document.createElement("h1");
+    header_h1.innerText = "Logo personal library";
+    header.appendChild(header_h1);
+
+    const header_h3 = document.createElement("h3");
+    header_h3.innerText = username;
+    header.appendChild(header_h3);
+
+    if (imageData64Url) {
+      const header_img = document.createElement("img");
+      header_img.setAttribute("src", imageData64Url);
+      header.appendChild(header_img);
     }
-    return "";
+
+    const table = document.createElement("table");
+    body.appendChild(table);
+    const tbody = document.createElement("tbody");
+    table.appendChild(tbody);
+
+    const rows = programsSorted.map(p => this.serializeProgramToHtmlNode(p));
+    for (const row of rows) {
+      tbody.appendChild(row);
+    }
+
+    const xmlserializer = new XMLSerializer();
+    return headHtml + this.formatXml(xmlserializer.serializeToString(body)) + "\n</html>";
   }
 
-  private encodeHtml(str: string): string {
-    const div = document.createElement("div");
-    div.appendChild(document.createTextNode(str));
-    const result = div.innerHTML;
-    div.remove();
-    return result;
+  private serializeProgramToHtmlNode(program: ProgramModel) {
+    const tr = document.createElement("tr");
+    tr.className = "logo-program";
+    tr.setAttribute("data-program-id", program.id);
+    tr.setAttribute("data-program-name", program.name);
+    tr.setAttribute("data-program-date-created", program.dateCreated.toUTCString());
+    tr.setAttribute("data-program-date-edited", program.dateLastEdited.toUTCString());
+
+    const td1 = document.createElement("td");
+    tr.appendChild(td1);
+    const programNameElt = document.createElement("strong");
+    programNameElt.innerText = program.name;
+    td1.appendChild(programNameElt);
+
+    td1.appendChild(document.createElement("br"));
+
+    const programDateElt = document.createElement("small");
+    programDateElt.innerText = program.dateLastEdited.toLocaleDateString();
+    td1.appendChild(programDateElt);
+
+    td1.appendChild(document.createElement("br"));
+    td1.appendChild(document.createElement("br"));
+
+    if (program.screenshot) {
+      const img = document.createElement("img");
+      img.setAttribute("src", program.screenshot);
+      td1.appendChild(img);
+    }
+
+    const td2 = document.createElement("td");
+    tr.appendChild(td2);
+    const pre = document.createElement("pre");
+    pre.appendChild(document.createTextNode(program.code));
+    td2.appendChild(pre);
+    tr.appendChild(td2);
+
+    return tr;
   }
 
   private async getImageBase64ByUrl(imgUrl: string): Promise<string> {
@@ -142,7 +160,7 @@ export class ProgramsHtmlSerializerService {
             return;
           }
           ctx.drawImage(imgElt, 0, 0);
-          var dataURL = canvasElt.toDataURL("image/jpeg", 0.5);
+          const dataURL = canvasElt.toDataURL("image/jpeg", 0.5);
           resolve(dataURL);
         } catch (ex) {
           resolve("");
@@ -151,5 +169,37 @@ export class ProgramsHtmlSerializerService {
       imgElt.setAttribute("crossOrigin", "Anonymous");
       imgElt.setAttribute("src", imgUrl);
     });
+  }
+
+  /**
+   * Pretty prints the xml string
+   * copy pasted from https://gist.github.com/sente/1083506/d2834134cd070dbcc08bf42ee27dabb746a1c54d
+   */
+  private formatXml(xml: string) {
+    const PADDING = " ".repeat(2); // set desired indent size here
+    const reg = /(>)(<)(\/*)/g;
+    let pad = 0;
+
+    xml = xml.replace(reg, "$1\r\n$2$3");
+
+    return xml
+      .split("\r\n")
+      .map((node, index) => {
+        let indent = 0;
+        if (node.match(/.+<\/\w[^>]*>$/)) {
+          indent = 0;
+        } else if (node.match(/^<\/\w/) && pad > 0) {
+          pad -= 1;
+        } else if (node.match(/^<\w[^>]*[^\/]>.*$/)) {
+          indent = 1;
+        } else {
+          indent = 0;
+        }
+
+        pad += indent;
+
+        return PADDING.repeat(pad - indent) + node;
+      })
+      .join("\n");
   }
 }
