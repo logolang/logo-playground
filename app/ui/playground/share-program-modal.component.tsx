@@ -51,10 +51,11 @@ export class ShareProgramModalComponent extends React.Component<IComponentProps,
       <ModalComponent
         show
         title={_T("Share your program")}
-        onConfirm={this.state.publishedUrl ? undefined : this.saveProgramAction}
+        onConfirm={this.state.publishedUrl ? undefined : this.shareProgramAction}
         onCancel={this.props.onClose}
+        withoutFooter={!!this.state.publishedUrl}
         actionButtonText={_T("Continue")}
-        cancelButtonText={this.state.publishedUrl ? _T("Close") : _T("Cancel")}
+        cancelButtonText={_T("Cancel")}
       >
         {this.state.errorMessage && (
           <div>
@@ -91,12 +92,11 @@ export class ShareProgramModalComponent extends React.Component<IComponentProps,
     );
   }
 
-  saveProgramAction = async () => {
+  shareProgramAction = async () => {
     this.setState({ isSavingInProgress: true, errorMessage: "" });
 
-    const result = await callActionSafe(
-      this.errorHandler,
-      async () => await this.gistService.post(this.state.programName, this.props.imageBase64, this.props.programModel)
+    const result = await callActionSafe(this.errorHandler, async () =>
+      this.gistService.post(this.state.programName, this.props.imageBase64, this.props.programModel)
     );
     this.setState({
       isSavingInProgress: false

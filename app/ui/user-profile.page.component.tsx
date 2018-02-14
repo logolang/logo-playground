@@ -253,8 +253,8 @@ export class UserProfilePageComponent extends React.Component<IComponentProps, I
                           <label className="label" htmlFor="theme-selector">
                             {_T("User interface theme")}
                           </label>
-                          <div className="control">
-                            <div className="select">
+                          <div className="control is-expanded">
+                            <div className="select is-fullwidth">
                               <ThemeSelector
                                 items={this.themeService.getAllThemes()}
                                 selectedItem={this.state.theme}
@@ -276,8 +276,8 @@ export class UserProfilePageComponent extends React.Component<IComponentProps, I
 
                         <br />
 
-                        <label className="label">{_T("Turtle")}</label>
-                        <div className="field is-grouped">
+                        <label className="label">{_T("Turtle outfit")}</label>
+                        <div className="field">
                           <div className="control">
                             <div className="select">
                               <TurtleSelector
@@ -297,6 +297,12 @@ export class UserProfilePageComponent extends React.Component<IComponentProps, I
                               />
                             </div>
                           </div>
+                        </div>
+
+                        <br />
+
+                        <label className="label">{_T("Turtle size")}</label>
+                        <div className="field">
                           <div className="control">
                             <div className="select">
                               <TurtleSizeSelector
@@ -321,10 +327,10 @@ export class UserProfilePageComponent extends React.Component<IComponentProps, I
                         <br />
 
                         <label className="label">{_T("Personal library")}</label>
-                        <p className="help">
+                        <p>
                           <span>
-                            {_T("You have %d program", {
-                              plural: "You have %d programs",
+                            {_T("You have %d program in your library", {
+                              plural: "You have %d programs in your library",
                               value: this.state.programCount
                             })}
                           </span>
@@ -348,17 +354,21 @@ export class UserProfilePageComponent extends React.Component<IComponentProps, I
                   </div>
 
                   <div className="column">
-                    {[
-                      <LogoExecutorComponent
-                        key={`${JSON.stringify(this.state.userSettings)}`} //this is a hack to force component to be created each render in order to not handle prop change event
-                        onIsRunningChanged={this.onIsRunningChanged}
-                        runCommands={this.runCode}
-                        stopCommands={new Subject<void>()}
-                        customTurtleImage={this.state.turtleImage}
-                        customTurtleSize={this.state.userSettings.turtleSize}
-                        isDarkTheme={this.state.theme.isDark}
-                      />
-                    ]}
+                    <div className="card">
+                      <div className="card-content">
+                        {[
+                          <LogoExecutorComponent
+                            key={`${JSON.stringify(this.state.userSettings)}`} //this is a hack to force component to be created each render in order to not handle prop change event
+                            onIsRunningChanged={this.onIsRunningChanged}
+                            runCommands={this.runCode}
+                            stopCommands={new Subject<void>()}
+                            customTurtleImage={this.state.turtleImage}
+                            customTurtleSize={this.state.userSettings.turtleSize}
+                            isDarkTheme={this.state.theme.isDark}
+                          />
+                        ]}
+                      </div>
+                    </div>
                   </div>
                 </div>
               )}

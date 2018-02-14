@@ -2,6 +2,10 @@
 <html>
 
 <head>
+    <meta property="og:title" content="Logo playground" />
+    <meta property="og:description" content="Online environment for programming with Logo language" />
+    <meta property="og:image" content="content/images/logo-logo.png" />
+
     <!-- Global site tag (gtag.js) - Google Analytics -->
     {{#if htmlWebpackPlugin.options.variables.appConfig.services.googleAnalyticsTrackingId}}
     <script async src="https://www.googletagmanager.com/gtag/js?id={{htmlWebpackPlugin.options.variables.appConfig.services.googleAnalyticsTrackingId}}"></script>
@@ -12,7 +16,7 @@
         gtag('config', '{{htmlWebpackPlugin.options.variables.appConfig.services.googleAnalyticsTrackingId}}');
     </script> {{/if}}
 
-    <title>Logolang</title>
+    <title>Logo playground</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -26,6 +30,7 @@
 
     <link href="content/css/codemirror/codemirror.css" rel="stylesheet">
     <link href="content/css/golden-layout/goldenlayout-base.css" rel="stylesheet">
+    <meta id="theme_styles_inserted_straight_before_this_element">
 </head>
 
 <body style="margin:0px;">
@@ -70,7 +75,8 @@
             link.setAttribute('rel', 'stylesheet');
             link.setAttribute('type', 'text/css');
             link.setAttribute('href', linkUrl + '?{{htmlWebpackPlugin.options.variables.appGitVersion}}');
-            document.getElementsByTagName('head')[0].appendChild(link);
+            const insertAfterElement = document.getElementById('theme_styles_inserted_straight_before_this_element');
+            insertAfterElement.parentElement.insertBefore(link, insertAfterElement);
         }
 
         function activateTheme(theme, isFirstTime) {

@@ -74,8 +74,7 @@ export class ProgramControlsMenuComponent extends React.Component<IComponentProp
                     this.props.revertChanges && this.props.revertChanges();
                   }}
                 >
-                  <i className="fa fa-undo" aria-hidden="true" />
-                  &nbsp;&nbsp;
+                  <i className="fa fa-undo icon-fixed-width" aria-hidden="true" />
                   {_T("Revert changes")}
                 </a>
               )}
@@ -87,8 +86,7 @@ export class ProgramControlsMenuComponent extends React.Component<IComponentProp
                     this.props.saveAsNew && this.props.saveAsNew();
                   }}
                 >
-                  <i className="fa fa-clone" aria-hidden="true" />
-                  &nbsp;&nbsp;
+                  <i className="fa fa-clone icon-fixed-width" aria-hidden="true" />
                   {_T("Save as ...")}
                 </a>
               )}
@@ -103,8 +101,7 @@ export class ProgramControlsMenuComponent extends React.Component<IComponentProp
                     this.props.save && this.props.save();
                   }}
                 >
-                  <i className="fa fa-check-square-o" aria-hidden="true" />
-                  &nbsp;&nbsp;
+                  <i className="fa fa-check-square-o icon-fixed-width" aria-hidden="true" />
                   {_T("Save")}
                 </a>
               )}
@@ -115,8 +112,7 @@ export class ProgramControlsMenuComponent extends React.Component<IComponentProp
                   this.props.onShareProgram();
                 }}
               >
-                <i className="fa fa-share-alt" aria-hidden="true" />
-                &nbsp;&nbsp;
+                <i className="fa fa-share-alt icon-fixed-width" aria-hidden="true" />
                 {_T("Share")}
               </a>
               <hr className="dropdown-divider" />
@@ -127,8 +123,7 @@ export class ProgramControlsMenuComponent extends React.Component<IComponentProp
                   this.props.exportImage();
                 }}
               >
-                <i className="fa fa-camera" aria-hidden="true" />
-                &nbsp;&nbsp;
+                <i className="fa fa-camera icon-fixed-width" aria-hidden="true" />
                 {_T("Take screenshot")}
               </a>
             </div>

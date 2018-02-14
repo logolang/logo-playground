@@ -4,7 +4,7 @@ export class RandomHelper {
   }
 
   public static getRandomObjectId(length = 10): string {
-    const symbols = "1234567890ABCDEF";
+    const symbols = "0123456789abcdef";
     let result = "";
     for (let i = 0; i < length; ++i) {
       result += symbols[RandomHelper.getRandomInt(0, symbols.length - 1)];

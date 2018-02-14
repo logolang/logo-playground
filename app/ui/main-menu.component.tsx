@@ -84,20 +84,24 @@ export class MainMenuComponent extends React.Component<IComponentProps, ICompone
               </span>
               <div className="navbar-dropdown is-right">
                 <NavLink className="navbar-item" activeClassName="is-active" to={Routes.settingsRoot.build({})}>
-                  {_T("User profile")}
+                  <i className="fa fa-wrench icon-fixed-width" aria-hidden="true" />
+                  {_T("Settings")}
                 </NavLink>
                 <NavLink className="navbar-item" activeClassName="is-active" to={Routes.infoRoot.build({})}>
-                  {_T("About...")}
+                  <i className="fa fa-info icon-fixed-width" aria-hidden="true" />
+                  {_T("About")}
                 </NavLink>
                 <hr className="navbar-divider" />
                 {!loginStatus.isLoggedIn && (
                   <NavLink className="navbar-item" activeClassName="is-active" to={Routes.loginRoot.build({})}>
-                    {_T("Log in")}
+                    <i className="fa fa-sign-in icon-fixed-width" aria-hidden="true" />
+                    {_T("Sign in")}
                   </NavLink>
                 )}
                 {loginStatus.isLoggedIn && (
                   <a href="#" className="navbar-item" onClick={this.menuLogOutClick}>
-                    {_T("Log out")}
+                    <i className="fa fa-sign-out icon-fixed-width" aria-hidden="true" />
+                    {_T("Sign out")}
                   </a>
                 )}
               </div>
