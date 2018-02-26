@@ -128,19 +128,20 @@ export class TutorialViewComponent extends React.Component<ITutorialViewComponen
               {this.renderFixTheCodeModal()}
               {this.renderSelectTutorialModal()}
 
-              <button
-                className="button is-info is-pulled-right"
-                onClick={() => {
-                  this.setState({ showSelectionTutorials: true });
-                }}
-              >
-                <span>{this.state.currentTutorial.label}</span>
-                <span className="icon is-small">
-                  <i className="fa fa-angle-down" aria-hidden="true" />
-                </span>
-              </button>
-
-              <span className="subtitle is-3">{this.state.currentStepInfo.name}</span>
+              <div className="tutorial-header">
+                <span className="subtitle is-3 is-marginless">{this.state.currentStepInfo.name}</span>
+                <button
+                  className="button is-info"
+                  onClick={() => {
+                    this.setState({ showSelectionTutorials: true });
+                  }}
+                >
+                  <span>{this.state.currentTutorial.label}</span>
+                  <span className="icon is-small">
+                    <i className="fa fa-angle-down" aria-hidden="true" />
+                  </span>
+                </button>
+              </div>
 
               <p className="help">
                 {_T("Step %1$s of %2$s", {
@@ -157,59 +158,54 @@ export class TutorialViewComponent extends React.Component<ITutorialViewComponen
               />
               <br />
               <br />
-              <div className="field is-grouped">
-                <p className="control">
-                  {!prevStepButtonDisabled && (
-                    <button type="button" className="button" onClick={this.navigateToNextStep(-1)}>
-                      <span className="icon">
-                        <i className="fa fa-arrow-left" aria-hidden="true" />
-                      </span>
-                      <span>{_T("Back")}</span>
-                    </button>
-                  )}
-                </p>
-                <p className="control">
-                  {this.state.currentStepContent.resultCode && (
-                    <button
-                      type="button"
-                      className="button is-warning"
-                      onClick={() => {
-                        this.setState({ showFixTheCode: true });
-                      }}
-                    >
-                      <span className="icon">
-                        <i className="fa fa-question" aria-hidden="true" />
-                      </span>
-                      <span>{_T("Help – it's not working!")}</span>
-                    </button>
-                  )}
-                </p>
-                <p className="control">
-                  {!nextStepButtonDisabled && (
-                    <button type="button" className="button is-primary" onClick={this.navigateToNextStep(1)}>
-                      <span className="icon">
-                        <i className="fa fa-arrow-right" aria-hidden="true" />
-                      </span>
-                      <span>{_T("Continue")}</span>
-                    </button>
-                  )}
-                </p>
-                <p className="control">
-                  {nextStepButtonDisabled && (
-                    <button
-                      type="button"
-                      className="button is-primary"
-                      onClick={() => {
-                        this.setState({ showSelectionTutorials: true });
-                      }}
-                    >
-                      <span className="icon">
-                        <i className="fa fa-arrow-right" aria-hidden="true" />
-                      </span>
-                      <span>{_T("Choose another tutorial")}</span>
-                    </button>
-                  )}
-                </p>
+              <div className="tutorials-bottom-nav-buttons-container">
+                {!prevStepButtonDisabled && (
+                  <button type="button" className="button" onClick={this.navigateToNextStep(-1)}>
+                    <span className="icon">
+                      <i className="fa fa-arrow-left" aria-hidden="true" />
+                    </span>
+                    <span>{_T("Back")}</span>
+                  </button>
+                )}
+
+                {this.state.currentStepContent.resultCode && (
+                  <button
+                    type="button"
+                    className="button is-warning"
+                    onClick={() => {
+                      this.setState({ showFixTheCode: true });
+                    }}
+                  >
+                    <span className="icon">
+                      <i className="fa fa-question" aria-hidden="true" />
+                    </span>
+                    <span>{_T("Help – it's not working!")}</span>
+                  </button>
+                )}
+
+                {!nextStepButtonDisabled && (
+                  <button type="button" className="button is-primary" onClick={this.navigateToNextStep(1)}>
+                    <span className="icon">
+                      <i className="fa fa-arrow-right" aria-hidden="true" />
+                    </span>
+                    <span>{_T("Continue")}</span>
+                  </button>
+                )}
+
+                {nextStepButtonDisabled && (
+                  <button
+                    type="button"
+                    className="button is-primary"
+                    onClick={() => {
+                      this.setState({ showSelectionTutorials: true });
+                    }}
+                  >
+                    <span className="icon">
+                      <i className="fa fa-arrow-right" aria-hidden="true" />
+                    </span>
+                    <span>{_T("Choose another tutorial")}</span>
+                  </button>
+                )}
               </div>
               <div />
             </div>
@@ -249,7 +245,7 @@ export class TutorialViewComponent extends React.Component<ITutorialViewComponen
         show
         title={_T("Fix the code?")}
         actionButtonText={_T("Yes, fix my code")}
-        cancelButtonText={_T("No, keep my code as is")}
+        cancelButtonText={_T("No, leave it as is")}
         onConfirm={async () => {
           this.setState({ showFixTheCode: false });
           this.props.onFixTheCode(currentStep.resultCode);

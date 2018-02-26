@@ -8,6 +8,7 @@ export interface ITutorialInfo {
   label: string;
   steps: ITutorialStepInfo[];
   description: string;
+  level: string;
 }
 
 export interface ITutorialStepInfo {
