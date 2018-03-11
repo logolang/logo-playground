@@ -4,11 +4,9 @@ import * as FileSaver from "file-saver";
 import { Link, RouteComponentProps } from "react-router-dom";
 import { Subject, BehaviorSubject } from "rxjs";
 
-import { stay } from "app/utils/async-helpers";
 import { RandomHelper } from "app/utils/random-helper";
 import { callActionSafe, ErrorDef } from "app/utils/error-helpers";
 
-import { DateTimeStampComponent } from "app/ui/_generic/date-time-stamp.component";
 import { PageHeaderComponent } from "app/ui/_generic/page-header.component";
 import { MainMenuComponent } from "app/ui/main-menu.component";
 import { LogoExecutorComponent } from "app/ui/_shared/logo-executor.component";
@@ -16,7 +14,7 @@ import { FileSelectorComponent } from "app/ui/_generic/file-selector.component";
 
 import { resolveInject } from "app/di";
 import { Routes } from "app/routes";
-import { UserInfo } from "app/services/login/user-info";
+import { UserInfo, AuthProvider } from "app/services/login/user-info";
 import { TurtlesService, TurtleInfo, TurtleSize } from "app/services/customizations/turtles.service";
 import { Theme, ThemesService } from "app/services/customizations/themes.service";
 import { ProgramsExportImportService } from "app/services/gallery/programs-export-import.service";
@@ -168,6 +166,18 @@ export class UserProfilePageComponent extends React.Component<IComponentProps, I
     }
   };
 
+  getAuthProviderIcon(provider: AuthProvider) {
+    switch (provider) {
+      case AuthProvider.google:
+        return (
+          <>
+            <i className="fa fa-google" aria-hidden="true" />&nbsp;
+          </>
+        );
+    }
+    return null;
+  }
+
   render(): JSX.Element {
     return (
       <div className="ex-page-container">
@@ -175,7 +185,7 @@ export class UserProfilePageComponent extends React.Component<IComponentProps, I
         <div className="ex-page-content">
           <div className="container">
             <br />
-            <PageHeaderComponent title={_T("User settings")} />
+            <PageHeaderComponent title={_T("Settings")} />
 
             {this.state.userSettings &&
               this.state.currentLocale &&
@@ -203,17 +213,23 @@ export class UserProfilePageComponent extends React.Component<IComponentProps, I
                         <div className="content">
                           {this.currentUser.getLoginStatus().isLoggedIn ? (
                             <>
-                              <p>
-                                {_T("You are logged in with %s authentication.", {
-                                  value: this.state.userInfo.attributes.authProvider.toLowerCase()
-                                })}
-                              </p>
+                              <div className="level is-mobile">
+                                <div className="level-left">
+                                  <div className="level-item">{_T("You are signed in via")}</div>
+                                  <div className="level-item">
+                                    <span className="tag is-primary is-medium">
+                                      {this.getAuthProviderIcon(this.state.userInfo.attributes.authProvider)}{" "}
+                                      {this.state.userInfo.attributes.authProvider}
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
                             </>
                           ) : (
                             <>
                               <p>{_T("NOT_LOGGED_IN_TEXT_BLOCK")}</p>
                               <Link to={Routes.loginRoot.build({})} className="button is-primary">
-                                {_T("Log in")}
+                                {_T("Sign in")}
                               </Link>
                             </>
                           )}
@@ -328,12 +344,10 @@ export class UserProfilePageComponent extends React.Component<IComponentProps, I
 
                         <label className="label">{_T("Personal library")}</label>
                         <p>
-                          <span>
-                            {_T("You have %d program in your library", {
-                              plural: "You have %d programs in your library",
-                              value: this.state.programCount
-                            })}
-                          </span>
+                          {_T("You have %d program in your library", {
+                            plural: "You have %d programs in your library",
+                            value: this.state.programCount
+                          })}
                         </p>
                         <div className="field is-grouped is-grouped-multiline">
                           <p className="control">

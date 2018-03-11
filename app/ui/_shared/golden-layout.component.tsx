@@ -1,7 +1,6 @@
 import * as React from "react";
-import * as $ from "jquery"; //required for goldenLayout
 import * as goldenLayout from "golden-layout";
-import { Subject, BehaviorSubject } from "rxjs";
+import { BehaviorSubject } from "rxjs";
 
 import "./golden-layout.component.less";
 import { checkIsMobileDevice } from "app/utils/device-helper";
@@ -32,6 +31,7 @@ export class GoldenLayoutComponent extends React.Component<IComponentProps, ICom
   private layout: goldenLayout;
   private stateChangedTimer: any;
   private stateLastJSON: string;
+  private oldWindowDimensions = { width: window.innerWidth, height: window.innerHeight };
 
   constructor(props: IComponentProps) {
     super(props);
@@ -62,11 +62,19 @@ export class GoldenLayoutComponent extends React.Component<IComponentProps, ICom
 
   onWindowResize = () => {
     if (checkIsMobileDevice()) {
-      /* Skip window resizing on mobile devices - bacause we should have browser full screen anyway
-       and resizing is occuring due to on-screen keyboard toggling
-       */
-      return;
+      if (
+        this.oldWindowDimensions.width === window.innerWidth &&
+        this.oldWindowDimensions.height > window.innerHeight + 100
+      ) {
+        // detected sharp reduction of window height - this must be a virtual keyboard toggled on
+        // in this case we don't want to resize layout
+        return;
+      }
     }
+    this.oldWindowDimensions = {
+      width: window.innerWidth,
+      height: window.innerHeight
+    };
     if (this.layout) {
       this.layout.updateSize();
     }

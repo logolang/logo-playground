@@ -4,7 +4,6 @@ import * as cn from "classnames";
 import { _T } from "app/services/customizations/localization.service";
 import { IProgramToSaveAttributes } from "app/services/program/program-management.service";
 
-import { AlertMessageComponent } from "app/ui/_generic/alert-message.component";
 import { ModalComponent } from "app/ui/_generic/modal.component";
 import { NoDataComponent } from "app/ui/_generic/no-data.component";
 
@@ -37,7 +36,7 @@ export class SaveProgramModalComponent extends React.Component<IComponentProps, 
     return (
       <ModalComponent
         show
-        title={_T("Save your program to Gallery")}
+        title={_T("Save to personal library")}
         onConfirm={this.saveProgramAction}
         onCancel={this.props.onClose}
         actionButtonText={_T("Save")}

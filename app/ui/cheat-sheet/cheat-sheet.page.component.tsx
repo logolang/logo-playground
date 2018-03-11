@@ -44,7 +44,7 @@ export class CheatSheetPageComponent extends React.Component<IComponentProps, IC
   }
 
   async componentDidMount() {
-    this.titleService.setDocumentTitle(_T("Documentation"));
+    this.titleService.setDocumentTitle(_T("Cheat sheet"));
     this.eventsTracking.sendEvent(EventAction.openCheatsheet);
     await this.loadData();
   }

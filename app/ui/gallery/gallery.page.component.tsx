@@ -3,27 +3,22 @@ import { Link, RouteComponentProps } from "react-router-dom";
 
 import { MainMenuComponent } from "app/ui/main-menu.component";
 import { PageHeaderComponent } from "app/ui/_generic/page-header.component";
-import { ModalComponent, IDialogCallbackResult } from "app/ui/_generic/modal.component";
+import { ModalComponent } from "app/ui/_generic/modal.component";
 import { DateTimeStampComponent } from "app/ui/_generic/date-time-stamp.component";
 import { NoDataComponent } from "app/ui/_generic/no-data.component";
 import { AlertMessageComponent } from "app/ui/_generic/alert-message.component";
-import { LoadingComponent } from "app/ui/_generic/loading.component";
 
 import { resolveInject } from "app/di";
 import { Routes } from "app/routes";
 import { _T } from "app/services/customizations/localization.service";
-import {
-  ProgramsLocalStorageRepository,
-  IUserLibraryRepository
-} from "app/services/gallery/personal-gallery-localstorage.repository";
+import { IUserLibraryRepository } from "app/services/gallery/personal-gallery-localstorage.repository";
 import { ProgramModel } from "app/services/program/program.model";
-import { GallerySamplesRepository, IGallerySamplesRepository } from "app/services/gallery/gallery-samples.repository";
+import { IGallerySamplesRepository } from "app/services/gallery/gallery-samples.repository";
 import { ProgramStorageType } from "app/services/program/program-management.service";
 import { ICurrentUserService } from "app/services/login/current-user.service";
 import { TitleService } from "app/services/infrastructure/title.service";
 import { IEventsTrackingService, EventAction } from "app/services/infrastructure/events-tracking.service";
 import { CollapsiblePanelComponent } from "app/ui/_generic/collapsible-panel.component";
-import { stay } from "app/utils/async-helpers";
 
 import "./gallery.page.component.less";
 import { createCompareFuntion } from "app/utils/syntax-helpers";
@@ -106,7 +101,7 @@ export class GalleryPageComponent extends React.Component<IComponentProps, IComp
                   <div className="column">
                     <br />
                     <br />
-                    <p>Loading...</p>
+                    <p>{_T("Loading...")}</p>
                     <progress className="progress is-primary" value="45" max="100" />
                     <br />
                     <br />

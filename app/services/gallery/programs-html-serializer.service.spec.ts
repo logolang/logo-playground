@@ -1,6 +1,5 @@
 import { ProgramsHtmlSerializerService } from "app/services/gallery/programs-html-serializer.service";
 import { ProgramModel } from "app/services/program/program.model";
-import { ProgramModelConverter } from "app/services/program/program-model.converter";
 
 const programs: ProgramModel[] = [
   {

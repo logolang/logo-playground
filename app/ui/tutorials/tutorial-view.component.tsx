@@ -2,8 +2,6 @@ import * as React from "react";
 
 import { _T } from "app/services/customizations/localization.service";
 import { resolveInject } from "app/di";
-import { Routes } from "app/routes";
-import { INavigationService } from "app/services/infrastructure/navigation.service";
 import { INotificationService } from "app/services/infrastructure/notification.service";
 import {
   ITutorialInfo,

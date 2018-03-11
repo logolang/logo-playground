@@ -1,16 +1,12 @@
 import * as React from "react";
-import { RouteComponentProps } from "react-router-dom";
 import { Subject, BehaviorSubject } from "rxjs";
-import { ISubscription } from "rxjs/Subscription";
 
 import { as } from "app/utils/syntax-helpers";
 import { callActionSafe, ErrorDef } from "app/utils/error-helpers";
-import { subscribeLoadDataOnPropsParamsChange, subscribeLoadDataOnPropsChange } from "app/utils/react-helpers";
 
 import { _T } from "app/services/customizations/localization.service";
 import { resolveInject } from "app/di";
 import { Routes } from "app/routes";
-import { GallerySamplesRepository } from "app/services/gallery/gallery-samples.repository";
 import { ProgramModel } from "app/services/program/program.model";
 import { ProgramExecutionContext } from "app/services/program/program-execution.context";
 import { INotificationService } from "app/services/infrastructure/notification.service";
@@ -23,7 +19,7 @@ import { ProgramStorageType, ProgramManagementService } from "app/services/progr
 import { IEventsTrackingService, EventAction } from "app/services/infrastructure/events-tracking.service";
 
 import { MainMenuComponent } from "app/ui/main-menu.component";
-import { GoldenLayoutComponent, IPanelConfig, GoldenLayoutConfig } from "app/ui/_shared/golden-layout.component";
+import { GoldenLayoutComponent, IPanelConfig } from "app/ui/_shared/golden-layout.component";
 import { CodePanelComponent, ICodePanelComponentProps } from "app/ui/playground/code-panel.component";
 import { OutputPanelComponent, IOutputPanelComponentProps } from "app/ui/playground/output-panel.component";
 import { LoadingComponent } from "app/ui/_generic/loading.component";

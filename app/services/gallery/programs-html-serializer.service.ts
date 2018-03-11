@@ -1,5 +1,4 @@
 import { ProgramModel } from "app/services/program/program.model";
-import { ProgramStorageType } from "app/services/program/program-management.service";
 import { createCompareFuntion } from "app/utils/syntax-helpers";
 
 export class ProgramsHtmlSerializerService {

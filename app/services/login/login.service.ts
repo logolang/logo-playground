@@ -1,5 +1,5 @@
 import { IAuthService } from "app/services/login/auth.service";
-import { NotLoggenInStatus, ICurrentUserService, LoginStatus } from "app/services/login/current-user.service";
+import { NotLoggenInStatus, ICurrentUserService } from "app/services/login/current-user.service";
 import { IEventsTrackingService, EventAction } from "app/services/infrastructure/events-tracking.service";
 
 export abstract class ILoginService {

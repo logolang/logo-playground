@@ -165,7 +165,9 @@ for controllist [ statements ...]
 Typical for loop. The controllist specifies three or four members: the local varname, start value, limit value, and optional step size
 
 ```
-to PROCNAME inputs ... statements ... end
+to PROCNAME inputs 
+   ... statements ...
+end
 ```
 Define a new named procedure with optional inputs
 

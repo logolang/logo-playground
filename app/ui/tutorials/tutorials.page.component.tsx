@@ -3,7 +3,6 @@ import { RouteComponentProps } from "react-router-dom";
 import { Subject } from "rxjs";
 import { BehaviorSubject } from "rxjs/BehaviorSubject";
 
-import { subscribeLoadDataOnPropsParamsChange } from "app/utils/react-helpers";
 import { callActionSafe, ErrorDef } from "app/utils/error-helpers";
 import { as } from "app/utils/syntax-helpers";
 
@@ -18,20 +17,13 @@ import { ProgramModel } from "app/services/program/program.model";
 import { ThemesService, Theme } from "app/services/customizations/themes.service";
 import { TurtlesService } from "app/services/customizations/turtles.service";
 import { ProgramExecutionContext } from "app/services/program/program-execution.context";
-import { ProgramManagementService, ProgramStorageType } from "app/services/program/program-management.service";
 import { ITutorialsContentService, ITutorialInfo } from "app/services/tutorials/tutorials-content-service";
 
 import { MainMenuComponent } from "app/ui/main-menu.component";
-import { GoldenLayoutConfig, GoldenLayoutComponent, IPanelConfig } from "app/ui/_shared/golden-layout.component";
+import { GoldenLayoutComponent, IPanelConfig } from "app/ui/_shared/golden-layout.component";
 import { CodePanelComponent, ICodePanelComponentProps } from "app/ui/playground/code-panel.component";
 import { OutputPanelComponent, IOutputPanelComponentProps } from "app/ui/playground/output-panel.component";
-import {
-  TutorialViewComponent,
-  ITutorialViewComponentProps,
-  ITutorialNavigationRequest,
-  ITutorialRequestData,
-  ITutorialLoadedData
-} from "app/ui/tutorials/tutorial-view.component";
+import { TutorialViewComponent, ITutorialViewComponentProps } from "app/ui/tutorials/tutorial-view.component";
 import { LoadingComponent } from "app/ui/_generic/loading.component";
 import { IEventsTrackingService, EventAction } from "app/services/infrastructure/events-tracking.service";
 import { tutorialsDefaultLayout, tutorialsDefaultMobileLayout } from "app/ui/tutorials/tutorials-default-goldenlayout";

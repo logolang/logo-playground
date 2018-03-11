@@ -1,9 +1,8 @@
 import { injectable, inject } from "app/di";
-import { ensure } from "app/utils/syntax-helpers";
 
 import { IUserLibraryRepository } from "app/services/gallery/personal-gallery-localstorage.repository";
 import { ProgramModel } from "app/services/program/program.model";
-import { GallerySamplesRepository, IGallerySamplesRepository } from "app/services/gallery/gallery-samples.repository";
+import { IGallerySamplesRepository } from "app/services/gallery/gallery-samples.repository";
 import { ILocalTempCodeStorage } from "app/services/program/local-temp-code.storage";
 import { ProgramModelConverter } from "app/services/program/program-model.converter";
 import { GistSharedProgramsRepository } from "app/services/program/gist-shared-programs.repository";

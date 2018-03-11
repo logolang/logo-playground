@@ -3,28 +3,21 @@ import { ISubscription } from "rxjs/Subscription";
 import { Observable } from "rxjs/Observable";
 import * as keymaster from "keymaster";
 
-import { as } from "app/utils/syntax-helpers";
 import { resolveInject } from "app/di";
 
 import { _T } from "app/services/customizations/localization.service";
-import { Routes } from "app/routes";
 import { ProgramModel } from "app/services/program/program.model";
 import { INotificationService } from "app/services/infrastructure/notification.service";
 import { INavigationService } from "app/services/infrastructure/navigation.service";
 import { ProgramExecutionContext } from "app/services/program/program-execution.context";
-import {
-  ProgramManagementService,
-  IProgramToSaveAttributes,
-  ProgramStorageType
-} from "app/services/program/program-management.service";
+import { ProgramManagementService, ProgramStorageType } from "app/services/program/program-management.service";
 import { IEventsTrackingService, EventAction } from "app/services/infrastructure/events-tracking.service";
 
 import { ShareScreenshotModalComponent } from "app/ui/playground/share-screenshot-modal.component";
 import { ShareProgramModalComponent } from "app/ui/playground/share-program-modal.component";
-import { CodeInputLogoComponent, ICodeInputComponentProps } from "app/ui/_shared/code-input-logo.component";
+import { CodeInputLogoComponent } from "app/ui/_shared/code-input-logo.component";
 import { SaveProgramModalComponent } from "app/ui/playground/save-program-modal.component";
 import { ProgramControlsMenuComponent } from "app/ui/playground/program-controls-menu.component";
-import { AlertMessageComponent } from "app/ui/_generic/alert-message.component";
 
 import "./code-panel.component.less";
 

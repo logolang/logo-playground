@@ -1,5 +1,5 @@
 {
-  "name": "logo-sandbox",
+  "name": "logo-playground",
   "version": "1.0.0",
   "license": "MIT",
   "description": "Online environment for Logo programming language",
@@ -17,8 +17,8 @@
     "coverage-report-html": "istanbul report --include reports/coverage/coverage.json --dir reports/coverage html",
     "coverage-report-clover": "istanbul report --include reports/coverage/coverage.json --dir reports/coverage clover",
     "start": "npm run build-vendor-dev && webpack-dev-server",
-    "start-tslint": "npm run build-vendor-dev && webpack-dev-server --env.tslint_enabled=true",
-    "build-war": "node tools/make-war.js",
+    "tslint": "tslint --project . --format verbose",
+    "tslint-fix": "tslint --project . --format verbose --fix",
     "translate": "tsc tools/update-translations.ts --lib dom,es7 --target es5 && node tools/update-translations.js"
   },
   "dependencies": {
@@ -118,7 +118,6 @@
     "remap-istanbul": "0.10.0",
     "style-loader": "0.19.1",
     "tslint": "5.9.1",
-    "tslint-loader": "3.5.3",
     "typescript": "2.6.2",
     "url-loader": "0.6.2",
     "webpack": "3.10.0",

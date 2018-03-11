@@ -3,7 +3,6 @@ import { RouteComponentProps } from "react-router-dom";
 import * as markdown from "markdown-it";
 
 import { MainMenuComponent } from "app/ui/main-menu.component";
-import { PageHeaderComponent } from "app/ui/_generic/page-header.component";
 
 import { _T } from "app/services/customizations/localization.service";
 import { resolveInject } from "app/di";
@@ -42,7 +41,7 @@ export class InfoPageComponent extends React.Component<IComponentProps, ICompone
         <div className="ex-page-content">
           <div className="container">
             <br />
-            <h1 className="title">Logo sandbox</h1>
+            <h1 className="title">Logo playground</h1>
             <br />
             <h2 className="subtitle">{this.appInfo.description}</h2>
             <br />

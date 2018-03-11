@@ -56,6 +56,7 @@ export class TutorialSelectModalComponent extends React.Component<IComponentProp
         width="default"
         title={_T("Choose a tutorial")}
         onCancel={this.props.onCancel}
+        cancelButtonText={_T("Cancel")}
         actionButtonText={
           this.state.currentSelectedTutorial.id === this.props.currentTutorialId ? _T("Continue") : _T("Start")
         }
