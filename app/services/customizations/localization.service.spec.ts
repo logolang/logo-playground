@@ -16,7 +16,8 @@ describe("Localization service", () => {
   });
 
   it("should translate plural properly", () => {
-    const getLocalizedString = (n: number) => _T("You have %d program", { plural: "You have %d programs", value: n });
+    const getLocalizedString = (n: number) =>
+      _T("You have %d program in your library", { plural: "You have %d programs in your library", value: n });
 
     chai.expect(getLocalizedString(0)).to.eql("У вас 0 программ");
     chai.expect(getLocalizedString(1)).to.eql("У вас 1 программа");
