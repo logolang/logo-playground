@@ -4,8 +4,8 @@ export class UserInfo {
 }
 
 export enum AuthProvider {
-  google = "Google",
-  none = "None"
+  google = "google",
+  none = "none"
 }
 
 export class UserAttributes {

@@ -23,7 +23,7 @@ export class CollapsiblePanelComponent extends React.Component<
   constructor(props: ICollapsiblePanelComponentProps) {
     super(props);
     this.state = {
-      panelHeight: "auto"
+      panelHeight: this.props.isCollapsed ? "0px" : "auto"
     };
   }
 
@@ -50,7 +50,13 @@ export class CollapsiblePanelComponent extends React.Component<
     }
   };
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps: ICollapsiblePanelComponentProps) {
+    if (this.props.isCollapsed && !prevProps.isCollapsed) {
+      if (this.props.isCollapsed) {
+        const panelOuterDiv = this.refs["panelBodyOuter"] as HTMLElement;
+        panelOuterDiv.style.height = panelOuterDiv.scrollHeight + "px";
+      }
+    }
     this.handleResize();
 
     /**
@@ -65,6 +71,7 @@ export class CollapsiblePanelComponent extends React.Component<
     return (
       <div
         className={cn("collapsible-panel-component", this.props.className)}
+        ref="panelBodyOuter"
         style={{
           height: this.state.panelHeight,
           transition: "height " + this.animationDuration / 1000 + "s",

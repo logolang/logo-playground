@@ -1,5 +1,4 @@
 import { Container, inject, injectable } from "inversify";
-import getDecorators from "inversify-inject-decorators";
 
 const container = new Container({ defaultScope: "Singleton" });
 export { container, inject, injectable };

@@ -25,8 +25,11 @@ html {
 }
 
 /* Application specific styles */
+.dark-navbar .ex-app-logo {
+  background-image: url(../../../content/images/logo-logo-light.svg);
+}
 .ex-app-logo {
-  background-image: url(../../../content/images/logo-logo.svg);
+  background-image: url(../../../content/images/logo-logo-dark.svg);
   background-repeat: no-repeat;
   background-position: center;
   width: 120px;
@@ -37,10 +40,12 @@ html {
   height: 100vh;
   display: flex;
   flex-direction: column;
+  justify-content: center;
 }
 
 .ex-page-content {
   display: flex;
   overflow-y: auto;
   flex: auto;
+  justify-content: center;
 }

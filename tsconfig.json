@@ -1,33 +1,25 @@
 ﻿{
-    "compilerOptions": {
-        "target": "es5",
-        "module": "es2015",
-        "moduleResolution": "node",
-        "baseUrl": ".",
-        "sourceMap": true,
-        "inlineSourceMap": false,
-        "emitDecoratorMetadata": true,
-        "experimentalDecorators": true,
-        "removeComments": false,
-        "strictNullChecks": true,
-        "noImplicitAny": true,
-        "noFallthroughCasesInSwitch": true,
-        "noImplicitReturns": true,
-        "noImplicitThis": true,
-        //"noUnusedLocals": true,
-        //"noUnusedParameters": true,
-        "pretty": true,
-        "jsx": "react",
-        "importHelpers": true,
-        "lib": [
-            "dom",
-            "es7"
-        ]
-    },
-    "exclude": [
-        "node_modules",
-        "content",
-        "dist",
-        "reports"
-    ]
+  "compilerOptions": {
+    "target": "es5",
+    "module": "es2015",
+    "moduleResolution": "node",
+    "baseUrl": ".",
+    "sourceMap": true,
+    "inlineSourceMap": false,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "removeComments": false,
+    "strictNullChecks": true,
+    "noImplicitAny": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    //"noUnusedLocals": true,
+    //"noUnusedParameters": true,
+    "pretty": true,
+    "jsx": "react",
+    "importHelpers": true,
+    "lib": ["dom", "es2017"]
+  },
+  "exclude": ["node_modules", "content", "dist", "reports"]
 }

@@ -3,7 +3,6 @@ import { RouteComponentProps } from "react-router-dom";
 import { Subject } from "rxjs";
 import { BehaviorSubject } from "rxjs/BehaviorSubject";
 
-import { subscribeLoadDataOnPropsParamsChange } from "app/utils/react-helpers";
 import { callActionSafe, ErrorDef } from "app/utils/error-helpers";
 import { as } from "app/utils/syntax-helpers";
 
@@ -18,24 +17,18 @@ import { ProgramModel } from "app/services/program/program.model";
 import { ThemesService, Theme } from "app/services/customizations/themes.service";
 import { TurtlesService } from "app/services/customizations/turtles.service";
 import { ProgramExecutionContext } from "app/services/program/program-execution.context";
-import { ProgramManagementService, ProgramStorageType } from "app/services/program/program-management.service";
 import { ITutorialsContentService, ITutorialInfo } from "app/services/tutorials/tutorials-content-service";
 
 import { MainMenuComponent } from "app/ui/main-menu.component";
-import { GoldenLayoutConfig, GoldenLayoutComponent, IPanelConfig } from "app/ui/_shared/golden-layout.component";
+import { GoldenLayoutComponent, IPanelConfig } from "app/ui/_shared/golden-layout.component";
 import { CodePanelComponent, ICodePanelComponentProps } from "app/ui/playground/code-panel.component";
 import { OutputPanelComponent, IOutputPanelComponentProps } from "app/ui/playground/output-panel.component";
-import {
-  TutorialViewComponent,
-  ITutorialViewComponentProps,
-  ITutorialNavigationRequest,
-  ITutorialRequestData,
-  ITutorialLoadedData
-} from "app/ui/tutorials/tutorial-view.component";
+import { TutorialViewComponent, ITutorialViewComponentProps } from "app/ui/tutorials/tutorial-view.component";
 import { LoadingComponent } from "app/ui/_generic/loading.component";
 import { IEventsTrackingService, EventAction } from "app/services/infrastructure/events-tracking.service";
 import { tutorialsDefaultLayout, tutorialsDefaultMobileLayout } from "app/ui/tutorials/tutorials-default-goldenlayout";
 import { ProgramModelConverter } from "app/services/program/program-model.converter";
+import { checkIsMobileDevice } from "app/utils/device-helper";
 
 interface IComponentState {
   isLoading: boolean;
@@ -46,6 +39,7 @@ interface IComponentState {
   tutorialId?: string;
   stepId?: string;
   program?: ProgramModel;
+  pageLayoutConfig?: object;
 }
 
 interface IComponentProps extends RouteComponentProps<ITutorialPageRouteParams> {}
@@ -65,11 +59,12 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
   private tutorialsLoader = resolveInject(ITutorialsContentService);
   private eventsTracking = resolveInject(IEventsTrackingService);
 
+  private isMobileDevice = checkIsMobileDevice();
   private executionService = new ProgramExecutionContext();
   private codeChangesStream = new Subject<string>();
   private layoutChangesStream = new Subject<void>();
 
-  private defaultLayoutConfigJSON: string;
+  private defaultLayoutConfig = this.isMobileDevice ? tutorialsDefaultMobileLayout : tutorialsDefaultLayout;
 
   private errorHandler = (err: ErrorDef) => {
     this.notificationService.push({ message: err.message, type: "danger" });
@@ -86,10 +81,6 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
   async componentDidMount() {
     this.titleService.setDocumentTitle(_T("Tutorials"));
     this.eventsTracking.sendEvent(EventAction.tutorialsOpen);
-    const isMobile = window.matchMedia && window.matchMedia("only screen and (max-width: 760px)").matches;
-    this.defaultLayoutConfigJSON = isMobile
-      ? JSON.stringify(tutorialsDefaultMobileLayout)
-      : JSON.stringify(tutorialsDefaultLayout);
     await this.loadData(this.props);
   }
 
@@ -97,8 +88,10 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
     /** */
   }
 
-  layoutChanged = (newLayoutJSON: string): void => {
-    this.userSettingsService.update({ tutorialsLayoutJSON: newLayoutJSON });
+  layoutChanged = (newLayout: object): void => {
+    this.userSettingsService.update(
+      this.isMobileDevice ? { tutorialsLayoutMobile: newLayout } : { tutorialsLayout: newLayout }
+    );
     this.layoutChangesStream.next();
   };
 
@@ -140,7 +133,8 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
       tutorials,
       program,
       tutorialId,
-      stepId
+      stepId,
+      pageLayoutConfig: this.isMobileDevice ? userSettings.tutorialsLayoutMobile : userSettings.tutorialsLayout
     });
   }
 
@@ -193,8 +187,8 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
             this.state.stepId &&
             this.state.program && (
               <GoldenLayoutComponent
-                initialLayoutConfigJSON={this.state.userSettings.tutorialsLayoutJSON || ""}
-                defaultLayoutConfigJSON={this.defaultLayoutConfigJSON}
+                initialLayoutConfig={this.state.pageLayoutConfig}
+                defaultLayoutConfig={this.defaultLayoutConfig}
                 onLayoutChange={this.layoutChanged}
                 panelsReloadCheck={() => false}
                 panels={[
@@ -221,7 +215,6 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
                       executionService: this.executionService,
                       program: this.state.program,
                       saveCurrentEnabled: false,
-                      navigateAutomaticallyAfterSaveAs: false,
                       externalCodeChanges: this.codeChangesStream,
                       containerResized: this.layoutChangesStream
                     }

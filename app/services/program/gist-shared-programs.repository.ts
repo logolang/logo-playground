@@ -1,8 +1,6 @@
 import * as fetch from "isomorphic-fetch";
-import { injectable, inject } from "app/di";
+import { injectable } from "app/di";
 import { DictionaryLike } from "app/utils/syntax-helpers";
-import { stay } from "app/utils/async-helpers";
-import { RandomHelper } from "app/utils/random-helper";
 import { ProgramModel } from "app/services/program/program.model";
 import { Routes } from "app/routes";
 

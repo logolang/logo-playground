@@ -11,8 +11,26 @@
     }
   }
 
-  .steps-list {
-    list-style: decimal;
-    padding-left: 32px;
+  .tutorial-link {
+    i {
+      transition: transform 0.5s;
+    }
+
+    &.is-active {
+      i {
+        transform: rotate(90deg);
+      }
+    }
+  }
+
+  .tutorial-description-container {
+    ol {
+      margin-left: 16px;
+    }
+    .tutorial-description {
+      margin-top: 10px;
+      margin-left: 10px;
+      margin-bottom: 10px;
+    }
   }
 }

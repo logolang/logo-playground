@@ -1,7 +1,5 @@
 import { ProgramModel } from "app/services/program/program.model";
 import { IUserLibraryRepository } from "app/services/gallery/personal-gallery-localstorage.repository";
-import { ProgramModelConverter } from "app/services/program/program-model.converter";
-import { ProgramsHtmlSerializerService } from "app/services/gallery/programs-html-serializer.service";
 
 function getIncrementalName(name: string, checkExist: (name: string) => boolean) {
   let counter = 1;

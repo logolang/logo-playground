@@ -13,8 +13,10 @@ export interface IUserSettings {
   themeName: string;
   localeId: string;
   currentTutorialInfo?: ICurrentTutorialInfo;
-  playgroundLayoutJSON?: string;
-  tutorialsLayoutJSON?: string;
+  playgroundLayout?: object;
+  playgroundLayoutMobile?: object;
+  tutorialsLayout?: object;
+  tutorialsLayoutMobile?: object;
 }
 
 export interface ICurrentTutorialInfo {

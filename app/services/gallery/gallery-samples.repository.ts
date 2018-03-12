@@ -2,7 +2,6 @@ import { formatId } from "app/utils/formatter-helper";
 
 import { injectable } from "app/di";
 import { ProgramModel } from "app/services/program/program.model";
-import { ProgramModelConverter } from "app/services/program/program-model.converter";
 import { IAjaxService } from "app/services/infrastructure/ajax-service";
 import { ProgramsHtmlSerializerService } from "app/services/gallery/programs-html-serializer.service";
 
