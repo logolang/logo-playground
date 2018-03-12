@@ -16,14 +16,14 @@ msgstr ""
 msgid "About"
 msgstr ""
 
-msgid "About..."
-msgstr ""
-
 msgid "Added programs: %d"
 msgstr ""
 
 msgid "App title"
 msgstr "Logo"
+
+msgid "Are you sure?"
+msgstr ""
 
 msgid "Back"
 msgstr ""
@@ -40,9 +40,6 @@ msgstr ""
 msgid "Choose another tutorial"
 msgstr ""
 
-msgid "Close"
-msgstr ""
-
 msgid "Code"
 msgstr ""
 
@@ -56,12 +53,6 @@ msgid "Copy to clipboard"
 msgstr ""
 
 msgid "Delete"
-msgstr ""
-
-msgid "Do you want to delete?"
-msgstr ""
-
-msgid "Documentation"
 msgstr ""
 
 msgid "Edited"
@@ -88,6 +79,9 @@ msgstr ""
 msgid "Gallery"
 msgstr "Gallery"
 
+msgid "Gallery image"
+msgstr ""
+
 msgid "Guest"
 msgstr ""
 
@@ -97,7 +91,10 @@ msgstr ""
 msgid "Huge"
 msgstr ""
 
-msgid "Image"
+msgid "Image preview"
+msgstr ""
+
+msgid "Image url"
 msgstr ""
 
 msgid "Import"
@@ -112,13 +109,7 @@ msgstr ""
 msgid "Large"
 msgstr ""
 
-msgid "Log in"
-msgstr ""
-
-msgid "Log out"
-msgstr ""
-
-msgid "Login with Google"
+msgid "Loading..."
 msgstr ""
 
 msgid "Medium"
@@ -128,12 +119,12 @@ msgid "Message"
 msgstr ""
 
 msgid "NOT_LOGGED_IN_TEXT_BLOCK"
-msgstr "You are not logged in. Your personal gallery is persisted in your browser local storage. Proceed with login if you want to synchronize your gallery."
+msgstr "You are not authenticated. Your personal gallery is persisted in your browser local storage. Please sign in if you want to synchronize your gallery."
 
 msgid "No image"
 msgstr ""
 
-msgid "No, keep my code as is"
+msgid "No, leave it as is"
 msgstr ""
 
 msgid "Output"
@@ -146,6 +137,9 @@ msgid "Playground"
 msgstr ""
 
 msgid "Please enter the name for your program"
+msgstr ""
+
+msgid "Program"
 msgstr ""
 
 msgid "Program has been saved in the personal library."
@@ -169,10 +163,10 @@ msgstr ""
 msgid "Save"
 msgstr ""
 
-msgid "Save to personal library"
+msgid "Save as ..."
 msgstr ""
 
-msgid "Save your program to Gallery"
+msgid "Save to personal library"
 msgstr ""
 
 msgid "Screenshot"
@@ -181,10 +175,22 @@ msgstr ""
 msgid "Screenshot is not available because program has not been executed yet."
 msgstr ""
 
+msgid "Settings"
+msgstr ""
+
 msgid "Share"
 msgstr ""
 
 msgid "Share your program"
+msgstr ""
+
+msgid "Sign in"
+msgstr ""
+
+msgid "Sign in with Google"
+msgstr ""
+
+msgid "Sign out"
 msgstr ""
 
 msgid "Small"
@@ -211,9 +217,6 @@ msgstr ""
 msgid "This program has changes"
 msgstr ""
 
-msgid "Turtle"
-msgstr ""
-
 msgid "Turtle Name tt10"
 msgstr "Chilly Bob"
 
@@ -232,6 +235,12 @@ msgstr "Chameleon"
 msgid "Turtle Name tt9"
 msgstr "Princess"
 
+msgid "Turtle outfit"
+msgstr ""
+
+msgid "Turtle size"
+msgstr ""
+
 msgid "Tutorial"
 msgstr ""
 
@@ -244,20 +253,17 @@ msgstr ""
 msgid "User profile"
 msgstr ""
 
-msgid "User settings"
-msgstr "User settings"
-
 msgid "Yes, fix my code"
 msgstr ""
 
 msgid "You are going to delete this program."
 msgstr ""
 
-msgid "You are logged in with %s authentication."
+msgid "You are signed in via"
 msgstr ""
 
-msgid "You have %d program"
-msgid_plural "You have %d programs"
+msgid "You have %d program in your library"
+msgid_plural "You have %d programs in your library"
 msgstr[0] ""
 msgstr[1] ""
 

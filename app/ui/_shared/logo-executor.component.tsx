@@ -105,6 +105,10 @@ export class LogoExecutorComponent extends React.Component<ILogoExecutorComponen
 
     this.logo = new LogoInterpreter(this.graphics.initTurtle(), new LogoOutputConsole("#console-output"));
 
+    // Replace all non-breaking spaces to normal ones because jsLogo does not understand them
+    // This nbsp might occur when typing code on mobile devices
+    code = code.replace(/\u00A0/g, " ");
+
     try {
       await this.logo.run(polyfills + "\r\n" + initCode + "\r\n" + code);
       this.isRunning = false;

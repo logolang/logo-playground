@@ -41,18 +41,19 @@ export class InputCopyToClipboardComponent extends React.Component<IComponentPro
   }
 
   render(): JSX.Element {
-    console.log("yo! render");
     return (
-      <div className="field has-addons">
-        <div className="control is-expanded has-icons-right">
-          <input id={this.componentId + "-url"} className="input" type="text" value={this.props.text} readOnly />
-          {this.state.isCopied && (
-            <span className="icon is-small is-right">
-              <i className="fa fa-check" />
-            </span>
-          )}
+      <>
+        <div className="field">
+          <div className="control has-icons-right">
+            <input id={this.componentId + "-url"} className="input" type="text" value={this.props.text} readOnly />
+            {this.state.isCopied && (
+              <span className="icon is-small is-right">
+                <i className="fa fa-check" />
+              </span>
+            )}
+          </div>
         </div>
-        <div className="control">
+        <div className="field">
           <button
             id={this.componentId + "-btn"}
             type="button"
@@ -64,7 +65,7 @@ export class InputCopyToClipboardComponent extends React.Component<IComponentPro
             <span>{this.state.isCopied ? _T("Copied") : _T("Copy to clipboard")}</span>
           </button>
         </div>
-      </div>
+      </>
     );
   }
 }

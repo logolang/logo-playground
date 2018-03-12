@@ -106,7 +106,7 @@ export class GoogleAuthService implements IAuthService {
           <span className="icon">
             <i className="fa fa-google" aria-hidden="true" />
           </span>
-          <span>{_T("Login with Google")}</span>
+          <span>{_T("Sign in with Google")}</span>
         </button>
       </div>
     );

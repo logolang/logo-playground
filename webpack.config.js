@@ -173,7 +173,8 @@ module.exports = function(env) {
     performance: { hints: false },
     devServer: {
       contentBase: "dist/",
-      port: 8085
+      port: 8085,
+      host: "0.0.0.0"
     },
     devtool: isDevBuild ? "source-map" : "source-map" // Turn on sourcemaps
   };

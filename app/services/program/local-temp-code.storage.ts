@@ -1,6 +1,5 @@
 import { injectable, inject } from "app/di";
 import { ICurrentUserService } from "app/services/login/current-user.service";
-import { DictionaryLike } from "app/utils/syntax-helpers";
 
 export abstract class ILocalTempCodeStorage {
   abstract getCode(id: string): Promise<string>;
@@ -17,7 +16,7 @@ export class LocalTempCodeStorage implements ILocalTempCodeStorage {
   private storagePrefix: string = "";
   constructor(@inject(ICurrentUserService) private currentUser: ICurrentUserService) {
     const userId = this.currentUser.getLoginStatus().userInfo.id;
-    this.storagePrefix = "logo-sandbox.local-temp-code." + userId;
+    this.storagePrefix = "logo-playground.temp-code." + userId + ".";
   }
 
   async getCode(id: string): Promise<string> {

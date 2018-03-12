@@ -3,7 +3,6 @@ import { RandomHelper } from "app/utils/random-helper";
 import { injectable, inject } from "app/di";
 import { ICurrentUserService } from "app/services/login/current-user.service";
 import { ProgramModel } from "app/services/program/program.model";
-import { ProgramModelConverter } from "app/services/program/program-model.converter";
 import { IUserLibraryRepository } from "app/services/gallery/personal-gallery-localstorage.repository";
 import { GoogleDriveClient, IGoogleFileInfo } from "app/services/infrastructure/google-drive.client";
 import { ProgramsHtmlSerializerService } from "app/services/gallery/programs-html-serializer.service";
@@ -56,39 +55,38 @@ export class ProgramsGoogleDriveRepository implements IUserLibraryRepository {
       program.dateLastEdited = new Date();
       programsToStore.push(program);
     }
+    await this.storeData(programsToStore, storedData.fileId);
+  }
 
-    const serializedData = await this.serializationService.serialize(
-      programsToStore,
-      this.currentUser.getLoginStatus().userInfo.attributes.name,
-      this.currentUser.getLoginStatus().userInfo.attributes.imageUrl
-    );
-    if (storedData.fileId) {
-      await this.googleDriveClient.updateFile(
-        storedData.fileId,
-        this.appConfig.services.googleDriveGalleryFilename,
-        serializedData,
-        storageFileContentType
-      );
-    } else {
-      await this.googleDriveClient.uploadNewFile(
-        this.appConfig.services.googleDriveGalleryFilename,
-        serializedData,
-        storageFileContentType
-      );
+  async save(programToSave: ProgramModel): Promise<void> {
+    const storedData = await this.getStoredData();
+    const program = storedData.programs.find(p => p.id === programToSave.id);
+    if (!program) {
+      throw new Error("Program is not found in google storage");
     }
+    program.dateLastEdited = new Date();
+    program.code = programToSave.code;
+    program.screenshot = programToSave.screenshot;
+
+    await this.storeData(storedData.programs, storedData.fileId);
   }
 
   async remove(id: string): Promise<void> {
     const storedData = await this.getStoredData();
     const programsToStore = storedData.programs.filter(p => p.id !== id);
+
+    await this.storeData(programsToStore, storedData.fileId);
+  }
+
+  private async storeData(programsToStore: ProgramModel[], fileId: string) {
     const serializedData = await this.serializationService.serialize(
       programsToStore,
       this.currentUser.getLoginStatus().userInfo.attributes.name,
       this.currentUser.getLoginStatus().userInfo.attributes.imageUrl
     );
-    if (storedData.fileId) {
+    if (fileId) {
       await this.googleDriveClient.updateFile(
-        storedData.fileId,
+        fileId,
         this.appConfig.services.googleDriveGalleryFilename,
         serializedData,
         storageFileContentType

@@ -1,9 +1,8 @@
 import { injectable, inject } from "app/di";
-import { ensure } from "app/utils/syntax-helpers";
 
 import { IUserLibraryRepository } from "app/services/gallery/personal-gallery-localstorage.repository";
 import { ProgramModel } from "app/services/program/program.model";
-import { GallerySamplesRepository, IGallerySamplesRepository } from "app/services/gallery/gallery-samples.repository";
+import { IGallerySamplesRepository } from "app/services/gallery/gallery-samples.repository";
 import { ILocalTempCodeStorage } from "app/services/program/local-temp-code.storage";
 import { ProgramModelConverter } from "app/services/program/program-model.converter";
 import { GistSharedProgramsRepository } from "app/services/program/gist-shared-programs.repository";
@@ -53,27 +52,38 @@ export class ProgramManagementService {
     newProgramName: string,
     newScreenshot: string,
     newCode: string,
-    program: ProgramModel
-  ): Promise<string> => {
+    program: ProgramModel,
+    allowOverwrite: boolean
+  ): Promise<ProgramModel> => {
     if (!newProgramName || !newProgramName.trim()) {
       throw new Error("Program name is required.");
     }
     const allProgs = await this.personalRepository.getAll();
-    const progWithSameName = allProgs.find(p => p.name.trim().toLowerCase() === newProgramName.trim().toLowerCase());
-    if (progWithSameName) {
-      throw new Error("Program with this name is already stored in library. Please enter different name.");
+    if (!allowOverwrite) {
+      const progWithSameName = allProgs.find(p => p.name.trim().toLowerCase() === newProgramName.trim().toLowerCase());
+      if (progWithSameName) {
+        throw new Error("Program with this name is already stored in library. Please enter different name.");
+      }
+      const newProgram = ProgramModelConverter.createNewProgram(
+        ProgramStorageType.gallery,
+        newProgramName,
+        newCode,
+        newScreenshot
+      );
+      await this.personalRepository.add([newProgram]);
+      if (program.id) {
+        await this.saveTempProgram(program.id, "");
+      }
+      return newProgram;
+    } else {
+      program.screenshot = newScreenshot;
+      program.code = newCode;
+      await this.personalRepository.save(program);
+      if (program.id) {
+        await this.saveTempProgram(program.id, "");
+      }
+      return program;
     }
-    const newProgram = ProgramModelConverter.createNewProgram(
-      ProgramStorageType.gallery,
-      newProgramName,
-      newCode,
-      newScreenshot
-    );
-    await this.personalRepository.add([newProgram]);
-    if (program.id) {
-      await this.saveTempProgram(program.id, "");
-    }
-    return newProgram.id;
   };
 
   private async loadProgramFromStorage(storageType?: ProgramStorageType, programId?: string): Promise<ProgramModel> {

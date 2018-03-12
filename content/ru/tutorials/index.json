@@ -4,6 +4,7 @@
       "id": "01-basics",
       "label": "Введение и основы",
       "description": "Введение и основы языка LOGO. Встреча с черепахой.",
+      "level": "начальный уровень",
       "steps": [
         {
           "name": "Черепаха Лого",
@@ -39,6 +40,7 @@
       "id": "02-controlling",
       "label": "Controlling the Turtle and Pen",
       "description": "Basic turtle commands, working with graphics",
+      "level": "начальный уровень",
       "steps": [
         {
           "name": "What is the pen?",
@@ -86,6 +88,7 @@
       "id": "03-labels",
       "label": "Cool Labels",
       "description": "Printing nice labels using turtle graphics",
+      "level": "продвинутый уровень",
       "steps": [
         {
           "name": "The label command",

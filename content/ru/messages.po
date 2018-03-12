@@ -15,16 +15,16 @@ msgstr ""
 "X-Generator: Virtaal 0.7.1\n"
 
 msgid "About"
-msgstr "О программе"
-
-msgid "About..."
-msgstr "О программе..."
+msgstr "Информация"
 
 msgid "Added programs: %d"
-msgstr "Добавленные программы: %d"
+msgstr "Добавлено программ: %d"
 
 msgid "App title"
 msgstr "Лого"
+
+msgid "Are you sure?"
+msgstr "Вы уверены?"
 
 msgid "Back"
 msgstr "Назад"
@@ -41,9 +41,6 @@ msgstr "Выберите учебник"
 msgid "Choose another tutorial"
 msgstr "Выбрать другой учебник"
 
-msgid "Close"
-msgstr "Закрыть"
-
 msgid "Code"
 msgstr "Код программы"
 
@@ -58,12 +55,6 @@ msgstr "Скопировать в буфер обмена"
 
 msgid "Delete"
 msgstr "Удалить"
-
-msgid "Do you want to delete?"
-msgstr "Вы хотите удалить?"
-
-msgid "Documentation"
-msgstr "Документация"
 
 msgid "Edited"
 msgstr "Дата обновления"
@@ -84,10 +75,13 @@ msgid "FIX_THE_CODE_WARNING"
 msgstr "Это полностью перезапишет ваш код."
 
 msgid "Fix the code?"
-msgstr "Исправить код программы?"
+msgstr "Исправить код?"
 
 msgid "Gallery"
 msgstr "Галлерея"
+
+msgid "Gallery image"
+msgstr "Картина в галлерею"
 
 msgid "Guest"
 msgstr "Гость"
@@ -98,8 +92,11 @@ msgstr "Помогите - не работает!"
 msgid "Huge"
 msgstr "Огромный"
 
-msgid "Image"
-msgstr "Изображение"
+msgid "Image preview"
+msgstr "Скриншот"
+
+msgid "Image url"
+msgstr "Публичная ссылка"
 
 msgid "Import"
 msgstr "Импорт"
@@ -113,14 +110,8 @@ msgstr "Язык"
 msgid "Large"
 msgstr "Крупный"
 
-msgid "Log in"
-msgstr "Войти"
-
-msgid "Log out"
-msgstr "Выход из системы"
-
-msgid "Login with Google"
-msgstr "Войти используя Гугл-аккаунт"
+msgid "Loading..."
+msgstr "Загрузка..."
 
 msgid "Medium"
 msgstr "Средний"
@@ -134,8 +125,8 @@ msgstr "Для синхронизации персональной галлер�
 msgid "No image"
 msgstr "Нет изображения"
 
-msgid "No, keep my code as is"
-msgstr "Нет, сохранить мой код как есть"
+msgid "No, leave it as is"
+msgstr "Отменить"
 
 msgid "Output"
 msgstr "Вывод"
@@ -148,6 +139,9 @@ msgstr "Игровая площадка"
 
 msgid "Please enter the name for your program"
 msgstr "Введите название своей программы"
+
+msgid "Program"
+msgstr "Программа"
 
 msgid "Program has been saved in the personal library."
 msgstr "Программа сохранена успешно"
@@ -170,11 +164,11 @@ msgstr "Образцы"
 msgid "Save"
 msgstr "Сохранить"
 
-msgid "Save to personal library"
-msgstr "Сохранить в персональной галерее"
+msgid "Save as ..."
+msgstr "Сохранить как ..."
 
-msgid "Save your program to Gallery"
-msgstr "Сохранить вашу программу в галерее"
+msgid "Save to personal library"
+msgstr "Сохранить в галерее"
 
 msgid "Screenshot"
 msgstr "Скриншот"
@@ -182,11 +176,23 @@ msgstr "Скриншот"
 msgid "Screenshot is not available because program has not been executed yet."
 msgstr "Скриншот невозможен потому что программа еще не была выполнена."
 
+msgid "Settings"
+msgstr "Настройки"
+
 msgid "Share"
-msgstr "Поделиться"
+msgstr "Опубликовать"
 
 msgid "Share your program"
-msgstr "Опубликовать программу"
+msgstr "Опубликовать"
+
+msgid "Sign in"
+msgstr "Войти"
+
+msgid "Sign in with Google"
+msgstr "Войти через Google"
+
+msgid "Sign out"
+msgstr "Выйти"
 
 msgid "Small"
 msgstr "Маленький"
@@ -212,9 +218,6 @@ msgstr "Сделать скриншот"
 msgid "This program has changes"
 msgstr "У вас есть изменения в программе."
 
-msgid "Turtle"
-msgstr "Черепаха"
-
 msgid "Turtle Name tt10"
 msgstr "Мистер"
 
@@ -233,6 +236,12 @@ msgstr "Хамелеон"
 msgid "Turtle Name tt9"
 msgstr "Принцесса"
 
+msgid "Turtle outfit"
+msgstr "Вид черепахи"
+
+msgid "Turtle size"
+msgstr "Размер черепахи"
+
 msgid "Tutorial"
 msgstr "Учебник"
 
@@ -245,23 +254,20 @@ msgstr "Тема пользовательского интерфейса"
 msgid "User profile"
 msgstr "Профиль пользователя"
 
-msgid "User settings"
-msgstr "Настройки пользователя"
-
 msgid "Yes, fix my code"
-msgstr "Да, исправить мой код"
+msgstr "Да, исправить"
 
 msgid "You are going to delete this program."
 msgstr "Вы собираетесь удалить эту программу"
 
-msgid "You are logged in with %s authentication."
-msgstr "Учетная запись: %s"
+msgid "You are signed in via"
+msgstr "Вы вошли через"
 
-msgid "You have %d program"
-msgid_plural "You have %d programs"
+msgid "You have %d program in your library"
+msgid_plural "You have %d programs in your library"
 msgstr[0] "У вас %d программа"
 msgstr[1] "У вас %d программы"
 msgstr[2] "У вас %d программ"
 
 msgid "Your personal library"
-msgstr "Персональная галерея - пространство для ваших личных программ"
+msgstr "Персональная галерея"

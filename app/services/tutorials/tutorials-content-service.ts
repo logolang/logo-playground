@@ -1,13 +1,13 @@
 import * as markdown from "markdown-it";
 import { ILocalizedContentLoader } from "app/services/infrastructure/localized-content-loader";
 import { injectable, inject } from "app/di";
-import { stay } from "app/utils/async-helpers";
 
 export interface ITutorialInfo {
   id: string;
   label: string;
   steps: ITutorialStepInfo[];
   description: string;
+  level: string;
 }
 
 export interface ITutorialStepInfo {

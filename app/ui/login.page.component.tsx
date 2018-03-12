@@ -29,7 +29,7 @@ export class LoginPageComponent extends React.Component<IComponentProps, ICompon
   constructor(props: IComponentProps) {
     super(props);
     this.state = {};
-    this.titleService.setDocumentTitle(_T("Log in"));
+    this.titleService.setDocumentTitle(_T("Sign in"));
   }
 
   async componentDidMount() {
@@ -56,7 +56,7 @@ export class LoginPageComponent extends React.Component<IComponentProps, ICompon
         <MainMenuComponent />
         <div className="container">
           <br />
-          <PageHeaderComponent title={_T("Log in")} />
+          <PageHeaderComponent title={_T("Sign in")} />
           <br />
           <br />
           {this.loginService.renderLoginUI()}
