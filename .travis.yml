@@ -8,6 +8,7 @@ script:
 - npm run build
 deploy:
   - provider: script
+    skip_cleanup: true
     script: bash tools/deploy.sh --repo="https://deploybot:$GIT_TOKEN_DEPLOY_MASTER@github.com/logolang/logolang.github.io.git" --branch="master" --message="Deployment"
     on:
       branch: master
