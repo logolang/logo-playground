@@ -8,5 +8,18 @@ interface Abstract<T> {
 }
 
 export function resolveInject<T>(serviceIdentifier: Abstract<T>): T {
-  return container.get(serviceIdentifier);
+  const all = container.getAll(serviceIdentifier);
+  if (all.length == 0) {
+    throw new Error("No binding is configured " + serviceIdentifier);
+  }
+  if (all.length > 1) {
+    console.error("Found multiple bindings!!", serviceIdentifier);
+  }
+  return all[0];
+}
+
+export function resolveLazy<T>(serviceIdentifier: Abstract<T>) {
+  return () => {
+    return container.get(serviceIdentifier) as T;
+  };
 }
