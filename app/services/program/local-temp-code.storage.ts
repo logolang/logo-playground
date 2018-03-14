@@ -15,8 +15,8 @@ export abstract class ILocalTempCodeStorage {
 export class LocalTempCodeStorage implements ILocalTempCodeStorage {
   private storagePrefix: string = "";
   constructor(@inject(ICurrentUserService) private currentUser: ICurrentUserService) {
-    const userId = this.currentUser.getLoginStatus().userInfo.id;
-    this.storagePrefix = "logo-playground.temp-code." + userId + ".";
+    const userId = this.currentUser.getLoginStatus().userInfo.attributes.email || "guest";
+    this.storagePrefix = "logo-playground-temp-code-" + userId + "-";
   }
 
   async getCode(id: string): Promise<string> {

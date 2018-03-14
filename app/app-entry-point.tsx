@@ -10,18 +10,18 @@ import * as ReactDOM from "react-dom";
 (window as any)["ReactDOM"] = ReactDOM;
 
 import { normalizeError } from "app/utils/error-helpers";
-import { Routes } from "app/routes";
-import { DependecyInjectionSetup } from "app/di-setup";
-
+import { DependecyInjectionSetupService } from "app/di-setup";
 import { AlertMessageComponent } from "app/ui/_generic/alert-message.component";
+import { MainComponent } from "app/main.component";
 
 async function runApp() {
   const appHostDomElement = document.getElementById("app-container") || document.body;
+  const diService = new DependecyInjectionSetupService();
   try {
-    await DependecyInjectionSetup.setup();
+    await diService.setup();
 
     // Render the app
-    ReactDOM.render(<Routes />, appHostDomElement);
+    ReactDOM.render(<MainComponent />, appHostDomElement);
   } catch (ex) {
     const error = await normalizeError(ex);
     ReactDOM.render(

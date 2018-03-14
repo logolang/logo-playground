@@ -39,7 +39,7 @@ export class GoogleAuthService implements IAuthService {
   }
 
   private initGoogleAuth = async (gapi: any): Promise<void> => {
-    const auth2 = await gapi.client
+    await gapi.client
       .init({
         clientId: this.googleClientId,
         scope: "profile email https://www.googleapis.com/auth/drive.appdata https://www.googleapis.com/auth/drive.file",
@@ -49,20 +49,21 @@ export class GoogleAuthService implements IAuthService {
 
     const auth = gapi.auth2.getAuthInstance();
 
-    //Get current user
+    // Get current user
     const googleUser = auth.currentUser.get();
     this.updateSigninStatus(googleUser);
 
     // Listen for changes to current user.
     auth.currentUser.listen((googleUser: any) => {
-      console.log("4");
+      console.log("auth.currentUser.listen", googleUser);
       this.updateSigninStatus(googleUser);
     });
   };
 
   private updateSigninStatus = (googleUser: any) => {
+    const isSignedIn = googleUser && googleUser.isSignedIn();
     const profile = googleUser && googleUser.getBasicProfile();
-    if (profile) {
+    if (isSignedIn && profile) {
       const loginStatus: LoginStatus = {
         isLoggedIn: true,
         userInfo: {
@@ -89,7 +90,8 @@ export class GoogleAuthService implements IAuthService {
     if (this.isSignedIn) {
       const gapi = (window as any).gapi;
       const auth2 = gapi.auth2.getAuthInstance();
-      return auth2.signOut();
+      await auth2.signOut().then();
+      this.loginStatusSubject.next(NotLoggenInStatus);
     }
   }
 

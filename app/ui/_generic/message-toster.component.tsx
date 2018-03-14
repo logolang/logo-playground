@@ -43,7 +43,6 @@ export class MessageTosterComponent extends React.Component<IComponentProps, ICo
   }
 
   onMessage = (message: ITosterMessage) => {
-    console.log("got a message!", message);
     const newMessageData: IMessageData = {
       id: (++this.id).toString(),
       message: message,

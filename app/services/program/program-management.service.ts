@@ -39,7 +39,7 @@ export class ProgramManagementService {
   };
 
   saveTempProgram = async (programId: string, code: string): Promise<void> => {
-    this.localTempStorage.setCode(programId, code);
+    await this.localTempStorage.setCode(programId, code);
   };
 
   revertLocalTempChanges = async (programModel: ProgramModel): Promise<string> => {
