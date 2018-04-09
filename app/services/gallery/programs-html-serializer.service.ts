@@ -6,7 +6,7 @@ export class ProgramsHtmlSerializerService {
     const result: ProgramModel[] = [];
     const bodyStartIndex = serialized.indexOf("<body");
     const bodyEndIndex = serialized.indexOf("</html>");
-    const bodyXml = serialized.substring(bodyStartIndex, bodyEndIndex - 1);
+    const bodyXml = serialized.substring(bodyStartIndex, bodyEndIndex);
     const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(bodyXml, "application/xml");
 
@@ -39,36 +39,34 @@ export class ProgramsHtmlSerializerService {
     const programsSorted = [...programs].sort(sortingFunction);
 
     const imageData64Url = await this.getImageBase64ByUrl(userpicUrl);
-    const headHtml = `<!DOCTYPE html>
-    <html>
-    <head>
-        <title>Logo personal library</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <style>  
-            body {
-                margin: 20px 100px;
-                font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
-                font-weight: 300;
-            }
+    const headBlock = `<head>
+  <title>Logo personal library</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <style>  
+    body {
+      margin: 20px 100px;
+      font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+      font-weight: 300;
+    }
 
-            header {
-                padding: 10px;
-                border-bottom: 1px solid gray;
-            }
+    header {
+      padding: 10px;
+      border-bottom: 1px solid gray;
+    }
 
-            td {
-                vertical-align: top;
-                padding: 10px;
-            }
+    td {
+      vertical-align: top;
+      padding: 10px;
+    }
 
-            pre {
-                background-color: #eee;
-                padding: 20px;
-            }
-        </style>
-    </head>
+    pre {
+      background-color: #eee;
+      padding: 20px;
+    }
+  </style>
+</head>
 `;
 
     const body = document.createElement("body");
@@ -99,8 +97,7 @@ export class ProgramsHtmlSerializerService {
       tbody.appendChild(row);
     }
 
-    const xmlserializer = new XMLSerializer();
-    return headHtml + this.formatXml(xmlserializer.serializeToString(body)) + "\n</html>";
+    return "<!DOCTYPE html><html>" + headBlock + new XMLSerializer().serializeToString(body) + "</html>";
   }
 
   private serializeProgramToHtmlNode(program: ProgramModel) {
@@ -168,37 +165,5 @@ export class ProgramsHtmlSerializerService {
       imgElt.setAttribute("crossOrigin", "Anonymous");
       imgElt.setAttribute("src", imgUrl);
     });
-  }
-
-  /**
-   * Pretty prints the xml string
-   * copy pasted from https://gist.github.com/sente/1083506/d2834134cd070dbcc08bf42ee27dabb746a1c54d
-   */
-  private formatXml(xml: string) {
-    const PADDING = " ".repeat(2); // set desired indent size here
-    const reg = /(>)(<)(\/*)/g;
-    let pad = 0;
-
-    xml = xml.replace(reg, "$1\r\n$2$3");
-
-    return xml
-      .split("\r\n")
-      .map((node, index) => {
-        let indent = 0;
-        if (node.match(/.+<\/\w[^>]*>$/)) {
-          indent = 0;
-        } else if (node.match(/^<\/\w/) && pad > 0) {
-          pad -= 1;
-        } else if (node.match(/^<\w[^>]*[^\/]>.*$/)) {
-          indent = 1;
-        } else {
-          indent = 0;
-        }
-
-        pad += indent;
-
-        return PADDING.repeat(pad - indent) + node;
-      })
-      .join("\n");
   }
 }

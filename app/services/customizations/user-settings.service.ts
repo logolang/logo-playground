@@ -13,10 +13,10 @@ export interface IUserSettings {
   themeName: string;
   localeId: string;
   currentTutorialInfo?: ICurrentTutorialInfo;
-  playgroundLayout?: object;
-  playgroundLayoutMobile?: object;
-  tutorialsLayout?: object;
-  tutorialsLayoutMobile?: object;
+  playgroundLayoutJSON?: string;
+  playgroundLayoutMobileJSON?: string;
+  tutorialsLayoutJSON?: string;
+  tutorialsLayoutMobileJSON?: string;
 }
 
 export interface ICurrentTutorialInfo {
@@ -34,7 +34,7 @@ export class UserSettingsBrowserLocalStorageService implements IUserSettingsServ
   private currentData: IUserSettings;
 
   constructor(@inject(ICurrentUserService) private currentUser: ICurrentUserService) {
-    const userId = this.currentUser.getLoginStatus().userInfo.attributes.email;
+    const userId = this.currentUser.getLoginStatus().userInfo.attributes.email || "guest";
     this.localStorage = new LocalStorageService<IUserSettings>(`logolang-app-local-settings-${userId}`, {} as any);
     const settings = this.localStorage.getValue();
 

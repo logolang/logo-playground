@@ -1,3 +1,4 @@
+import { Subject } from "rxjs";
 import { container } from "app/di";
 import { normalizeError } from "app/utils/error-helpers";
 
@@ -10,7 +11,7 @@ import {
   ProgramsLocalStorageRepository,
   IUserLibraryRepository
 } from "app/services/gallery/personal-gallery-localstorage.repository";
-import { LocalTempCodeStorage, ILocalTempCodeStorage } from "app/services/program/local-temp-code.storage";
+import { LocalTempCodeStorage } from "app/services/program/local-temp-code.storage";
 import {
   UserSettingsBrowserLocalStorageService,
   IUserSettingsService
@@ -38,8 +39,13 @@ import {
 } from "app/services/infrastructure/events-tracking.service";
 import { GoogleAnalyticsTrackerService } from "app/services/infrastructure/google-analytics-tracker.service";
 
-export class DependecyInjectionSetup {
-  static async setup() {
+export class DependecyInjectionSetupService {
+  public onResetEvents = new Subject<void>();
+
+  public async setup() {
+    console.log("start setting up bindings");
+    container.bind(DependecyInjectionSetupService).toConstantValue(this);
+
     const appInfo: IAppInfo = APP_WEBPACK_STATIC_INFO /*Global variable injected by Webpack*/;
 
     container.bind(IAjaxService).to(AjaxService);
@@ -79,7 +85,7 @@ export class DependecyInjectionSetup {
     container.bind(IUserSettingsService).toConstantValue(userSettingsService);
     const userSettings = await userSettingsService.get();
 
-    container.bind(ILocalTempCodeStorage).to(LocalTempCodeStorage);
+    container.bind(LocalTempCodeStorage).to(LocalTempCodeStorage);
 
     const localizedContentLoader = new LocalizedContentLoader(container.get(IAjaxService), userSettings.localeId);
     container.bind(ILocalizedContentLoader).toConstantValue(localizedContentLoader);
@@ -103,7 +109,9 @@ export class DependecyInjectionSetup {
     );
     container.bind(ImageUploadService).toConstantValue(imageUploadService);
 
-    container.bind(ThemesService).to(ThemesService);
+    const themeService = new ThemesService();
+    themeService.setActiveTheme(userSettings.themeName);
+    container.bind(ThemesService).toConstantValue(themeService);
     container.bind(TurtlesService).to(TurtlesService);
 
     switch (currentUserService.getLoginStatus().userInfo.attributes.authProvider) {
@@ -118,11 +126,13 @@ export class DependecyInjectionSetup {
     container.bind(IGallerySamplesRepository).to(GallerySamplesRepository);
     container.bind(ProgramManagementService).to(ProgramManagementService);
     container.bind(GistSharedProgramsRepository).to(GistSharedProgramsRepository);
+
+    console.log("finish setting up bindings");
   }
 
-  static async reset() {
-    container.unload();
+  public async reset() {
     container.unbindAll();
     await this.setup();
+    this.onResetEvents.next();
   }
 }

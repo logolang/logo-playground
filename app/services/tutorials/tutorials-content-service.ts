@@ -35,11 +35,6 @@ export class TutorialsContentService implements ITutorialsContentService {
 
   constructor(@inject(ILocalizedContentLoader) private contentLoader: ILocalizedContentLoader) {}
 
-  private getIdFromIndex(index: number): string {
-    const id = (index + 1).toString();
-    return id.length > 1 ? id : "0" + id;
-  }
-
   async getTutorialsList(): Promise<ITutorialInfo[]> {
     if (this.tutorialInfos.length == 0) {
       const result = await this.contentLoader.getFileContent("tutorials/index.json");

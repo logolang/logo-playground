@@ -14,7 +14,7 @@ import { _T } from "app/services/customizations/localization.service";
 import { IUserLibraryRepository } from "app/services/gallery/personal-gallery-localstorage.repository";
 import { ProgramModel } from "app/services/program/program.model";
 import { IGallerySamplesRepository } from "app/services/gallery/gallery-samples.repository";
-import { ProgramStorageType } from "app/services/program/program-management.service";
+import { ProgramStorageType, ProgramManagementService } from "app/services/program/program-management.service";
 import { ICurrentUserService } from "app/services/login/current-user.service";
 import { TitleService } from "app/services/infrastructure/title.service";
 import { IEventsTrackingService, EventAction } from "app/services/infrastructure/events-tracking.service";
@@ -40,6 +40,7 @@ export class GalleryPageComponent extends React.Component<IComponentProps, IComp
   private programsRepo = resolveInject(IUserLibraryRepository);
   private samplesRepo = resolveInject(IGallerySamplesRepository);
   private eventsTracker = resolveInject(IEventsTrackingService);
+  private programManagementService = resolveInject(ProgramManagementService);
 
   constructor(props: IComponentProps) {
     super(props);
@@ -60,6 +61,7 @@ export class GalleryPageComponent extends React.Component<IComponentProps, IComp
   async loadData() {
     const sortingFunction = createCompareFuntion<ProgramModel>(x => x.dateLastEdited, "desc");
     const samples = await this.samplesRepo.getAll();
+    this.programManagementService.initLocalModificationsFlag(samples);
     samples.sort(sortingFunction);
     this.setState({
       samples: samples
@@ -67,6 +69,7 @@ export class GalleryPageComponent extends React.Component<IComponentProps, IComp
 
     this.setState({ isLoading: true });
     const programs = await this.programsRepo.getAll();
+    this.programManagementService.initLocalModificationsFlag(programs);
     programs.sort(sortingFunction);
     this.setState({
       programs,
@@ -158,11 +161,18 @@ export class GalleryPageComponent extends React.Component<IComponentProps, IComp
           <div className="media">
             <div className="media-content">
               <p className="title is-5">
+                {p.hasTempLocalModifications && (
+                  <>
+                    <i className="fa fa-asterisk icon-sm" aria-hidden="true" title={_T("This program has changes")} />
+                    &nbsp;
+                  </>
+                )}
                 <Link to={link}>{p.name}</Link>
               </p>
               <div className="subtitle is-7">
                 <DateTimeStampComponent datetime={p.dateLastEdited} />
               </div>
+
               {deleteBox && (
                 <a
                   onClick={() => {

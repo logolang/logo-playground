@@ -1,13 +1,7 @@
 import * as React from "react";
-import { HashRouter as Router, Route, Switch, Redirect } from "react-router-dom";
+import { Route, Redirect, Switch } from "react-router-dom";
 
-import { resolveInject } from "app/di";
 import { RouteInfo } from "app/utils/route-info";
-
-import { MessageTosterComponent } from "app/ui/_generic/message-toster.component";
-import { INavigationService } from "app/services/infrastructure/navigation.service";
-import { INotificationService } from "app/services/infrastructure/notification.service";
-
 import { LoginPageComponent } from "app/ui/login.page.component";
 import { GalleryPageComponent } from "app/ui/gallery/gallery.page.component";
 import { UserProfilePageComponent } from "app/ui/user-profile.page.component";
@@ -17,71 +11,52 @@ import { ProgramStorageType } from "app/services/program/program-management.serv
 import { CheatSheetPageComponent } from "app/ui/cheat-sheet/cheat-sheet.page.component";
 import { TutorialsPageComponent, ITutorialPageRouteParams } from "app/ui/tutorials/tutorials.page.component";
 
-export class Routes extends React.Component<object, object> {
-  private navigationService = resolveInject(INavigationService);
-  private notificationService = resolveInject(INotificationService);
+export const RoutesComponent = (): JSX.Element => (
+  <Switch>
+    <Route path={Routes.loginRoot.relativePath} component={LoginPageComponent} />
 
-  private router: any;
+    <Route path={Routes.galleryRoot.relativePath} component={GalleryPageComponent} />
 
-  componentDidMount() {
-    // Initialize navigation service to perform navigation via React Router
-    this.navigationService.getObservable().subscribe(request => {
-      this.router.history.push(request.route);
-    });
-  }
+    <Route path={Routes.settingsRoot.relativePath} component={UserProfilePageComponent} />
 
-  render(): JSX.Element {
-    return (
-      <Router ref={router => (this.router = router)}>
-        <div>
-          <MessageTosterComponent events={this.notificationService.getObservable()} />
-          <Switch>
-            <Route path={Routes.loginRoot.relativePath} component={LoginPageComponent} />
+    <Route path={Routes.infoRoot.relativePath} component={InfoPageComponent} />
 
-            <Route path={Routes.galleryRoot.relativePath} component={GalleryPageComponent} />
+    <Route exact path={Routes.playground.relativePath} component={PlaygroundPageComponent} />
+    <Route
+      exact
+      path={Routes.codeGist.relativePath}
+      render={props => (
+        <PlaygroundPageComponent storageType={ProgramStorageType.gist} programId={props.match.params.id} />
+      )}
+    />
+    <Route
+      exact
+      path={Routes.codeExample.relativePath}
+      render={props => (
+        <PlaygroundPageComponent storageType={ProgramStorageType.samples} programId={props.match.params.id} />
+      )}
+    />
+    <Route
+      exact
+      path={Routes.codeLibrary.relativePath}
+      render={props => (
+        <PlaygroundPageComponent storageType={ProgramStorageType.gallery} programId={props.match.params.id} />
+      )}
+    />
 
-            <Route path={Routes.settingsRoot.relativePath} component={UserProfilePageComponent} />
+    <Route path={Routes.cheatSheetRoot.relativePath} component={CheatSheetPageComponent} />
 
-            <Route path={Routes.infoRoot.relativePath} component={InfoPageComponent} />
+    <Route exact path={Routes.tutorialsRoot.relativePath} component={TutorialsPageComponent} />
+    <Route exact path={Routes.tutorialSpecified.relativePath} component={TutorialsPageComponent} />
 
-            <Route exact path={Routes.playground.relativePath} component={PlaygroundPageComponent} />
-            <Route
-              exact
-              path={Routes.codeGist.relativePath}
-              render={props => (
-                <PlaygroundPageComponent storageType={ProgramStorageType.gist} programId={props.match.params.id} />
-              )}
-            />
-            <Route
-              exact
-              path={Routes.codeExample.relativePath}
-              render={props => (
-                <PlaygroundPageComponent storageType={ProgramStorageType.samples} programId={props.match.params.id} />
-              )}
-            />
-            <Route
-              exact
-              path={Routes.codeLibrary.relativePath}
-              render={props => (
-                <PlaygroundPageComponent storageType={ProgramStorageType.gallery} programId={props.match.params.id} />
-              )}
-            />
+    <Redirect from="/" to={Routes.galleryRoot.relativePath} />
 
-            <Route path={Routes.cheatSheetRoot.relativePath} component={CheatSheetPageComponent} />
+    {/* Default route will be used in case if nothing matches */}
+    <Route component={GalleryPageComponent} />
+  </Switch>
+);
 
-            <Route exact path={Routes.tutorialsRoot.relativePath} component={TutorialsPageComponent} />
-            <Route exact path={Routes.tutorialSpecified.relativePath} component={TutorialsPageComponent} />
-
-            <Redirect from="/" to={Routes.galleryRoot.relativePath} />
-
-            {/* Default route will be used in case if nothing matches */}
-            <Route component={GalleryPageComponent} />
-          </Switch>
-        </div>
-      </Router>
-    );
-  }
-
+export class Routes {
   static readonly root = new RouteInfo(undefined, "/");
 
   static readonly loginRoot = new RouteInfo(Routes.root, "/login");

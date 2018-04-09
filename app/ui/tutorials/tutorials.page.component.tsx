@@ -39,7 +39,7 @@ interface IComponentState {
   tutorialId?: string;
   stepId?: string;
   program?: ProgramModel;
-  pageLayoutConfig?: object;
+  pageLayoutConfigJSON?: string;
 }
 
 interface IComponentProps extends RouteComponentProps<ITutorialPageRouteParams> {}
@@ -64,7 +64,9 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
   private codeChangesStream = new Subject<string>();
   private layoutChangesStream = new Subject<void>();
 
-  private defaultLayoutConfig = this.isMobileDevice ? tutorialsDefaultMobileLayout : tutorialsDefaultLayout;
+  private defaultLayoutConfigJSON = JSON.stringify(
+    this.isMobileDevice ? tutorialsDefaultMobileLayout : tutorialsDefaultLayout
+  );
 
   private errorHandler = (err: ErrorDef) => {
     this.notificationService.push({ message: err.message, type: "danger" });
@@ -88,9 +90,9 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
     /** */
   }
 
-  layoutChanged = (newLayout: object): void => {
-    this.userSettingsService.update(
-      this.isMobileDevice ? { tutorialsLayoutMobile: newLayout } : { tutorialsLayout: newLayout }
+  layoutChanged = async (newLayoutJSON: string) => {
+    await this.userSettingsService.update(
+      this.isMobileDevice ? { tutorialsLayoutMobileJSON: newLayoutJSON } : { tutorialsLayoutJSON: newLayoutJSON }
     );
     this.layoutChangesStream.next();
   };
@@ -134,7 +136,9 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
       program,
       tutorialId,
       stepId,
-      pageLayoutConfig: this.isMobileDevice ? userSettings.tutorialsLayoutMobile : userSettings.tutorialsLayout
+      pageLayoutConfigJSON: this.isMobileDevice
+        ? userSettings.tutorialsLayoutMobileJSON
+        : userSettings.tutorialsLayoutJSON
     });
   }
 
@@ -145,13 +149,13 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
     }
   };
 
-  onLoadedTutorial = (tutorialId: string, stepId: string, initCode: string) => {
+  onLoadedTutorial = async (tutorialId: string, stepId: string, initCode: string) => {
     if (this.state.program) {
       this.codeChangesStream.next(initCode);
       this.executionService.executeProgram(initCode);
     }
 
-    this.userSettingsService.update({
+    await this.userSettingsService.update({
       currentTutorialInfo: {
         tutorialId,
         stepId
@@ -187,8 +191,8 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
             this.state.stepId &&
             this.state.program && (
               <GoldenLayoutComponent
-                initialLayoutConfig={this.state.pageLayoutConfig}
-                defaultLayoutConfig={this.defaultLayoutConfig}
+                initialLayoutConfigJSON={this.state.pageLayoutConfigJSON}
+                defaultLayoutConfigJSON={this.defaultLayoutConfigJSON}
                 onLayoutChange={this.layoutChanged}
                 panelsReloadCheck={() => false}
                 panels={[
