@@ -21,9 +21,9 @@ interface IComponentState {}
 
 interface IComponentProps {
   panels: IPanelConfig<any, any>[];
-  defaultLayoutConfig: object;
-  initialLayoutConfig?: object;
-  onLayoutChange(newConfig: object): void;
+  defaultLayoutConfigJSON: string;
+  initialLayoutConfigJSON?: string;
+  onLayoutChange(newConfigJSON: string): void;
   panelsReloadCheck(oldPanels: IPanelConfig<any, any>[], newPanels: IPanelConfig<any, any>[]): boolean;
 }
 
@@ -83,9 +83,9 @@ export class GoldenLayoutComponent extends React.Component<IComponentProps, ICom
   initLayout(props: IComponentProps) {
     setTimeout(() => {
       try {
-        this.initLayoutWithConfig(props, props.initialLayoutConfig);
+        this.initLayoutWithConfig(props, JSON.parse(props.initialLayoutConfigJSON || ""));
       } catch (ex) {
-        this.initLayoutWithConfig(props, props.defaultLayoutConfig);
+        this.initLayoutWithConfig(props, JSON.parse(props.defaultLayoutConfigJSON));
       }
     }, 0);
   }
@@ -148,20 +148,25 @@ export class GoldenLayoutComponent extends React.Component<IComponentProps, ICom
 
   stateChangeHandler = () => {
     const config = this.layout.toConfig();
-    // erase props from config layout
-    for (const panel of this.props.panels) {
-      const panelConfig = this.findGoldenLayoutConfigItem(panel.componentName, config.content);
-      if (panelConfig) {
-        (panelConfig as any).props = undefined;
-        (panelConfig as any).componentState = undefined;
-      }
-    }
+    this.scanObjAndDeleteProps(config, ["props", "componentState", "title"]);
     const json = JSON.stringify(config);
     if (this.stateLastJSON != json) {
       this.stateLastJSON = json;
-      this.props.onLayoutChange(config);
+      this.props.onLayoutChange(json);
     }
   };
+
+  scanObjAndDeleteProps(obj: any, propNamesToDelete: string[]) {
+    for (const [k, v] of Object.entries(obj)) {
+      if (propNamesToDelete.includes(k)) {
+        delete obj[k];
+      } else {
+        if (typeof v === "object" && v) {
+          this.scanObjAndDeleteProps(v, propNamesToDelete);
+        }
+      }
+    }
+  }
 
   render(): JSX.Element {
     return <div className="golden-layout-component" ref="container" />;

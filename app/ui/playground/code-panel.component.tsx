@@ -8,7 +8,6 @@ import { resolveInject } from "app/di";
 import { _T } from "app/services/customizations/localization.service";
 import { ProgramModel } from "app/services/program/program.model";
 import { INotificationService } from "app/services/infrastructure/notification.service";
-import { INavigationService } from "app/services/infrastructure/navigation.service";
 import { ProgramExecutionContext } from "app/services/program/program-execution.context";
 import { ProgramManagementService, ProgramStorageType } from "app/services/program/program-management.service";
 import { IEventsTrackingService, EventAction } from "app/services/infrastructure/events-tracking.service";
@@ -44,7 +43,6 @@ interface IComponentState {
 
 export class CodePanelComponent extends React.Component<ICodePanelComponentProps, IComponentState> {
   private notificationService = resolveInject(INotificationService);
-  private navigationService = resolveInject(INavigationService);
   private managementService = resolveInject(ProgramManagementService);
   private eventsTracker = resolveInject(IEventsTrackingService);
   private subscriptions: ISubscription[] = [];
@@ -153,8 +151,8 @@ export class CodePanelComponent extends React.Component<ICodePanelComponentProps
     if (this.saveTempCodeTimer) {
       clearTimeout(this.saveTempCodeTimer);
     }
-    this.saveTempCodeTimer = setTimeout(() => {
-      this.managementService.saveTempProgram(this.props.program.id, newCode);
+    this.saveTempCodeTimer = setTimeout(async () => {
+      await this.managementService.saveTempProgram(this.props.program.id, newCode);
       if (!this.state.hasLocalTempChanges) {
         this.setState({ hasLocalTempChanges: true });
         this.props.hasChangesStatus && this.props.hasChangesStatus(true);

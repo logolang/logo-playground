@@ -34,7 +34,7 @@ import "./playground.page.component.less";
 interface IComponentState {
   isLoading: boolean;
   userSettings?: IUserSettings;
-  pageLayoutConfig?: object;
+  pageLayoutConfigJSON?: string;
   program?: ProgramModel;
   turtleImage?: HTMLImageElement;
   theme?: Theme;
@@ -66,7 +66,9 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
   private codePanelTitle = new BehaviorSubject<string>("");
   private outputPanelTitle = new BehaviorSubject<string>("");
   private isMobileDevice = checkIsMobileDevice();
-  private defaultLayoutConfig = this.isMobileDevice ? playgroundDefaultMobileLayout : playgroundDefaultLayout;
+  private defaultLayoutConfigJSON = JSON.stringify(
+    this.isMobileDevice ? playgroundDefaultMobileLayout : playgroundDefaultLayout
+  );
 
   private errorHandler = (err: ErrorDef) => {
     this.notificationService.push({ message: err.message, type: "danger" });
@@ -101,14 +103,14 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
     /***/
   }
 
-  layoutChanged = async (newLayout: object): Promise<void> => {
+  layoutChanged = async (newLayoutJSON: string): Promise<void> => {
     await this.userSettingsService.update(
       this.isMobileDevice
         ? {
-            playgroundLayoutMobile: newLayout
+            playgroundLayoutMobileJSON: newLayoutJSON
           }
         : {
-            playgroundLayout: newLayout
+            playgroundLayoutJSON: newLayoutJSON
           }
     );
     this.layoutChangedSubject.next();
@@ -132,9 +134,7 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
       _T("Program") +
       (programName ? ": <strong>" + programName + "</strong>" : "");
     if (hasChanges && programId) {
-      title += ` <i class="fa fa-asterisk" aria-hidden="true" style="transform: scale(0.7, 0.7);" title="${_T(
-        "This program has changes"
-      )}"></i>`;
+      title += ` <i class="fa fa-asterisk icon-sm" aria-hidden="true" title="${_T("This program has changes")}"></i>`;
     }
     this.codePanelTitle.next(title);
   }
@@ -184,7 +184,9 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
       userSettings,
       theme,
       turtleImage,
-      pageLayoutConfig: this.isMobileDevice ? userSettings.playgroundLayoutMobile : userSettings.playgroundLayout
+      pageLayoutConfigJSON: this.isMobileDevice
+        ? userSettings.playgroundLayoutMobileJSON
+        : userSettings.playgroundLayoutJSON
     });
 
     this.titleService.setDocumentTitle(programModel.name);
@@ -210,8 +212,8 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
             this.state.userSettings &&
             this.state.theme && (
               <GoldenLayoutComponent
-                initialLayoutConfig={this.state.pageLayoutConfig}
-                defaultLayoutConfig={this.defaultLayoutConfig}
+                initialLayoutConfigJSON={this.state.pageLayoutConfigJSON}
+                defaultLayoutConfigJSON={this.defaultLayoutConfigJSON}
                 onLayoutChange={this.layoutChanged}
                 panelsReloadCheck={(oldPanels, newPanels) => {
                   const oldProgramId = oldPanels[0].props.program.id;

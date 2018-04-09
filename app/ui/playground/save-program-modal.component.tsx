@@ -2,7 +2,6 @@ import * as React from "react";
 import * as cn from "classnames";
 
 import { _T } from "app/services/customizations/localization.service";
-import { IProgramToSaveAttributes } from "app/services/program/program-management.service";
 
 import { ModalComponent } from "app/ui/_generic/modal.component";
 import { NoDataComponent } from "app/ui/_generic/no-data.component";
@@ -89,10 +88,6 @@ export class SaveProgramModalComponent extends React.Component<IComponentProps, 
 
   saveProgramAction = async () => {
     this.setState({ isSavingInProgress: true, errorMessage: "" });
-    const attrs: IProgramToSaveAttributes = {
-      name: this.state.programName,
-      programId: ""
-    };
 
     try {
       await this.props.onSave(this.state.programName);

@@ -161,8 +161,12 @@ export class ThemesService {
     return themes[0];
   }
 
-  setActiveTheme(theme: Theme) {
-    this.themeManager.activateTheme(theme, false);
+  setActiveTheme(themeName: string) {
+    const activeTheme = this.getActiveTheme();
+    if (activeTheme && activeTheme.name === themeName) {
+      return;
+    }
+    this.themeManager.activateTheme(this.getTheme(themeName), false);
   }
 
   getActiveTheme(): Theme | undefined {
