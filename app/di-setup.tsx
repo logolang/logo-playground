@@ -11,7 +11,7 @@ import {
   ProgramsLocalStorageRepository,
   IUserLibraryRepository
 } from "app/services/gallery/personal-gallery-localstorage.repository";
-import { LocalTempCodeStorage, ILocalTempCodeStorage } from "app/services/program/local-temp-code.storage";
+import { LocalTempCodeStorage } from "app/services/program/local-temp-code.storage";
 import {
   UserSettingsBrowserLocalStorageService,
   IUserSettingsService
@@ -85,7 +85,7 @@ export class DependecyInjectionSetupService {
     container.bind(IUserSettingsService).toConstantValue(userSettingsService);
     const userSettings = await userSettingsService.get();
 
-    container.bind(ILocalTempCodeStorage).to(LocalTempCodeStorage);
+    container.bind(LocalTempCodeStorage).to(LocalTempCodeStorage);
 
     const localizedContentLoader = new LocalizedContentLoader(container.get(IAjaxService), userSettings.localeId);
     container.bind(ILocalizedContentLoader).toConstantValue(localizedContentLoader);

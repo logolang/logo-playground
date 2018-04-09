@@ -134,9 +134,7 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
       _T("Program") +
       (programName ? ": <strong>" + programName + "</strong>" : "");
     if (hasChanges && programId) {
-      title += ` <i class="fa fa-asterisk" aria-hidden="true" style="transform: scale(0.7, 0.7);" title="${_T(
-        "This program has changes"
-      )}"></i>`;
+      title += ` <i class="fa fa-asterisk icon-sm" aria-hidden="true" title="${_T("This program has changes")}"></i>`;
     }
     this.codePanelTitle.next(title);
   }
