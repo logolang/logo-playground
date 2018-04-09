@@ -6,7 +6,7 @@ export class ProgramsHtmlSerializerService {
     const result: ProgramModel[] = [];
     const bodyStartIndex = serialized.indexOf("<body");
     const bodyEndIndex = serialized.indexOf("</html>");
-    const bodyXml = serialized.substring(bodyStartIndex, bodyEndIndex - 1);
+    const bodyXml = serialized.substring(bodyStartIndex, bodyEndIndex);
     const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(bodyXml, "application/xml");
 
