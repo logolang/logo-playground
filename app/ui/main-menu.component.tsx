@@ -3,7 +3,7 @@ import { Link, NavLink } from "react-router-dom";
 import * as cn from "classnames";
 
 import { resolveInject } from "app/di";
-import { DependecyInjectionSetup } from "app/di-setup";
+import { DependecyInjectionSetupService } from "app/di-setup";
 import { Routes } from "app/routes";
 import { _T } from "app/services/customizations/localization.service";
 import { ICurrentUserService } from "app/services/login/current-user.service";
@@ -20,6 +20,7 @@ interface IComponentProps {
 export class MainMenuComponent extends React.Component<IComponentProps, IComponentState> {
   private loginService = resolveInject(ILoginService);
   private currentUser = resolveInject(ICurrentUserService);
+  private diService = resolveInject(DependecyInjectionSetupService);
 
   constructor(props: IComponentProps) {
     super(props);
@@ -29,9 +30,7 @@ export class MainMenuComponent extends React.Component<IComponentProps, ICompone
 
   menuLogOutClick = async () => {
     await this.loginService.signOut();
-    await DependecyInjectionSetup.reset();
-    // refresh browser window
-    window.location.reload(true);
+    await this.diService.reset();
   };
 
   render(): JSX.Element {
@@ -99,7 +98,7 @@ export class MainMenuComponent extends React.Component<IComponentProps, ICompone
                   </NavLink>
                 )}
                 {loginStatus.isLoggedIn && (
-                  <a href="#" className="navbar-item" onClick={this.menuLogOutClick}>
+                  <a href="javascript:void(0)" className="navbar-item" onClick={this.menuLogOutClick}>
                     <i className="fa fa-sign-out icon-fixed-width" aria-hidden="true" />
                     {_T("Sign out")}
                   </a>

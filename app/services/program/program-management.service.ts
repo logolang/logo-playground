@@ -3,7 +3,7 @@ import { injectable, inject } from "app/di";
 import { IUserLibraryRepository } from "app/services/gallery/personal-gallery-localstorage.repository";
 import { ProgramModel } from "app/services/program/program.model";
 import { IGallerySamplesRepository } from "app/services/gallery/gallery-samples.repository";
-import { ILocalTempCodeStorage } from "app/services/program/local-temp-code.storage";
+import { LocalTempCodeStorage } from "app/services/program/local-temp-code.storage";
 import { ProgramModelConverter } from "app/services/program/program-model.converter";
 import { GistSharedProgramsRepository } from "app/services/program/gist-shared-programs.repository";
 
@@ -23,14 +23,14 @@ export class ProgramManagementService {
   constructor(
     @inject(IGallerySamplesRepository) private examplesRepository: IGallerySamplesRepository,
     @inject(IUserLibraryRepository) private personalRepository: IUserLibraryRepository,
-    @inject(ILocalTempCodeStorage) private localTempStorage: ILocalTempCodeStorage,
+    @inject(LocalTempCodeStorage) private localTempStorage: LocalTempCodeStorage,
     @inject(GistSharedProgramsRepository) private gistRepository: GistSharedProgramsRepository
   ) {}
 
   loadProgram = async (programId?: string, storageType?: ProgramStorageType): Promise<ProgramModel> => {
     const program = await this.loadProgramFromStorage(storageType, programId);
 
-    const tempCode = await this.localTempStorage.getCode(programId || "");
+    const tempCode = this.localTempStorage.getCode(programId || "");
     if (tempCode) {
       program.code = tempCode;
       program.hasTempLocalModifications = true;
@@ -38,15 +38,24 @@ export class ProgramManagementService {
     return program;
   };
 
-  saveTempProgram = async (programId: string, code: string): Promise<void> => {
+  saveTempProgram = (programId: string, code: string): void => {
     this.localTempStorage.setCode(programId, code);
   };
 
   revertLocalTempChanges = async (programModel: ProgramModel): Promise<string> => {
     const program = await this.loadProgramFromStorage(programModel.storageType, programModel.id);
-    await this.saveTempProgram(program.id, "");
+    this.saveTempProgram(program.id, "");
     return program.code;
   };
+
+  async initLocalModificationsFlag(programs: ProgramModel[]) {
+    for (const program of programs) {
+      const tempCode = this.localTempStorage.getCode(program.id);
+      if (tempCode) {
+        program.hasTempLocalModifications = true;
+      }
+    }
+  }
 
   saveProgramToLibrary = async (
     newProgramName: string,

@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as cn from "classnames";
 import * as FileSaver from "file-saver";
-import { Link, RouteComponentProps } from "react-router-dom";
+import { RouteComponentProps } from "react-router-dom";
 import { Subject, BehaviorSubject } from "rxjs";
 
 import { RandomHelper } from "app/utils/random-helper";
@@ -12,16 +12,14 @@ import { MainMenuComponent } from "app/ui/main-menu.component";
 import { LogoExecutorComponent } from "app/ui/_shared/logo-executor.component";
 import { FileSelectorComponent } from "app/ui/_generic/file-selector.component";
 
-import { resolveInject } from "app/di";
-import { Routes } from "app/routes";
-import { UserInfo, AuthProvider } from "app/services/login/user-info";
+import { resolveInject, resolveLazy } from "app/di";
+import { UserInfo } from "app/services/login/user-info";
 import { TurtlesService, TurtleInfo, TurtleSize } from "app/services/customizations/turtles.service";
 import { Theme, ThemesService } from "app/services/customizations/themes.service";
 import { ProgramsExportImportService } from "app/services/gallery/programs-export-import.service";
 import { LocalizationService, ILocaleInfo, _T } from "app/services/customizations/localization.service";
 import { ICurrentUserService } from "app/services/login/current-user.service";
 import { TitleService } from "app/services/infrastructure/title.service";
-import { INavigationService } from "app/services/infrastructure/navigation.service";
 import { IUserSettingsService, IUserSettings } from "app/services/customizations/user-settings.service";
 import { INotificationService } from "app/services/infrastructure/notification.service";
 import { IUserLibraryRepository } from "app/services/gallery/personal-gallery-localstorage.repository";
@@ -29,6 +27,8 @@ import { ProgramsHtmlSerializerService } from "app/services/gallery/programs-htm
 import { IEventsTrackingService, EventAction } from "app/services/infrastructure/events-tracking.service";
 import { ensure } from "app/utils/syntax-helpers";
 import { SimpleSelectComponent } from "app/ui/_generic/simple-select.component";
+import { DependecyInjectionSetupService } from "app/di-setup";
+import { SignInStatusComponent } from "app/ui/sign-in-status.component";
 
 class LocaleSelector extends SimpleSelectComponent<ILocaleInfo> {}
 class ThemeSelector extends SimpleSelectComponent<Theme> {}
@@ -49,9 +49,9 @@ interface IComponentState {
 interface IComponentProps extends RouteComponentProps<void> {}
 
 const codeSamples = [
-  "pu setxy -40 -20 pd repeat 8 [fd 40 rt 360/8]",
-  "repeat 10 [repeat 8 [fd 20 rt 360/8] rt 360/10]",
   "repeat 14 [fd repcount*8 rt 90]",
+  "repeat 10 [repeat 8 [fd 20 rt 360/8] rt 360/10]",
+  "pu setxy -40 -20 pd repeat 8 [fd 40 rt 360/8]",
   "repeat 10 [fd 5 * repcount repeat 3 [fd 18 rt 360/3] rt 360/10]",
   "repeat 10 [fd 10 rt 90 fd 10 lt 90]",
   `
@@ -72,8 +72,7 @@ repeat 5 [
 ];
 
 export class UserProfilePageComponent extends React.Component<IComponentProps, IComponentState> {
-  private titleService = resolveInject(TitleService);
-  private navService = resolveInject(INavigationService);
+  private titleService = resolveLazy(TitleService);
   private notificationService = resolveInject(INotificationService);
   private currentUser = resolveInject(ICurrentUserService);
   private userSettingsService = resolveInject(IUserSettingsService);
@@ -82,9 +81,10 @@ export class UserProfilePageComponent extends React.Component<IComponentProps, I
   private localizationService = resolveInject(LocalizationService);
   private programsReporitory = resolveInject(IUserLibraryRepository);
   private eventsTracking = resolveInject(IEventsTrackingService);
+  private diSetup = resolveInject(DependecyInjectionSetupService);
 
   private onIsRunningChanged = new Subject<boolean>();
-  private runCode = new BehaviorSubject<string>("");
+  private runCode = new BehaviorSubject<string>(codeSamples[0]);
   private exportInportService = new ProgramsExportImportService();
 
   private errorHandler = (err: ErrorDef) => {
@@ -100,17 +100,12 @@ export class UserProfilePageComponent extends React.Component<IComponentProps, I
       isSavingInProgress: false,
       programCount: 0
     };
-    this.setRandomCode();
   }
 
   async componentDidMount() {
-    this.titleService.setDocumentTitle(_T("User profile"));
+    this.titleService().setDocumentTitle(_T("User profile"));
     this.eventsTracking.sendEvent(EventAction.openSettings);
     await this.loadData();
-  }
-
-  private setRandomCode() {
-    this.runCode.next(codeSamples[RandomHelper.getRandomInt(0, codeSamples.length - 1)]);
   }
 
   private async loadData() {
@@ -130,6 +125,8 @@ export class UserProfilePageComponent extends React.Component<IComponentProps, I
         turtleImage: turtleImage,
         programCount: programs.length
       });
+
+      this.runCode.next(codeSamples[RandomHelper.getRandomInt(0, codeSamples.length - 1)]);
     }
   }
 
@@ -166,18 +163,6 @@ export class UserProfilePageComponent extends React.Component<IComponentProps, I
     }
   };
 
-  getAuthProviderIcon(provider: AuthProvider) {
-    switch (provider) {
-      case AuthProvider.google:
-        return (
-          <>
-            <i className="fa fa-google" aria-hidden="true" />&nbsp;
-          </>
-        );
-    }
-    return null;
-  }
-
   render(): JSX.Element {
     return (
       <div className="ex-page-container">
@@ -195,46 +180,7 @@ export class UserProfilePageComponent extends React.Component<IComponentProps, I
                   <div className="column">
                     <div className="card">
                       <div className="card-content">
-                        <div className="media">
-                          {this.state.userInfo.attributes.imageUrl && (
-                            <div className="media-left">
-                              <figure className="image is-48x48">
-                                <img src={this.state.userInfo.attributes.imageUrl} alt="User image" />
-                              </figure>
-                            </div>
-                          )}
-
-                          <div className="media-content">
-                            <p className="title is-4">{this.state.userInfo.attributes.name || _T("Guest")}</p>
-                            <p className="subtitle is-6">{this.state.userInfo.attributes.email}</p>
-                          </div>
-                        </div>
-
-                        <div className="content">
-                          {this.currentUser.getLoginStatus().isLoggedIn ? (
-                            <>
-                              <div className="level is-mobile">
-                                <div className="level-left">
-                                  <div className="level-item">{_T("You are signed in via")}</div>
-                                  <div className="level-item">
-                                    <span className="tag is-primary is-medium">
-                                      {this.getAuthProviderIcon(this.state.userInfo.attributes.authProvider)}{" "}
-                                      {this.state.userInfo.attributes.authProvider}
-                                    </span>
-                                  </div>
-                                </div>
-                              </div>
-                            </>
-                          ) : (
-                            <>
-                              <p>{_T("NOT_LOGGED_IN_TEXT_BLOCK")}</p>
-                              <Link to={Routes.loginRoot.build({})} className="button is-primary">
-                                {_T("Sign in")}
-                              </Link>
-                            </>
-                          )}
-                        </div>
-
+                        <SignInStatusComponent />
                         <br />
 
                         <div className="field">
@@ -249,13 +195,10 @@ export class UserProfilePageComponent extends React.Component<IComponentProps, I
                                 getItemIdentifier={x => x.id}
                                 renderItem={x => x.name}
                                 idAttr="language-selector"
-                                selectionChanged={selectedLocation => {
+                                selectionChanged={async selectedLocation => {
                                   if (selectedLocation) {
-                                    setTimeout(async () => {
-                                      await this.userSettingsService.update({ localeId: selectedLocation.id });
-                                      // refresh browser window
-                                      window.location.reload(true);
-                                    }, 0);
+                                    await this.userSettingsService.update({ localeId: selectedLocation.id });
+                                    await this.diSetup.reset();
                                   }
                                 }}
                               />
@@ -280,9 +223,8 @@ export class UserProfilePageComponent extends React.Component<IComponentProps, I
                                 selectionChanged={async selectedTheme => {
                                   if (selectedTheme) {
                                     await this.userSettingsService.update({ themeName: selectedTheme.name });
-                                    this.themeService.setActiveTheme(selectedTheme);
+                                    this.themeService.setActiveTheme(selectedTheme.name);
                                     await this.loadData();
-                                    this.setRandomCode();
                                   }
                                 }}
                               />
@@ -307,7 +249,6 @@ export class UserProfilePageComponent extends React.Component<IComponentProps, I
                                   if (newTurtle) {
                                     await this.userSettingsService.update({ turtleId: newTurtle.id });
                                     await this.loadData();
-                                    this.setRandomCode();
                                   }
                                 }}
                               />
@@ -332,7 +273,6 @@ export class UserProfilePageComponent extends React.Component<IComponentProps, I
                                   if (newSize) {
                                     await this.userSettingsService.update({ turtleSize: newSize.size });
                                     await this.loadData();
-                                    this.setRandomCode();
                                   }
                                 }}
                               />
