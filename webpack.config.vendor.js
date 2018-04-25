@@ -16,6 +16,7 @@ module.exports = function(env) {
   console.log(`building vendor bundle with webpack. production mode:${isProduction}`);
 
   return {
+    mode: isDevBuild ? "development" : "production",
     resolve: {
       extensions: [".js", ".jsx"]
     },
@@ -36,7 +37,6 @@ module.exports = function(env) {
         "codemirror/addon/edit/matchbrackets.js",
         "codemirror/addon/display/placeholder.js",
         "isomorphic-fetch",
-        "tv4",
         "moment",
         "file-saver",
         "color",
@@ -64,37 +64,29 @@ module.exports = function(env) {
         name: "[name]"
       }),
 
-      new webpack.DefinePlugin({
-        "process.env.NODE_ENV": isDevBuild ? '"development"' : '"production"'
-      })
-    ].concat(
-      isDevBuild
-        ? []
-        : [
-            // Apply minification
-            new webpack.optimize.UglifyJsPlugin({
-              sourceMap: true
-            }),
-            new webpack.LoaderOptionsPlugin({
-              minimize: true
-            }),
-            new BundleAnalyzerPlugin({
-              // Can be `server`, `static` or `disabled`.
-              // In `server` mode analyzer will start HTTP server to show bundle report.
-              // In `static` mode single HTML file with bundle report will be generated.
-              // In `disabled` mode you can use this plugin to just generate Webpack Stats JSON file by setting `generateStatsFile` to `true`.
-              analyzerMode: "static",
-              // Path to bundle report file that will be generated in `static` mode.
-              // Relative to bundles output directory.
-              reportFilename: "../reports/bundle-analyzer-vendor-report.html",
-              // Automatically open report in default browser
-              openAnalyzer: false,
-              // If `true`, Webpack Stats JSON file will be generated in bundles output directory
-              generateStatsFile: false,
-              // Log level. Can be 'info', 'warn', 'error' or 'silent'.
-              logLevel: "info"
-            })
-          ]
-    )
+      /**
+       * This is to specify what locales for moment.js we want to include in the bundle
+       * https://github.com/jmblog/how-to-optimize-momentjs-with-webpack/
+       */
+      new webpack.ContextReplacementPlugin(/moment[\/\\]locale$/, /en|ru|nl/),
+
+      isProduction &&
+        new BundleAnalyzerPlugin({
+          // Can be `server`, `static` or `disabled`.
+          // In `server` mode analyzer will start HTTP server to show bundle report.
+          // In `static` mode single HTML file with bundle report will be generated.
+          // In `disabled` mode you can use this plugin to just generate Webpack Stats JSON file by setting `generateStatsFile` to `true`.
+          analyzerMode: "static",
+          // Path to bundle report file that will be generated in `static` mode.
+          // Relative to bundles output directory.
+          reportFilename: "../reports/bundle-analyzer-vendor-report.html",
+          // Automatically open report in default browser
+          openAnalyzer: false,
+          // If `true`, Webpack Stats JSON file will be generated in bundles output directory
+          generateStatsFile: false,
+          // Log level. Can be 'info', 'warn', 'error' or 'silent'.
+          logLevel: "info"
+        })
+    ].filter(x => x)
   };
 };
