@@ -102,7 +102,7 @@ module.exports = function(env) {
       }),
 
       new HtmlWebpackPlugin({
-        template: "app/app-index-template.hbs",
+        template: "app/app-index-template.ejs",
         filename: "index.html",
         chunks: ["app"],
         inject: false,

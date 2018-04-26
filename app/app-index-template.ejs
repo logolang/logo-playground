@@ -1,20 +1,28 @@
-<!DOCTYPE html>
+<%
+    const packageJson = require('../package.json');
+    const appConfig = htmlWebpackPlugin.options.variables.appConfig;
+    const googleAnalyticsTrackingId = appConfig.services.googleAnalyticsTrackingId;
+    const appGitVersion = htmlWebpackPlugin.options.variables.appGitVersion;
+    const loadingSvg = require('!raw-loader!content/images/square-logo-light.svg');
+%><!DOCTYPE html>
 <html style="overflow: hidden;">
 
 <head>
     <meta property="og:title" content="Logo playground" />
     <meta property="og:description" content="Online environment for programming with Logo language" />
-    <meta property="og:image" content="https://logolang.github.io/content/images/square-logo.png" />
+    <meta property="og:image" content="https://logolang.github.io/content/images/square-logo-light-colored-200.png" />
 
     <!-- Global site tag (gtag.js) - Google Analytics -->
-    {{#if htmlWebpackPlugin.options.variables.appConfig.services.googleAnalyticsTrackingId}}
-    <script async src="https://www.googletagmanager.com/gtag/js?id={{htmlWebpackPlugin.options.variables.appConfig.services.googleAnalyticsTrackingId}}"></script>
+    <% if (googleAnalyticsTrackingId) { %>
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=<%=googleAnalyticsTrackingId%>"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
         function gtag() { dataLayer.push(arguments); }
         gtag('js', new Date());
-        gtag('config', '{{htmlWebpackPlugin.options.variables.appConfig.services.googleAnalyticsTrackingId}}');
-    </script> {{/if}}
+        gtag('config', '<%=googleAnalyticsTrackingId%>');
+    </script> 
+    <% } %>
 
     <title>Logo playground</title>
     <meta charset="UTF-8">
@@ -35,8 +43,8 @@
 
 <body style="margin:0px;">
     <div id="app-container">
-        <div style="text-align:center;margin-top:100px;">
-            <img style="width:200px;" src="content/images/square-logo.svg" alt="logo" />
+        <div id="svg-animation-container" style="text-align:center;margin-top:100px;">
+            <%=loadingSvg%>
         </div>
     </div>
 
@@ -74,8 +82,8 @@
             link.setAttribute('data-theme-name', themeName);
             link.setAttribute('rel', 'stylesheet');
             link.setAttribute('type', 'text/css');
-            link.setAttribute('href', linkUrl + '?{{htmlWebpackPlugin.options.variables.appGitVersion}}');
-            const insertAfterElement = document.getElementById('theme_styles_inserted_straight_before_this_element');
+            link.setAttribute('href', linkUrl + '?<%=appGitVersion%>');
+            var insertAfterElement = document.getElementById('theme_styles_inserted_straight_before_this_element');
             insertAfterElement.parentElement.insertBefore(link, insertAfterElement);
         }
 
@@ -95,6 +103,36 @@
                 }, 1000);
             }
         }
+
+        function svgLoadingAnimation(currentFrameIndex){
+            var frames = [ 
+                {id: "path4", fillColor:"#bf80ff", delay: 200},
+                {id: "path6", fillColor:"#80ffff", delay: 200},
+                {id: "path8", fillColor:"#ff8080", delay: 200},
+                {id: "path10", fillColor:"#80ff80", delay: 200},
+                {id: "path12", fillColor:"#c9c9c9", delay: 200},
+                {id: "path4", fillColor:"#8000ff", delay: 200},
+                {id: "path6", fillColor:"#00e6e6", delay: 200},
+                {id: "path8", fillColor:"#ff0000", delay: 200},
+                {id: "path10", fillColor:"#00ff00", delay: 200},
+                {id: "path12", fillColor:"#999999", delay: 200}
+            ];
+            var animationContainer = document.getElementById('svg-animation-container');
+            if (animationContainer){
+                // we have animation still visible, so animate required step
+                var frame = frames[currentFrameIndex];
+                if (frame) {
+                    var svgElement = animationContainer.querySelector("#" + frame.id);
+                    if (svgElement) {
+                        svgElement.setAttribute("style", "fill:" + frame.fillColor);
+                    }
+                    // timeout for next animation frame
+                    setTimeout(function(){svgLoadingAnimation(currentFrameIndex + 1)}, frame.delay);
+                }
+            }
+        }
+        setTimeout(function(){svgLoadingAnimation(0)}, 200);
+
         window.themeManager = {
             activateTheme: activateTheme,
             getActiveTheme: getActiveTheme,
@@ -105,18 +143,17 @@
         activateTheme(theme, true);
     </script>
 
-    <script src="vendor.js?{{htmlWebpackPlugin.options.variables.appGitVersion}}"></script>
+    <script src="vendor.js?<%=appGitVersion%>"></script>
 
-    <!--styles-->
-    {{#each htmlWebpackPlugin.files.css}}
-    <link href="{{this}}?{{../htmlWebpackPlugin.options.variables.appGitVersion}}" rel="stylesheet" /> {{/each}}
-
-    <!--scripts-->
-    {{#each htmlWebpackPlugin.files.chunks}}
-    <script src="{{this.entry}}?{{../htmlWebpackPlugin.options.variables.appGitVersion}}"></script> {{/each}}
-
+    <% for (var css in htmlWebpackPlugin.files.css) { %>
+    <link href="<%=htmlWebpackPlugin.files.css[css]+'?'+appGitVersion%>" rel="stylesheet">
+    <% } %>
+    <% for (var chunk in htmlWebpackPlugin.files.chunks) { %>
+    <script src="<%=htmlWebpackPlugin.files.chunks[chunk].entry+'?'+appGitVersion%>"></script>
+    <% } %>
     <script>
-        app.run();
+    //setTimeout(function(){app.run();}, 3000);
+    app.run();
     </script>
 </body>
 
