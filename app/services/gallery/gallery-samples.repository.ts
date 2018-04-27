@@ -5,13 +5,8 @@ import { ProgramModel } from "app/services/program/program.model";
 import { IAjaxService } from "app/services/infrastructure/ajax-service";
 import { ProgramsHtmlSerializerService } from "app/services/gallery/programs-html-serializer.service";
 
-export abstract class IGallerySamplesRepository {
-  abstract getAll(): Promise<ProgramModel[]>;
-  abstract get(id: string): Promise<ProgramModel>;
-}
-
 @injectable()
-export class GallerySamplesRepository implements IGallerySamplesRepository {
+export class GallerySamplesRepository {
   private cached_programs: ProgramModel[] | undefined;
 
   constructor(private ajax: IAjaxService) {}

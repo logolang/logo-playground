@@ -1,11 +1,11 @@
 import { injectable, inject } from "app/di";
 
-import { IUserLibraryRepository } from "app/services/gallery/personal-gallery-localstorage.repository";
 import { ProgramModel } from "app/services/program/program.model";
-import { IGallerySamplesRepository } from "app/services/gallery/gallery-samples.repository";
+import { GallerySamplesRepository } from "app/services/gallery/gallery-samples.repository";
 import { LocalTempCodeStorage } from "app/services/program/local-temp-code.storage";
 import { ProgramModelConverter } from "app/services/program/program-model.converter";
 import { GistSharedProgramsRepository } from "app/services/program/gist-shared-programs.repository";
+import { PersonalGalleryService } from "app/services/gallery/personal-gallery.service";
 
 export enum ProgramStorageType {
   samples = "samples",
@@ -21,8 +21,8 @@ export interface IProgramToSaveAttributes {
 @injectable()
 export class ProgramManagementService {
   constructor(
-    @inject(IGallerySamplesRepository) private examplesRepository: IGallerySamplesRepository,
-    @inject(IUserLibraryRepository) private personalRepository: IUserLibraryRepository,
+    @inject(GallerySamplesRepository) private examplesRepository: GallerySamplesRepository,
+    @inject(PersonalGalleryService) private personalGalleryService: PersonalGalleryService,
     @inject(LocalTempCodeStorage) private localTempStorage: LocalTempCodeStorage,
     @inject(GistSharedProgramsRepository) private gistRepository: GistSharedProgramsRepository
   ) {}
@@ -48,7 +48,7 @@ export class ProgramManagementService {
     return program.code;
   };
 
-  async initLocalModificationsFlag(programs: ProgramModel[]) {
+  initLocalModificationsFlag(programs: ProgramModel[]) {
     for (const program of programs) {
       const tempCode = this.localTempStorage.getCode(program.id);
       if (tempCode) {
@@ -67,7 +67,7 @@ export class ProgramManagementService {
     if (!newProgramName || !newProgramName.trim()) {
       throw new Error("Program name is required.");
     }
-    const allProgs = await this.personalRepository.getAll();
+    const allProgs = await this.personalGalleryService.getAll();
     if (!allowOverwrite) {
       const progWithSameName = allProgs.find(p => p.name.trim().toLowerCase() === newProgramName.trim().toLowerCase());
       if (progWithSameName) {
@@ -79,17 +79,17 @@ export class ProgramManagementService {
         newCode,
         newScreenshot
       );
-      await this.personalRepository.add([newProgram]);
+      await this.personalGalleryService.add([newProgram]);
       if (program.id) {
-        await this.saveTempProgram(program.id, "");
+        this.saveTempProgram(program.id, "");
       }
       return newProgram;
     } else {
       program.screenshot = newScreenshot;
       program.code = newCode;
-      await this.personalRepository.save(program);
+      await this.personalGalleryService.save(program);
       if (program.id) {
-        await this.saveTempProgram(program.id, "");
+        this.saveTempProgram(program.id, "");
       }
       return program;
     }
@@ -107,7 +107,7 @@ export class ProgramManagementService {
           program.storageType = ProgramStorageType.samples;
           break;
         case ProgramStorageType.gallery:
-          program = await this.personalRepository.get(programId);
+          program = await this.personalGalleryService.get(programId);
           program.storageType = ProgramStorageType.gallery;
           break;
         case ProgramStorageType.gist:

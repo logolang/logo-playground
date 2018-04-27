@@ -11,7 +11,7 @@ export class LocalTempCodeStorage {
   private storagePrefix: string = "";
   constructor(@inject(ICurrentUserService) private currentUser: ICurrentUserService) {
     const userId = this.currentUser.getLoginStatus().userInfo.attributes.email || "guest";
-    this.storagePrefix = "logo-playground-temp-code-" + userId + "-";
+    this.storagePrefix = "logo-playground.temp-code:" + userId + ":";
   }
 
   getCode(id: string): string {
@@ -20,6 +20,10 @@ export class LocalTempCodeStorage {
   }
 
   setCode(id: string, code: string): void {
-    localStorage.setItem(this.storagePrefix + id, code);
+    if (!code) {
+      localStorage.removeItem(this.storagePrefix + id);
+    } else {
+      localStorage.setItem(this.storagePrefix + id, code);
+    }
   }
 }

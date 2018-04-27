@@ -1,5 +1,5 @@
 import { ProgramModel } from "app/services/program/program.model";
-import { IUserLibraryRepository } from "app/services/gallery/personal-gallery-localstorage.repository";
+import { IPersonalGalleryRepository } from "app/services/gallery/personal-gallery-remote.repository";
 
 function getIncrementalName(name: string, checkExist: (name: string) => boolean) {
   let counter = 1;
@@ -12,12 +12,12 @@ function getIncrementalName(name: string, checkExist: (name: string) => boolean)
 }
 
 export class ProgramsExportImportService {
-  async exportAll(repository: IUserLibraryRepository): Promise<ProgramModel[]> {
+  async exportAll(repository: IPersonalGalleryRepository): Promise<ProgramModel[]> {
     const programs = await repository.getAll();
     return programs;
   }
 
-  async importAll(repository: IUserLibraryRepository, importingPrograms: ProgramModel[]): Promise<number> {
+  async importAll(repository: IPersonalGalleryRepository, importingPrograms: ProgramModel[]): Promise<number> {
     const existingPrograms = await repository.getAll();
     const programsToAdd: ProgramModel[] = [];
     let added = 0;

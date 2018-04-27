@@ -152,7 +152,7 @@ export class CodePanelComponent extends React.Component<ICodePanelComponentProps
       clearTimeout(this.saveTempCodeTimer);
     }
     this.saveTempCodeTimer = setTimeout(async () => {
-      await this.managementService.saveTempProgram(this.props.program.id, newCode);
+      this.managementService.saveTempProgram(this.props.program.id, newCode);
       if (!this.state.hasLocalTempChanges) {
         this.setState({ hasLocalTempChanges: true });
         this.props.hasChangesStatus && this.props.hasChangesStatus(true);
