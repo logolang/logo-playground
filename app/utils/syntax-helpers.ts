@@ -46,7 +46,7 @@ export interface SortingOptions<T> {
  * @param criterions
  */
 export function createCompareFunction<T>(criterions: SortingOptions<T>[]) {
-  const s = function(itemA: T, itemB: T) {
+  return function(itemA: T, itemB: T) {
     for (const options of criterions) {
       let valA = options.sortBy(itemA);
       valA = valA === undefined || valA === null ? "" : valA;
@@ -71,11 +71,5 @@ export function createCompareFunction<T>(criterions: SortingOptions<T>[]) {
       }
     }
     return 0;
-  };
-
-  return function(itemA: T, itemB: T) {
-    const v = s(itemA, itemB);
-    console.log("S", itemA, itemB, v);
-    return v;
   };
 }

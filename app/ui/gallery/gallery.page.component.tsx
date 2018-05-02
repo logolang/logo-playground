@@ -1,12 +1,6 @@
 import * as React from "react";
 import { Link, RouteComponentProps } from "react-router-dom";
 
-import { MainMenuComponent } from "app/ui/main-menu.component";
-import { ModalComponent } from "app/ui/_generic/modal.component";
-import { DateTimeStampComponent } from "app/ui/_generic/date-time-stamp.component";
-import { NoDataComponent } from "app/ui/_generic/no-data.component";
-import { AlertMessageComponent } from "app/ui/_generic/alert-message.component";
-
 import { createCompareFunction } from "app/utils/syntax-helpers";
 import { resolveInject } from "app/di";
 import { Routes } from "app/routes";
@@ -19,6 +13,13 @@ import { ICurrentUserService } from "app/services/login/current-user.service";
 import { TitleService } from "app/services/infrastructure/title.service";
 import { IEventsTrackingService, EventAction } from "app/services/infrastructure/events-tracking.service";
 
+import { MainMenuComponent } from "app/ui/main-menu.component";
+import { ModalComponent } from "app/ui/_generic/modal.component";
+import { DateTimeStampComponent } from "app/ui/_generic/date-time-stamp.component";
+import { NoDataComponent } from "app/ui/_generic/no-data.component";
+import { AlertMessageComponent } from "app/ui/_generic/alert-message.component";
+import { LoadingComponent } from "app/ui/_generic/loading.component";
+
 import "./gallery.page.component.less";
 
 interface IComponentState {
@@ -26,6 +27,7 @@ interface IComponentState {
   programs?: ProgramModel[];
   samples?: ProgramModel[];
   isLoading?: boolean;
+  isSyncronizing?: boolean;
   errorMessge?: string;
   programToDelete: ProgramModel | undefined;
 }
@@ -46,7 +48,8 @@ export class GalleryPageComponent extends React.Component<IComponentProps, IComp
     this.state = {
       userName: this.currentUser.getLoginStatus().userInfo.attributes.name,
       programToDelete: undefined,
-      isLoading: true
+      isLoading: true,
+      isSyncronizing: true
     };
   }
 
@@ -67,32 +70,38 @@ export class GalleryPageComponent extends React.Component<IComponentProps, IComp
     samples.sort(sortingFunction);
 
     const programs = await this.galleryService.getAllLocal();
-    this.programManagementService.initLocalModificationsFlag(programs);
-    programs.sort(sortingFunction);
+    if (programs) {
+      this.programManagementService.initLocalModificationsFlag(programs);
+      programs.sort(sortingFunction);
+
+      this.setState({
+        samples,
+        programs,
+        isLoading: false
+      });
+    }
+
+    const programsFromRemote = await this.galleryService.getAll();
+    if (programsFromRemote) {
+      this.programManagementService.initLocalModificationsFlag(programsFromRemote);
+      programsFromRemote.sort(sortingFunction);
+    }
 
     this.setState({
       samples,
-      programs
-    });
-
-    const programsFromRemote = await this.galleryService.getAll();
-    this.programManagementService.initLocalModificationsFlag(programsFromRemote);
-    programsFromRemote.sort(sortingFunction);
-
-    this.setState({
       programs: programsFromRemote,
-      isLoading: false
+      isLoading: false,
+      isSyncronizing: false
     });
   }
 
   confirmDelete = async (): Promise<void> => {
     if (this.state.programToDelete) {
-      this.setState({ isLoading: true });
       await this.galleryService.remove(this.state.programToDelete.id);
       this.eventsTracker.sendEvent(EventAction.deleteProgramFromPersonalLibrary);
+      this.setState({ programToDelete: undefined, isSyncronizing: true });
     }
     await this.loadData();
-    this.setState({ programToDelete: undefined });
   };
 
   render(): JSX.Element {
@@ -101,40 +110,51 @@ export class GalleryPageComponent extends React.Component<IComponentProps, IComp
         <MainMenuComponent />
         <div className="ex-page-content">
           <div className="container">
-            <br />
-
-            {this.state.programs &&
-              this.state.programs.length > 0 && (
-                <>
-                  <h1 className="title">
-                    {_T("Personal library")}
-                    {this.state.isLoading && (
-                      <>
-                        &nbsp;&nbsp;<i
-                          className="fa fa-refresh fa-spin has-text-grey-lighter"
-                          title={_T("Synchronizing gallery with remote storage")}
-                        />
-                      </>
-                    )}
-                  </h1>
+            {this.state.isLoading ? (
+              <LoadingComponent fullPage isLoading />
+            ) : (
+              <>
+                <br />
+                <h1 className="title">
+                  {_T("Personal library")}
+                  {this.state.isSyncronizing && (
+                    <>
+                      &nbsp;&nbsp;<i
+                        className="fa fa-refresh fa-spin has-text-grey-lighter"
+                        title={_T("Synchronizing gallery with remote storage")}
+                      />
+                    </>
+                  )}
+                </h1>
+                {this.state.programs && this.state.programs.length > 0 ? (
                   <div className="program-cards-container">
                     {this.state.programs.map(pr => this.renderProgramCard(pr, ProgramStorageType.gallery, true))}
                   </div>
-                  <br />
-                  <br />
-                </>
-              )}
-            {this.state.samples &&
-              this.state.samples.length > 0 && (
-                <>
-                  <h1 className="title">{_T("Examples gallery")}</h1>
-                  <div className="program-cards-container">
-                    {this.state.samples.map(pr => this.renderProgramCard(pr, ProgramStorageType.samples, false))}
-                  </div>
-                </>
-              )}
+                ) : (
+                  <>
+                    <NoDataComponent
+                      title=""
+                      description={_T("You do not have any programs stored in personal library yet.")}
+                    />
+                  </>
+                )}
 
-            {this.renderDeleteModal()}
+                <br />
+                <br />
+
+                {this.state.samples &&
+                  this.state.samples.length > 0 && (
+                    <>
+                      <h1 className="title">{_T("Examples gallery")}</h1>
+                      <div className="program-cards-container">
+                        {this.state.samples.map(pr => this.renderProgramCard(pr, ProgramStorageType.samples, false))}
+                      </div>
+                    </>
+                  )}
+
+                {this.renderDeleteModal()}
+              </>
+            )}
           </div>
         </div>
       </div>

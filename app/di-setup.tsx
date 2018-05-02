@@ -115,7 +115,7 @@ export class DependecyInjectionSetupService {
 
     switch (currentUserService.getLoginStatus().userInfo.attributes.authProvider) {
       case AuthProvider.none:
-        container.bind(IPersonalGalleryRemoteRepository).to(PersonalGalleryLocalRepository);
+        container.bind(IPersonalGalleryRemoteRepository).toConstantValue(null as any);
         break;
       case AuthProvider.google:
         container.bind(IPersonalGalleryRemoteRepository).to(PersonalGalleryGoogleDriveRepository);

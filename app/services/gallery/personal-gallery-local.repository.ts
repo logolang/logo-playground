@@ -15,17 +15,16 @@ export class PersonalGalleryLocalRepository implements IPersonalGalleryRepositor
     this.storageKey = "logo-playground.gallery:" + userId;
   }
 
-  async getAll(): Promise<ProgramModel[]> {
-    let programs: ProgramModel[] = [];
+  async getAll(): Promise<ProgramModel[] | undefined> {
     const stored = this.storage.getItem(this.storageKey);
     if (stored) {
-      programs = ProgramModelConverter.fromJson(JSON.parse(stored));
+      return ProgramModelConverter.fromJson(JSON.parse(stored));
     }
-    return programs;
+    return undefined;
   }
 
   async get(id: string): Promise<ProgramModel> {
-    const all = await this.getAll();
+    const all = (await this.getAll()) || [];
     const program = all.find(p => p.id === id);
     if (!program) {
       throw new Error(`Program with id ${id} is not found`);
@@ -34,12 +33,12 @@ export class PersonalGalleryLocalRepository implements IPersonalGalleryRepositor
   }
 
   async add(programs: ProgramModel[]): Promise<void> {
-    const all = await this.getAll();
+    const all = (await this.getAll()) || [];
     this.addAndSave(all, programs, true);
   }
 
   async save(programToSave: ProgramModel): Promise<void> {
-    const all = await this.getAll();
+    const all = (await this.getAll()) || [];
     const program = all.find(p => p.id === programToSave.id);
     if (!program) {
       throw new Error(`Program with id ${programToSave.id} is not found`);
@@ -51,7 +50,7 @@ export class PersonalGalleryLocalRepository implements IPersonalGalleryRepositor
   }
 
   async remove(id: string): Promise<void> {
-    const all = await this.getAll();
+    const all = (await this.getAll()) || [];
     const updated = all.filter(p => p.id !== id);
     this.storage.setItem(this.storageKey, ProgramModelConverter.toJson(updated));
   }

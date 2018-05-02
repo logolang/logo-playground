@@ -13,12 +13,12 @@ function getIncrementalName(name: string, checkExist: (name: string) => boolean)
 
 export class ProgramsExportImportService {
   async exportAll(repository: IPersonalGalleryRepository): Promise<ProgramModel[]> {
-    const programs = await repository.getAll();
+    const programs = (await repository.getAll()) || [];
     return programs;
   }
 
   async importAll(repository: IPersonalGalleryRepository, importingPrograms: ProgramModel[]): Promise<number> {
-    const existingPrograms = await repository.getAll();
+    const existingPrograms = (await repository.getAll()) || [];
     const programsToAdd: ProgramModel[] = [];
     let added = 0;
     for (const importingProgram of importingPrograms) {

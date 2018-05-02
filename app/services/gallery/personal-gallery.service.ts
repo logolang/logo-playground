@@ -6,36 +6,45 @@ import { IPersonalGalleryRemoteRepository } from "app/services/gallery/personal-
 @injectable()
 export class PersonalGalleryService {
   constructor(
-    @inject(PersonalGalleryLocalRepository) private localRepository: PersonalGalleryLocalRepository,
-    @inject(IPersonalGalleryRemoteRepository) private remoteRepository: IPersonalGalleryRemoteRepository
+    @inject(PersonalGalleryLocalRepository) private localProgramsRepository: PersonalGalleryLocalRepository,
+    @inject(IPersonalGalleryRemoteRepository) private remoteProgramsRepository?: IPersonalGalleryRemoteRepository
   ) {}
 
-  async getAll(): Promise<ProgramModel[]> {
-    const all = await this.remoteRepository.getAll();
-    await this.localRepository.overwrite(all);
+  async getAll(): Promise<ProgramModel[] | undefined> {
+    const all =
+      (await (this.remoteProgramsRepository
+        ? this.remoteProgramsRepository.getAll()
+        : this.localProgramsRepository.getAll())) || [];
+    await this.localProgramsRepository.overwrite(all);
     return all;
   }
 
-  async getAllLocal(): Promise<ProgramModel[]> {
-    return this.localRepository.getAll();
+  async getAllLocal(): Promise<ProgramModel[] | undefined> {
+    return this.localProgramsRepository.getAll();
   }
 
   async get(id: string): Promise<ProgramModel> {
-    return this.remoteRepository.get(id);
+    return this.remoteProgramsRepository ? this.remoteProgramsRepository.get(id) : this.localProgramsRepository.get(id);
   }
 
   async add(programs: ProgramModel[]): Promise<void> {
-    await this.localRepository.add(programs);
-    return this.remoteRepository.add(programs);
+    await this.localProgramsRepository.add(programs);
+    if (this.remoteProgramsRepository) {
+      await this.remoteProgramsRepository.add(programs);
+    }
   }
 
   async save(programToSave: ProgramModel): Promise<void> {
-    await this.localRepository.save(programToSave);
-    return this.remoteRepository.save(programToSave);
+    await this.localProgramsRepository.save(programToSave);
+    if (this.remoteProgramsRepository) {
+      await this.remoteProgramsRepository.save(programToSave);
+    }
   }
 
   async remove(id: string): Promise<void> {
-    await this.localRepository.remove(id);
-    return this.remoteRepository.remove(id);
+    await this.localProgramsRepository.remove(id);
+    if (this.remoteProgramsRepository) {
+      await this.remoteProgramsRepository.remove(id);
+    }
   }
 }

@@ -29,13 +29,16 @@ export class PersonalGalleryGoogleDriveRepository implements IPersonalGalleryRem
     this.googleDriveClient = new GoogleDriveClient();
   }
 
-  async getAll(): Promise<ProgramModel[]> {
+  async getAll(): Promise<ProgramModel[] | undefined> {
     const data = await this.getStoredData();
-    return data.programs;
+    if (data) {
+      return data.programs;
+    }
+    return undefined;
   }
 
   async get(id: string): Promise<ProgramModel> {
-    const existingPrograms = await this.getAll();
+    const existingPrograms = (await this.getAll()) || [];
     const pr = existingPrograms.find(p => p.id === id);
     if (pr) {
       // return clone of program object - so original will be intact in memory if updates happen
@@ -46,7 +49,7 @@ export class PersonalGalleryGoogleDriveRepository implements IPersonalGalleryRem
 
   async add(programs: ProgramModel[]): Promise<void> {
     const storedData = await this.getStoredData();
-    const programsToStore = [...storedData.programs];
+    const programsToStore = storedData ? [...storedData.programs] : [];
     for (const program of programs) {
       if (!program.id) {
         program.id = RandomHelper.getRandomObjectId(32);
@@ -55,11 +58,14 @@ export class PersonalGalleryGoogleDriveRepository implements IPersonalGalleryRem
       program.dateLastEdited = new Date();
       programsToStore.push(program);
     }
-    await this.storeData(programsToStore, storedData.fileId);
+    await this.storeData(programsToStore, storedData ? storedData.fileId : undefined);
   }
 
   async save(programToSave: ProgramModel): Promise<void> {
     const storedData = await this.getStoredData();
+    if (!storedData) {
+      throw new Error("Google storage is empty");
+    }
     const program = storedData.programs.find(p => p.id === programToSave.id);
     if (!program) {
       throw new Error("Program is not found in google storage");
@@ -73,12 +79,15 @@ export class PersonalGalleryGoogleDriveRepository implements IPersonalGalleryRem
 
   async remove(id: string): Promise<void> {
     const storedData = await this.getStoredData();
+    if (!storedData) {
+      throw new Error("Google storage is empty");
+    }
     const programsToStore = storedData.programs.filter(p => p.id !== id);
 
     await this.storeData(programsToStore, storedData.fileId);
   }
 
-  private async storeData(programsToStore: ProgramModel[], fileId: string) {
+  private async storeData(programsToStore: ProgramModel[], fileId: string | undefined) {
     const serializedData = await this.serializationService.serialize(
       programsToStore,
       this.currentUser.getLoginStatus().userInfo.attributes.name,
@@ -100,14 +109,10 @@ export class PersonalGalleryGoogleDriveRepository implements IPersonalGalleryRem
     }
   }
 
-  private async getStoredData(): Promise<IStoredData> {
+  private async getStoredData(): Promise<IStoredData | undefined> {
     const storageFileInfo = await this.getStorageFileInfo();
     if (!storageFileInfo) {
-      return {
-        fileId: "",
-        fileHash: "",
-        programs: []
-      };
+      return undefined;
     }
 
     if (this.cachedData && this.cachedData.fileHash === storageFileInfo.md5Checksum) {

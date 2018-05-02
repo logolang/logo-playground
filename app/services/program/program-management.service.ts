@@ -67,7 +67,7 @@ export class ProgramManagementService {
     if (!newProgramName || !newProgramName.trim()) {
       throw new Error("Program name is required.");
     }
-    const allProgs = await this.personalGalleryService.getAll();
+    const allProgs = (await this.personalGalleryService.getAll()) || [];
     if (!allowOverwrite) {
       const progWithSameName = allProgs.find(p => p.name.trim().toLowerCase() === newProgramName.trim().toLowerCase());
       if (progWithSameName) {
