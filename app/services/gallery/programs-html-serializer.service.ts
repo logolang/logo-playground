@@ -162,7 +162,7 @@ export class ProgramsHtmlSerializerService {
             return;
           }
           ctx.drawImage(imgElt, 0, 0, 64, 64);
-          const dataURL = canvasElt.toDataURL("image/jpeg", 0.5);
+          const dataURL = canvasElt.toDataURL("image/jpeg", 0.75);
           resolve(dataURL);
         } catch (ex) {
           resolve("");

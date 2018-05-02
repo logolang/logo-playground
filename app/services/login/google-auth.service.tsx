@@ -27,25 +27,29 @@ export class GoogleAuthService implements IAuthService {
     }
 
     return new Promise<void>((resolve, reject) => {
-      gapi.load("client:auth2", async () => {
-        try {
-          await this.initGoogleAuth(gapi);
-          resolve();
-        } catch (ex) {
-          reject(ex);
+      gapi.load("client:auth2", {
+        callback: async () => {
+          try {
+            await this.initGoogleAuth(gapi);
+            resolve();
+          } catch (ex) {
+            reject(ex);
+          }
+        },
+        onerror: () => {
+          reject("gapi.client failed to load");
         }
       });
     });
   }
 
   private initGoogleAuth = async (gapi: any): Promise<void> => {
-    await gapi.client
-      .init({
-        clientId: this.googleClientId,
-        scope: "profile email https://www.googleapis.com/auth/drive.appdata https://www.googleapis.com/auth/drive.file",
-        discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"]
-      })
-      .then();
+    await gapi.client.init({
+      clientId: this.googleClientId,
+      scope: "profile email https://www.googleapis.com/auth/drive.appdata https://www.googleapis.com/auth/drive.file",
+      discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"],
+      prompt: "select_account"
+    });
 
     const auth = gapi.auth2.getAuthInstance();
 
@@ -90,7 +94,7 @@ export class GoogleAuthService implements IAuthService {
     if (this.isSignedIn) {
       const gapi = (window as any).gapi;
       const auth2 = gapi.auth2.getAuthInstance();
-      await auth2.signOut().then();
+      await auth2.signOut();
       this.loginStatusSubject.next(NotLoggenInStatus);
     }
   }
