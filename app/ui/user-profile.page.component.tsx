@@ -222,6 +222,7 @@ export class UserProfilePageComponent extends React.Component<IComponentProps, I
                                 idAttr="theme-selector"
                                 selectionChanged={async selectedTheme => {
                                   if (selectedTheme) {
+                                    this.setState({ theme: selectedTheme });
                                     await this.userSettingsService.update({ themeName: selectedTheme.name });
                                     this.themeService.setActiveTheme(selectedTheme.name);
                                     await this.loadData();
