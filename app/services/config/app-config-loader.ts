@@ -6,11 +6,11 @@ export class AppConfigLoader {
   constructor(private ajaxService: IAjaxService) {}
 
   async loadData(): Promise<AppConfig> {
-    const configData = await this.ajaxService.ajax(
+    const config = (await this.ajaxService.ajax(
       `content/config/config.json?${RandomHelper.getRandomObjectId(20)}`,
       "get"
-    );
-    const config = AppConfig.buildFromConfigData(configData);
+    )) as AppConfig;
+
     return config;
   }
 }

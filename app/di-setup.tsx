@@ -7,10 +7,7 @@ import { AppConfigLoader } from "app/services/config/app-config-loader";
 import { CurrentUserService, ICurrentUserService } from "app/services/login/current-user.service";
 import { LocalizedContentLoader, ILocalizedContentLoader } from "app/services/infrastructure/localized-content-loader";
 import { TutorialsContentService, ITutorialsContentService } from "app/services/tutorials/tutorials-content-service";
-import {
-  ProgramsLocalStorageRepository,
-  IUserLibraryRepository
-} from "app/services/gallery/personal-gallery-localstorage.repository";
+import { PersonalGalleryLocalRepository } from "app/services/gallery/personal-gallery-local.repository";
 import { LocalTempCodeStorage } from "app/services/program/local-temp-code.storage";
 import {
   UserSettingsBrowserLocalStorageService,
@@ -25,19 +22,21 @@ import { IAppInfo } from "app/services/infrastructure/app-info";
 import { AppConfig } from "app/services/config/app-config";
 import { ThemesService } from "app/services/customizations/themes.service";
 import { TurtlesService } from "app/services/customizations/turtles.service";
-import { GallerySamplesRepository, IGallerySamplesRepository } from "app/services/gallery/gallery-samples.repository";
+import { GallerySamplesRepository } from "app/services/gallery/gallery-samples.repository";
 import { GoogleAuthService } from "app/services/login/google-auth.service";
 import { LoginService, ILoginService } from "app/services/login/login.service";
 import { ProgramManagementService } from "app/services/program/program-management.service";
 import { GistSharedProgramsRepository } from "app/services/program/gist-shared-programs.repository";
 import { AuthProvider } from "app/services/login/user-info";
-import { ProgramsGoogleDriveRepository } from "app/services/gallery/personal-gallery-googledrive.repository";
+import { PersonalGalleryGoogleDriveRepository } from "app/services/gallery/personal-gallery-googledrive.repository";
 import {
   IEventsTrackingService,
   EventsTrackingService,
   EventAction
 } from "app/services/infrastructure/events-tracking.service";
 import { GoogleAnalyticsTrackerService } from "app/services/infrastructure/google-analytics-tracker.service";
+import { PersonalGalleryService } from "app/services/gallery/personal-gallery.service";
+import { IPersonalGalleryRemoteRepository } from "app/services/gallery/personal-gallery-remote.repository";
 
 export class DependecyInjectionSetupService {
   public onResetEvents = new Subject<void>();
@@ -116,14 +115,16 @@ export class DependecyInjectionSetupService {
 
     switch (currentUserService.getLoginStatus().userInfo.attributes.authProvider) {
       case AuthProvider.none:
-        container.bind(IUserLibraryRepository).to(ProgramsLocalStorageRepository);
+        container.bind(IPersonalGalleryRemoteRepository).toConstantValue(null as any);
         break;
       case AuthProvider.google:
-        container.bind(IUserLibraryRepository).to(ProgramsGoogleDriveRepository);
+        container.bind(IPersonalGalleryRemoteRepository).to(PersonalGalleryGoogleDriveRepository);
         break;
     }
 
-    container.bind(IGallerySamplesRepository).to(GallerySamplesRepository);
+    container.bind(PersonalGalleryLocalRepository).to(PersonalGalleryLocalRepository);
+    container.bind(PersonalGalleryService).to(PersonalGalleryService);
+    container.bind(GallerySamplesRepository).to(GallerySamplesRepository);
     container.bind(ProgramManagementService).to(ProgramManagementService);
     container.bind(GistSharedProgramsRepository).to(GistSharedProgramsRepository);
 

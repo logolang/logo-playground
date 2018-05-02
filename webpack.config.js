@@ -1,36 +1,30 @@
+const path = require("path");
 const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const WebpackNotifierPlugin = require("webpack-notifier");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
-const ExtractTextPlugin = require("extract-text-webpack-plugin");
 const GitRevisionPlugin = require("git-revision-webpack-plugin");
 const BundleAnalyzerPlugin = require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const WatchIgnorePlugin = webpack.WatchIgnorePlugin;
-
-// `CheckerPlugin` is optional. Use it if you want async error reporting.
-// We need this plugin to detect a `--watch` mode. It may be removed later
-// after https://github.com/webpack/webpack/issues/3460 will be resolved.
-const { CheckerPlugin } = require("awesome-typescript-loader");
+const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
+const gitRevisionPlugin = new GitRevisionPlugin();
 
 const packageJson = require("./package.json");
-
-const extractTextPlugin = new ExtractTextPlugin("[name].css");
-const gitRevisionPlugin = new GitRevisionPlugin();
 const appGitVersion = gitRevisionPlugin.version();
-
-let path = require("path");
 
 module.exports = function(env) {
   env = env || {};
   const isProduction = !!env.prod;
   const isDevBuild = !isProduction;
-  const isTSLintEnabled = env.tslint_enabled === "true"; // Due to long checking time this is disabled by default.
   const configFileName = isProduction ? "config.prod.json" : "config.json";
   const appConfig = require("./content/config/" + configFileName);
 
   console.log(`building app bundle with webpack. production mode:${isProduction}`);
 
   const webpackConfig = {
+    mode: isDevBuild ? "development" : "production",
+
     entry: isDevBuild
       ? {
           app: "./app/app-entry-point.tsx",
@@ -49,44 +43,38 @@ module.exports = function(env) {
       path: __dirname + "/dist",
       publicPath: "",
       filename: "[name].js",
-      pathinfo: isDevBuild
+      pathinfo: false
     },
 
     module: {
       rules: [
         {
           test: /\.tsx?$/,
-          loader: "awesome-typescript-loader",
+          loader: "ts-loader",
           options: {
-            target: isDevBuild ? "ES2017" : "es5",
-            useCache: true,
-            cacheDirectory: isDevBuild ? ".atl-cache.es2017" : ".atl-cache.es5"
+            transpileOnly: true,
+            compilerOptions: {
+              target: isProduction ? "es5" : "ES2017"
+            }
           }
         },
         { test: /\.(png|jpg|jpeg|gif|svg)$/, loader: "url-loader", options: { limit: 200000 } },
-        { test: /\.json$/, loader: "json-loader" },
         { test: /\.hbs$/, loader: "handlebars-loader" },
         { test: /\.(txt|html|md|po)$/, loader: "raw-loader" },
-        isDevBuild && { test: /\.css$/, loaders: ["style-loader", "css-loader"] },
-        isDevBuild && { test: /\.less$/, loaders: ["style-loader", "css-loader", "less-loader"] },
-        !isDevBuild && { test: /\.css$/, loader: extractTextPlugin.extract(["css-loader"]) },
-        !isDevBuild && { test: /\.less$/, loader: extractTextPlugin.extract(["css-loader", "less-loader"]) },
-        isTSLintEnabled && {
-          test: /\.tsx$/,
-          enforce: "pre",
-          loader: "tslint-loader",
-          options: {
-            typeCheck: true,
-            fix: true
-          }
-        }
-      ].filter(x => !!x)
+
+        isDevBuild
+          ? { test: /\.css$/, use: ["style-loader", "css-loader"] }
+          : { test: /\.css$/, use: [MiniCssExtractPlugin.loader, "css-loader"] },
+        isDevBuild
+          ? { test: /\.(less|scss)$/, use: ["style-loader", "css-loader", "less-loader"] }
+          : { test: /\.(less|scss)$/, use: [MiniCssExtractPlugin.loader, "css-loader", "less-loader"] }
+      ].filter(x => x)
     },
 
     plugins: [
       new WatchIgnorePlugin([path.resolve(__dirname, "./dist/")]),
 
-      new CheckerPlugin(),
+      !isProduction && new ForkTsCheckerWebpackPlugin(),
 
       new webpack.DllReferencePlugin({
         context: __dirname,
@@ -114,7 +102,7 @@ module.exports = function(env) {
       }),
 
       new HtmlWebpackPlugin({
-        template: "app/app-index-template.hbs",
+        template: "app/app-index-template.ejs",
         filename: "index.html",
         chunks: ["app"],
         inject: false,
@@ -137,18 +125,7 @@ module.exports = function(env) {
 
       isDevBuild && new WebpackNotifierPlugin(),
 
-      isProduction && extractTextPlugin,
-
-      // Apply minification
-      isProduction &&
-        new webpack.optimize.UglifyJsPlugin({
-          sourceMap: true
-        }),
-
-      isProduction &&
-        new webpack.LoaderOptionsPlugin({
-          minimize: true
-        }),
+      isProduction && new MiniCssExtractPlugin({ filename: "[name].css" }),
 
       isProduction &&
         new BundleAnalyzerPlugin({
@@ -167,7 +144,7 @@ module.exports = function(env) {
           // Log level. Can be 'info', 'warn', 'error' or 'silent'.
           logLevel: "info"
         })
-    ].filter(x => !!x),
+    ].filter(x => x),
 
     stats: { modules: false },
     performance: { hints: false },

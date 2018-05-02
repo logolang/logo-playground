@@ -70,9 +70,7 @@ export class FileSelectorComponent extends React.Component<IComponentProps, ICom
           this.fileInputEl && this.fileInputEl.click();
         }}
       >
-        <span>
-          {this.props.buttonText}
-        </span>
+        <span>{this.props.buttonText}</span>
         <input
           type="file"
           style={{ display: "none" }}
@@ -90,7 +88,10 @@ export class FileSelectorComponent extends React.Component<IComponentProps, ICom
       if (input && input.files) {
         const files: File[] = [];
         for (let i = 0; i < input.files.length; ++i) {
-          files.push(input.files.item(i));
+          const file = input.files.item(i);
+          if (file) {
+            files.push(file);
+          }
         }
         this.onFileSelected(files);
       }

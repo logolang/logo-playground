@@ -12,7 +12,7 @@ import { MainMenuComponent } from "app/ui/main-menu.component";
 import { LogoExecutorComponent } from "app/ui/_shared/logo-executor.component";
 import { FileSelectorComponent } from "app/ui/_generic/file-selector.component";
 
-import { resolveInject, resolveLazy } from "app/di";
+import { resolveInject } from "app/di";
 import { UserInfo } from "app/services/login/user-info";
 import { TurtlesService, TurtleInfo, TurtleSize } from "app/services/customizations/turtles.service";
 import { Theme, ThemesService } from "app/services/customizations/themes.service";
@@ -22,7 +22,7 @@ import { ICurrentUserService } from "app/services/login/current-user.service";
 import { TitleService } from "app/services/infrastructure/title.service";
 import { IUserSettingsService, IUserSettings } from "app/services/customizations/user-settings.service";
 import { INotificationService } from "app/services/infrastructure/notification.service";
-import { IUserLibraryRepository } from "app/services/gallery/personal-gallery-localstorage.repository";
+import { PersonalGalleryService } from "app/services/gallery/personal-gallery.service";
 import { ProgramsHtmlSerializerService } from "app/services/gallery/programs-html-serializer.service";
 import { IEventsTrackingService, EventAction } from "app/services/infrastructure/events-tracking.service";
 import { ensure } from "app/utils/syntax-helpers";
@@ -72,14 +72,14 @@ repeat 5 [
 ];
 
 export class UserProfilePageComponent extends React.Component<IComponentProps, IComponentState> {
-  private titleService = resolveLazy(TitleService);
+  private titleService = resolveInject(TitleService);
   private notificationService = resolveInject(INotificationService);
   private currentUser = resolveInject(ICurrentUserService);
   private userSettingsService = resolveInject(IUserSettingsService);
   private themeService = resolveInject(ThemesService);
   private turtleCustomizationService = resolveInject(TurtlesService);
   private localizationService = resolveInject(LocalizationService);
-  private programsReporitory = resolveInject(IUserLibraryRepository);
+  private programsReporitory = resolveInject(PersonalGalleryService);
   private eventsTracking = resolveInject(IEventsTrackingService);
   private diSetup = resolveInject(DependecyInjectionSetupService);
 
@@ -103,7 +103,7 @@ export class UserProfilePageComponent extends React.Component<IComponentProps, I
   }
 
   async componentDidMount() {
-    this.titleService().setDocumentTitle(_T("User profile"));
+    this.titleService.setDocumentTitle(_T("User profile"));
     this.eventsTracking.sendEvent(EventAction.openSettings);
     await this.loadData();
   }
@@ -222,6 +222,7 @@ export class UserProfilePageComponent extends React.Component<IComponentProps, I
                                 idAttr="theme-selector"
                                 selectionChanged={async selectedTheme => {
                                   if (selectedTheme) {
+                                    this.setState({ theme: selectedTheme });
                                     await this.userSettingsService.update({ themeName: selectedTheme.name });
                                     this.themeService.setActiveTheme(selectedTheme.name);
                                     await this.loadData();
