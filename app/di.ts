@@ -17,9 +17,3 @@ export function resolveInject<T>(serviceIdentifier: Abstract<T>): T {
   }
   return all[0];
 }
-
-export function resolveLazy<T>(serviceIdentifier: Abstract<T>) {
-  return () => {
-    return container.get(serviceIdentifier) as T;
-  };
-}

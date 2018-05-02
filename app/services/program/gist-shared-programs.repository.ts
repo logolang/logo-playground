@@ -54,7 +54,6 @@ export class GistSharedProgramsRepository {
           code: file.content,
           dateCreated: new Date(result.created_at),
           dateLastEdited: new Date(result.updated_at),
-          lang: "logo",
           name: file.filename,
           screenshot: "",
           hasTempLocalModifications: false
