@@ -5,7 +5,7 @@ import * as keymaster from "keymaster";
 
 import { resolveInject } from "app/di";
 
-import { _T } from "app/services/customizations/localization.service";
+import { $T } from "app/i18n/strings";
 import { ProgramModel } from "app/services/program/program.model";
 import { INotificationService } from "app/services/infrastructure/notification.service";
 import { ProgramExecutionContext } from "app/services/program/program-execution.context";
@@ -215,8 +215,8 @@ export class CodePanelComponent extends React.Component<ICodePanelComponentProps
     );
     this.notificationService.push({
       type: "success",
-      title: _T("Message"),
-      message: _T("Program has been saved in the personal library.")
+      title: $T.common.message,
+      message: $T.gallery.programHasBeenSaved
     });
     this.setState({ hasLocalTempChanges: false });
     this.props.hasChangesStatus && this.props.hasChangesStatus(false);
@@ -234,8 +234,8 @@ export class CodePanelComponent extends React.Component<ICodePanelComponentProps
     );
     this.notificationService.push({
       type: "success",
-      title: _T("Message"),
-      message: _T("Program has been saved in the personal library.")
+      title: $T.common.message,
+      message: $T.gallery.programHasBeenSaved
     });
     this.setState({ hasLocalTempChanges: false });
     this.eventsTracker.sendEvent(EventAction.saveProgramToPersonalLibrary);
@@ -255,9 +255,9 @@ export class CodePanelComponent extends React.Component<ICodePanelComponentProps
     const data = await this.props.executionService.getScreenshot(false);
     if (!data) {
       this.notificationService.push({
-        title: _T("Message"),
-        message: _T("Screenshot is not available because program has not been executed yet."),
-        type: "primary"
+        type: "primary",
+        title: $T.common.message,
+        message: $T.program.screenShotNotAvailable
       });
     }
     this.setState({ isTakeScreenshotModalActive: true, screenshotDataToSave: data });

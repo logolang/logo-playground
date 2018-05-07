@@ -19,7 +19,7 @@
     "start": "npm run build-vendor-dev && webpack-dev-server",
     "tslint": "tslint --project . --format verbose",
     "tslint-fix": "tslint --project . --format verbose --fix",
-    "translate": "tsc tools/update-translations.ts --lib dom,es7 --target es5 && node tools/update-translations.js"
+    "i18n": "tsc tools/i18n-cli.ts --lib dom,es2017 --target es5 --outDir tmp && node tmp/tools/i18n-cli.js"
   },
   "dependencies": {
     "classnames": "2.2.5",

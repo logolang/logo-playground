@@ -15,7 +15,7 @@ import {
 } from "app/services/customizations/user-settings.service";
 import { NotificationService, INotificationService } from "app/services/infrastructure/notification.service";
 import { TitleService } from "app/services/infrastructure/title.service";
-import { LocalizationService, _T } from "app/services/customizations/localization.service";
+import { LocalizationService } from "app/services/customizations/localization.service";
 import { NavigationService, INavigationService } from "app/services/infrastructure/navigation.service";
 import { ImageUploadImgurService, ImageUploadService } from "app/services/infrastructure/image-upload-imgur.service";
 import { IAppInfo } from "app/services/infrastructure/app-info";
@@ -37,6 +37,8 @@ import {
 import { GoogleAnalyticsTrackerService } from "app/services/infrastructure/google-analytics-tracker.service";
 import { PersonalGalleryService } from "app/services/gallery/personal-gallery.service";
 import { IPersonalGalleryRemoteRepository } from "app/services/gallery/personal-gallery-remote.repository";
+import { updateStringsObject } from "app/i18n/i18n-tools";
+import { $T } from "app/i18n/strings";
 
 export class DependecyInjectionSetupService {
   public onResetEvents = new Subject<void>();
@@ -89,15 +91,15 @@ export class DependecyInjectionSetupService {
     const localizedContentLoader = new LocalizedContentLoader(container.get(IAjaxService), userSettings.localeId);
     container.bind(ILocalizedContentLoader).toConstantValue(localizedContentLoader);
 
-    const localizationData = await localizedContentLoader.getFileContent("messages.po");
+    const poFile = await localizedContentLoader.getFileContent("strings.po");
+    updateStringsObject($T, poFile);
     const localizationService = new LocalizationService();
-    localizationService.initLocale(localizationData);
     container.bind(LocalizationService).toConstantValue(localizationService);
 
     container.bind(INotificationService).to(NotificationService);
     container.bind(INavigationService).to(NavigationService);
 
-    const titleService = new TitleService(_T("App title"));
+    const titleService = new TitleService($T.common.appTitle);
     container.bind(TitleService).toConstantValue(titleService);
 
     container.bind(ITutorialsContentService).to(TutorialsContentService);

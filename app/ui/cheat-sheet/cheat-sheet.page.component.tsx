@@ -5,7 +5,7 @@ import * as markdown from "markdown-it";
 import { callActionSafe, ErrorDef } from "app/utils/error-helpers";
 
 import { resolveInject } from "app/di";
-import { _T } from "app/services/customizations/localization.service";
+import { $T } from "app/i18n/strings";
 import { INotificationService } from "app/services/infrastructure/notification.service";
 import { TitleService } from "app/services/infrastructure/title.service";
 import { ILocalizedContentLoader } from "app/services/infrastructure/localized-content-loader";
@@ -44,7 +44,7 @@ export class CheatSheetPageComponent extends React.Component<IComponentProps, IC
   }
 
   async componentDidMount() {
-    this.titleService.setDocumentTitle(_T("Cheat sheet"));
+    this.titleService.setDocumentTitle($T.cheatSheet.cheatSheetTitle);
     this.eventsTracking.sendEvent(EventAction.openCheatsheet);
     await this.loadData();
   }
