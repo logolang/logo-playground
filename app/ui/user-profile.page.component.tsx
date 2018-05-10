@@ -13,11 +13,12 @@ import { LogoExecutorComponent } from "app/ui/_shared/logo-executor.component";
 import { FileSelectorComponent } from "app/ui/_generic/file-selector.component";
 
 import { resolveInject } from "app/di";
+import { $T } from "app/i18n/strings";
 import { UserInfo } from "app/services/login/user-info";
 import { TurtlesService, TurtleInfo, TurtleSize } from "app/services/customizations/turtles.service";
 import { Theme, ThemesService } from "app/services/customizations/themes.service";
 import { ProgramsExportImportService } from "app/services/gallery/programs-export-import.service";
-import { LocalizationService, ILocaleInfo, _T } from "app/services/customizations/localization.service";
+import { LocalizationService, ILocaleInfo } from "app/services/customizations/localization.service";
 import { ICurrentUserService } from "app/services/login/current-user.service";
 import { TitleService } from "app/services/infrastructure/title.service";
 import { IUserSettingsService, IUserSettings } from "app/services/customizations/user-settings.service";
@@ -103,7 +104,7 @@ export class UserProfilePageComponent extends React.Component<IComponentProps, I
   }
 
   async componentDidMount() {
-    this.titleService.setDocumentTitle(_T("User profile"));
+    this.titleService.setDocumentTitle($T.settings.settingsTitle);
     this.eventsTracking.sendEvent(EventAction.openSettings);
     await this.loadData();
   }
@@ -156,8 +157,8 @@ export class UserProfilePageComponent extends React.Component<IComponentProps, I
       await this.loadData();
       this.notificationService.push({
         type: "success",
-        title: _T("Import completed"),
-        message: _T("Added programs: %d", { value: added }),
+        title: $T.settings.importCompletedTitle,
+        message: $T.settings.addedProgramsMessage.val(added),
         closeTimeout: 4000
       });
     }
@@ -170,7 +171,7 @@ export class UserProfilePageComponent extends React.Component<IComponentProps, I
         <div className="ex-page-content">
           <div className="container">
             <br />
-            <PageHeaderComponent title={_T("Settings")} />
+            <PageHeaderComponent title={$T.settings.settingsTitle} />
 
             {this.state.userSettings &&
               this.state.currentLocale &&
@@ -185,7 +186,7 @@ export class UserProfilePageComponent extends React.Component<IComponentProps, I
 
                         <div className="field">
                           <label className="label" htmlFor="language-selector">
-                            {_T("Language")}
+                            {$T.settings.language}
                           </label>
                           <div className="control">
                             <div className="select">
@@ -210,7 +211,7 @@ export class UserProfilePageComponent extends React.Component<IComponentProps, I
 
                         <div className="field">
                           <label className="label" htmlFor="theme-selector">
-                            {_T("User interface theme")}
+                            {$T.settings.uiTheme}
                           </label>
                           <div className="control is-expanded">
                             <div className="select is-fullwidth">
@@ -235,7 +236,7 @@ export class UserProfilePageComponent extends React.Component<IComponentProps, I
 
                         <br />
 
-                        <label className="label">{_T("Turtle outfit")}</label>
+                        <label className="label">{$T.settings.turtleSkin}</label>
                         <div className="field">
                           <div className="control">
                             <div className="select">
@@ -245,7 +246,7 @@ export class UserProfilePageComponent extends React.Component<IComponentProps, I
                                   .getAllTurtles()
                                   .find(x => x.id === ensure(this.state.userSettings).turtleId)}
                                 getItemIdentifier={x => x.id}
-                                renderItem={x => x.getName()}
+                                renderItem={x => x.name}
                                 selectionChanged={async newTurtle => {
                                   if (newTurtle) {
                                     await this.userSettingsService.update({ turtleId: newTurtle.id });
@@ -259,7 +260,7 @@ export class UserProfilePageComponent extends React.Component<IComponentProps, I
 
                         <br />
 
-                        <label className="label">{_T("Turtle size")}</label>
+                        <label className="label">{$T.settings.turtleSize}</label>
                         <div className="field">
                           <div className="control">
                             <div className="select">
@@ -283,23 +284,18 @@ export class UserProfilePageComponent extends React.Component<IComponentProps, I
 
                         <br />
 
-                        <label className="label">{_T("Personal library")}</label>
-                        <p>
-                          {_T("You have %d program in your library", {
-                            plural: "You have %d programs in your library",
-                            value: this.state.programCount
-                          })}
-                        </p>
+                        <label className="label">{$T.gallery.personalLibrary}</label>
+                        <p>{$T.settings.youHaveNProgramsInLibrary.val(this.state.programCount)}</p>
                         <div className="field is-grouped is-grouped-multiline">
                           <p className="control">
                             <a className="button" onClick={this.doExport}>
-                              {_T("Export")}
+                              {$T.settings.export}
                             </a>
                           </p>
                           <p className="control">
                             <FileSelectorComponent
                               className={cn({ "is-loading": this.state.isImportingInProgress })}
-                              buttonText={_T("Import")}
+                              buttonText={$T.settings.import}
                               onFileTextContentReady={this.onImport}
                             />
                           </p>

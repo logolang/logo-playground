@@ -1,0 +1,282 @@
+# Olek, 2017.
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language: en\n"
+"Language-Team: \n"
+"Content-Type: \n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+msgid "about.aboutTitle"
+msgstr "About"
+
+msgid "cheatSheet.cheatSheetTitle"
+msgstr "Cheat sheet"
+
+msgid "common.appTitle"
+msgstr "Logo playground"
+
+msgid "common.areYouSure"
+msgstr "Are you sure?"
+
+msgid "common.cancel"
+msgstr "Cancel"
+
+msgid "common.continue"
+msgstr "Continue"
+
+msgid "common.copied"
+msgstr "Copied"
+
+msgid "common.copyToClipboard"
+msgstr "Copy to clipboard"
+
+msgid "common.delete"
+msgstr "Delete"
+
+msgid "common.error"
+msgstr "Sorry, error has occured"
+
+msgid "common.loading"
+msgstr "Loading..."
+
+msgid "common.login"
+msgstr "Login"
+
+msgid "common.logout"
+msgstr "Logout"
+
+msgid "common.message"
+msgstr "Message"
+
+msgid "common.noImage"
+msgstr "No image"
+
+msgid "common.save"
+msgstr "Save"
+
+msgid "common.signIn"
+msgstr "Sign in"
+
+msgid "common.signInWithGoogle"
+msgstr "Sign in with Google"
+
+msgid "common.signOut"
+msgstr "Sign out"
+
+msgid "common.signedVia"
+msgstr "You are signed in via"
+
+msgid "gallery.editedDate"
+msgstr "Edited"
+
+msgid "gallery.emptyLibrary"
+msgstr "You do not have any programs stored in personal library yet."
+
+msgid "gallery.examplesGallery"
+msgstr "Examples gallery"
+
+msgid "gallery.galleryImage"
+msgstr "Gallery image"
+
+msgid "gallery.galleryTitle"
+msgstr "Gallery"
+
+msgid "gallery.noImage"
+msgstr "No image"
+
+msgid "gallery.notLoggedInText"
+msgstr "You are not authenticated. Your personal gallery is persisted in your browser local storage. Please sign in if you want to synchronize your gallery."
+
+msgid "gallery.personalLibrary"
+msgstr "Personal library"
+
+msgid "gallery.programHasBeenSaved"
+msgstr "Program has been saved in the personal library."
+
+msgid "gallery.syncronizing"
+msgstr "Synchronizing gallery with remote storage"
+
+msgid "program.code"
+msgstr "Code"
+
+msgid "program.imagePreview"
+msgstr "Image preview"
+
+msgid "program.imageUrl"
+msgstr "Image url"
+
+msgid "program.output"
+msgstr "Output"
+
+msgid "program.playgroundTitle"
+msgstr "Playground"
+
+msgid "program.pleaseEnterNameForYourProgram"
+msgstr "Please enter the name for your program"
+
+msgid "program.program"
+msgstr "Program"
+
+msgid "program.programHasChanges"
+msgstr "This program has changes"
+
+msgid "program.programName"
+msgstr "Program name"
+
+msgid "program.publicUrl"
+msgstr "Public url"
+
+msgid "program.revertChanges"
+msgstr "Revert changes"
+
+msgid "program.run"
+msgstr "Run"
+
+msgid "program.runDescription"
+msgstr "Execute the program"
+
+msgid "program.save"
+msgstr "Save"
+
+msgid "program.saveAs"
+msgstr "Save as..."
+
+msgid "program.saveToLibrary"
+msgstr "Save to personal library"
+
+msgid "program.screenShotNotAvailable"
+msgstr "Screenshot is not available because program has not been executed yet."
+
+msgid "program.screenshot"
+msgstr "Screenshot"
+
+msgid "program.share"
+msgstr "Share"
+
+msgid "program.shareYourProgram"
+msgstr "Share your program"
+
+msgid "program.stop"
+msgstr "Stop"
+
+msgid "program.stopDescription"
+msgstr "Stop execution of the program"
+
+msgid "program.takeScreenshot"
+msgstr "Take screenshot"
+
+msgid "program.youAreGoingToDeleteProgram"
+msgstr "You are going to delete this program."
+
+msgid "settings.addedProgramsMessage"
+msgstr[0] "Added one program"
+msgstr[1] "Added %d programs"
+
+msgid "settings.export"
+msgstr "Export"
+
+msgid "settings.import"
+msgstr "Import"
+
+msgid "settings.importCompletedTitle"
+msgstr "Import completed"
+
+msgid "settings.language"
+msgstr "Language"
+
+msgid "settings.settingsTitle"
+msgstr "Settings"
+
+msgid "settings.turtleSize"
+msgstr "Turtle size"
+
+msgid "settings.turtleSizes.extraSmall"
+msgstr "Extra small"
+
+msgid "settings.turtleSizes.huge"
+msgstr "Huge"
+
+msgid "settings.turtleSizes.large"
+msgstr "Large"
+
+msgid "settings.turtleSizes.medium"
+msgstr "Medium"
+
+msgid "settings.turtleSizes.small"
+msgstr "Small"
+
+msgid "settings.turtleSkin"
+msgstr "Turtle outfit"
+
+msgid "settings.turtleSkins.tt10"
+msgstr "Chilly Bob"
+
+msgid "settings.turtleSkins.tt11"
+msgstr "Summer"
+
+msgid "settings.turtleSkins.tt12"
+msgstr "Bright Runner"
+
+msgid "settings.turtleSkins.tt13"
+msgstr "Deep Diver"
+
+msgid "settings.turtleSkins.tt2"
+msgstr "Chameleon"
+
+msgid "settings.turtleSkins.tt9"
+msgstr "Princess"
+
+msgid "settings.uiTheme"
+msgstr "User interface theme"
+
+msgid "settings.userGuestNickName"
+msgstr "Guest"
+
+msgid "settings.youHaveNProgramsInLibrary"
+msgstr[0] "You have one program in your library"
+msgstr[1] "You have %d programs in your library"
+
+msgid "tutorial.back"
+msgstr "Back"
+
+msgid "tutorial.chooseAnotherTutorial"
+msgstr "Choose another tutorial"
+
+msgid "tutorial.chooseTutorial"
+msgstr "Choose a tutorial"
+
+msgid "tutorial.fixTheCodeMessage"
+msgstr "If your code isn't working as the tutorial describes, you can replace it with a working version."
+
+msgid "tutorial.fixTheCodeTitle"
+msgstr "Fix the code?"
+
+msgid "tutorial.fixTheCodeWarning"
+msgstr "This will overwrite your code entirely."
+
+msgid "tutorial.helpItsNotworking"
+msgstr "Help – it's not working!"
+
+msgid "tutorial.noLeaveItAsIs"
+msgstr "No, leave it as is"
+
+msgid "tutorial.start"
+msgstr "Start"
+
+msgid "tutorial.stepIndicator"
+msgstr "Step %1$s of %2$s"
+
+msgid "tutorial.tutorial"
+msgstr "Tutorial"
+
+msgid "tutorial.tutorialsTitle"
+msgstr "Tutorials"
+
+msgid "tutorial.yesFixMyCode"
+msgstr "Yes, fix my code"

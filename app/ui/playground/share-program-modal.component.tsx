@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { _T } from "app/services/customizations/localization.service";
+import { $T } from "app/i18n/strings";
 import { resolveInject } from "app/di";
 import { ErrorDef, callActionSafe } from "app/utils/error-helpers";
 
@@ -48,12 +48,12 @@ export class ShareProgramModalComponent extends React.Component<IComponentProps,
     return (
       <ModalComponent
         show
-        title={_T("Share your program")}
+        title={$T.program.shareYourProgram}
         onConfirm={this.state.publishedUrl ? undefined : this.shareProgramAction}
         onCancel={this.props.onClose}
         withoutFooter={!!this.state.publishedUrl}
-        actionButtonText={_T("Continue")}
-        cancelButtonText={_T("Cancel")}
+        actionButtonText={$T.common.continue}
+        cancelButtonText={$T.common.cancel}
       >
         {this.state.errorMessage && (
           <div>
@@ -63,14 +63,14 @@ export class ShareProgramModalComponent extends React.Component<IComponentProps,
         )}
 
         <div className="field">
-          <label className="label">{_T("Program name")}</label>
+          <label className="label">{$T.program.programName}</label>
           <div className="control">
             <input
               readOnly={!!this.state.publishedUrl}
               type="text"
               className="input"
               id="program-name-in-share-dialog"
-              placeholder={_T("Please enter the name for your program")}
+              placeholder={$T.program.pleaseEnterNameForYourProgram}
               autoFocus
               value={this.state.programName}
               onChange={event => {
@@ -82,7 +82,7 @@ export class ShareProgramModalComponent extends React.Component<IComponentProps,
         <br />
         {this.state.publishedUrl && (
           <div>
-            <label className="label">{_T("Public url")}</label>
+            <label className="label">{$T.program.publicUrl}</label>
             <InputCopyToClipboardComponent text={this.state.publishedUrl} />
           </div>
         )}

@@ -6,3 +6,4 @@ dist/
 tools/update-translations.js
 .atl-cache*
 yarn-error.log
+/tmp/

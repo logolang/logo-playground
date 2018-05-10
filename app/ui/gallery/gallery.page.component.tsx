@@ -4,7 +4,7 @@ import { Link, RouteComponentProps } from "react-router-dom";
 import { createCompareFunction } from "app/utils/syntax-helpers";
 import { resolveInject } from "app/di";
 import { Routes } from "app/routes";
-import { _T } from "app/services/customizations/localization.service";
+import { $T } from "app/i18n/strings";
 import { PersonalGalleryService } from "app/services/gallery/personal-gallery.service";
 import { ProgramModel } from "app/services/program/program.model";
 import { GallerySamplesRepository } from "app/services/gallery/gallery-samples.repository";
@@ -54,7 +54,7 @@ export class GalleryPageComponent extends React.Component<IComponentProps, IComp
   }
 
   async componentDidMount() {
-    this.titleService.setDocumentTitle(_T("Gallery"));
+    this.titleService.setDocumentTitle($T.gallery.galleryTitle);
     this.eventsTracker.sendEvent(EventAction.openGallery);
     await this.loadData();
   }
@@ -116,12 +116,12 @@ export class GalleryPageComponent extends React.Component<IComponentProps, IComp
               <>
                 <br />
                 <h1 className="title">
-                  {_T("Personal library")}
+                  {$T.gallery.personalLibrary}
                   {this.state.isSyncronizing && (
                     <>
                       &nbsp;&nbsp;<i
                         className="fa fa-refresh fa-spin has-text-grey-lighter"
-                        title={_T("Synchronizing gallery with remote storage")}
+                        title={$T.gallery.syncronizing}
                       />
                     </>
                   )}
@@ -132,10 +132,7 @@ export class GalleryPageComponent extends React.Component<IComponentProps, IComp
                   </div>
                 ) : (
                   <>
-                    <NoDataComponent
-                      title=""
-                      description={_T("You do not have any programs stored in personal library yet.")}
-                    />
+                    <NoDataComponent title="" description={$T.gallery.emptyLibrary} />
                   </>
                 )}
 
@@ -145,7 +142,7 @@ export class GalleryPageComponent extends React.Component<IComponentProps, IComp
                 {this.state.samples &&
                   this.state.samples.length > 0 && (
                     <>
-                      <h1 className="title">{_T("Examples gallery")}</h1>
+                      <h1 className="title">{$T.gallery.examplesGallery}</h1>
                       <div className="program-cards-container">
                         {this.state.samples.map(pr => this.renderProgramCard(pr, ProgramStorageType.samples, false))}
                       </div>
@@ -176,7 +173,7 @@ export class GalleryPageComponent extends React.Component<IComponentProps, IComp
               </Link>
             </figure>
           ) : (
-            <NoDataComponent iconClass="fa-picture-o" title={_T("No image")} />
+            <NoDataComponent iconClass="fa-picture-o" title={$T.gallery.noImage} />
           )}
         </div>
         <div className="card-content">
@@ -185,7 +182,7 @@ export class GalleryPageComponent extends React.Component<IComponentProps, IComp
               <p className="title is-5">
                 {p.hasTempLocalModifications && (
                   <>
-                    <i className="fa fa-asterisk icon-sm" aria-hidden="true" title={_T("This program has changes")} />
+                    <i className="fa fa-asterisk icon-sm" aria-hidden="true" title={$T.program.programHasChanges} />
                     &nbsp;
                   </>
                 )}
@@ -201,7 +198,7 @@ export class GalleryPageComponent extends React.Component<IComponentProps, IComp
                     this.setState({ programToDelete: p });
                   }}
                 >
-                  {_T("Delete")}
+                  {$T.common.delete}
                 </a>
               )}
             </div>
@@ -219,14 +216,14 @@ export class GalleryPageComponent extends React.Component<IComponentProps, IComp
         <ModalComponent
           show
           onConfirm={this.confirmDelete}
-          actionButtonText={_T("Delete")}
-          cancelButtonText={_T("Cancel")}
-          title={_T("Are you sure?")}
+          actionButtonText={$T.common.delete}
+          cancelButtonText={$T.common.cancel}
+          title={$T.common.areYouSure}
           onCancel={() => {
             this.setState({ programToDelete: undefined });
           }}
         >
-          <AlertMessageComponent title={_T("You are going to delete this program.")} type="warning" />
+          <AlertMessageComponent title={$T.program.youAreGoingToDeleteProgram} type="warning" />
           <br />
           <div className="card">
             <div className="card-content">
@@ -237,14 +234,14 @@ export class GalleryPageComponent extends React.Component<IComponentProps, IComp
                       <img src={p.screenshot} />
                     </figure>
                   ) : (
-                    <NoDataComponent iconClass="fa-picture-o" title={_T("No image")} />
+                    <NoDataComponent iconClass="fa-picture-o" title={$T.gallery.noImage} />
                   )}
                 </div>
                 <div className="media-content">
                   <br />
                   <p className="subtitle is-4">{p.name}</p>
                   <p className="is-6">
-                    <strong>{_T("Edited")}: </strong>
+                    <strong>{$T.gallery.editedDate}: </strong>
                     <DateTimeStampComponent datetime={p.dateLastEdited} />
                   </p>
                 </div>

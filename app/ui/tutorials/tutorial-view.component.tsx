@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { _T } from "app/services/customizations/localization.service";
+import { $T } from "app/i18n/strings";
 import { resolveInject } from "app/di";
 import { INotificationService } from "app/services/infrastructure/notification.service";
 import {
@@ -142,9 +142,10 @@ export class TutorialViewComponent extends React.Component<ITutorialViewComponen
               </div>
 
               <p className="help">
-                {_T("Step %1$s of %2$s", {
-                  values: [this.state.currentStepIndex + 1, this.state.currentTutorial.steps.length]
-                })}
+                {$T.tutorial.stepIndicator.val(
+                  (this.state.currentStepIndex + 1).toString(),
+                  this.state.currentTutorial.steps.length.toString()
+                )}
               </p>
               <br />
 
@@ -162,7 +163,7 @@ export class TutorialViewComponent extends React.Component<ITutorialViewComponen
                     <span className="icon">
                       <i className="fa fa-arrow-left" aria-hidden="true" />
                     </span>
-                    <span>{_T("Back")}</span>
+                    <span>{$T.tutorial.back}</span>
                   </button>
                 )}
 
@@ -177,7 +178,7 @@ export class TutorialViewComponent extends React.Component<ITutorialViewComponen
                     <span className="icon">
                       <i className="fa fa-question" aria-hidden="true" />
                     </span>
-                    <span>{_T("Help – it's not working!")}</span>
+                    <span>{$T.tutorial.helpItsNotworking}</span>
                   </button>
                 )}
 
@@ -186,7 +187,7 @@ export class TutorialViewComponent extends React.Component<ITutorialViewComponen
                     <span className="icon">
                       <i className="fa fa-arrow-right" aria-hidden="true" />
                     </span>
-                    <span>{_T("Continue")}</span>
+                    <span>{$T.common.continue}</span>
                   </button>
                 )}
 
@@ -201,7 +202,7 @@ export class TutorialViewComponent extends React.Component<ITutorialViewComponen
                     <span className="icon">
                       <i className="fa fa-arrow-right" aria-hidden="true" />
                     </span>
-                    <span>{_T("Choose another tutorial")}</span>
+                    <span>{$T.tutorial.chooseAnotherTutorial}</span>
                   </button>
                 )}
               </div>
@@ -241,9 +242,9 @@ export class TutorialViewComponent extends React.Component<ITutorialViewComponen
     return (
       <ModalComponent
         show
-        title={_T("Fix the code?")}
-        actionButtonText={_T("Yes, fix my code")}
-        cancelButtonText={_T("No, leave it as is")}
+        title={$T.tutorial.fixTheCodeTitle}
+        actionButtonText={$T.tutorial.yesFixMyCode}
+        cancelButtonText={$T.tutorial.noLeaveItAsIs}
         onConfirm={async () => {
           this.setState({ showFixTheCode: false });
           this.props.onFixTheCode(currentStep.resultCode);
@@ -253,9 +254,9 @@ export class TutorialViewComponent extends React.Component<ITutorialViewComponen
         }}
       >
         <p>
-          {_T("FIX_THE_CODE_MESSAGE")}
+          {$T.tutorial.fixTheCodeMessage}
           <span>&nbsp;</span>
-          <strong>{_T("FIX_THE_CODE_WARNING")}</strong>
+          <strong>{$T.tutorial.fixTheCodeWarning}</strong>
         </p>
       </ModalComponent>
     );

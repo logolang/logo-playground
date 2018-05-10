@@ -4,7 +4,7 @@ import { Subject, BehaviorSubject } from "rxjs";
 import { as } from "app/utils/syntax-helpers";
 import { callActionSafe, ErrorDef } from "app/utils/error-helpers";
 
-import { _T } from "app/services/customizations/localization.service";
+import { $T } from "app/i18n/strings";
 import { resolveInject } from "app/di";
 import { Routes } from "app/routes";
 import { ProgramModel } from "app/services/program/program.model";
@@ -95,7 +95,7 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
   }
 
   async componentDidMount() {
-    this.titleService.setDocumentTitle(_T("Playground"));
+    this.titleService.setDocumentTitle($T.program.playgroundTitle);
     await this.loadData(this.props);
   }
 
@@ -131,10 +131,10 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
   private setCodePanelTitle(programName: string, programId: string, hasChanges: boolean) {
     let title =
       `<i class="fa fa-code" aria-hidden="true"></i> ` +
-      _T("Program") +
+      $T.program.program +
       (programName ? ": <strong>" + programName + "</strong>" : "");
     if (hasChanges && programId) {
-      title += ` <i class="fa fa-asterisk icon-sm" aria-hidden="true" title="${_T("This program has changes")}"></i>`;
+      title += ` <i class="fa fa-asterisk icon-sm" aria-hidden="true" title="${$T.program.programHasChanges}"></i>`;
     }
     this.codePanelTitle.next(title);
   }
@@ -176,7 +176,7 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
     const turtleImage = this.turtlesService.getTurtleImage(userSettings.turtleId);
 
     this.setCodePanelTitle(programModel.name, programModel.id, programModel.hasTempLocalModifications);
-    this.outputPanelTitle.next(`<i class="fa fa-television" aria-hidden="true"></i> ` + _T("Output"));
+    this.outputPanelTitle.next(`<i class="fa fa-television" aria-hidden="true"></i> ` + $T.program.output);
 
     this.setState({
       isLoading: false,

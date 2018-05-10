@@ -3,7 +3,7 @@ import { Subscription } from "rxjs/Subscription";
 
 import { resolveInject } from "app/di";
 import { DependecyInjectionSetupService } from "app/di-setup";
-import { _T } from "app/services/customizations/localization.service";
+import { $T } from "app/i18n/strings";
 import { ICurrentUserService } from "app/services/login/current-user.service";
 import { ILoginService } from "app/services/login/login.service";
 import { AuthProvider } from "app/services/login/user-info";
@@ -70,7 +70,7 @@ export class SignInStatusComponent extends React.Component<IComponentProps, ICom
           )}
 
           <div className="media-content">
-            <p className="title is-4">{userInfo.attributes.name || _T("Guest")}</p>
+            <p className="title is-4">{userInfo.attributes.name || $T.settings.userGuestNickName}</p>
             <p className="subtitle is-6">{userInfo.attributes.email}</p>
           </div>
         </div>
@@ -80,7 +80,7 @@ export class SignInStatusComponent extends React.Component<IComponentProps, ICom
             <>
               <div className="level is-mobile">
                 <div className="level-left">
-                  <div className="level-item">{_T("You are signed in via")}</div>
+                  <div className="level-item">{$T.common.signedVia}</div>
                   <div className="level-item">
                     <span className="tag is-primary is-medium">
                       {this.getAuthProviderIcon(userInfo.attributes.authProvider)} {userInfo.attributes.authProvider}
@@ -91,7 +91,7 @@ export class SignInStatusComponent extends React.Component<IComponentProps, ICom
             </>
           ) : (
             <>
-              <p>{_T("NOT_LOGGED_IN_TEXT_BLOCK")}</p>
+              <p>{$T.gallery.notLoggedInText}</p>
               {this.loginService.renderLoginUI()}
             </>
           )}
