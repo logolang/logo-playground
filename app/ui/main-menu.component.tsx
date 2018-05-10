@@ -5,7 +5,7 @@ import * as cn from "classnames";
 import { resolveInject } from "app/di";
 import { DependecyInjectionSetupService } from "app/di-setup";
 import { Routes } from "app/routes";
-import { _T } from "app/services/customizations/localization.service";
+import { $T } from "app/i18n/strings";
 import { ICurrentUserService } from "app/services/login/current-user.service";
 import { ILoginService } from "app/services/login/login.service";
 
@@ -58,16 +58,16 @@ export class MainMenuComponent extends React.Component<IComponentProps, ICompone
         <div className={cn("navbar-menu", { "is-active": this.state.isMenuToggled })}>
           <div className="navbar-start">
             <NavLink className="navbar-item" activeClassName="is-active" to={Routes.galleryRoot.build({})}>
-              {_T("Gallery")}
+              {$T.gallery.galleryTitle}
             </NavLink>
             <NavLink className="navbar-item" activeClassName="is-active" to={Routes.tutorialsRoot.build({})}>
-              {_T("Tutorials")}
+              {$T.tutorial.tutorialsTitle}
             </NavLink>
             <NavLink className="navbar-item" activeClassName="is-active" to={Routes.cheatSheetRoot.build({})}>
-              {_T("Cheat sheet")}
+              {$T.cheatSheet.cheatSheetTitle}
             </NavLink>
             <NavLink className="navbar-item" activeClassName="is-active" to={Routes.playground.build({})}>
-              {_T("Playground")}
+              {$T.program.playgroundTitle}
             </NavLink>
           </div>
           <div className="navbar-end">
@@ -84,23 +84,23 @@ export class MainMenuComponent extends React.Component<IComponentProps, ICompone
               <div className="navbar-dropdown is-right">
                 <NavLink className="navbar-item" activeClassName="is-active" to={Routes.settingsRoot.build({})}>
                   <i className="fa fa-wrench icon-fixed-width" aria-hidden="true" />
-                  {_T("Settings")}
+                  {$T.settings.settingsTitle}
                 </NavLink>
                 <NavLink className="navbar-item" activeClassName="is-active" to={Routes.infoRoot.build({})}>
                   <i className="fa fa-info icon-fixed-width" aria-hidden="true" />
-                  {_T("About")}
+                  {$T.about.aboutTitle}
                 </NavLink>
                 <hr className="navbar-divider" />
                 {!loginStatus.isLoggedIn && (
                   <NavLink className="navbar-item" activeClassName="is-active" to={Routes.loginRoot.build({})}>
                     <i className="fa fa-sign-in icon-fixed-width" aria-hidden="true" />
-                    {_T("Sign in")}
+                    {$T.common.signIn}
                   </NavLink>
                 )}
                 {loginStatus.isLoggedIn && (
                   <a href="javascript:void(0)" className="navbar-item" onClick={this.menuLogOutClick}>
                     <i className="fa fa-sign-out icon-fixed-width" aria-hidden="true" />
-                    {_T("Sign out")}
+                    {$T.common.signOut}
                   </a>
                 )}
               </div>

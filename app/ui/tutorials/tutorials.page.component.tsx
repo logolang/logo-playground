@@ -8,7 +8,7 @@ import { as } from "app/utils/syntax-helpers";
 
 import { resolveInject } from "app/di";
 import { Routes } from "app/routes";
-import { _T } from "app/services/customizations/localization.service";
+import { $T } from "app/i18n/strings";
 import { INotificationService } from "app/services/infrastructure/notification.service";
 import { TitleService } from "app/services/infrastructure/title.service";
 import { INavigationService } from "app/services/infrastructure/navigation.service";
@@ -81,7 +81,7 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
   }
 
   async componentDidMount() {
-    this.titleService.setDocumentTitle(_T("Tutorials"));
+    this.titleService.setDocumentTitle($T.tutorial.tutorialsTitle);
     this.eventsTracking.sendEvent(EventAction.tutorialsOpen);
     await this.loadData(this.props);
   }
@@ -198,7 +198,7 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
                 panels={[
                   as<IPanelConfig<TutorialViewComponent, ITutorialViewComponentProps>>({
                     title: new BehaviorSubject(
-                      `<i class="fa fa-graduation-cap" aria-hidden="true"></i> ` + _T("Tutorial")
+                      `<i class="fa fa-graduation-cap" aria-hidden="true"></i> ` + $T.tutorial.tutorialsTitle
                     ),
                     componentName: "tutorial-panel",
                     componentType: TutorialViewComponent,
@@ -211,7 +211,7 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
                     }
                   }),
                   as<IPanelConfig<CodePanelComponent, ICodePanelComponentProps>>({
-                    title: new BehaviorSubject(`<i class="fa fa-code" aria-hidden="true"></i> ` + _T("Code")),
+                    title: new BehaviorSubject(`<i class="fa fa-code" aria-hidden="true"></i> ` + $T.program.code),
                     componentName: "code-panel",
                     componentType: CodePanelComponent,
                     props: {
@@ -224,7 +224,9 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
                     }
                   }),
                   as<IPanelConfig<OutputPanelComponent, IOutputPanelComponentProps>>({
-                    title: new BehaviorSubject(`<i class="fa fa-television" aria-hidden="true"></i> ` + _T("Output")),
+                    title: new BehaviorSubject(
+                      `<i class="fa fa-television" aria-hidden="true"></i> ` + $T.program.output
+                    ),
                     componentName: "output-panel",
                     componentType: OutputPanelComponent,
                     props: {

@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as cn from "classnames";
 import * as clipboard from "clipboard";
-import { _T } from "app/services/customizations/localization.service";
+import { $T } from "app/i18n/strings";
 
 interface IComponentProps {
   text: string;
@@ -62,7 +62,7 @@ export class InputCopyToClipboardComponent extends React.Component<IComponentPro
           >
             <i className="fa fa-clipboard" aria-hidden="true" />
             &nbsp;&nbsp;
-            <span>{this.state.isCopied ? _T("Copied") : _T("Copy to clipboard")}</span>
+            <span>{this.state.isCopied ? $T.common.copied : $T.common.copyToClipboard}</span>
           </button>
         </div>
       </>
