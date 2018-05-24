@@ -1,4 +1,5 @@
-import { Subject, BehaviorSubject } from "rxjs/Rx";
+import { Subject } from "rxjs/Subject";
+import { BehaviorSubject } from "rxjs/BehaviorSubject";
 
 export interface ICreateScreenshotCommand {
   isSmall: boolean;

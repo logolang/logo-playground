@@ -2,15 +2,16 @@ import * as React from "react";
 
 import { $T } from "app/i18n/strings";
 import { resolveInject } from "app/di";
-import { INotificationService } from "app/services/infrastructure/notification.service";
+import { NotificationService } from "app/services/infrastructure/notification.service";
 import {
   ITutorialInfo,
-  ITutorialsContentService,
+  TutorialsContentService,
   ITutorialStepInfo,
   ITutorialStepContent
 } from "app/services/tutorials/tutorials-content-service";
-import { IEventsTrackingService, EventAction } from "app/services/infrastructure/events-tracking.service";
+import { EventsTrackingService, EventAction } from "app/services/infrastructure/events-tracking.service";
 import { ErrorDef, callActionSafe } from "app/utils/error-helpers";
+import { ErrorService } from "app/services/infrastructure/error.service";
 
 import { TutorialSelectModalComponent } from "app/ui/tutorials/tutorial-select-modal.component";
 import { ModalComponent } from "app/ui/_generic/modal.component";
@@ -52,9 +53,10 @@ interface IComponentState {
 }
 
 export class TutorialViewComponent extends React.Component<ITutorialViewComponentProps, IComponentState> {
-  private tutorialsLoader = resolveInject(ITutorialsContentService);
-  private notificationService = resolveInject(INotificationService);
-  private eventsTracking = resolveInject(IEventsTrackingService);
+  private tutorialsLoader = resolveInject(TutorialsContentService);
+  private notificationService = resolveInject(NotificationService);
+  private errorService = resolveInject(ErrorService);
+  private eventsTracking = resolveInject(EventsTrackingService);
 
   constructor(props: ITutorialViewComponentProps) {
     super(props);
@@ -65,10 +67,6 @@ export class TutorialViewComponent extends React.Component<ITutorialViewComponen
       showFixTheCode: false
     };
   }
-
-  private errorHandler = (err: ErrorDef) => {
-    this.notificationService.push({ message: err.message, type: "danger" });
-  };
 
   async componentDidMount() {
     await this.loadTutorial(this.props.initialTutorialId, this.props.initialStepId);
@@ -88,7 +86,7 @@ export class TutorialViewComponent extends React.Component<ITutorialViewComponen
     }
     const currentStepInfo = currentTutorial.steps[currentStepIndex];
 
-    const currentStepContent = await callActionSafe(this.errorHandler, async () =>
+    const currentStepContent = await callActionSafe(this.errorService.handleError, async () =>
       this.tutorialsLoader.getStep(tutorialId, stepId)
     );
     if (!currentStepContent) {

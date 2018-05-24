@@ -1,29 +1,21 @@
-export class RouteInfo<TParams>{
-    private parent?: RouteInfo<never>
-    private path: string
+export class RouteInfo<TParams> {
+  private _path: string;
 
-    constructor(parent: RouteInfo<any> | undefined, path: string) {
-        this.parent = parent;
-        this.path = path;
-    }
+  constructor(path: string) {
+    this._path = path;
+  }
 
-    get relativePath(): string {
-        if (this.parent) {
-            const parentRelativePath = this.parent.relativePath;
-            if (parentRelativePath != '/') {
-                return this.parent.relativePath + this.path;
-            }
-        }
-        return this.path;
-    }
+  get path(): string {
+    return this._path;
+  }
 
-    build(params: TParams): string {
-        let result = this.relativePath;
-        for (const key in params) {
-            if (params.hasOwnProperty(key)) {
-                result = result.replace(':' + key, encodeURIComponent((params as any)[key]));
-            }
-        }
-        return result;
+  build(params: TParams): string {
+    let result = this._path;
+    for (const key in params) {
+      if (params.hasOwnProperty(key)) {
+        result = result.replace(":" + key, encodeURIComponent((params as any)[key]));
+      }
     }
+    return result;
+  }
 }

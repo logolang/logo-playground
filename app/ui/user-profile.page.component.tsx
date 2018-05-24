@@ -2,34 +2,34 @@ import * as React from "react";
 import * as cn from "classnames";
 import * as FileSaver from "file-saver";
 import { RouteComponentProps } from "react-router-dom";
-import { Subject, BehaviorSubject } from "rxjs";
+import { Subject } from "rxjs/Subject";
+import { BehaviorSubject } from "rxjs/BehaviorSubject";
 
 import { RandomHelper } from "app/utils/random-helper";
 import { callActionSafe, ErrorDef } from "app/utils/error-helpers";
-
-import { PageHeaderComponent } from "app/ui/_generic/page-header.component";
-import { MainMenuComponent } from "app/ui/main-menu.component";
-import { LogoExecutorComponent } from "app/ui/_shared/logo-executor.component";
-import { FileSelectorComponent } from "app/ui/_generic/file-selector.component";
-
+import { ensure } from "app/utils/syntax-helpers";
 import { resolveInject } from "app/di";
 import { $T } from "app/i18n/strings";
 import { UserInfo } from "app/services/login/user-info";
 import { TurtlesService, TurtleInfo, TurtleSize } from "app/services/customizations/turtles.service";
 import { Theme, ThemesService } from "app/services/customizations/themes.service";
-import { ProgramsExportImportService } from "app/services/gallery/programs-export-import.service";
+import { PersonalGalleryImportService } from "app/services/gallery/personal-gallery-import.service";
 import { LocalizationService, ILocaleInfo } from "app/services/customizations/localization.service";
-import { ICurrentUserService } from "app/services/login/current-user.service";
+import { CurrentUserService } from "app/services/login/current-user.service";
 import { TitleService } from "app/services/infrastructure/title.service";
 import { IUserSettingsService, IUserSettings } from "app/services/customizations/user-settings.service";
-import { INotificationService } from "app/services/infrastructure/notification.service";
+import { NotificationService } from "app/services/infrastructure/notification.service";
 import { PersonalGalleryService } from "app/services/gallery/personal-gallery.service";
 import { ProgramsHtmlSerializerService } from "app/services/gallery/programs-html-serializer.service";
-import { IEventsTrackingService, EventAction } from "app/services/infrastructure/events-tracking.service";
-import { ensure } from "app/utils/syntax-helpers";
-import { SimpleSelectComponent } from "app/ui/_generic/simple-select.component";
+import { EventsTrackingService, EventAction } from "app/services/infrastructure/events-tracking.service";
 import { DependecyInjectionSetupService } from "app/di-setup";
+import { ErrorService } from "app/services/infrastructure/error.service";
 import { SignInStatusComponent } from "app/ui/sign-in-status.component";
+import { SimpleSelectComponent } from "app/ui/_generic/simple-select.component";
+import { PageHeaderComponent } from "app/ui/_generic/page-header.component";
+import { MainMenuComponent } from "app/ui/main-menu.component";
+import { LogoExecutorComponent } from "app/ui/_shared/logo-executor.component";
+import { FileSelectorComponent } from "app/ui/_generic/file-selector.component";
 
 class LocaleSelector extends SimpleSelectComponent<ILocaleInfo> {}
 class ThemeSelector extends SimpleSelectComponent<Theme> {}
@@ -74,23 +74,20 @@ repeat 5 [
 
 export class UserProfilePageComponent extends React.Component<IComponentProps, IComponentState> {
   private titleService = resolveInject(TitleService);
-  private notificationService = resolveInject(INotificationService);
-  private currentUser = resolveInject(ICurrentUserService);
+  private notificationService = resolveInject(NotificationService);
+  private errorService = resolveInject(ErrorService);
+  private currentUser = resolveInject(CurrentUserService);
   private userSettingsService = resolveInject(IUserSettingsService);
   private themeService = resolveInject(ThemesService);
   private turtleCustomizationService = resolveInject(TurtlesService);
   private localizationService = resolveInject(LocalizationService);
-  private programsReporitory = resolveInject(PersonalGalleryService);
-  private eventsTracking = resolveInject(IEventsTrackingService);
+  private galleryService = resolveInject(PersonalGalleryService);
+  private eventsTracking = resolveInject(EventsTrackingService);
   private diSetup = resolveInject(DependecyInjectionSetupService);
 
   private onIsRunningChanged = new Subject<boolean>();
   private runCode = new BehaviorSubject<string>(codeSamples[0]);
-  private exportInportService = new ProgramsExportImportService();
-
-  private errorHandler = (err: ErrorDef) => {
-    this.notificationService.push({ message: err.message, type: "danger" });
-  };
+  private exportInportService = new PersonalGalleryImportService();
 
   constructor(props: IComponentProps) {
     super(props);
@@ -111,8 +108,8 @@ export class UserProfilePageComponent extends React.Component<IComponentProps, I
 
   private async loadData() {
     const [programs, userSettings] = await Promise.all([
-      callActionSafe(this.errorHandler, async () => this.programsReporitory.getAll()),
-      callActionSafe(this.errorHandler, async () => this.userSettingsService.get())
+      callActionSafe(this.errorService.handleError, async () => this.galleryService.getAll()),
+      callActionSafe(this.errorService.handleError, async () => this.userSettingsService.get())
     ]);
     if (programs && userSettings) {
       const theme = this.themeService.getActiveTheme() || this.themeService.getTheme("Default");
@@ -132,9 +129,7 @@ export class UserProfilePageComponent extends React.Component<IComponentProps, I
   }
 
   private doExport = async () => {
-    const programs = await callActionSafe(this.errorHandler, async () =>
-      this.exportInportService.exportAll(this.programsReporitory)
-    );
+    const programs = await callActionSafe(this.errorService.handleError, async () => this.galleryService.getAll());
     if (programs) {
       const html = await new ProgramsHtmlSerializerService().serialize(
         programs,
@@ -148,9 +143,9 @@ export class UserProfilePageComponent extends React.Component<IComponentProps, I
 
   private onImport = async (fileInfo: File, content: string) => {
     this.setState({ isImportingInProgress: true });
-    const added = await callActionSafe(this.errorHandler, async () => {
+    const added = await callActionSafe(this.errorService.handleError, async () => {
       const programs = new ProgramsHtmlSerializerService().parse(content);
-      return this.exportInportService.importAll(this.programsReporitory, programs);
+      return this.exportInportService.importAll(this.galleryService, programs);
     });
     this.setState({ isImportingInProgress: false });
     if (added !== undefined) {

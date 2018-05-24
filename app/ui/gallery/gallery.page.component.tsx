@@ -9,9 +9,9 @@ import { PersonalGalleryService } from "app/services/gallery/personal-gallery.se
 import { ProgramModel } from "app/services/program/program.model";
 import { GallerySamplesRepository } from "app/services/gallery/gallery-samples.repository";
 import { ProgramStorageType, ProgramManagementService } from "app/services/program/program-management.service";
-import { ICurrentUserService } from "app/services/login/current-user.service";
+import { CurrentUserService } from "app/services/login/current-user.service";
 import { TitleService } from "app/services/infrastructure/title.service";
-import { IEventsTrackingService, EventAction } from "app/services/infrastructure/events-tracking.service";
+import { EventsTrackingService, EventAction } from "app/services/infrastructure/events-tracking.service";
 
 import { MainMenuComponent } from "app/ui/main-menu.component";
 import { ModalComponent } from "app/ui/_generic/modal.component";
@@ -35,11 +35,11 @@ interface IComponentState {
 interface IComponentProps extends RouteComponentProps<void> {}
 
 export class GalleryPageComponent extends React.Component<IComponentProps, IComponentState> {
-  private currentUser = resolveInject(ICurrentUserService);
+  private currentUser = resolveInject(CurrentUserService);
   private titleService = resolveInject(TitleService);
   private galleryService = resolveInject(PersonalGalleryService);
   private samplesRepo = resolveInject(GallerySamplesRepository);
-  private eventsTracker = resolveInject(IEventsTrackingService);
+  private eventsTracker = resolveInject(EventsTrackingService);
   private programManagementService = resolveInject(ProgramManagementService);
 
   constructor(props: IComponentProps) {

@@ -3,7 +3,7 @@ import * as React from "react";
 import { $T } from "app/i18n/strings";
 import { resolveInject } from "app/di";
 import { ImageUploadService } from "app/services/infrastructure/image-upload-imgur.service";
-import { IEventsTrackingService, EventAction } from "app/services/infrastructure/events-tracking.service";
+import { EventsTrackingService, EventAction } from "app/services/infrastructure/events-tracking.service";
 
 import { AlertMessageComponent } from "app/ui/_generic/alert-message.component";
 import { LoadingComponent } from "app/ui/_generic/loading.component";
@@ -25,7 +25,7 @@ interface IComponentProps {
 
 export class ShareScreenshotModalComponent extends React.Component<IComponentProps, IComponentState> {
   private imageUploadService = resolveInject(ImageUploadService);
-  private eventsTracking = resolveInject(IEventsTrackingService);
+  private eventsTracking = resolveInject(EventsTrackingService);
 
   constructor(props: IComponentProps) {
     super(props);

@@ -6,8 +6,8 @@ import { resolveInject } from "app/di";
 import { DependecyInjectionSetupService } from "app/di-setup";
 import { Routes } from "app/routes";
 import { $T } from "app/i18n/strings";
-import { ICurrentUserService } from "app/services/login/current-user.service";
-import { ILoginService } from "app/services/login/login.service";
+import { CurrentUserService } from "app/services/login/current-user.service";
+import { LoginService } from "app/services/login/login.service";
 
 interface IComponentState {
   isMenuToggled?: boolean;
@@ -18,8 +18,8 @@ interface IComponentProps {
 }
 
 export class MainMenuComponent extends React.Component<IComponentProps, IComponentState> {
-  private loginService = resolveInject(ILoginService);
-  private currentUser = resolveInject(ICurrentUserService);
+  private loginService = resolveInject(LoginService);
+  private currentUser = resolveInject(CurrentUserService);
   private diService = resolveInject(DependecyInjectionSetupService);
 
   constructor(props: IComponentProps) {
