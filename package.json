@@ -4,19 +4,17 @@
   "license": "MIT",
   "description": "Online environment for Logo programming language",
   "scripts": {
-    "precommit": "lint-staged",
-    "build-vendor-dev": "webpack  --config webpack.config.vendor.js",
-    "build-app-dev": "webpack  --config webpack.config.js",
-    "build-vendor-prod": "webpack  --config webpack.config.vendor.js --env.prod",
-    "build-app-prod": "webpack  --config webpack.config.js --env.prod",
-    "build": "npm run build-vendor-prod && npm run build-app-prod",
-    "test": "npm run build-vendor-dev && karma start karma.conf.js",
+    "start": "webpack-dev-server",
+    "start-tests": "webpack-dev-server --env.unit_tests=true",
+    "build": "webpack --env.prod",
+    "stats": "webpack --profile --json > stats.json",
+    "test": "karma start karma.conf.js",
     "posttest": "npm run coverage",
     "coverage": "npm run coverage-remap && npm run coverage-report-html && npm run coverage-report-clover",
     "coverage-remap": "remap-istanbul -i reports/coverage/coverage.json -o reports/coverage/coverage.json -t json",
     "coverage-report-html": "istanbul report --include reports/coverage/coverage.json --dir reports/coverage html",
     "coverage-report-clover": "istanbul report --include reports/coverage/coverage.json --dir reports/coverage clover",
-    "start": "npm run build-vendor-dev && webpack-dev-server",
+    "precommit": "lint-staged",
     "tslint": "tslint --project . --format verbose",
     "tslint-fix": "tslint --project . --format verbose --fix",
     "i18n": "tsc tools/i18n-cli.ts --lib dom,es2017 --target es5 --outDir tmp && node tmp/tools/i18n-cli.js"
@@ -37,6 +35,7 @@
     "keymaster": "1.6.2",
     "markdown-it": "8.4.1",
     "moment": "2.22.1",
+    "node-noop": "1.0.0",
     "po2json": "0.4.5",
     "react": "16.4.0",
     "react-dom": "16.4.0",
@@ -120,8 +119,7 @@
     "webpack": "4.8.3",
     "webpack-bundle-analyzer": "2.13.1",
     "webpack-cli": "2.1.4",
-    "webpack-dev-server": "3.1.4",
-    "webpack-notifier": "1.6.0"
+    "webpack-dev-server": "3.1.4"
   },
   "lint-staged": {
     "linters": {
