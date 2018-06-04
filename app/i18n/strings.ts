@@ -20,7 +20,6 @@ export const $T = {
     signIn: "Sign in",
     signInWithGoogle: "Sign in with Google",
     signOut: "Sign out",
-    signedVia: "You are signed in via",
     error: "Sorry, error has occured"
   },
   program: {

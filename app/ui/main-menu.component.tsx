@@ -37,7 +37,7 @@ export class MainMenuComponent extends React.Component<IComponentProps, ICompone
     const loginStatus = this.currentUser.getLoginStatus();
     const userPic = loginStatus.userInfo.attributes.imageUrl;
     return (
-      <nav className="navbar navbar-mobile-fix">
+      <nav className="navbar navbar-mobile-fix" role="navigation" aria-label="main navigation">
         <div className="navbar-brand">
           <Link className="navbar-item" to={Routes.galleryRoot.build({})}>
             <span className="ex-app-logo" />

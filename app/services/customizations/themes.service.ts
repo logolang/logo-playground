@@ -29,7 +29,7 @@ export class ThemesService {
     {
       name: "Materia",
       description: "Material is the metaphor",
-      bodyClass: "is-light dark-navbar",
+      bodyClass: "is-light",
       isDark: false,
       codeEditorThemeName: "eclipse",
       styleLinks: [

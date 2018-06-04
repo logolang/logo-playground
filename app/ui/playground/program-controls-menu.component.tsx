@@ -17,6 +17,7 @@ interface IComponentProps {
   save?: () => void;
   onShareProgram: () => void;
   exportImage: () => void;
+  onDeleteProgram?(): void;
 }
 
 export class ProgramControlsMenuComponent extends React.Component<IComponentProps, IComponentState> {
@@ -88,6 +89,18 @@ export class ProgramControlsMenuComponent extends React.Component<IComponentProp
                 >
                   <i className="fa fa-clone icon-fixed-width" aria-hidden="true" />
                   {$T.program.saveAs}
+                </a>
+              )}
+              {this.props.onDeleteProgram && (
+                <a
+                  className="dropdown-item"
+                  onClick={() => {
+                    this.setState({ menuIsActive: false });
+                    this.props.onDeleteProgram && this.props.onDeleteProgram();
+                  }}
+                >
+                  <i className="fa fa-trash icon-fixed-width" aria-hidden="true" />
+                  {$T.common.delete}
                 </a>
               )}
 

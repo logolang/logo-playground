@@ -70,31 +70,23 @@ export class SignInStatusComponent extends React.Component<IComponentProps, ICom
           )}
 
           <div className="media-content">
-            <p className="title is-4">{userInfo.attributes.name || $T.settings.userGuestNickName}</p>
-            <p className="subtitle is-6">{userInfo.attributes.email}</p>
+            <p className="title is-5 is-marginless">{userInfo.attributes.name || $T.settings.userGuestNickName}</p>
+            <p>{userInfo.attributes.email}</p>
+            {this.currentUser.getLoginStatus().isLoggedIn ? (
+              <>
+                <p>
+                  <span className="tag is-primary is-medium">
+                    {this.getAuthProviderIcon(userInfo.attributes.authProvider)} {userInfo.attributes.authProvider}
+                  </span>
+                </p>
+              </>
+            ) : (
+              <>
+                <p>{$T.gallery.notLoggedInText}</p>
+                {this.loginService.renderLoginUI()}
+              </>
+            )}
           </div>
-        </div>
-
-        <div className="content">
-          {this.currentUser.getLoginStatus().isLoggedIn ? (
-            <>
-              <div className="level is-mobile">
-                <div className="level-left">
-                  <div className="level-item">{$T.common.signedVia}</div>
-                  <div className="level-item">
-                    <span className="tag is-primary is-medium">
-                      {this.getAuthProviderIcon(userInfo.attributes.authProvider)} {userInfo.attributes.authProvider}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </>
-          ) : (
-            <>
-              <p>{$T.gallery.notLoggedInText}</p>
-              {this.loginService.renderLoginUI()}
-            </>
-          )}
         </div>
       </div>
     );

@@ -1,5 +1,5 @@
 Javascript libraries:
-* Logo Interpreter [jslogo](https://github.com/inexorabletash/jslogo)
+* Logo interpreter [jslogo](https://github.com/inexorabletash/jslogo)
 * Code editor [codemirror](https://github.com/codemirror/CodeMirror)
 * Markdown rendering library [markdown-it](https://github.com/markdown-it/markdown-it)
 * Panels with drag and drop support [golden-layout](https://github.com/deepstreamIO/golden-layout)

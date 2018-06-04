@@ -15,7 +15,6 @@ import { EventsTrackingService, EventAction } from "app/services/infrastructure/
 
 import { MainMenuComponent } from "app/ui/main-menu.component";
 import { ModalComponent } from "app/ui/_generic/modal.component";
-import { DateTimeStampComponent } from "app/ui/_generic/date-time-stamp.component";
 import { NoDataComponent } from "app/ui/_generic/no-data.component";
 import { AlertMessageComponent } from "app/ui/_generic/alert-message.component";
 import { LoadingComponent } from "app/ui/_generic/loading.component";
@@ -61,6 +60,7 @@ export class GalleryPageComponent extends React.Component<IComponentProps, IComp
 
   async loadData() {
     const sortingFunction = createCompareFunction<ProgramModel>([
+      { sortBy: x => x.hasTempLocalModifications, direction: "desc" },
       { sortBy: x => x.dateLastEdited, direction: "desc" },
       { sortBy: x => x.name }
     ]);
@@ -115,7 +115,7 @@ export class GalleryPageComponent extends React.Component<IComponentProps, IComp
             ) : (
               <>
                 <br />
-                <h1 className="title">
+                <h1 className="title is-4">
                   {$T.gallery.personalLibrary}
                   {this.state.isSyncronizing && (
                     <>
@@ -142,14 +142,12 @@ export class GalleryPageComponent extends React.Component<IComponentProps, IComp
                 {this.state.samples &&
                   this.state.samples.length > 0 && (
                     <>
-                      <h1 className="title">{$T.gallery.examplesGallery}</h1>
+                      <h1 className="title is-4">{$T.gallery.examplesGallery}</h1>
                       <div className="program-cards-container">
                         {this.state.samples.map(pr => this.renderProgramCard(pr, ProgramStorageType.samples, false))}
                       </div>
                     </>
                   )}
-
-                {this.renderDeleteModal()}
               </>
             )}
           </div>
@@ -167,89 +165,26 @@ export class GalleryPageComponent extends React.Component<IComponentProps, IComp
       <div key={p.id} className="card program-card">
         <div className="card-image">
           {p.screenshot ? (
-            <figure className="image is-4by3">
+            <figure className="image is-4by3 gallery-img-container">
               <Link to={link}>
                 <img src={p.screenshot} />
+
+                <div className="gallery-img-title">
+                  {p.hasTempLocalModifications && (
+                    <>
+                      <i className="fa fa-asterisk icon-sm" aria-hidden="true" title={$T.program.programHasChanges} />
+                      &nbsp;
+                    </>
+                  )}
+                  {p.name}
+                </div>
               </Link>
             </figure>
           ) : (
             <NoDataComponent iconClass="fa-picture-o" title={$T.gallery.noImage} />
           )}
         </div>
-        <div className="card-content">
-          <div className="media">
-            <div className="media-content">
-              <p className="title is-5">
-                {p.hasTempLocalModifications && (
-                  <>
-                    <i className="fa fa-asterisk icon-sm" aria-hidden="true" title={$T.program.programHasChanges} />
-                    &nbsp;
-                  </>
-                )}
-                <Link to={link}>{p.name}</Link>
-              </p>
-              <div className="subtitle is-7">
-                <DateTimeStampComponent datetime={p.dateLastEdited} />
-              </div>
-
-              {deleteBox && (
-                <a
-                  onClick={() => {
-                    this.setState({ programToDelete: p });
-                  }}
-                >
-                  {$T.common.delete}
-                </a>
-              )}
-            </div>
-          </div>
-        </div>
       </div>
-    );
-  }
-
-  renderDeleteModal() {
-    const p = this.state.programToDelete;
-
-    return (
-      p && (
-        <ModalComponent
-          show
-          onConfirm={this.confirmDelete}
-          actionButtonText={$T.common.delete}
-          cancelButtonText={$T.common.cancel}
-          title={$T.common.areYouSure}
-          onCancel={() => {
-            this.setState({ programToDelete: undefined });
-          }}
-        >
-          <AlertMessageComponent title={$T.program.youAreGoingToDeleteProgram} type="warning" />
-          <br />
-          <div className="card">
-            <div className="card-content">
-              <div className="media">
-                <div className="media-left">
-                  {p.screenshot ? (
-                    <figure className="image is-128x128">
-                      <img src={p.screenshot} />
-                    </figure>
-                  ) : (
-                    <NoDataComponent iconClass="fa-picture-o" title={$T.gallery.noImage} />
-                  )}
-                </div>
-                <div className="media-content">
-                  <br />
-                  <p className="subtitle is-4">{p.name}</p>
-                  <p className="is-6">
-                    <strong>{$T.gallery.editedDate}: </strong>
-                    <DateTimeStampComponent datetime={p.dateLastEdited} />
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </ModalComponent>
-      )
     );
   }
 }

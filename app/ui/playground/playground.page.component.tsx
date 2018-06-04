@@ -5,9 +5,11 @@ import { BehaviorSubject } from "rxjs/BehaviorSubject";
 import { as } from "app/utils/syntax-helpers";
 import { callActionSafe, ErrorDef } from "app/utils/error-helpers";
 
+import { checkIsMobileDevice } from "app/utils/device-helper";
 import { $T } from "app/i18n/strings";
 import { resolveInject } from "app/di";
 import { Routes } from "app/routes";
+import { ErrorService } from "app/services/infrastructure/error.service";
 import { ProgramModel } from "app/services/program/program.model";
 import { ProgramExecutionContext } from "app/services/program/program-execution.context";
 import { NotificationService } from "app/services/infrastructure/notification.service";
@@ -28,10 +30,8 @@ import {
   playgroundDefaultLayout,
   playgroundDefaultMobileLayout
 } from "app/ui/playground/playground-default-goldenlayout";
-import { checkIsMobileDevice } from "app/utils/device-helper";
 
 import "./playground.page.component.less";
-import { ErrorService } from "app/services/infrastructure/error.service";
 
 interface IComponentState {
   isLoading: boolean;
