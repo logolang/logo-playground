@@ -162,16 +162,14 @@
         activateTheme(theme, true);
     </script>
 
-    <script src="vendor.js?<%=appGitVersion%>"></script>
-
     <% for (var css in htmlWebpackPlugin.files.css) { %>
     <link href="<%=htmlWebpackPlugin.files.css[css]+'?'+appGitVersion%>" rel="stylesheet">
     <% } %>
     <% for (var chunk in htmlWebpackPlugin.files.chunks) { %>
     <script src="<%=htmlWebpackPlugin.files.chunks[chunk].entry+'?'+appGitVersion%>"></script>
     <% } %>
+    
     <script>
-        //setTimeout(function(){app.run();}, 3000);
         app.run();
     </script>
 </body>

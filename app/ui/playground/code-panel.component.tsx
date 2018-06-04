@@ -7,10 +7,10 @@ import { resolveInject } from "app/di";
 
 import { $T } from "app/i18n/strings";
 import { ProgramModel } from "app/services/program/program.model";
-import { INotificationService } from "app/services/infrastructure/notification.service";
+import { NotificationService } from "app/services/infrastructure/notification.service";
 import { ProgramExecutionContext } from "app/services/program/program-execution.context";
 import { ProgramManagementService, ProgramStorageType } from "app/services/program/program-management.service";
-import { IEventsTrackingService, EventAction } from "app/services/infrastructure/events-tracking.service";
+import { EventsTrackingService, EventAction } from "app/services/infrastructure/events-tracking.service";
 
 import { ShareScreenshotModalComponent } from "app/ui/playground/share-screenshot-modal.component";
 import { ShareProgramModalComponent } from "app/ui/playground/share-program-modal.component";
@@ -42,9 +42,9 @@ interface IComponentState {
 }
 
 export class CodePanelComponent extends React.Component<ICodePanelComponentProps, IComponentState> {
-  private notificationService = resolveInject(INotificationService);
+  private notificationService = resolveInject(NotificationService);
   private managementService = resolveInject(ProgramManagementService);
-  private eventsTracker = resolveInject(IEventsTrackingService);
+  private eventsTracker = resolveInject(EventsTrackingService);
   private subscriptions: ISubscription[] = [];
   private saveTempCodeTimer: any = undefined;
 

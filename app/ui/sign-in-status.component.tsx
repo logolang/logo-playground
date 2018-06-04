@@ -4,8 +4,8 @@ import { Subscription } from "rxjs/Subscription";
 import { resolveInject } from "app/di";
 import { DependecyInjectionSetupService } from "app/di-setup";
 import { $T } from "app/i18n/strings";
-import { ICurrentUserService } from "app/services/login/current-user.service";
-import { ILoginService } from "app/services/login/login.service";
+import { CurrentUserService } from "app/services/login/current-user.service";
+import { LoginService } from "app/services/login/login.service";
 import { AuthProvider } from "app/services/login/user-info";
 
 interface IComponentState {}
@@ -15,8 +15,8 @@ interface IComponentProps {
 }
 
 export class SignInStatusComponent extends React.Component<IComponentProps, IComponentState> {
-  private currentUser = resolveInject(ICurrentUserService);
-  private loginService = resolveInject(ILoginService);
+  private currentUser = resolveInject(CurrentUserService);
+  private loginService = resolveInject(LoginService);
   private diService = resolveInject(DependecyInjectionSetupService);
 
   private subscriptions: Subscription[] = [];

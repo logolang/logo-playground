@@ -6,7 +6,7 @@ import { ErrorDef, callActionSafe } from "app/utils/error-helpers";
 
 import { GistSharedProgramsRepository } from "app/services/program/gist-shared-programs.repository";
 import { ProgramModel } from "app/services/program/program.model";
-import { IEventsTrackingService, EventAction } from "app/services/infrastructure/events-tracking.service";
+import { EventsTrackingService, EventAction } from "app/services/infrastructure/events-tracking.service";
 
 import { AlertMessageComponent } from "app/ui/_generic/alert-message.component";
 import { ModalComponent } from "app/ui/_generic/modal.component";
@@ -27,7 +27,7 @@ interface IComponentProps {
 
 export class ShareProgramModalComponent extends React.Component<IComponentProps, IComponentState> {
   private gistService = resolveInject(GistSharedProgramsRepository);
-  private eventsTracking = resolveInject(IEventsTrackingService);
+  private eventsTracking = resolveInject(EventsTrackingService);
 
   constructor(props: IComponentProps) {
     super(props);

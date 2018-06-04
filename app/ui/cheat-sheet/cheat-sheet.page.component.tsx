@@ -6,11 +6,11 @@ import { callActionSafe, ErrorDef } from "app/utils/error-helpers";
 
 import { resolveInject } from "app/di";
 import { $T } from "app/i18n/strings";
-import { INotificationService } from "app/services/infrastructure/notification.service";
+import { NotificationService } from "app/services/infrastructure/notification.service";
 import { TitleService } from "app/services/infrastructure/title.service";
-import { ILocalizedContentLoader } from "app/services/infrastructure/localized-content-loader";
-import { EventAction, IEventsTrackingService } from "app/services/infrastructure/events-tracking.service";
-
+import { LocalizedContentLoader } from "app/services/infrastructure/localized-content-loader";
+import { EventAction, EventsTrackingService } from "app/services/infrastructure/events-tracking.service";
+import { ErrorService } from "app/services/infrastructure/error.service";
 import { MainMenuComponent } from "app/ui/main-menu.component";
 import { LoadingComponent } from "app/ui/_generic/loading.component";
 
@@ -24,15 +24,11 @@ interface IComponentState {
 interface IComponentProps extends RouteComponentProps<void> {}
 
 export class CheatSheetPageComponent extends React.Component<IComponentProps, IComponentState> {
-  private notificationService = resolveInject(INotificationService);
+  private notificationService = resolveInject(NotificationService);
   private titleService = resolveInject(TitleService);
-  private contentLoader = resolveInject(ILocalizedContentLoader);
-  private eventsTracking = resolveInject(IEventsTrackingService);
-
-  private errorHandler = (err: ErrorDef) => {
-    this.notificationService.push({ message: err.message, type: "danger" });
-    this.setState({ isLoading: false });
-  };
+  private contentLoader = resolveInject(LocalizedContentLoader);
+  private eventsTracking = resolveInject(EventsTrackingService);
+  private errorService = resolveInject(ErrorService);
 
   constructor(props: IComponentProps) {
     super(props);
@@ -50,7 +46,7 @@ export class CheatSheetPageComponent extends React.Component<IComponentProps, IC
   }
 
   private async loadData() {
-    const contentMd = await callActionSafe(this.errorHandler, async () =>
+    const contentMd = await callActionSafe(this.errorService.handleError, async () =>
       this.contentLoader.getFileContent("cheat-sheet.md")
     );
     if (contentMd) {

@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as goldenLayout from "golden-layout";
-import { BehaviorSubject } from "rxjs";
+import { BehaviorSubject } from "rxjs/BehaviorSubject";
 
 import "./golden-layout.component.less";
 import { checkIsMobileDevice } from "app/utils/device-helper";

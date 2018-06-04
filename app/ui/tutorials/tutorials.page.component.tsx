@@ -1,34 +1,33 @@
 import * as React from "react";
 import { RouteComponentProps } from "react-router-dom";
-import { Subject } from "rxjs";
+import { Subject } from "rxjs/Subject";
 import { BehaviorSubject } from "rxjs/BehaviorSubject";
 
 import { callActionSafe, ErrorDef } from "app/utils/error-helpers";
 import { as } from "app/utils/syntax-helpers";
-
 import { resolveInject } from "app/di";
 import { Routes } from "app/routes";
 import { $T } from "app/i18n/strings";
-import { INotificationService } from "app/services/infrastructure/notification.service";
+import { checkIsMobileDevice } from "app/utils/device-helper";
+import { NotificationService } from "app/services/infrastructure/notification.service";
+import { ErrorService } from "app/services/infrastructure/error.service";
 import { TitleService } from "app/services/infrastructure/title.service";
-import { INavigationService } from "app/services/infrastructure/navigation.service";
+import { NavigationService } from "app/services/infrastructure/navigation.service";
 import { IUserSettingsService, IUserSettings } from "app/services/customizations/user-settings.service";
 import { ProgramModel } from "app/services/program/program.model";
+import { ProgramModelConverter } from "app/services/program/program-model.converter";
 import { ThemesService, Theme } from "app/services/customizations/themes.service";
 import { TurtlesService } from "app/services/customizations/turtles.service";
 import { ProgramExecutionContext } from "app/services/program/program-execution.context";
-import { ITutorialsContentService, ITutorialInfo } from "app/services/tutorials/tutorials-content-service";
-
+import { TutorialsContentService, ITutorialInfo } from "app/services/tutorials/tutorials-content-service";
+import { EventsTrackingService, EventAction } from "app/services/infrastructure/events-tracking.service";
+import { tutorialsDefaultLayout, tutorialsDefaultMobileLayout } from "app/ui/tutorials/tutorials-default-goldenlayout";
 import { MainMenuComponent } from "app/ui/main-menu.component";
 import { GoldenLayoutComponent, IPanelConfig } from "app/ui/_shared/golden-layout.component";
 import { CodePanelComponent, ICodePanelComponentProps } from "app/ui/playground/code-panel.component";
 import { OutputPanelComponent, IOutputPanelComponentProps } from "app/ui/playground/output-panel.component";
 import { TutorialViewComponent, ITutorialViewComponentProps } from "app/ui/tutorials/tutorial-view.component";
 import { LoadingComponent } from "app/ui/_generic/loading.component";
-import { IEventsTrackingService, EventAction } from "app/services/infrastructure/events-tracking.service";
-import { tutorialsDefaultLayout, tutorialsDefaultMobileLayout } from "app/ui/tutorials/tutorials-default-goldenlayout";
-import { ProgramModelConverter } from "app/services/program/program-model.converter";
-import { checkIsMobileDevice } from "app/utils/device-helper";
 
 interface IComponentState {
   isLoading: boolean;
@@ -50,14 +49,15 @@ export interface ITutorialPageRouteParams {
 }
 
 export class TutorialsPageComponent extends React.Component<IComponentProps, IComponentState> {
-  private notificationService = resolveInject(INotificationService);
-  private navService = resolveInject(INavigationService);
+  private notificationService = resolveInject(NotificationService);
+  private navService = resolveInject(NavigationService);
+  private errorService = resolveInject(ErrorService);
   private titleService = resolveInject(TitleService);
   private userSettingsService = resolveInject(IUserSettingsService);
   private themesService = resolveInject(ThemesService);
   private turtlesService = resolveInject(TurtlesService);
-  private tutorialsLoader = resolveInject(ITutorialsContentService);
-  private eventsTracking = resolveInject(IEventsTrackingService);
+  private tutorialsLoader = resolveInject(TutorialsContentService);
+  private eventsTracking = resolveInject(EventsTrackingService);
 
   private isMobileDevice = checkIsMobileDevice();
   private executionService = new ProgramExecutionContext();
@@ -67,11 +67,6 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
   private defaultLayoutConfigJSON = JSON.stringify(
     this.isMobileDevice ? tutorialsDefaultMobileLayout : tutorialsDefaultLayout
   );
-
-  private errorHandler = (err: ErrorDef) => {
-    this.notificationService.push({ message: err.message, type: "danger" });
-    this.setState({ isLoading: false });
-  };
 
   constructor(props: IComponentProps) {
     super(props);
@@ -102,13 +97,17 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
       isLoading: true
     });
 
-    const userSettings = await callActionSafe(this.errorHandler, async () => this.userSettingsService.get());
+    const userSettings = await callActionSafe(this.errorService.handleError, async () =>
+      this.userSettingsService.get()
+    );
     if (!userSettings) {
       return;
     }
     const theme = this.themesService.getTheme(userSettings.themeName);
     const turtleImage = this.turtlesService.getTurtleImage(userSettings.turtleId);
-    const tutorials = await callActionSafe(this.errorHandler, async () => this.tutorialsLoader.getTutorialsList());
+    const tutorials = await callActionSafe(this.errorService.handleError, async () =>
+      this.tutorialsLoader.getTutorialsList()
+    );
     if (!tutorials) {
       return;
     }

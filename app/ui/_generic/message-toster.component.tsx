@@ -1,5 +1,6 @@
 import * as React from "react";
-import { Observable, Subscription } from "rxjs/Rx";
+import { Observable } from "rxjs/Observable";
+import { Subscription } from "rxjs/Subscription";
 
 import "./message-toster.component.less";
 

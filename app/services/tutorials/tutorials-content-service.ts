@@ -1,5 +1,5 @@
 import * as markdown from "markdown-it";
-import { ILocalizedContentLoader } from "app/services/infrastructure/localized-content-loader";
+import { LocalizedContentLoader } from "app/services/infrastructure/localized-content-loader";
 import { injectable, inject } from "app/di";
 
 export interface ITutorialInfo {
@@ -24,16 +24,11 @@ export interface ITutorialStepContent {
 /**
  * Gets access to tutorials content
  */
-export abstract class ITutorialsContentService {
-  abstract getTutorialsList(): Promise<ITutorialInfo[]>;
-  abstract getStep(tutorialId: string, stepId: string): Promise<ITutorialStepContent>;
-}
-
 @injectable()
-export class TutorialsContentService implements ITutorialsContentService {
+export class TutorialsContentService {
   private tutorialInfos: ITutorialInfo[] = [];
 
-  constructor(@inject(ILocalizedContentLoader) private contentLoader: ILocalizedContentLoader) {}
+  constructor(@inject(LocalizedContentLoader) private contentLoader: LocalizedContentLoader) {}
 
   async getTutorialsList(): Promise<ITutorialInfo[]> {
     if (this.tutorialInfos.length == 0) {

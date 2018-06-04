@@ -1,5 +1,5 @@
-import { Subject } from "rxjs/Rx";
 import { injectable } from "app/di";
+import { Subject } from "rxjs/Subject";
 import { ISubscription } from "rxjs/Subscription";
 
 export enum EventAction {
@@ -39,13 +39,8 @@ interface IEventData {
 
 type EventHandler = (eventData: IEventData) => void;
 
-export abstract class IEventsTrackingService {
-  abstract sendEvent(eventAction: EventAction, data?: string): void;
-  abstract subscribe(handler: EventHandler): void;
-}
-
 @injectable()
-export class EventsTrackingService implements IEventsTrackingService {
+export class EventsTrackingService {
   private eventsSubject = new Subject<IEventData>();
   private subscriptions: { handler: EventHandler; subscription: ISubscription }[] = [];
 
