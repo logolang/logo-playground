@@ -148,7 +148,11 @@ export class GoldenLayoutComponent extends React.Component<IComponentProps, ICom
 
   stateChangeHandler = () => {
     const config = this.layout.toConfig();
-    this.scanObjAndDeleteProps(config, ["props", "componentState", "title"]);
+    this.scanObjAndSetProps(config, {
+      props: undefined,
+      componentState: undefined,
+      title: "Panel"
+    });
     const json = JSON.stringify(config);
     if (this.stateLastJSON != json) {
       this.stateLastJSON = json;
@@ -156,13 +160,13 @@ export class GoldenLayoutComponent extends React.Component<IComponentProps, ICom
     }
   };
 
-  scanObjAndDeleteProps(obj: any, propNamesToDelete: string[]) {
+  scanObjAndSetProps(obj: any, propsToSet: any) {
     for (const [k, v] of Object.entries(obj)) {
-      if (propNamesToDelete.includes(k)) {
-        delete obj[k];
+      if (propsToSet.hasOwnProperty(k)) {
+        obj[k] = propsToSet[k];
       } else {
         if (typeof v === "object" && v) {
-          this.scanObjAndDeleteProps(v, propNamesToDelete);
+          this.scanObjAndSetProps(v, propsToSet);
         }
       }
     }

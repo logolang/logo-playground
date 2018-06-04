@@ -46,7 +46,6 @@ export const tutorialsDefaultMobileLayout = {
     {
       type: "column",
       isClosable: true,
-      reorderEnabled: true,
       title: "",
       content: [
         {
@@ -55,7 +54,6 @@ export const tutorialsDefaultMobileLayout = {
           height: 57.046411353202295,
           activeItemIndex: 0,
           isClosable: true,
-          reorderEnabled: true,
           title: "",
           content: [
             {
@@ -63,16 +61,14 @@ export const tutorialsDefaultMobileLayout = {
               type: "component",
               component: "tutorial-panel",
               componentName: "lm-react-component",
-              isClosable: false,
-              reorderEnabled: true
+              isClosable: false
             },
             {
               title: "Code",
               type: "component",
               component: "code-panel",
               componentName: "lm-react-component",
-              isClosable: false,
-              reorderEnabled: true
+              isClosable: false
             }
           ]
         },
@@ -80,7 +76,6 @@ export const tutorialsDefaultMobileLayout = {
           type: "stack",
           height: 42.953588646797705,
           isClosable: true,
-          reorderEnabled: true,
           title: "",
           activeItemIndex: 0,
           content: [
@@ -90,8 +85,7 @@ export const tutorialsDefaultMobileLayout = {
               component: "output-panel",
               componentName: "lm-react-component",
               height: 55,
-              isClosable: false,
-              reorderEnabled: true
+              isClosable: false
             }
           ]
         }
