@@ -4,18 +4,17 @@ import { Link, RouteComponentProps } from "react-router-dom";
 import { createCompareFunction } from "app/utils/syntax-helpers";
 import { resolveInject } from "app/di";
 import { Routes } from "app/routes";
-import { _T } from "app/services/customizations/localization.service";
+import { $T } from "app/i18n/strings";
 import { PersonalGalleryService } from "app/services/gallery/personal-gallery.service";
 import { ProgramModel } from "app/services/program/program.model";
 import { GallerySamplesRepository } from "app/services/gallery/gallery-samples.repository";
 import { ProgramStorageType, ProgramManagementService } from "app/services/program/program-management.service";
-import { ICurrentUserService } from "app/services/login/current-user.service";
+import { CurrentUserService } from "app/services/login/current-user.service";
 import { TitleService } from "app/services/infrastructure/title.service";
-import { IEventsTrackingService, EventAction } from "app/services/infrastructure/events-tracking.service";
+import { EventsTrackingService, EventAction } from "app/services/infrastructure/events-tracking.service";
 
 import { MainMenuComponent } from "app/ui/main-menu.component";
 import { ModalComponent } from "app/ui/_generic/modal.component";
-import { DateTimeStampComponent } from "app/ui/_generic/date-time-stamp.component";
 import { NoDataComponent } from "app/ui/_generic/no-data.component";
 import { AlertMessageComponent } from "app/ui/_generic/alert-message.component";
 import { LoadingComponent } from "app/ui/_generic/loading.component";
@@ -35,11 +34,11 @@ interface IComponentState {
 interface IComponentProps extends RouteComponentProps<void> {}
 
 export class GalleryPageComponent extends React.Component<IComponentProps, IComponentState> {
-  private currentUser = resolveInject(ICurrentUserService);
+  private currentUser = resolveInject(CurrentUserService);
   private titleService = resolveInject(TitleService);
   private galleryService = resolveInject(PersonalGalleryService);
   private samplesRepo = resolveInject(GallerySamplesRepository);
-  private eventsTracker = resolveInject(IEventsTrackingService);
+  private eventsTracker = resolveInject(EventsTrackingService);
   private programManagementService = resolveInject(ProgramManagementService);
 
   constructor(props: IComponentProps) {
@@ -54,13 +53,14 @@ export class GalleryPageComponent extends React.Component<IComponentProps, IComp
   }
 
   async componentDidMount() {
-    this.titleService.setDocumentTitle(_T("Gallery"));
+    this.titleService.setDocumentTitle($T.gallery.galleryTitle);
     this.eventsTracker.sendEvent(EventAction.openGallery);
     await this.loadData();
   }
 
   async loadData() {
     const sortingFunction = createCompareFunction<ProgramModel>([
+      { sortBy: x => x.hasTempLocalModifications, direction: "desc" },
       { sortBy: x => x.dateLastEdited, direction: "desc" },
       { sortBy: x => x.name }
     ]);
@@ -115,13 +115,13 @@ export class GalleryPageComponent extends React.Component<IComponentProps, IComp
             ) : (
               <>
                 <br />
-                <h1 className="title">
-                  {_T("Personal library")}
+                <h1 className="title is-4">
+                  {$T.gallery.personalLibrary}
                   {this.state.isSyncronizing && (
                     <>
                       &nbsp;&nbsp;<i
                         className="fa fa-refresh fa-spin has-text-grey-lighter"
-                        title={_T("Synchronizing gallery with remote storage")}
+                        title={$T.gallery.syncronizing}
                       />
                     </>
                   )}
@@ -132,10 +132,7 @@ export class GalleryPageComponent extends React.Component<IComponentProps, IComp
                   </div>
                 ) : (
                   <>
-                    <NoDataComponent
-                      title=""
-                      description={_T("You do not have any programs stored in personal library yet.")}
-                    />
+                    <NoDataComponent title="" description={$T.gallery.emptyLibrary} />
                   </>
                 )}
 
@@ -145,14 +142,12 @@ export class GalleryPageComponent extends React.Component<IComponentProps, IComp
                 {this.state.samples &&
                   this.state.samples.length > 0 && (
                     <>
-                      <h1 className="title">{_T("Examples gallery")}</h1>
+                      <h1 className="title is-4">{$T.gallery.examplesGallery}</h1>
                       <div className="program-cards-container">
                         {this.state.samples.map(pr => this.renderProgramCard(pr, ProgramStorageType.samples, false))}
                       </div>
                     </>
                   )}
-
-                {this.renderDeleteModal()}
               </>
             )}
           </div>
@@ -170,89 +165,26 @@ export class GalleryPageComponent extends React.Component<IComponentProps, IComp
       <div key={p.id} className="card program-card">
         <div className="card-image">
           {p.screenshot ? (
-            <figure className="image is-4by3">
+            <figure className="image is-4by3 gallery-img-container">
               <Link to={link}>
                 <img src={p.screenshot} />
+
+                <div className="gallery-img-title">
+                  {p.hasTempLocalModifications && (
+                    <>
+                      <i className="fa fa-asterisk icon-sm" aria-hidden="true" title={$T.program.programHasChanges} />
+                      &nbsp;
+                    </>
+                  )}
+                  {p.name}
+                </div>
               </Link>
             </figure>
           ) : (
-            <NoDataComponent iconClass="fa-picture-o" title={_T("No image")} />
+            <NoDataComponent iconClass="fa-picture-o" title={$T.gallery.noImage} />
           )}
         </div>
-        <div className="card-content">
-          <div className="media">
-            <div className="media-content">
-              <p className="title is-5">
-                {p.hasTempLocalModifications && (
-                  <>
-                    <i className="fa fa-asterisk icon-sm" aria-hidden="true" title={_T("This program has changes")} />
-                    &nbsp;
-                  </>
-                )}
-                <Link to={link}>{p.name}</Link>
-              </p>
-              <div className="subtitle is-7">
-                <DateTimeStampComponent datetime={p.dateLastEdited} />
-              </div>
-
-              {deleteBox && (
-                <a
-                  onClick={() => {
-                    this.setState({ programToDelete: p });
-                  }}
-                >
-                  {_T("Delete")}
-                </a>
-              )}
-            </div>
-          </div>
-        </div>
       </div>
-    );
-  }
-
-  renderDeleteModal() {
-    const p = this.state.programToDelete;
-
-    return (
-      p && (
-        <ModalComponent
-          show
-          onConfirm={this.confirmDelete}
-          actionButtonText={_T("Delete")}
-          cancelButtonText={_T("Cancel")}
-          title={_T("Are you sure?")}
-          onCancel={() => {
-            this.setState({ programToDelete: undefined });
-          }}
-        >
-          <AlertMessageComponent title={_T("You are going to delete this program.")} type="warning" />
-          <br />
-          <div className="card">
-            <div className="card-content">
-              <div className="media">
-                <div className="media-left">
-                  {p.screenshot ? (
-                    <figure className="image is-128x128">
-                      <img src={p.screenshot} />
-                    </figure>
-                  ) : (
-                    <NoDataComponent iconClass="fa-picture-o" title={_T("No image")} />
-                  )}
-                </div>
-                <div className="media-content">
-                  <br />
-                  <p className="subtitle is-4">{p.name}</p>
-                  <p className="is-6">
-                    <strong>{_T("Edited")}: </strong>
-                    <DateTimeStampComponent datetime={p.dateLastEdited} />
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </ModalComponent>
-      )
     );
   }
 }

@@ -1,17 +1,14 @@
-import { Observable, Subject } from "rxjs/Rx";
+import { Subject } from "rxjs/Subject";
+import { Observable } from "rxjs/Observable";
+
 import { injectable } from "app/di";
 
 interface INavigationRequest {
   route: string;
 }
 
-export abstract class INavigationService {
-  abstract navigate(request: INavigationRequest): void;
-  abstract getObservable(): Observable<INavigationRequest>;
-}
-
 @injectable()
-export class NavigationService implements INavigationService {
+export class NavigationService {
   private subject = new Subject<INavigationRequest>();
 
   navigate(request: INavigationRequest): void {
@@ -19,6 +16,6 @@ export class NavigationService implements INavigationService {
   }
 
   getObservable(): Observable<INavigationRequest> {
-    return this.subject;
+    return this.subject.asObservable();
   }
 }

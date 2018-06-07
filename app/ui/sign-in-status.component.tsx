@@ -3,9 +3,9 @@ import { Subscription } from "rxjs/Subscription";
 
 import { resolveInject } from "app/di";
 import { DependecyInjectionSetupService } from "app/di-setup";
-import { _T } from "app/services/customizations/localization.service";
-import { ICurrentUserService } from "app/services/login/current-user.service";
-import { ILoginService } from "app/services/login/login.service";
+import { $T } from "app/i18n/strings";
+import { CurrentUserService } from "app/services/login/current-user.service";
+import { LoginService } from "app/services/login/login.service";
 import { AuthProvider } from "app/services/login/user-info";
 
 interface IComponentState {}
@@ -15,8 +15,8 @@ interface IComponentProps {
 }
 
 export class SignInStatusComponent extends React.Component<IComponentProps, IComponentState> {
-  private currentUser = resolveInject(ICurrentUserService);
-  private loginService = resolveInject(ILoginService);
+  private currentUser = resolveInject(CurrentUserService);
+  private loginService = resolveInject(LoginService);
   private diService = resolveInject(DependecyInjectionSetupService);
 
   private subscriptions: Subscription[] = [];
@@ -70,31 +70,23 @@ export class SignInStatusComponent extends React.Component<IComponentProps, ICom
           )}
 
           <div className="media-content">
-            <p className="title is-4">{userInfo.attributes.name || _T("Guest")}</p>
-            <p className="subtitle is-6">{userInfo.attributes.email}</p>
+            <p className="title is-5 is-marginless">{userInfo.attributes.name || $T.settings.userGuestNickName}</p>
+            <p>{userInfo.attributes.email}</p>
+            {this.currentUser.getLoginStatus().isLoggedIn ? (
+              <>
+                <p>
+                  <span className="tag is-primary is-medium">
+                    {this.getAuthProviderIcon(userInfo.attributes.authProvider)} {userInfo.attributes.authProvider}
+                  </span>
+                </p>
+              </>
+            ) : (
+              <>
+                <p>{$T.gallery.notLoggedInText}</p>
+                {this.loginService.renderLoginUI()}
+              </>
+            )}
           </div>
-        </div>
-
-        <div className="content">
-          {this.currentUser.getLoginStatus().isLoggedIn ? (
-            <>
-              <div className="level is-mobile">
-                <div className="level-left">
-                  <div className="level-item">{_T("You are signed in via")}</div>
-                  <div className="level-item">
-                    <span className="tag is-primary is-medium">
-                      {this.getAuthProviderIcon(userInfo.attributes.authProvider)} {userInfo.attributes.authProvider}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </>
-          ) : (
-            <>
-              <p>{_T("NOT_LOGGED_IN_TEXT_BLOCK")}</p>
-              {this.loginService.renderLoginUI()}
-            </>
-          )}
         </div>
       </div>
     );

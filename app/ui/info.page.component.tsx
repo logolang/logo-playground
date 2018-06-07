@@ -4,11 +4,11 @@ import * as markdown from "markdown-it";
 
 import { MainMenuComponent } from "app/ui/main-menu.component";
 
-import { _T } from "app/services/customizations/localization.service";
+import { $T } from "app/i18n/strings";
 import { resolveInject } from "app/di";
 import { TitleService } from "app/services/infrastructure/title.service";
-import { IAppInfo } from "app/services/infrastructure/app-info";
-import { IEventsTrackingService, EventAction } from "app/services/infrastructure/events-tracking.service";
+import { AppInfo } from "app/services/infrastructure/app-info";
+import { EventsTrackingService, EventAction } from "app/services/infrastructure/events-tracking.service";
 
 interface IComponentState {}
 
@@ -16,14 +16,14 @@ interface IComponentProps extends RouteComponentProps<void> {}
 
 export class InfoPageComponent extends React.Component<IComponentProps, IComponentState> {
   private titleService = resolveInject(TitleService);
-  private appInfo = resolveInject(IAppInfo);
-  private eventsTracking = resolveInject(IEventsTrackingService);
+  private appInfo = resolveInject(AppInfo);
+  private eventsTracking = resolveInject(EventsTrackingService);
   private thirdPartyCreditsMd: string;
 
   constructor(props: IComponentProps) {
     super(props);
     this.state = {};
-    this.titleService.setDocumentTitle(_T("About"));
+    this.titleService.setDocumentTitle($T.about.aboutTitle);
     this.eventsTracking.sendEvent(EventAction.openAbout);
 
     const contentMd = require("CREDITS.md") as string;

@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as cn from "classnames";
-import { _T } from "app/services/customizations/localization.service";
+import { $T } from "app/i18n/strings";
 
 interface IComponentState {
   menuIsActive?: boolean;
@@ -17,6 +17,7 @@ interface IComponentProps {
   save?: () => void;
   onShareProgram: () => void;
   exportImage: () => void;
+  onDeleteProgram?(): void;
 }
 
 export class ProgramControlsMenuComponent extends React.Component<IComponentProps, IComponentState> {
@@ -38,9 +39,9 @@ export class ProgramControlsMenuComponent extends React.Component<IComponentProp
             type="button"
             className="button is-success is-borderless"
             onClick={this.props.runProgram}
-            title={_T("Execute the program") + " (F9)"}
+            title={$T.program.runDescription + " (F9)"}
           >
-            {_T("Run")}
+            {$T.program.run}
           </button>
         )}{" "}
         {this.props.isRunning && (
@@ -48,9 +49,9 @@ export class ProgramControlsMenuComponent extends React.Component<IComponentProp
             type="button"
             className="button is-warning is-borderless"
             onClick={this.props.stopProgram}
-            title={_T("Stop execution of the program")}
+            title={$T.program.stopDescription}
           >
-            {_T("Stop")}
+            {$T.program.stop}
           </button>
         )}{" "}
         <div className={cn("dropdown is-right is-borderless", { "is-active": this.state.menuIsActive })}>
@@ -75,7 +76,7 @@ export class ProgramControlsMenuComponent extends React.Component<IComponentProp
                   }}
                 >
                   <i className="fa fa-undo icon-fixed-width" aria-hidden="true" />
-                  {_T("Revert changes")}
+                  {$T.program.revertChanges}
                 </a>
               )}
               {this.props.saveAsNew && (
@@ -87,7 +88,19 @@ export class ProgramControlsMenuComponent extends React.Component<IComponentProp
                   }}
                 >
                   <i className="fa fa-clone icon-fixed-width" aria-hidden="true" />
-                  {_T("Save as ...")}
+                  {$T.program.saveAs}
+                </a>
+              )}
+              {this.props.onDeleteProgram && (
+                <a
+                  className="dropdown-item"
+                  onClick={() => {
+                    this.setState({ menuIsActive: false });
+                    this.props.onDeleteProgram && this.props.onDeleteProgram();
+                  }}
+                >
+                  <i className="fa fa-trash icon-fixed-width" aria-hidden="true" />
+                  {$T.common.delete}
                 </a>
               )}
 
@@ -102,7 +115,7 @@ export class ProgramControlsMenuComponent extends React.Component<IComponentProp
                   }}
                 >
                   <i className="fa fa-check-square-o icon-fixed-width" aria-hidden="true" />
-                  {_T("Save")}
+                  {$T.program.save}
                 </a>
               )}
               <a
@@ -113,7 +126,7 @@ export class ProgramControlsMenuComponent extends React.Component<IComponentProp
                 }}
               >
                 <i className="fa fa-share-alt icon-fixed-width" aria-hidden="true" />
-                {_T("Share")}
+                {$T.program.share}
               </a>
               <hr className="dropdown-divider" />
               <a
@@ -124,7 +137,7 @@ export class ProgramControlsMenuComponent extends React.Component<IComponentProp
                 }}
               >
                 <i className="fa fa-camera icon-fixed-width" aria-hidden="true" />
-                {_T("Take screenshot")}
+                {$T.program.takeScreenshot}
               </a>
             </div>
           </div>

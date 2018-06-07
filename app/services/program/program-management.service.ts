@@ -51,9 +51,7 @@ export class ProgramManagementService {
   initLocalModificationsFlag(programs: ProgramModel[]) {
     for (const program of programs) {
       const tempCode = this.localTempStorage.getCode(program.id);
-      if (tempCode) {
-        program.hasTempLocalModifications = true;
-      }
+      program.hasTempLocalModifications = !!tempCode;
     }
   }
 

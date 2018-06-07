@@ -1,0 +1,284 @@
+# Olek, 2017.
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language: ru\n"
+"Language-Team: \n"
+"Content-Type: \n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+
+msgid "about.aboutTitle"
+msgstr "Информация"
+
+msgid "cheatSheet.cheatSheetTitle"
+msgstr "Шпаргалка"
+
+msgid "common.appTitle"
+msgstr "Лого"
+
+msgid "common.areYouSure"
+msgstr "Вы уверены?"
+
+msgid "common.cancel"
+msgstr "Отменить"
+
+msgid "common.continue"
+msgstr "Продолжить"
+
+msgid "common.copied"
+msgstr "Скопировано"
+
+msgid "common.copyToClipboard"
+msgstr "Скопировать в буфер обмена"
+
+msgid "common.delete"
+msgstr "Удалить"
+
+msgid "common.error"
+msgstr "Произошла ошибка"
+
+msgid "common.loading"
+msgstr "Загрузка..."
+
+msgid "common.login"
+msgstr "Войти"
+
+msgid "common.logout"
+msgstr "Выйти"
+
+msgid "common.message"
+msgstr "Сообщение"
+
+msgid "common.noImage"
+msgstr "Нет изображения"
+
+msgid "common.save"
+msgstr "Сохранить"
+
+msgid "common.signIn"
+msgstr "Войти"
+
+msgid "common.signInWithGoogle"
+msgstr "Войти через Google"
+
+msgid "common.signOut"
+msgstr "Выйти"
+
+msgid "common.signedVia"
+msgstr "Вы вошли через"
+
+msgid "gallery.editedDate"
+msgstr "Дата обновления"
+
+msgid "gallery.emptyLibrary"
+msgstr "Ваша персональная галлерея пуста."
+
+msgid "gallery.examplesGallery"
+msgstr "Образцы"
+
+msgid "gallery.galleryImage"
+msgstr "Картина в галлерею"
+
+msgid "gallery.galleryTitle"
+msgstr "Галлерея"
+
+msgid "gallery.noImage"
+msgstr "Нет изображения"
+
+msgid "gallery.notLoggedInText"
+msgstr "Для синхронизации персональной галлереи необходимо залогиниться."
+
+msgid "gallery.personalLibrary"
+msgstr "Персональная библиотека"
+
+msgid "gallery.programHasBeenSaved"
+msgstr "Программа сохранена успешно"
+
+msgid "gallery.syncronizing"
+msgstr "Синхронизация"
+
+msgid "program.code"
+msgstr "Код программы"
+
+msgid "program.imagePreview"
+msgstr "Скриншот"
+
+msgid "program.imageUrl"
+msgstr "Публичная ссылка"
+
+msgid "program.output"
+msgstr "Вывод"
+
+msgid "program.playgroundTitle"
+msgstr "Игровая площадка"
+
+msgid "program.pleaseEnterNameForYourProgram"
+msgstr "Введите название своей программы"
+
+msgid "program.program"
+msgstr "Программа"
+
+msgid "program.programHasChanges"
+msgstr "У вас есть изменения в программе."
+
+msgid "program.programName"
+msgstr "Название программы"
+
+msgid "program.publicUrl"
+msgstr "Публичная ссылка"
+
+msgid "program.revertChanges"
+msgstr "Отменить изменения"
+
+msgid "program.run"
+msgstr "Выполнить"
+
+msgid "program.runDescription"
+msgstr "Запустить программу"
+
+msgid "program.save"
+msgstr "Сохранить"
+
+msgid "program.saveAs"
+msgstr "Сохранить как ..."
+
+msgid "program.saveToLibrary"
+msgstr "Сохранить в галерее"
+
+msgid "program.screenShotNotAvailable"
+msgstr "Скриншот невозможен потому что программа еще не была выполнена."
+
+msgid "program.screenshot"
+msgstr "Скриншот"
+
+msgid "program.share"
+msgstr "Опубликовать"
+
+msgid "program.shareYourProgram"
+msgstr "Опубликовать"
+
+msgid "program.stop"
+msgstr "Остановить"
+
+msgid "program.stopDescription"
+msgstr "Остановить выполнение программы"
+
+msgid "program.takeScreenshot"
+msgstr "Сделать скриншот"
+
+msgid "program.youAreGoingToDeleteProgram"
+msgstr "Вы собираетесь удалить эту программу."
+
+msgid "settings.addedProgramsMessage"
+msgstr[0] "Добавлена %d программа."
+msgstr[1] "Добавлено %d программы."
+msgstr[2] "Добавлено %d программ."
+
+msgid "settings.export"
+msgstr "Экспорт"
+
+msgid "settings.import"
+msgstr "Импорт"
+
+msgid "settings.importCompletedTitle"
+msgstr "Импорт завершен"
+
+msgid "settings.language"
+msgstr "Язык"
+
+msgid "settings.settingsTitle"
+msgstr "Настройки"
+
+msgid "settings.turtleSize"
+msgstr "Размер черепахи"
+
+msgid "settings.turtleSizes.extraSmall"
+msgstr "Очень маленький"
+
+msgid "settings.turtleSizes.huge"
+msgstr "Огромный"
+
+msgid "settings.turtleSizes.large"
+msgstr "Крупный"
+
+msgid "settings.turtleSizes.medium"
+msgstr "Средний"
+
+msgid "settings.turtleSizes.small"
+msgstr "Маленький"
+
+msgid "settings.turtleSkin"
+msgstr "Вид черепахи"
+
+msgid "settings.turtleSkins.tt10"
+msgstr "Мистер"
+
+msgid "settings.turtleSkins.tt11"
+msgstr "Жорик"
+
+msgid "settings.turtleSkins.tt12"
+msgstr "Весёлый Боб"
+
+msgid "settings.turtleSkins.tt13"
+msgstr "Ныряльщик"
+
+msgid "settings.turtleSkins.tt2"
+msgstr "Хамелеон"
+
+msgid "settings.turtleSkins.tt9"
+msgstr "Принцесса"
+
+msgid "settings.uiTheme"
+msgstr "Тема пользовательского интерфейса"
+
+msgid "settings.userGuestNickName"
+msgstr "Гость"
+
+msgid "settings.youHaveNProgramsInLibrary"
+msgstr[0] "У вас %d программа"
+msgstr[1] "У вас %d программы"
+msgstr[2] "У вас %d программ"
+
+msgid "tutorial.back"
+msgstr "Назад"
+
+msgid "tutorial.chooseAnotherTutorial"
+msgstr "Выбрать другой учебник"
+
+msgid "tutorial.chooseTutorial"
+msgstr "Выберите учебник"
+
+msgid "tutorial.fixTheCodeMessage"
+msgstr "Если ваш код не работает, как описано в учебнике, вы можете заменить его рабочей версией."
+
+msgid "tutorial.fixTheCodeTitle"
+msgstr "Исправить код?"
+
+msgid "tutorial.fixTheCodeWarning"
+msgstr "Это полностью перезапишет ваш код."
+
+msgid "tutorial.helpItsNotworking"
+msgstr "Помогите - не работает!"
+
+msgid "tutorial.noLeaveItAsIs"
+msgstr "Отменить"
+
+msgid "tutorial.start"
+msgstr "Старт"
+
+msgid "tutorial.stepIndicator"
+msgstr "Шаг %1$s из %2$s"
+
+msgid "tutorial.tutorial"
+msgstr "Учебник"
+
+msgid "tutorial.tutorialsTitle"
+msgstr "Учебные пособия"
+
+msgid "tutorial.yesFixMyCode"
+msgstr "Да, исправить"

@@ -1,5 +1,5 @@
 import { injectable, inject } from "app/di";
-import { ICurrentUserService } from "app/services/login/current-user.service";
+import { CurrentUserService } from "app/services/login/current-user.service";
 
 /**
  * This service is to store and get user temporary code stored in local browser
@@ -9,7 +9,7 @@ import { ICurrentUserService } from "app/services/login/current-user.service";
 @injectable()
 export class LocalTempCodeStorage {
   private storagePrefix: string = "";
-  constructor(@inject(ICurrentUserService) private currentUser: ICurrentUserService) {
+  constructor(@inject(CurrentUserService) private currentUser: CurrentUserService) {
     const userId = this.currentUser.getLoginStatus().userInfo.attributes.email || "guest";
     this.storagePrefix = "logo-playground.temp-code:" + userId + ":";
   }

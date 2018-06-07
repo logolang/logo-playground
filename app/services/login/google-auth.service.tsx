@@ -3,7 +3,7 @@ import { LoginStatus, NotLoggenInStatus } from "app/services/login/current-user.
 import { Subject } from "rxjs/Subject";
 import { IAuthService } from "app/services/login/auth.service";
 import { AuthProvider } from "app/services/login/user-info";
-import { _T } from "app/services/customizations/localization.service";
+import { $T } from "app/i18n/strings";
 
 export class GoogleAuthService implements IAuthService {
   private isSignedIn: boolean = false;
@@ -112,7 +112,7 @@ export class GoogleAuthService implements IAuthService {
           <span className="icon">
             <i className="fa fa-google" aria-hidden="true" />
           </span>
-          <span>{_T("Sign in with Google")}</span>
+          <span>{$T.common.signInWithGoogle}</span>
         </button>
       </div>
     );

@@ -1,13 +1,13 @@
 import { injectable, inject } from "app/di";
 import { ProgramModel } from "app/services/program/program.model";
 import { PersonalGalleryLocalRepository } from "app/services/gallery/personal-gallery-local.repository";
-import { IPersonalGalleryRemoteRepository } from "app/services/gallery/personal-gallery-remote.repository";
+import { PersonalGalleryRemoteRepository } from "app/services/gallery/personal-gallery-remote.repository";
 
 @injectable()
 export class PersonalGalleryService {
   constructor(
     @inject(PersonalGalleryLocalRepository) private localProgramsRepository: PersonalGalleryLocalRepository,
-    @inject(IPersonalGalleryRemoteRepository) private remoteProgramsRepository?: IPersonalGalleryRemoteRepository
+    @inject(PersonalGalleryRemoteRepository) private remoteProgramsRepository?: PersonalGalleryRemoteRepository
   ) {}
 
   async getAll(): Promise<ProgramModel[] | undefined> {
