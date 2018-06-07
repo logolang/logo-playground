@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as cn from "classnames";
 
-import { _T } from "app/services/customizations/localization.service";
+import { $T } from "app/i18n/strings";
 
 import { ModalComponent } from "app/ui/_generic/modal.component";
 import { NoDataComponent } from "app/ui/_generic/no-data.component";
@@ -35,14 +35,14 @@ export class SaveProgramModalComponent extends React.Component<IComponentProps, 
     return (
       <ModalComponent
         show
-        title={_T("Save to personal library")}
+        title={$T.program.saveToLibrary}
         onConfirm={this.saveProgramAction}
         onCancel={this.props.onClose}
-        actionButtonText={_T("Save")}
-        cancelButtonText={_T("Cancel")}
+        actionButtonText={$T.common.save}
+        cancelButtonText={$T.common.cancel}
       >
         <div className="field">
-          <label className="label">{_T("Program name")}</label>
+          <label className="label">{$T.program.programName}</label>
           <div className="control">
             <input
               type="text"
@@ -50,7 +50,7 @@ export class SaveProgramModalComponent extends React.Component<IComponentProps, 
               disabled={!this.props.allowRename}
               className={cn("input", { "is-danger": !!this.state.errorMessage })}
               id="program-name-in-save-dialog"
-              placeholder={_T("Please enter the name for your program")}
+              placeholder={$T.program.pleaseEnterNameForYourProgram}
               autoFocus
               value={this.state.programName}
               onChange={event => {
@@ -69,7 +69,7 @@ export class SaveProgramModalComponent extends React.Component<IComponentProps, 
           </div>
         </div>
         <div className="field">
-          <label className="label">{_T("Gallery image")}</label>
+          <label className="label">{$T.gallery.galleryImage}</label>
           <div className="has-text-centered">
             <div className="box is-inline-block">
               {this.props.screenshot ? (
@@ -77,7 +77,7 @@ export class SaveProgramModalComponent extends React.Component<IComponentProps, 
                   <img src={this.props.screenshot} />
                 </figure>
               ) : (
-                <NoDataComponent iconClass="fa-picture-o" title={_T("No image")} />
+                <NoDataComponent iconClass="fa-picture-o" title={$T.gallery.noImage} />
               )}
             </div>
           </div>

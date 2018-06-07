@@ -13,43 +13,43 @@ import { TutorialsPageComponent, ITutorialPageRouteParams } from "app/ui/tutoria
 
 export const RoutesComponent = (): JSX.Element => (
   <Switch>
-    <Route path={Routes.loginRoot.relativePath} component={LoginPageComponent} />
+    <Route path={Routes.loginRoot.path} component={LoginPageComponent} />
 
-    <Route path={Routes.galleryRoot.relativePath} component={GalleryPageComponent} />
+    <Route path={Routes.galleryRoot.path} component={GalleryPageComponent} />
 
-    <Route path={Routes.settingsRoot.relativePath} component={UserProfilePageComponent} />
+    <Route path={Routes.settingsRoot.path} component={UserProfilePageComponent} />
 
-    <Route path={Routes.infoRoot.relativePath} component={InfoPageComponent} />
+    <Route path={Routes.infoRoot.path} component={InfoPageComponent} />
 
-    <Route exact path={Routes.playground.relativePath} component={PlaygroundPageComponent} />
+    <Route exact path={Routes.playground.path} component={PlaygroundPageComponent} />
     <Route
       exact
-      path={Routes.codeGist.relativePath}
+      path={Routes.codeGist.path}
       render={props => (
         <PlaygroundPageComponent storageType={ProgramStorageType.gist} programId={props.match.params.id} />
       )}
     />
     <Route
       exact
-      path={Routes.codeExample.relativePath}
+      path={Routes.codeExample.path}
       render={props => (
         <PlaygroundPageComponent storageType={ProgramStorageType.samples} programId={props.match.params.id} />
       )}
     />
     <Route
       exact
-      path={Routes.codeLibrary.relativePath}
+      path={Routes.codeLibrary.path}
       render={props => (
         <PlaygroundPageComponent storageType={ProgramStorageType.gallery} programId={props.match.params.id} />
       )}
     />
 
-    <Route path={Routes.cheatSheetRoot.relativePath} component={CheatSheetPageComponent} />
+    <Route path={Routes.cheatSheetRoot.path} component={CheatSheetPageComponent} />
 
-    <Route exact path={Routes.tutorialsRoot.relativePath} component={TutorialsPageComponent} />
-    <Route exact path={Routes.tutorialSpecified.relativePath} component={TutorialsPageComponent} />
+    <Route exact path={Routes.tutorialsRoot.path} component={TutorialsPageComponent} />
+    <Route exact path={Routes.tutorialSpecified.path} component={TutorialsPageComponent} />
 
-    <Redirect from="/" to={Routes.galleryRoot.relativePath} />
+    <Redirect from="/" to={Routes.galleryRoot.path} />
 
     {/* Default route will be used in case if nothing matches */}
     <Route component={GalleryPageComponent} />
@@ -57,25 +57,15 @@ export const RoutesComponent = (): JSX.Element => (
 );
 
 export class Routes {
-  static readonly root = new RouteInfo(undefined, "/");
-
-  static readonly loginRoot = new RouteInfo(Routes.root, "/login");
-
-  static readonly infoRoot = new RouteInfo(Routes.root, "/info");
-  static readonly settingsRoot = new RouteInfo(Routes.root, "/settings");
-
-  static readonly galleryRoot = new RouteInfo(Routes.root, "/gallery");
-
-  static readonly playground = new RouteInfo(Routes.root, "/playground");
-  static readonly codeGist = new RouteInfo<{ id: string }>(Routes.root, "/shared/:id");
-  static readonly codeLibrary = new RouteInfo<{ id: string }>(Routes.root, "/library/:id");
-  static readonly codeExample = new RouteInfo<{ id: string }>(Routes.root, "/example/:id");
-
-  static readonly cheatSheetRoot = new RouteInfo(Routes.root, "/cheat-sheet");
-
-  static readonly tutorialsRoot = new RouteInfo(Routes.root, "/tutorials");
-  static readonly tutorialSpecified = new RouteInfo<ITutorialPageRouteParams>(
-    Routes.tutorialsRoot,
-    "/:tutorialId/:stepId"
-  );
+  static readonly loginRoot = new RouteInfo("/login");
+  static readonly infoRoot = new RouteInfo("/info");
+  static readonly settingsRoot = new RouteInfo("/settings");
+  static readonly galleryRoot = new RouteInfo("/gallery");
+  static readonly playground = new RouteInfo("/playground");
+  static readonly codeGist = new RouteInfo<{ id: string }>("/shared/:id");
+  static readonly codeLibrary = new RouteInfo<{ id: string }>("/library/:id");
+  static readonly codeExample = new RouteInfo<{ id: string }>("/example/:id");
+  static readonly cheatSheetRoot = new RouteInfo("/cheat-sheet");
+  static readonly tutorialsRoot = new RouteInfo("/tutorials");
+  static readonly tutorialSpecified = new RouteInfo<ITutorialPageRouteParams>("/tutorials/:tutorialId/:stepId");
 }

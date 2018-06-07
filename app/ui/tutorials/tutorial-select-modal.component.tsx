@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as cn from "classnames";
 import { ITutorialInfo } from "app/services/tutorials/tutorials-content-service";
-import { _T } from "app/services/customizations/localization.service";
+import { $T } from "app/i18n/strings";
 import { ModalComponent } from "app/ui/_generic/modal.component";
 import { CollapsiblePanelComponent } from "../_generic/collapsible-panel.component";
 import { DictionaryLike } from "app/utils/syntax-helpers";
@@ -54,11 +54,13 @@ export class TutorialSelectModalComponent extends React.Component<IComponentProp
       <ModalComponent
         show
         width="default"
-        title={_T("Choose a tutorial")}
+        title={$T.tutorial.chooseTutorial}
         onCancel={this.props.onCancel}
-        cancelButtonText={_T("Cancel")}
+        cancelButtonText={$T.common.cancel}
         actionButtonText={
-          this.state.currentSelectedTutorial.id === this.props.currentTutorialId ? _T("Continue") : _T("Start")
+          this.state.currentSelectedTutorial.id === this.props.currentTutorialId
+            ? $T.common.continue
+            : $T.tutorial.start
         }
         onConfirm={async () => {
           this.start();

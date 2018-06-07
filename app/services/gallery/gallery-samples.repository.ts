@@ -2,14 +2,14 @@ import { formatId } from "app/utils/formatter-helper";
 
 import { injectable } from "app/di";
 import { ProgramModel } from "app/services/program/program.model";
-import { IAjaxService } from "app/services/infrastructure/ajax-service";
+import { AjaxService } from "app/services/infrastructure/ajax-service";
 import { ProgramsHtmlSerializerService } from "app/services/gallery/programs-html-serializer.service";
 
 @injectable()
 export class GallerySamplesRepository {
   private cached_programs: ProgramModel[] | undefined;
 
-  constructor(private ajax: IAjaxService) {}
+  constructor(private ajax: AjaxService) {}
 
   async getAll(): Promise<ProgramModel[]> {
     if (this.cached_programs) {

@@ -5,18 +5,22 @@ import * as keymaster from "keymaster";
 
 import { resolveInject } from "app/di";
 
-import { _T } from "app/services/customizations/localization.service";
+import { $T } from "app/i18n/strings";
+import { Routes } from "app/routes";
 import { ProgramModel } from "app/services/program/program.model";
-import { INotificationService } from "app/services/infrastructure/notification.service";
+import { NotificationService } from "app/services/infrastructure/notification.service";
 import { ProgramExecutionContext } from "app/services/program/program-execution.context";
 import { ProgramManagementService, ProgramStorageType } from "app/services/program/program-management.service";
-import { IEventsTrackingService, EventAction } from "app/services/infrastructure/events-tracking.service";
+import { EventsTrackingService, EventAction } from "app/services/infrastructure/events-tracking.service";
+import { PersonalGalleryService } from "app/services/gallery/personal-gallery.service";
+import { NavigationService } from "app/services/infrastructure/navigation.service";
 
 import { ShareScreenshotModalComponent } from "app/ui/playground/share-screenshot-modal.component";
 import { ShareProgramModalComponent } from "app/ui/playground/share-program-modal.component";
 import { CodeInputLogoComponent } from "app/ui/_shared/code-input-logo.component";
 import { SaveProgramModalComponent } from "app/ui/playground/save-program-modal.component";
 import { ProgramControlsMenuComponent } from "app/ui/playground/program-controls-menu.component";
+import { DeleteProgramModalComponent } from "./delete-program-modal.component";
 
 import "./code-panel.component.less";
 
@@ -35,6 +39,7 @@ interface IComponentState {
   isSaveModalActive?: boolean;
   isSaveAsModalActive?: boolean;
   isShareModalActive?: boolean;
+  isDeleteModalActive?: boolean;
   isTakeScreenshotModalActive?: boolean;
   hasLocalTempChanges: boolean;
   screenshotDataToSave?: string;
@@ -42,9 +47,11 @@ interface IComponentState {
 }
 
 export class CodePanelComponent extends React.Component<ICodePanelComponentProps, IComponentState> {
-  private notificationService = resolveInject(INotificationService);
+  private notificationService = resolveInject(NotificationService);
+  private navigationService = resolveInject(NavigationService);
   private managementService = resolveInject(ProgramManagementService);
-  private eventsTracker = resolveInject(IEventsTrackingService);
+  private galleryService = resolveInject(PersonalGalleryService);
+  private eventsTracker = resolveInject(EventsTrackingService);
   private subscriptions: ISubscription[] = [];
   private saveTempCodeTimer: any = undefined;
 
@@ -114,6 +121,13 @@ export class CodePanelComponent extends React.Component<ICodePanelComponentProps
             }}
           />
         )}
+        {this.state.isDeleteModalActive && (
+          <DeleteProgramModalComponent
+            program={this.props.program}
+            onClose={() => this.setState({ isDeleteModalActive: false })}
+            onDelete={this.handleProgramDeleteConfirmation}
+          />
+        )}
 
         <ProgramControlsMenuComponent
           isRunning={execService.isRunning}
@@ -129,6 +143,9 @@ export class CodePanelComponent extends React.Component<ICodePanelComponentProps
               : undefined
           }
           saveAsNew={this.showSaveAsDialog}
+          onDeleteProgram={
+            this.props.program.storageType === ProgramStorageType.gallery ? this.handleDeleteProgramClick : undefined
+          }
           onShareProgram={this.shareProgram}
           revertChanges={
             this.state.hasLocalTempChanges && this.props.program.id ? this.revertCurrentProgram : undefined
@@ -194,6 +211,16 @@ export class CodePanelComponent extends React.Component<ICodePanelComponentProps
     return null;
   }
 
+  handleDeleteProgramClick = () => {
+    this.setState({ isDeleteModalActive: true });
+  };
+
+  handleProgramDeleteConfirmation = async () => {
+    await this.galleryService.remove(this.props.program.id);
+    this.eventsTracker.sendEvent(EventAction.deleteProgramFromPersonalLibrary);
+    this.navigationService.navigate({ route: Routes.galleryRoot.build({}) });
+  };
+
   showSaveDialog = async () => {
     const screenshot = await this.props.executionService.getScreenshot(true);
     this.setState({ isSaveModalActive: true, screenshotDataToSave: screenshot });
@@ -215,8 +242,8 @@ export class CodePanelComponent extends React.Component<ICodePanelComponentProps
     );
     this.notificationService.push({
       type: "success",
-      title: _T("Message"),
-      message: _T("Program has been saved in the personal library.")
+      title: $T.common.message,
+      message: $T.gallery.programHasBeenSaved
     });
     this.setState({ hasLocalTempChanges: false });
     this.props.hasChangesStatus && this.props.hasChangesStatus(false);
@@ -234,8 +261,8 @@ export class CodePanelComponent extends React.Component<ICodePanelComponentProps
     );
     this.notificationService.push({
       type: "success",
-      title: _T("Message"),
-      message: _T("Program has been saved in the personal library.")
+      title: $T.common.message,
+      message: $T.gallery.programHasBeenSaved
     });
     this.setState({ hasLocalTempChanges: false });
     this.eventsTracker.sendEvent(EventAction.saveProgramToPersonalLibrary);
@@ -255,9 +282,9 @@ export class CodePanelComponent extends React.Component<ICodePanelComponentProps
     const data = await this.props.executionService.getScreenshot(false);
     if (!data) {
       this.notificationService.push({
-        title: _T("Message"),
-        message: _T("Screenshot is not available because program has not been executed yet."),
-        type: "primary"
+        type: "primary",
+        title: $T.common.message,
+        message: $T.program.screenShotNotAvailable
       });
     }
     this.setState({ isTakeScreenshotModalActive: true, screenshotDataToSave: data });

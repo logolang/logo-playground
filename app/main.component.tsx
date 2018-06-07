@@ -1,22 +1,24 @@
 import * as React from "react";
 import { HashRouter } from "react-router-dom";
+import { Subscription } from "rxjs/Subscription";
 
 import { resolveInject } from "app/di";
+import { RandomHelper } from "app/utils/random-helper";
 import { MessageTosterComponent } from "app/ui/_generic/message-toster.component";
-import { INavigationService } from "app/services/infrastructure/navigation.service";
-import { INotificationService } from "app/services/infrastructure/notification.service";
+import { NavigationService } from "app/services/infrastructure/navigation.service";
+import { NotificationService } from "app/services/infrastructure/notification.service";
 import { RoutesComponent } from "app/routes";
 import { DependecyInjectionSetupService } from "app/di-setup";
-import { Subscription } from "rxjs";
-import { RandomHelper } from "./utils/random-helper";
+import { ErrorService } from "app/services/infrastructure/error.service";
 
 class IComponentState {
   renderKey: string;
 }
 
 export class MainComponent extends React.Component<{}, IComponentState> {
-  private navigationService = resolveInject(INavigationService);
-  private notificationService = resolveInject(INotificationService);
+  private navigationService = resolveInject(NavigationService);
+  private notificationService = resolveInject(NotificationService);
+  private errorService = resolveInject(ErrorService);
   private diService = resolveInject(DependecyInjectionSetupService);
 
   private navigationEventSubscription?: Subscription;
@@ -31,6 +33,10 @@ export class MainComponent extends React.Component<{}, IComponentState> {
   componentDidMount() {
     this.diService.onResetEvents.subscribe(() => {
       this.setState({ renderKey: RandomHelper.getRandomObjectId() });
+    });
+
+    this.errorService.getObservable().subscribe(err => {
+      this.notificationService.push({ message: err.message, type: "danger" });
     });
   }
 

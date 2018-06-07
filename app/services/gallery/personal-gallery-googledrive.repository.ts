@@ -2,11 +2,11 @@ import { RandomHelper } from "app/utils/random-helper";
 
 import { injectable, inject } from "app/di";
 import { AppConfig } from "app/services/config/app-config";
-import { ICurrentUserService } from "app/services/login/current-user.service";
+import { CurrentUserService } from "app/services/login/current-user.service";
 import { ProgramModel } from "app/services/program/program.model";
 import { GoogleDriveClient, IGoogleFileInfo } from "app/services/infrastructure/google-drive.client";
 import { ProgramsHtmlSerializerService } from "app/services/gallery/programs-html-serializer.service";
-import { IPersonalGalleryRemoteRepository } from "app/services/gallery/personal-gallery-remote.repository";
+import { PersonalGalleryRemoteRepository } from "./personal-gallery-remote.repository";
 
 const storageFileContentType = "text/html; charset=UTF-8";
 
@@ -17,13 +17,13 @@ interface IStoredData {
 }
 
 @injectable()
-export class PersonalGalleryGoogleDriveRepository implements IPersonalGalleryRemoteRepository {
+export class PersonalGalleryGoogleDriveRepository implements PersonalGalleryRemoteRepository {
   private googleDriveClient: GoogleDriveClient;
   private serializationService = new ProgramsHtmlSerializerService();
   private cachedData: IStoredData | undefined = undefined;
 
   constructor(
-    @inject(ICurrentUserService) private currentUser: ICurrentUserService,
+    @inject(CurrentUserService) private currentUser: CurrentUserService,
     @inject(AppConfig) private appConfig: AppConfig
   ) {
     this.googleDriveClient = new GoogleDriveClient();

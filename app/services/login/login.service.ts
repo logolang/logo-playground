@@ -1,21 +1,14 @@
 import { IAuthService } from "app/services/login/auth.service";
-import { NotLoggenInStatus, ICurrentUserService } from "app/services/login/current-user.service";
-import { IEventsTrackingService, EventAction } from "app/services/infrastructure/events-tracking.service";
+import { NotLoggenInStatus, CurrentUserService } from "app/services/login/current-user.service";
+import { EventsTrackingService, EventAction } from "app/services/infrastructure/events-tracking.service";
 
-export abstract class ILoginService {
-  abstract tryLoginUserAutomatically(): Promise<void>;
-  abstract signOut(): Promise<void>;
-  abstract initLoginUI(): Promise<void>;
-  abstract renderLoginUI(): JSX.Element[];
-}
-
-export class LoginService implements ILoginService {
+export class LoginService {
   private currentLoginStatus = NotLoggenInStatus;
 
   constructor(
     private authService: IAuthService,
-    private currentUserService: ICurrentUserService,
-    private eventTracker: IEventsTrackingService
+    private currentUserService: CurrentUserService,
+    private eventTracker: EventsTrackingService
   ) {
     this.authService.loginStatusObservable.subscribe(status => {
       this.currentLoginStatus = status;

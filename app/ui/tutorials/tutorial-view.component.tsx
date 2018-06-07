@@ -1,16 +1,17 @@
 import * as React from "react";
 
-import { _T } from "app/services/customizations/localization.service";
+import { $T } from "app/i18n/strings";
 import { resolveInject } from "app/di";
-import { INotificationService } from "app/services/infrastructure/notification.service";
+import { NotificationService } from "app/services/infrastructure/notification.service";
 import {
   ITutorialInfo,
-  ITutorialsContentService,
+  TutorialsContentService,
   ITutorialStepInfo,
   ITutorialStepContent
 } from "app/services/tutorials/tutorials-content-service";
-import { IEventsTrackingService, EventAction } from "app/services/infrastructure/events-tracking.service";
+import { EventsTrackingService, EventAction } from "app/services/infrastructure/events-tracking.service";
 import { ErrorDef, callActionSafe } from "app/utils/error-helpers";
+import { ErrorService } from "app/services/infrastructure/error.service";
 
 import { TutorialSelectModalComponent } from "app/ui/tutorials/tutorial-select-modal.component";
 import { ModalComponent } from "app/ui/_generic/modal.component";
@@ -52,9 +53,10 @@ interface IComponentState {
 }
 
 export class TutorialViewComponent extends React.Component<ITutorialViewComponentProps, IComponentState> {
-  private tutorialsLoader = resolveInject(ITutorialsContentService);
-  private notificationService = resolveInject(INotificationService);
-  private eventsTracking = resolveInject(IEventsTrackingService);
+  private tutorialsLoader = resolveInject(TutorialsContentService);
+  private notificationService = resolveInject(NotificationService);
+  private errorService = resolveInject(ErrorService);
+  private eventsTracking = resolveInject(EventsTrackingService);
 
   constructor(props: ITutorialViewComponentProps) {
     super(props);
@@ -65,10 +67,6 @@ export class TutorialViewComponent extends React.Component<ITutorialViewComponen
       showFixTheCode: false
     };
   }
-
-  private errorHandler = (err: ErrorDef) => {
-    this.notificationService.push({ message: err.message, type: "danger" });
-  };
 
   async componentDidMount() {
     await this.loadTutorial(this.props.initialTutorialId, this.props.initialStepId);
@@ -88,7 +86,7 @@ export class TutorialViewComponent extends React.Component<ITutorialViewComponen
     }
     const currentStepInfo = currentTutorial.steps[currentStepIndex];
 
-    const currentStepContent = await callActionSafe(this.errorHandler, async () =>
+    const currentStepContent = await callActionSafe(this.errorService.handleError, async () =>
       this.tutorialsLoader.getStep(tutorialId, stepId)
     );
     if (!currentStepContent) {
@@ -142,9 +140,10 @@ export class TutorialViewComponent extends React.Component<ITutorialViewComponen
               </div>
 
               <p className="help">
-                {_T("Step %1$s of %2$s", {
-                  values: [this.state.currentStepIndex + 1, this.state.currentTutorial.steps.length]
-                })}
+                {$T.tutorial.stepIndicator.val(
+                  (this.state.currentStepIndex + 1).toString(),
+                  this.state.currentTutorial.steps.length.toString()
+                )}
               </p>
               <br />
 
@@ -162,7 +161,7 @@ export class TutorialViewComponent extends React.Component<ITutorialViewComponen
                     <span className="icon">
                       <i className="fa fa-arrow-left" aria-hidden="true" />
                     </span>
-                    <span>{_T("Back")}</span>
+                    <span>{$T.tutorial.back}</span>
                   </button>
                 )}
 
@@ -177,7 +176,7 @@ export class TutorialViewComponent extends React.Component<ITutorialViewComponen
                     <span className="icon">
                       <i className="fa fa-question" aria-hidden="true" />
                     </span>
-                    <span>{_T("Help – it's not working!")}</span>
+                    <span>{$T.tutorial.helpItsNotworking}</span>
                   </button>
                 )}
 
@@ -186,7 +185,7 @@ export class TutorialViewComponent extends React.Component<ITutorialViewComponen
                     <span className="icon">
                       <i className="fa fa-arrow-right" aria-hidden="true" />
                     </span>
-                    <span>{_T("Continue")}</span>
+                    <span>{$T.common.continue}</span>
                   </button>
                 )}
 
@@ -201,7 +200,7 @@ export class TutorialViewComponent extends React.Component<ITutorialViewComponen
                     <span className="icon">
                       <i className="fa fa-arrow-right" aria-hidden="true" />
                     </span>
-                    <span>{_T("Choose another tutorial")}</span>
+                    <span>{$T.tutorial.chooseAnotherTutorial}</span>
                   </button>
                 )}
               </div>
@@ -241,9 +240,9 @@ export class TutorialViewComponent extends React.Component<ITutorialViewComponen
     return (
       <ModalComponent
         show
-        title={_T("Fix the code?")}
-        actionButtonText={_T("Yes, fix my code")}
-        cancelButtonText={_T("No, leave it as is")}
+        title={$T.tutorial.fixTheCodeTitle}
+        actionButtonText={$T.tutorial.yesFixMyCode}
+        cancelButtonText={$T.tutorial.noLeaveItAsIs}
         onConfirm={async () => {
           this.setState({ showFixTheCode: false });
           this.props.onFixTheCode(currentStep.resultCode);
@@ -253,9 +252,9 @@ export class TutorialViewComponent extends React.Component<ITutorialViewComponen
         }}
       >
         <p>
-          {_T("FIX_THE_CODE_MESSAGE")}
+          {$T.tutorial.fixTheCodeMessage}
           <span>&nbsp;</span>
-          <strong>{_T("FIX_THE_CODE_WARNING")}</strong>
+          <strong>{$T.tutorial.fixTheCodeWarning}</strong>
         </p>
       </ModalComponent>
     );

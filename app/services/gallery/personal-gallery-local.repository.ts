@@ -1,16 +1,15 @@
 import { RandomHelper } from "app/utils/random-helper";
 import { injectable, inject } from "app/di";
-import { ICurrentUserService } from "app/services/login/current-user.service";
+import { CurrentUserService } from "app/services/login/current-user.service";
 import { ProgramModel } from "app/services/program/program.model";
 import { ProgramModelConverter } from "app/services/program/program-model.converter";
-import { IPersonalGalleryRepository } from "app/services/gallery/personal-gallery-remote.repository";
 
 @injectable()
-export class PersonalGalleryLocalRepository implements IPersonalGalleryRepository {
+export class PersonalGalleryLocalRepository {
   storageKey = "";
   storage: Storage = window.localStorage;
 
-  constructor(@inject(ICurrentUserService) private currentUser: ICurrentUserService) {
+  constructor(@inject(CurrentUserService) private currentUser: CurrentUserService) {
     const userId = this.currentUser.getLoginStatus().userInfo.attributes.email || "guest";
     this.storageKey = "logo-playground.gallery:" + userId;
   }

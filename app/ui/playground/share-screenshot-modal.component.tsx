@@ -1,9 +1,9 @@
 import * as React from "react";
 
-import { _T } from "app/services/customizations/localization.service";
+import { $T } from "app/i18n/strings";
 import { resolveInject } from "app/di";
 import { ImageUploadService } from "app/services/infrastructure/image-upload-imgur.service";
-import { IEventsTrackingService, EventAction } from "app/services/infrastructure/events-tracking.service";
+import { EventsTrackingService, EventAction } from "app/services/infrastructure/events-tracking.service";
 
 import { AlertMessageComponent } from "app/ui/_generic/alert-message.component";
 import { LoadingComponent } from "app/ui/_generic/loading.component";
@@ -25,7 +25,7 @@ interface IComponentProps {
 
 export class ShareScreenshotModalComponent extends React.Component<IComponentProps, IComponentState> {
   private imageUploadService = resolveInject(ImageUploadService);
-  private eventsTracking = resolveInject(IEventsTrackingService);
+  private eventsTracking = resolveInject(EventsTrackingService);
 
   constructor(props: IComponentProps) {
     super(props);
@@ -49,7 +49,7 @@ export class ShareScreenshotModalComponent extends React.Component<IComponentPro
     } catch (ex) {
       this.setState({
         isSavingInProgress: false,
-        errorMessage: _T("Sorry, error has occured")
+        errorMessage: $T.common.error
       });
     }
   }
@@ -59,22 +59,22 @@ export class ShareScreenshotModalComponent extends React.Component<IComponentPro
       <ModalComponent
         show
         withoutFooter
-        title={_T("Screenshot")}
+        title={$T.program.screenshot}
         onCancel={this.props.onClose}
-        cancelButtonText={_T("Cancel")}
+        cancelButtonText={$T.common.cancel}
       >
         <LoadingComponent isLoading={this.state.isSavingInProgress} />
         {this.state.errorMessage && <AlertMessageComponent message={this.state.errorMessage} type="danger" />}
         {this.state.imgUrl && (
           <div className="share-screenshot-modal-component">
-            <label className="label">{_T("Image preview")}</label>
+            <label className="label">{$T.program.imagePreview}</label>
             <div className="has-text-centered">
               <div className="box is-inline-block">
                 <img className="screenshot-img" src={this.state.imgUrl} />
               </div>
             </div>
             <br />
-            <label className="label">{_T("Image url")}</label>
+            <label className="label">{$T.program.imageUrl}</label>
             <InputCopyToClipboardComponent text={this.state.imgUrl} />
           </div>
         )}

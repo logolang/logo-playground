@@ -56,12 +56,12 @@ module.exports = function(config) {
     frameworks: ["mocha"],
 
     /**
-    * A lot of plugins are available for test results reporting.
-    * You can find them here: https://npmjs.org/browse/keyword/karma-reporter
-    */
+     * A lot of plugins are available for test results reporting.
+     * You can find them here: https://npmjs.org/browse/keyword/karma-reporter
+     */
     reporters: ["mocha", "bamboo", "coverage"],
 
-    files: ["./dist/vendor.js", "./tools/tests-entry-point.spec.ts"],
+    files: ["./tools/tests-entry-point.spec.ts"],
     mime: {
       "text/javascript": ["ts"]
     },
@@ -70,8 +70,8 @@ module.exports = function(config) {
     exclude: [],
 
     /**
-    * Transform files before loading them.
-    */
+     * Transform files before loading them.
+     */
     preprocessors: {
       "./tools/tests-entry-point.spec.ts": ["webpack", "sourcemap"]
     },
@@ -79,7 +79,7 @@ module.exports = function(config) {
     webpack: (() => {
       // Here we load our base webpack config and override some settings.
       // This is because we want to reuse configuration and avoid duplication
-      let webpackConf = require("./webpack.config.js")({});
+      let webpackConf = require("./webpack.config.js")({ unit_tests: true });
       delete webpackConf.entry; // should be empty for karma
       delete webpackConf.output; // should be empty for karma
 

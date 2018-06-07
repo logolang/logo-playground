@@ -1,22 +1,25 @@
 import * as React from "react";
-import { Subject, BehaviorSubject } from "rxjs";
+import { Subject } from "rxjs/Subject";
+import { BehaviorSubject } from "rxjs/BehaviorSubject";
 
 import { as } from "app/utils/syntax-helpers";
 import { callActionSafe, ErrorDef } from "app/utils/error-helpers";
 
-import { _T } from "app/services/customizations/localization.service";
+import { checkIsMobileDevice } from "app/utils/device-helper";
+import { $T } from "app/i18n/strings";
 import { resolveInject } from "app/di";
 import { Routes } from "app/routes";
+import { ErrorService } from "app/services/infrastructure/error.service";
 import { ProgramModel } from "app/services/program/program.model";
 import { ProgramExecutionContext } from "app/services/program/program-execution.context";
-import { INotificationService } from "app/services/infrastructure/notification.service";
-import { INavigationService } from "app/services/infrastructure/navigation.service";
+import { NotificationService } from "app/services/infrastructure/notification.service";
+import { NavigationService } from "app/services/infrastructure/navigation.service";
 import { TitleService } from "app/services/infrastructure/title.service";
 import { IUserSettingsService, IUserSettings } from "app/services/customizations/user-settings.service";
 import { ThemesService, Theme } from "app/services/customizations/themes.service";
 import { TurtlesService } from "app/services/customizations/turtles.service";
 import { ProgramStorageType, ProgramManagementService } from "app/services/program/program-management.service";
-import { IEventsTrackingService, EventAction } from "app/services/infrastructure/events-tracking.service";
+import { EventsTrackingService, EventAction } from "app/services/infrastructure/events-tracking.service";
 
 import { MainMenuComponent } from "app/ui/main-menu.component";
 import { GoldenLayoutComponent, IPanelConfig } from "app/ui/_shared/golden-layout.component";
@@ -27,7 +30,6 @@ import {
   playgroundDefaultLayout,
   playgroundDefaultMobileLayout
 } from "app/ui/playground/playground-default-goldenlayout";
-import { checkIsMobileDevice } from "app/utils/device-helper";
 
 import "./playground.page.component.less";
 
@@ -45,7 +47,7 @@ export interface IComponentProps {
   programId?: string;
 }
 
-const defaultPlaygroundProgram = `;This is LOGO program sample
+const defaultPlaygroundProgram = `;This isLoading: false LOGO program sample;
 forward 50
 right 90
 forward 100
@@ -53,14 +55,16 @@ arc 360 50
 `;
 
 export class PlaygroundPageComponent extends React.Component<IComponentProps, IComponentState> {
-  private notificationService = resolveInject(INotificationService);
-  private navigationService = resolveInject(INavigationService);
+  private notificationService = resolveInject(NotificationService);
+  private navigationService = resolveInject(NavigationService);
+
+  private errorService = resolveInject(ErrorService);
   private titleService = resolveInject(TitleService);
   private programManagementService = resolveInject(ProgramManagementService);
   private userSettingsService = resolveInject(IUserSettingsService);
   private themesService = resolveInject(ThemesService);
   private turtlesService = resolveInject(TurtlesService);
-  private eventsTracking = resolveInject(IEventsTrackingService);
+  private eventsTracking = resolveInject(EventsTrackingService);
   private executionService = new ProgramExecutionContext();
   private layoutChangedSubject = new Subject<void>();
   private codePanelTitle = new BehaviorSubject<string>("");
@@ -69,11 +73,6 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
   private defaultLayoutConfigJSON = JSON.stringify(
     this.isMobileDevice ? playgroundDefaultMobileLayout : playgroundDefaultLayout
   );
-
-  private errorHandler = (err: ErrorDef) => {
-    this.notificationService.push({ message: err.message, type: "danger" });
-    this.setState({ isLoading: false });
-  };
 
   constructor(props: IComponentProps) {
     super(props);
@@ -95,7 +94,7 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
   }
 
   async componentDidMount() {
-    this.titleService.setDocumentTitle(_T("Playground"));
+    this.titleService.setDocumentTitle($T.program.playgroundTitle);
     await this.loadData(this.props);
   }
 
@@ -131,10 +130,10 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
   private setCodePanelTitle(programName: string, programId: string, hasChanges: boolean) {
     let title =
       `<i class="fa fa-code" aria-hidden="true"></i> ` +
-      _T("Program") +
+      $T.program.program +
       (programName ? ": <strong>" + programName + "</strong>" : "");
     if (hasChanges && programId) {
-      title += ` <i class="fa fa-asterisk icon-sm" aria-hidden="true" title="${_T("This program has changes")}"></i>`;
+      title += ` <i class="fa fa-asterisk icon-sm" aria-hidden="true" title="${$T.program.programHasChanges}"></i>`;
     }
     this.codePanelTitle.next(title);
   }
@@ -142,17 +141,21 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
   async loadData(props: IComponentProps) {
     this.setState({ isLoading: true });
 
-    const userSettings = await callActionSafe(this.errorHandler, async () => this.userSettingsService.get());
+    const userSettings = await callActionSafe(this.errorService.handleError, async () =>
+      this.userSettingsService.get()
+    );
     if (!userSettings) {
+      this.setState({ isLoading: false });
       return;
     }
 
     const programId = props.programId;
     const storageType = props.storageType;
-    const programModel = await callActionSafe(this.errorHandler, async () =>
+    const programModel = await callActionSafe(this.errorService.handleError, async () =>
       this.programManagementService.loadProgram(programId, storageType)
     );
     if (!programModel) {
+      this.setState({ isLoading: false });
       return;
     }
 
@@ -176,7 +179,7 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
     const turtleImage = this.turtlesService.getTurtleImage(userSettings.turtleId);
 
     this.setCodePanelTitle(programModel.name, programModel.id, programModel.hasTempLocalModifications);
-    this.outputPanelTitle.next(`<i class="fa fa-television" aria-hidden="true"></i> ` + _T("Output"));
+    this.outputPanelTitle.next(`<i class="fa fa-television" aria-hidden="true"></i> ` + $T.program.output);
 
     this.setState({
       isLoading: false,
