@@ -30,6 +30,7 @@ import { PageHeaderComponent } from "app/ui/_generic/page-header.component";
 import { MainMenuComponent } from "app/ui/main-menu.component";
 import { LogoExecutorComponent } from "app/ui/_shared/logo-executor.component";
 import { FileSelectorComponent } from "app/ui/_generic/file-selector.component";
+import { LogoCodeSamplesService } from "app/services/program/logo-code-samples.service";
 
 class LocaleSelector extends SimpleSelectComponent<ILocaleInfo> {}
 class ThemeSelector extends SimpleSelectComponent<Theme> {}
@@ -49,29 +50,6 @@ interface IComponentState {
 
 interface IComponentProps extends RouteComponentProps<void> {}
 
-const codeSamples = [
-  "repeat 14 [fd repcount*8 rt 90]",
-  "repeat 10 [repeat 8 [fd 20 rt 360/8] rt 360/10]",
-  "pu setxy -40 -20 pd repeat 8 [fd 40 rt 360/8]",
-  "repeat 10 [fd 5 * repcount repeat 3 [fd 18 rt 360/3] rt 360/10]",
-  "repeat 10 [fd 10 rt 90 fd 10 lt 90]",
-  `
-penup
-setxy -80 0
-repeat 10 [
-  arc 360 20
-  fd 40
-  rt 36
-]
-  `,
-  `
-  rt 18
-repeat 5 [
-	fd 100
-  	rt 144
-]`
-];
-
 export class UserProfilePageComponent extends React.Component<IComponentProps, IComponentState> {
   private titleService = resolveInject(TitleService);
   private notificationService = resolveInject(NotificationService);
@@ -83,10 +61,11 @@ export class UserProfilePageComponent extends React.Component<IComponentProps, I
   private localizationService = resolveInject(LocalizationService);
   private galleryService = resolveInject(PersonalGalleryService);
   private eventsTracking = resolveInject(EventsTrackingService);
+  private demoSamplesService = resolveInject(LogoCodeSamplesService);
   private diSetup = resolveInject(DependecyInjectionSetupService);
 
   private onIsRunningChanged = new Subject<boolean>();
-  private runCode = new BehaviorSubject<string>(codeSamples[0]);
+  private runCode = new BehaviorSubject<string>("");
   private exportInportService = new PersonalGalleryImportService();
 
   constructor(props: IComponentProps) {
@@ -124,7 +103,7 @@ export class UserProfilePageComponent extends React.Component<IComponentProps, I
         programCount: programs.length
       });
 
-      this.runCode.next(codeSamples[RandomHelper.getRandomInt(0, codeSamples.length - 1)]);
+      this.runCode.next(this.demoSamplesService.getRandomSample());
     }
   }
 

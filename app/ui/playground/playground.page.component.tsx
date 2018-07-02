@@ -20,6 +20,7 @@ import { ThemesService, Theme } from "app/services/customizations/themes.service
 import { TurtlesService } from "app/services/customizations/turtles.service";
 import { ProgramStorageType, ProgramManagementService } from "app/services/program/program-management.service";
 import { EventsTrackingService, EventAction } from "app/services/infrastructure/events-tracking.service";
+import { LogoCodeSamplesService } from "app/services/program/logo-code-samples.service";
 
 import { MainMenuComponent } from "app/ui/main-menu.component";
 import { GoldenLayoutComponent, IPanelConfig } from "app/ui/_shared/golden-layout.component";
@@ -47,13 +48,6 @@ export interface IComponentProps {
   programId?: string;
 }
 
-const defaultPlaygroundProgram = `;This isLoading: false LOGO program sample;
-forward 50
-right 90
-forward 100
-arc 360 50
-`;
-
 export class PlaygroundPageComponent extends React.Component<IComponentProps, IComponentState> {
   private notificationService = resolveInject(NotificationService);
   private navigationService = resolveInject(NavigationService);
@@ -65,6 +59,7 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
   private themesService = resolveInject(ThemesService);
   private turtlesService = resolveInject(TurtlesService);
   private eventsTracking = resolveInject(EventsTrackingService);
+  private demoSamplesService = resolveInject(LogoCodeSamplesService);
   private executionService = new ProgramExecutionContext();
   private layoutChangedSubject = new Subject<void>();
   private codePanelTitle = new BehaviorSubject<string>("");
@@ -160,7 +155,8 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
     }
 
     if (!programModel.code) {
-      programModel.code = defaultPlaygroundProgram;
+      programModel.code =
+        "; " + $T.program.defaultProgramWelcomeComment + "\r\n" + this.demoSamplesService.getRandomSample();
     }
 
     switch (programModel.storageType) {
@@ -194,11 +190,9 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
 
     this.titleService.setDocumentTitle(programModel.name);
 
-    if (programModel.storageType) {
-      setTimeout(() => {
-        this.executionService.executeProgram(programModel.code);
-      }, 500);
-    }
+    setTimeout(() => {
+      this.executionService.executeProgram(programModel.code);
+    }, 500);
   }
 
   render(): JSX.Element {

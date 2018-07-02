@@ -37,6 +37,7 @@ import { PersonalGalleryRemoteRepository } from "app/services/gallery/personal-g
 import { updateStringsObject } from "app/i18n/i18n-tools";
 import { $T } from "app/i18n/strings";
 import { ErrorService } from "app/services/infrastructure/error.service";
+import { LogoCodeSamplesService } from "app/services/program/logo-code-samples.service";
 
 /**
  * Declaration for app info object injected by webpack
@@ -132,6 +133,7 @@ export class DependecyInjectionSetupService {
     container.bind(GistSharedProgramsRepository).to(GistSharedProgramsRepository);
 
     container.bind(ErrorService).to(ErrorService);
+    container.bind(LogoCodeSamplesService).to(LogoCodeSamplesService);
 
     console.log("finish setting up bindings");
   }

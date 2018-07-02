@@ -69,9 +69,6 @@ msgstr "Sign in with Google"
 msgid "common.signOut"
 msgstr "Sign out"
 
-msgid "common.signedVia"
-msgstr "You are signed in via"
-
 msgid "gallery.editedDate"
 msgstr "Edited"
 
@@ -104,6 +101,9 @@ msgstr "Synchronizing gallery with remote storage"
 
 msgid "program.code"
 msgstr "Code"
+
+msgid "program.defaultProgramWelcomeComment"
+msgstr "Welcome to LOGO playground!"
 
 msgid "program.imagePreview"
 msgstr "Image preview"

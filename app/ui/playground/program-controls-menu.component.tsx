@@ -79,6 +79,18 @@ export class ProgramControlsMenuComponent extends React.Component<IComponentProp
                   {$T.program.revertChanges}
                 </a>
               )}
+              {this.props.save && (
+                <a
+                  className="dropdown-item"
+                  onClick={() => {
+                    this.setState({ menuIsActive: false });
+                    this.props.save && this.props.save();
+                  }}
+                >
+                  <i className="fa fa-check-square-o icon-fixed-width" aria-hidden="true" />
+                  {$T.program.save}
+                </a>
+              )}
               {this.props.saveAsNew && (
                 <a
                   className="dropdown-item"
@@ -104,20 +116,8 @@ export class ProgramControlsMenuComponent extends React.Component<IComponentProp
                 </a>
               )}
 
-              {(this.props.revertChanges || this.props.saveAsNew) && <hr className="dropdown-divider" />}
+              <hr className="dropdown-divider" />
 
-              {this.props.save && (
-                <a
-                  className="dropdown-item"
-                  onClick={() => {
-                    this.setState({ menuIsActive: false });
-                    this.props.save && this.props.save();
-                  }}
-                >
-                  <i className="fa fa-check-square-o icon-fixed-width" aria-hidden="true" />
-                  {$T.program.save}
-                </a>
-              )}
               <a
                 className="dropdown-item"
                 onClick={() => {

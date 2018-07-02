@@ -69,9 +69,6 @@ msgstr "Войти через Google"
 msgid "common.signOut"
 msgstr "Выйти"
 
-msgid "common.signedVia"
-msgstr "Вы вошли через"
-
 msgid "gallery.editedDate"
 msgstr "Дата обновления"
 
@@ -104,6 +101,9 @@ msgstr "Синхронизация"
 
 msgid "program.code"
 msgstr "Код программы"
+
+msgid "program.defaultProgramWelcomeComment"
+msgstr "Добро пожаловать на игровую площадку Лого!"
 
 msgid "program.imagePreview"
 msgstr "Скриншот"
