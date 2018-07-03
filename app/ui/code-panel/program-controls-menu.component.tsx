@@ -54,7 +54,11 @@ export class ProgramControlsMenuComponent extends React.Component<IComponentProp
             {$T.program.stop}
           </button>
         )}{" "}
-        <div className={cn("dropdown is-right is-borderless", { "is-active": this.state.menuIsActive })}>
+        <div
+          className={cn("dropdown is-right is-borderless", {
+            "is-active": this.state.menuIsActive
+          })}
+        >
           <div className="dropdown-trigger">
             <button
               className="button is-light"

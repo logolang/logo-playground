@@ -22,7 +22,7 @@ export interface ILogoExecutorComponentProps {
   runCommands: Observable<string>;
   stopCommands: Observable<void>;
   makeScreenshotCommands?: Observable<ICreateScreenshotCommand>;
-  onIsRunningChanged: Subject<boolean>;
+  onIsRunningChange: Subject<boolean>;
   isDarkTheme: boolean;
   customTurtleImage?: HTMLImageElement;
   customTurtleSize?: number;
@@ -94,7 +94,7 @@ export class LogoExecutorComponent extends React.Component<ILogoExecutorComponen
     });
 
     this.isRunning = true;
-    this.props.onIsRunningChanged.next(this.isRunning);
+    this.props.onIsRunningChange.next(this.isRunning);
     const lightThemeInit = `setbg 7 setpencolor 0 cs`;
     const darkThemeInit = `setbg 0 setpencolor 7 cs`;
     const initCode = this.props.isDarkTheme ? darkThemeInit : lightThemeInit;
@@ -112,7 +112,7 @@ export class LogoExecutorComponent extends React.Component<ILogoExecutorComponen
     try {
       await this.logo.run(polyfills + "\r\n" + initCode + "\r\n" + code);
       this.isRunning = false;
-      this.props.onIsRunningChanged.next(this.isRunning);
+      this.props.onIsRunningChange.next(this.isRunning);
     } catch (ex) {
       console.error("error", ex);
 
@@ -121,7 +121,7 @@ export class LogoExecutorComponent extends React.Component<ILogoExecutorComponen
       });
 
       this.isRunning = false;
-      this.props.onIsRunningChanged.next(this.isRunning);
+      this.props.onIsRunningChange.next(this.isRunning);
     }
   };
 

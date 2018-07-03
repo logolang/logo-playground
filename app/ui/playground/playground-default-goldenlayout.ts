@@ -5,19 +5,15 @@ export const playgroundDefaultLayout = {
       content: [
         {
           title: "",
-          type: "react-component",
-          component: "output-panel",
+          type: "component",
           componentName: "output-panel",
-          width: 60,
-          isClosable: false
+          width: 60
         },
         {
           title: "",
-          type: "react-component",
-          component: "code-panel",
+          type: "component",
           componentName: "code-panel",
-          width: 40,
-          isClosable: false
+          width: 40
         }
       ]
     }
@@ -34,19 +30,15 @@ export const playgroundDefaultMobileLayout = {
       content: [
         {
           title: "",
-          type: "react-component",
-          component: "code-panel",
+          type: "component",
           componentName: "code-panel",
-          height: 45,
-          isClosable: false
+          height: 45
         },
         {
           title: "",
-          type: "react-component",
-          component: "output-panel",
+          type: "component",
           componentName: "output-panel",
-          height: 55,
-          isClosable: false
+          height: 55
         }
       ]
     }

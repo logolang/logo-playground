@@ -1,15 +1,12 @@
 import * as React from "react";
 import { RouteComponentProps } from "react-router-dom";
 import { Subject } from "rxjs/Subject";
-import { BehaviorSubject } from "rxjs/BehaviorSubject";
 
-import { callActionSafe, ErrorDef } from "app/utils/error-helpers";
-import { as } from "app/utils/syntax-helpers";
+import { callActionSafe } from "app/utils/error-helpers";
 import { resolveInject } from "app/di";
 import { Routes } from "app/routes";
 import { $T } from "app/i18n/strings";
 import { checkIsMobileDevice } from "app/utils/device-helper";
-import { NotificationService } from "app/services/infrastructure/notification.service";
 import { ErrorService } from "app/services/infrastructure/error.service";
 import { TitleService } from "app/services/infrastructure/title.service";
 import { NavigationService } from "app/services/infrastructure/navigation.service";
@@ -23,11 +20,14 @@ import { TutorialsContentService, ITutorialInfo } from "app/services/tutorials/t
 import { EventsTrackingService, EventAction } from "app/services/infrastructure/events-tracking.service";
 import { tutorialsDefaultLayout, tutorialsDefaultMobileLayout } from "app/ui/tutorials/tutorials-default-goldenlayout";
 import { MainMenuComponent } from "app/ui/main-menu.component";
-import { GoldenLayoutComponent, IPanelConfig } from "app/ui/_shared/golden-layout.component";
-import { CodePanelComponent, ICodePanelComponentProps } from "app/ui/playground/code-panel.component";
-import { OutputPanelComponent, IOutputPanelComponentProps } from "app/ui/playground/output-panel.component";
-import { TutorialViewComponent, ITutorialViewComponentProps } from "app/ui/tutorials/tutorial-view.component";
 import { LoadingComponent } from "app/ui/_generic/loading.component";
+import { ReactGoldenLayout } from "app/ui/_generic/react-golden-layout/react-golden-layout";
+import { ReactGoldenLayoutPanel } from "app/ui/_generic/react-golden-layout/react-golden-layout-panel";
+import { CodePanelComponent } from "app/ui/code-panel/code-panel.component";
+import { LogoExecutorComponent } from "app/ui/_generic/logo-executor/logo-executor.component";
+import { TutorialViewComponent } from "app/ui/tutorials/tutorial-view.component";
+
+import "./tutorials.page.component.less";
 
 interface IComponentState {
   isLoading: boolean;
@@ -38,7 +38,7 @@ interface IComponentState {
   tutorialId?: string;
   stepId?: string;
   program?: ProgramModel;
-  pageLayoutConfigJSON?: string;
+  layoutLocalStorageKey?: string;
 }
 
 interface IComponentProps extends RouteComponentProps<ITutorialPageRouteParams> {}
@@ -49,7 +49,6 @@ export interface ITutorialPageRouteParams {
 }
 
 export class TutorialsPageComponent extends React.Component<IComponentProps, IComponentState> {
-  private notificationService = resolveInject(NotificationService);
   private navService = resolveInject(NavigationService);
   private errorService = resolveInject(ErrorService);
   private titleService = resolveInject(TitleService);
@@ -60,7 +59,7 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
   private eventsTracking = resolveInject(EventsTrackingService);
 
   private isMobileDevice = checkIsMobileDevice();
-  private executionService = new ProgramExecutionContext();
+  private executionContext = new ProgramExecutionContext();
   private codeChangesStream = new Subject<string>();
   private layoutChangesStream = new Subject<void>();
 
@@ -84,13 +83,6 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
   componentWillUnmount() {
     /** */
   }
-
-  layoutChanged = async (newLayoutJSON: string) => {
-    await this.userSettingsService.update(
-      this.isMobileDevice ? { tutorialsLayoutMobileJSON: newLayoutJSON } : { tutorialsLayoutJSON: newLayoutJSON }
-    );
-    this.layoutChangesStream.next();
-  };
 
   async loadData(props: IComponentProps) {
     this.setState({
@@ -135,9 +127,8 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
       program,
       tutorialId,
       stepId,
-      pageLayoutConfigJSON: this.isMobileDevice
-        ? userSettings.tutorialsLayoutMobileJSON
-        : userSettings.tutorialsLayoutJSON
+      layoutLocalStorageKey:
+        this.userSettingsService.userSettingsKey + ":tutorials-layout" + (this.isMobileDevice ? "-mobile" : "-desktop")
     });
   }
 
@@ -151,7 +142,7 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
   onLoadedTutorial = async (tutorialId: string, stepId: string, initCode: string) => {
     if (this.state.program) {
       this.codeChangesStream.next(initCode);
-      this.executionService.executeProgram(initCode);
+      this.executionContext.executeProgram(initCode);
     }
 
     await this.userSettingsService.update({
@@ -173,12 +164,10 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
     return (
       <div className="ex-page-container">
         <MainMenuComponent />
-        <div className="ex-page-content">
+        <div className="ex-page-content tutorials-page-component">
           {this.state.isLoading && (
-            <div className="golden-layout-component">
-              <div className="ex-page-content lm_content">
-                <LoadingComponent isLoading />
-              </div>
+            <div className="main-loading-container">
+              <LoadingComponent isLoading />
             </div>
           )}
 
@@ -189,59 +178,59 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
             this.state.tutorialId &&
             this.state.stepId &&
             this.state.program && (
-              <GoldenLayoutComponent
-                initialLayoutConfigJSON={this.state.pageLayoutConfigJSON}
+              <ReactGoldenLayout
+                className="golden-layout-container"
+                configLayoutOverride={{
+                  settings: {
+                    showMaximiseIcon: false,
+                    showPopoutIcon: false,
+                    showCloseIcon: false
+                  },
+                  dimensions: { headerHeight: 32 }
+                }}
+                layoutLocalStorageKey={this.state.layoutLocalStorageKey}
                 defaultLayoutConfigJSON={this.defaultLayoutConfigJSON}
-                onLayoutChange={this.layoutChanged}
-                panelsReloadCheck={() => false}
-                panels={[
-                  as<IPanelConfig<TutorialViewComponent, ITutorialViewComponentProps>>({
-                    title: new BehaviorSubject(
-                      `<i class="fa fa-graduation-cap" aria-hidden="true"></i> ` + $T.tutorial.tutorialsTitle
-                    ),
-                    componentName: "tutorial-panel",
-                    componentType: TutorialViewComponent,
-                    props: {
-                      onFixTheCode: this.onFixTheCode,
-                      onLoadedTutorial: this.onLoadedTutorial,
-                      initialStepId: this.state.stepId,
-                      initialTutorialId: this.state.tutorialId,
-                      tutorials: this.state.tutorials
-                    }
-                  }),
-                  as<IPanelConfig<CodePanelComponent, ICodePanelComponentProps>>({
-                    title: new BehaviorSubject(`<i class="fa fa-code" aria-hidden="true"></i> ` + $T.program.code),
-                    componentName: "code-panel",
-                    componentType: CodePanelComponent,
-                    props: {
-                      editorTheme: this.state.theme.codeEditorThemeName,
-                      executionService: this.executionService,
-                      program: this.state.program,
-                      saveCurrentEnabled: false,
-                      externalCodeChanges: this.codeChangesStream,
-                      containerResized: this.layoutChangesStream
-                    }
-                  }),
-                  as<IPanelConfig<OutputPanelComponent, IOutputPanelComponentProps>>({
-                    title: new BehaviorSubject(
-                      `<i class="fa fa-television" aria-hidden="true"></i> ` + $T.program.output
-                    ),
-                    componentName: "output-panel",
-                    componentType: OutputPanelComponent,
-                    props: {
-                      logoExecutorProps: {
-                        runCommands: this.executionService.runCommands,
-                        stopCommands: this.executionService.stopCommands,
-                        makeScreenshotCommands: this.executionService.makeScreenshotCommands,
-                        onIsRunningChanged: this.executionService.onIsRunningChanged,
-                        isDarkTheme: this.state.theme.isDark,
-                        customTurtleImage: this.state.turtleImage,
-                        customTurtleSize: this.state.userSettings.turtleSize
-                      }
-                    }
-                  })
-                ]}
-              />
+              >
+                <ReactGoldenLayoutPanel
+                  id="code-panel"
+                  title={`<i class="fa fa-code" aria-hidden="true"></i> ${$T.program.code}`}
+                >
+                  <CodePanelComponent
+                    saveCurrentEnabled={false}
+                    program={this.state.program}
+                    editorTheme={this.state.theme.codeEditorThemeName}
+                    executionContext={this.executionContext}
+                    resizeEvents={this.layoutChangesStream}
+                    externalCodeChanges={this.codeChangesStream}
+                  />
+                </ReactGoldenLayoutPanel>
+                <ReactGoldenLayoutPanel
+                  id="output-panel"
+                  title={`<i class="fa fa-television" aria-hidden="true"></i> ${$T.program.output}`}
+                >
+                  <LogoExecutorComponent
+                    runCommands={this.executionContext.runCommands}
+                    stopCommands={this.executionContext.stopCommands}
+                    makeScreenshotCommands={this.executionContext.makeScreenshotCommands}
+                    onIsRunningChange={this.executionContext.onIsRunningChange}
+                    isDarkTheme={this.state.theme.isDark}
+                    customTurtleImage={this.state.turtleImage}
+                    customTurtleSize={this.state.userSettings.turtleSize}
+                  />
+                </ReactGoldenLayoutPanel>
+                <ReactGoldenLayoutPanel
+                  id="tutorial-panel"
+                  title={`<i class="fa fa-graduation-cap" aria-hidden="true"></i> ${$T.tutorial.tutorialsTitle}`}
+                >
+                  <TutorialViewComponent
+                    onFixTheCode={this.onFixTheCode}
+                    onLoadedTutorial={this.onLoadedTutorial}
+                    initialStepId={this.state.stepId}
+                    initialTutorialId={this.state.tutorialId}
+                    tutorials={this.state.tutorials}
+                  />
+                </ReactGoldenLayoutPanel>
+              </ReactGoldenLayout>
             )}
         </div>
       </div>

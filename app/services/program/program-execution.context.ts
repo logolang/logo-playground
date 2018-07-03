@@ -9,7 +9,7 @@ export interface ICreateScreenshotCommand {
 export class ProgramExecutionContext {
   public runCommands = new Subject<string>();
   public stopCommands = new Subject<void>();
-  public onIsRunningChanged = new BehaviorSubject<boolean>(false);
+  public onIsRunningChange = new BehaviorSubject<boolean>(false);
   public makeScreenshotCommands = new Subject<ICreateScreenshotCommand>();
   private hasProgramBeenExecutedOnce = false;
 
@@ -18,7 +18,7 @@ export class ProgramExecutionContext {
   }
 
   get isRunning() {
-    return this.onIsRunningChanged.getValue();
+    return this.onIsRunningChange.getValue();
   }
 
   executeProgram = (code: string) => {

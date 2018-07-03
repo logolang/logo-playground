@@ -1,7 +1,7 @@
 import { injectable } from "app/di";
 
 @injectable()
-export abstract class AppConfig {
+export class AppConfig {
   services: {
     appApiUrl: string;
     imgurServiceUrl: string;

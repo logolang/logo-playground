@@ -1,8 +1,7 @@
 import * as React from "react";
 import * as cn from "classnames";
 import * as codemirror from "codemirror";
-import { Observable } from "rxjs/Observable";
-import { Subscription } from "rxjs/Subscription";
+import { Observable, Subscription } from "rxjs";
 
 import { ensure } from "app/utils/syntax-helpers";
 
@@ -13,7 +12,7 @@ import "node_modules/codemirror/addon/display/placeholder.js";
 
 import "app/../lib/codemirror-logo/cm-logo.js";
 
-import "./code-input-logo.component.less";
+import "./code-input.component.less";
 
 interface IComponentState {}
 
@@ -26,7 +25,7 @@ export interface ICodeInputComponentProps {
   containerResized?: Observable<void>;
 }
 
-export class CodeInputLogoComponent extends React.Component<ICodeInputComponentProps, IComponentState> {
+export class CodeInputComponent extends React.Component<ICodeInputComponentProps, IComponentState> {
   cm: codemirror.EditorFromTextArea;
   currentCode: string;
   subsriptions: Subscription[] = [];
@@ -100,7 +99,7 @@ export class CodeInputLogoComponent extends React.Component<ICodeInputComponentP
 
   render(): JSX.Element {
     return (
-      <div className={cn("code-input-logo-component", this.props.className)}>
+      <div className={cn("code-input-component", this.props.className)}>
         <textarea ref="text-area" />
       </div>
     );

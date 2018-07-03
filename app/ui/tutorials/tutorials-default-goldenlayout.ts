@@ -5,11 +5,9 @@ export const tutorialsDefaultLayout = {
       content: [
         {
           title: "",
-          type: "react-component",
-          component: "tutorial-panel",
+          type: "component",
           componentName: "tutorial-panel",
-          width: 40,
-          isClosable: false
+          width: 40
         },
         {
           type: "column",
@@ -17,19 +15,15 @@ export const tutorialsDefaultLayout = {
           content: [
             {
               title: "",
-              type: "react-component",
-              component: "output-panel",
+              type: "component",
               componentName: "output-panel",
-              height: 60,
-              isClosable: false
+              height: 60
             },
             {
               title: "",
-              type: "react-component",
-              component: "code-panel",
+              type: "component",
               componentName: "code-panel",
-              height: 40,
-              isClosable: false
+              height: 40
             }
           ]
         }
@@ -45,47 +39,34 @@ export const tutorialsDefaultMobileLayout = {
   content: [
     {
       type: "column",
-      isClosable: true,
-      title: "",
       content: [
         {
           type: "stack",
           width: 100,
-          height: 57.046411353202295,
+          height: 55,
           activeItemIndex: 0,
-          isClosable: true,
-          title: "",
           content: [
             {
-              title: "Tutorial",
+              title: "",
               type: "component",
-              component: "tutorial-panel",
-              componentName: "lm-react-component",
-              isClosable: false
+              componentName: "tutorial-panel"
             },
             {
-              title: "Code",
+              title: "",
               type: "component",
-              component: "code-panel",
-              componentName: "lm-react-component",
-              isClosable: false
+              componentName: "code-panel"
             }
           ]
         },
         {
           type: "stack",
-          height: 42.953588646797705,
-          isClosable: true,
-          title: "",
+          height: 45,
           activeItemIndex: 0,
           content: [
             {
-              title: "Output",
+              title: "",
               type: "component",
-              component: "output-panel",
-              componentName: "lm-react-component",
-              height: 55,
-              isClosable: false
+              componentName: "output-panel"
             }
           ]
         }

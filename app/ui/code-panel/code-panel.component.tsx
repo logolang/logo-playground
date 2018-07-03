@@ -15,23 +15,23 @@ import { EventsTrackingService, EventAction } from "app/services/infrastructure/
 import { PersonalGalleryService } from "app/services/gallery/personal-gallery.service";
 import { NavigationService } from "app/services/infrastructure/navigation.service";
 
-import { ShareScreenshotModalComponent } from "app/ui/playground/share-screenshot-modal.component";
-import { ShareProgramModalComponent } from "app/ui/playground/share-program-modal.component";
-import { CodeInputLogoComponent } from "app/ui/_shared/code-input-logo.component";
-import { SaveProgramModalComponent } from "app/ui/playground/save-program-modal.component";
-import { ProgramControlsMenuComponent } from "app/ui/playground/program-controls-menu.component";
+import { ShareScreenshotModalComponent } from "app/ui/code-panel/share-screenshot-modal.component";
+import { ShareProgramModalComponent } from "app/ui/code-panel/share-program-modal.component";
+import { CodeInputComponent } from "app/ui/_generic/code-input/code-input.component";
+import { SaveProgramModalComponent } from "app/ui/code-panel/save-program-modal.component";
+import { ProgramControlsMenuComponent } from "app/ui/code-panel/program-controls-menu.component";
 import { DeleteProgramModalComponent } from "./delete-program-modal.component";
 
 import "./code-panel.component.less";
 
 export interface ICodePanelComponentProps {
   editorTheme: string;
-  executionService: ProgramExecutionContext;
+  executionContext: ProgramExecutionContext;
   program: ProgramModel;
   saveCurrentEnabled: boolean;
   externalCodeChanges?: Observable<string>;
-  containerResized?: Observable<void>;
-  hasChangesStatus?: (hasChanges: boolean) => void;
+  resizeEvents?: Observable<void>;
+  onHasChangesChange?: (hasChanges: boolean) => void;
   onSaveAs?: (program: ProgramModel) => void;
 }
 
@@ -65,7 +65,7 @@ export class CodePanelComponent extends React.Component<ICodePanelComponentProps
 
   componentDidMount() {
     this.subscriptions.push(
-      this.props.executionService.onIsRunningChanged.subscribe(() => {
+      this.props.executionContext.onIsRunningChange.subscribe(() => {
         // Update state to force a component render.
         this.setState({});
       })
@@ -89,17 +89,17 @@ export class CodePanelComponent extends React.Component<ICodePanelComponentProps
   }
 
   onRunProgram = () => {
-    this.props.executionService.executeProgram(this.state.code);
+    this.props.executionContext.executeProgram(this.state.code);
     this.eventsTracker.sendEvent(EventAction.programStart);
   };
 
   onStopProgram = () => {
-    this.props.executionService.stopProgram();
+    this.props.executionContext.stopProgram();
     this.eventsTracker.sendEvent(EventAction.programStop);
   };
 
   render(): JSX.Element {
-    const execService = this.props.executionService;
+    const execService = this.props.executionContext;
     return (
       <div className="code-panel-container">
         {this.renderSaveModal()}
@@ -151,13 +151,13 @@ export class CodePanelComponent extends React.Component<ICodePanelComponentProps
             this.state.hasLocalTempChanges && this.props.program.id ? this.revertCurrentProgram : undefined
           }
         />
-        <CodeInputLogoComponent
+        <CodeInputComponent
           className="code-input-container"
           editorTheme={this.props.editorTheme}
           code={this.state.code}
           onChanged={this.onCodeChanged}
           onHotkey={this.onRunProgram}
-          containerResized={this.props.containerResized}
+          containerResized={this.props.resizeEvents}
         />
       </div>
     );
@@ -172,7 +172,7 @@ export class CodePanelComponent extends React.Component<ICodePanelComponentProps
       this.managementService.saveTempProgram(this.props.program.id, newCode);
       if (!this.state.hasLocalTempChanges) {
         this.setState({ hasLocalTempChanges: true });
-        this.props.hasChangesStatus && this.props.hasChangesStatus(true);
+        this.props.onHasChangesChange && this.props.onHasChangesChange(true);
       }
     }, 500);
   };
@@ -222,17 +222,23 @@ export class CodePanelComponent extends React.Component<ICodePanelComponentProps
   };
 
   showSaveDialog = async () => {
-    const screenshot = await this.props.executionService.getScreenshot(true);
-    this.setState({ isSaveModalActive: true, screenshotDataToSave: screenshot });
+    const screenshot = await this.props.executionContext.getScreenshot(true);
+    this.setState({
+      isSaveModalActive: true,
+      screenshotDataToSave: screenshot
+    });
   };
 
   showSaveAsDialog = async () => {
-    const screenshot = await this.props.executionService.getScreenshot(true);
-    this.setState({ isSaveAsModalActive: true, screenshotDataToSave: screenshot });
+    const screenshot = await this.props.executionContext.getScreenshot(true);
+    this.setState({
+      isSaveAsModalActive: true,
+      screenshotDataToSave: screenshot
+    });
   };
 
   saveProgramCallback = async (newProgramName: string): Promise<void> => {
-    const screenshot = await this.props.executionService.getScreenshot(true);
+    const screenshot = await this.props.executionContext.getScreenshot(true);
     await this.managementService.saveProgramToLibrary(
       newProgramName,
       screenshot,
@@ -246,12 +252,12 @@ export class CodePanelComponent extends React.Component<ICodePanelComponentProps
       message: $T.gallery.programHasBeenSaved
     });
     this.setState({ hasLocalTempChanges: false });
-    this.props.hasChangesStatus && this.props.hasChangesStatus(false);
+    this.props.onHasChangesChange && this.props.onHasChangesChange(false);
     this.eventsTracker.sendEvent(EventAction.saveProgramToPersonalLibrary);
   };
 
   saveProgramAsCallback = async (newProgramName: string): Promise<void> => {
-    const screenshot = await this.props.executionService.getScreenshot(true);
+    const screenshot = await this.props.executionContext.getScreenshot(true);
     const newProgram = await this.managementService.saveProgramToLibrary(
       newProgramName,
       screenshot,
@@ -275,11 +281,11 @@ export class CodePanelComponent extends React.Component<ICodePanelComponentProps
     const code = await this.managementService.revertLocalTempChanges(this.props.program);
     this.eventsTracker.sendEvent(EventAction.programResetChanges);
     this.setState({ hasLocalTempChanges: false, code: code });
-    this.props.hasChangesStatus && this.props.hasChangesStatus(false);
+    this.props.onHasChangesChange && this.props.onHasChangesChange(false);
   };
 
   exportScreenshot = async () => {
-    const data = await this.props.executionService.getScreenshot(false);
+    const data = await this.props.executionContext.getScreenshot(false);
     if (!data) {
       this.notificationService.push({
         type: "primary",
@@ -287,11 +293,14 @@ export class CodePanelComponent extends React.Component<ICodePanelComponentProps
         message: $T.program.screenShotNotAvailable
       });
     }
-    this.setState({ isTakeScreenshotModalActive: true, screenshotDataToSave: data });
+    this.setState({
+      isTakeScreenshotModalActive: true,
+      screenshotDataToSave: data
+    });
   };
 
   shareProgram = async () => {
-    const data = await this.props.executionService.getScreenshot(true);
+    const data = await this.props.executionContext.getScreenshot(true);
     this.setState({ isShareModalActive: true, screenshotDataToSave: data });
   };
 }

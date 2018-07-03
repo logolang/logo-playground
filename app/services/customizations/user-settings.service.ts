@@ -4,6 +4,7 @@ import { CurrentUserService } from "app/services/login/current-user.service";
 
 export abstract class IUserSettingsService {
   abstract get(): Promise<IUserSettings>;
+  abstract get userSettingsKey(): string;
   abstract update<K extends keyof IUserSettings>(update: Pick<IUserSettings, K>): Promise<void>;
 }
 
@@ -13,10 +14,6 @@ export interface IUserSettings {
   themeName: string;
   localeId: string;
   currentTutorialInfo?: ICurrentTutorialInfo;
-  playgroundLayoutJSON?: string;
-  playgroundLayoutMobileJSON?: string;
-  tutorialsLayoutJSON?: string;
-  tutorialsLayoutMobileJSON?: string;
 }
 
 export interface ICurrentTutorialInfo {
@@ -34,8 +31,7 @@ export class UserSettingsBrowserLocalStorageService implements IUserSettingsServ
   private currentData: IUserSettings;
 
   constructor(@inject(CurrentUserService) private currentUser: CurrentUserService) {
-    const userId = this.currentUser.getLoginStatus().userInfo.attributes.email || "guest";
-    this.localStorage = new LocalStorageService<IUserSettings>(`logo-playground.settings:${userId}`, {} as any);
+    this.localStorage = new LocalStorageService<IUserSettings>(this.userSettingsKey, {} as any);
     const settings = this.localStorage.getValue();
 
     //Apply default values
@@ -47,6 +43,11 @@ export class UserSettingsBrowserLocalStorageService implements IUserSettingsServ
 
   async saveDataToStorage(): Promise<void> {
     this.localStorage.setValue(this.currentData);
+  }
+
+  public get userSettingsKey() {
+    const userId = this.currentUser.getLoginStatus().userInfo.attributes.email || "guest";
+    return `logo-playground.settings:${userId}`;
   }
 
   async get(): Promise<IUserSettings> {

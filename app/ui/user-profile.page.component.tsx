@@ -28,7 +28,7 @@ import { SignInStatusComponent } from "app/ui/sign-in-status.component";
 import { SimpleSelectComponent } from "app/ui/_generic/simple-select.component";
 import { PageHeaderComponent } from "app/ui/_generic/page-header.component";
 import { MainMenuComponent } from "app/ui/main-menu.component";
-import { LogoExecutorComponent } from "app/ui/_shared/logo-executor.component";
+import { LogoExecutorComponent } from "app/ui/_generic/logo-executor/logo-executor.component";
 import { FileSelectorComponent } from "app/ui/_generic/file-selector.component";
 import { LogoCodeSamplesService } from "app/services/program/logo-code-samples.service";
 
@@ -172,7 +172,9 @@ export class UserProfilePageComponent extends React.Component<IComponentProps, I
                                 idAttr="language-selector"
                                 selectionChanged={async selectedLocation => {
                                   if (selectedLocation) {
-                                    await this.userSettingsService.update({ localeId: selectedLocation.id });
+                                    await this.userSettingsService.update({
+                                      localeId: selectedLocation.id
+                                    });
                                     await this.diSetup.reset();
                                   }
                                 }}
@@ -198,7 +200,9 @@ export class UserProfilePageComponent extends React.Component<IComponentProps, I
                                 selectionChanged={async selectedTheme => {
                                   if (selectedTheme) {
                                     this.setState({ theme: selectedTheme });
-                                    await this.userSettingsService.update({ themeName: selectedTheme.name });
+                                    await this.userSettingsService.update({
+                                      themeName: selectedTheme.name
+                                    });
                                     this.themeService.setActiveTheme(selectedTheme.name);
                                     await this.loadData();
                                   }
@@ -223,7 +227,9 @@ export class UserProfilePageComponent extends React.Component<IComponentProps, I
                                 renderItem={x => x.name}
                                 selectionChanged={async newTurtle => {
                                   if (newTurtle) {
-                                    await this.userSettingsService.update({ turtleId: newTurtle.id });
+                                    await this.userSettingsService.update({
+                                      turtleId: newTurtle.id
+                                    });
                                     await this.loadData();
                                   }
                                 }}
@@ -247,7 +253,9 @@ export class UserProfilePageComponent extends React.Component<IComponentProps, I
                                 renderItem={x => x.description}
                                 selectionChanged={async newSize => {
                                   if (newSize) {
-                                    await this.userSettingsService.update({ turtleSize: newSize.size });
+                                    await this.userSettingsService.update({
+                                      turtleSize: newSize.size
+                                    });
                                     await this.loadData();
                                   }
                                 }}
@@ -268,7 +276,9 @@ export class UserProfilePageComponent extends React.Component<IComponentProps, I
                           </p>
                           <p className="control">
                             <FileSelectorComponent
-                              className={cn({ "is-loading": this.state.isImportingInProgress })}
+                              className={cn({
+                                "is-loading": this.state.isImportingInProgress
+                              })}
                               buttonText={$T.settings.import}
                               onFileTextContentReady={this.onImport}
                             />
@@ -284,7 +294,7 @@ export class UserProfilePageComponent extends React.Component<IComponentProps, I
                         {[
                           <LogoExecutorComponent
                             key={`${JSON.stringify(this.state.userSettings)}`} //this is a hack to force component to be created each render in order to not handle prop change event
-                            onIsRunningChanged={this.onIsRunningChanged}
+                            onIsRunningChange={this.onIsRunningChanged}
                             runCommands={this.runCode}
                             stopCommands={new Subject<void>()}
                             customTurtleImage={this.state.turtleImage}
