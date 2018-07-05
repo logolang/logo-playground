@@ -99,7 +99,7 @@ msgstr "Программа сохранена успешно"
 msgid "gallery.syncronizing"
 msgstr "Синхронизация"
 
-msgid "program.code"
+msgid "program.codePanelTitle"
 msgstr "Код программы"
 
 msgid "program.defaultProgramWelcomeComment"
@@ -111,7 +111,7 @@ msgstr "Скриншот"
 msgid "program.imageUrl"
 msgstr "Публичная ссылка"
 
-msgid "program.output"
+msgid "program.outputPanelTitle"
 msgstr "Вывод"
 
 msgid "program.playgroundTitle"
@@ -274,7 +274,7 @@ msgstr "Старт"
 msgid "tutorial.stepIndicator"
 msgstr "Шаг %1$s из %2$s"
 
-msgid "tutorial.tutorial"
+msgid "tutorial.tutorialPanelTitle"
 msgstr "Учебник"
 
 msgid "tutorial.tutorialsTitle"

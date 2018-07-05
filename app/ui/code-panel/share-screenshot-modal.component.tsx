@@ -20,7 +20,7 @@ interface IComponentState {
 
 interface IComponentProps {
   imageBase64: string;
-  onClose: () => void;
+  onClose(): void;
 }
 
 export class ShareScreenshotModalComponent extends React.Component<IComponentProps, IComponentState> {

@@ -30,7 +30,7 @@ export class ProgramManagementService {
   loadProgram = async (programId?: string, storageType?: ProgramStorageType): Promise<ProgramModel> => {
     const program = await this.loadProgramFromStorage(storageType, programId);
 
-    const tempCode = this.localTempStorage.getCode(programId || "");
+    const tempCode = this.localTempStorage.getCode(programId || "playground");
     if (tempCode) {
       program.code = tempCode;
       program.hasTempLocalModifications = true;
@@ -38,13 +38,17 @@ export class ProgramManagementService {
     return program;
   };
 
-  saveTempProgram = (programId: string, code: string): void => {
-    this.localTempStorage.setCode(programId, code);
+  saveTempProgram = (programId: string | undefined, code: string): void => {
+    this.localTempStorage.setCode(programId || "playground", code);
   };
 
-  revertLocalTempChanges = async (programModel: ProgramModel): Promise<string> => {
-    const program = await this.loadProgramFromStorage(programModel.storageType, programModel.id);
-    this.saveTempProgram(program.id, "");
+  clearTempProgram = (programId: string | undefined): void => {
+    this.localTempStorage.setCode(programId || "playground", "");
+  };
+
+  revertLocalTempChanges = async (programId: string, storageType: ProgramStorageType): Promise<string> => {
+    const program = await this.loadProgramFromStorage(storageType, programId);
+    this.clearTempProgram(program.id);
     return program.code;
   };
 
@@ -55,46 +59,47 @@ export class ProgramManagementService {
     }
   }
 
-  saveProgramToLibrary = async (
-    newProgramName: string,
-    newScreenshot: string,
-    newCode: string,
-    program: ProgramModel,
-    allowOverwrite: boolean
-  ): Promise<ProgramModel> => {
-    if (!newProgramName || !newProgramName.trim()) {
+  saveProgramToLibrary = async (options: {
+    id?: string;
+    newProgramName: string;
+    newScreenshot: string;
+    newCode: string;
+  }): Promise<ProgramModel> => {
+    if (!options.newProgramName || !options.newProgramName.trim()) {
       throw new Error("Program name is required.");
     }
     const allProgs = (await this.personalGalleryService.getAll()) || [];
-    if (!allowOverwrite) {
-      const progWithSameName = allProgs.find(p => p.name.trim().toLowerCase() === newProgramName.trim().toLowerCase());
+    if (!options.id) {
+      const progWithSameName = allProgs.find(
+        p => p.name.trim().toLowerCase() === options.newProgramName.trim().toLowerCase()
+      );
       if (progWithSameName) {
         throw new Error("Program with this name is already stored in library. Please enter different name.");
       }
       const newProgram = ProgramModelConverter.createNewProgram(
         ProgramStorageType.gallery,
-        newProgramName,
-        newCode,
-        newScreenshot
+        options.newProgramName,
+        options.newCode,
+        options.newScreenshot
       );
       await this.personalGalleryService.add([newProgram]);
-      if (program.id) {
-        this.saveTempProgram(program.id, "");
-      }
       return newProgram;
     } else {
-      program.screenshot = newScreenshot;
-      program.code = newCode;
-      await this.personalGalleryService.save(program);
-      if (program.id) {
-        this.saveTempProgram(program.id, "");
+      const program = allProgs.find(p => p.id === options.id);
+      if (!program) {
+        throw new Error("Program with id is not found: " + options.id);
       }
+      program.screenshot = options.newScreenshot;
+      program.code = options.newCode;
+      program.name = options.newProgramName;
+      await this.personalGalleryService.save(program);
+      this.clearTempProgram(options.id);
       return program;
     }
   };
 
   private async loadProgramFromStorage(storageType?: ProgramStorageType, programId?: string): Promise<ProgramModel> {
-    let program: ProgramModel | undefined = undefined;
+    let program: ProgramModel | undefined;
 
     if (!storageType || !programId) {
       program = ProgramModelConverter.createNewProgram(undefined, "", "", "");

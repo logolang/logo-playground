@@ -1,6 +1,5 @@
 import * as React from "react";
-import { Observable } from "rxjs/Observable";
-import { Subscription } from "rxjs/Subscription";
+import { Observable, Subscription } from "rxjs";
 
 import "./message-toster.component.less";
 
@@ -30,7 +29,7 @@ interface IComponentState {
 
 export class MessageTosterComponent extends React.Component<IComponentProps, IComponentState> {
   private messageSubscription: Subscription | undefined;
-  private id: number = 1;
+  private id = 1;
 
   constructor(props: IComponentProps) {
     super(props);

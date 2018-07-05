@@ -40,7 +40,7 @@ export class GoogleDriveClient {
       })
     });
     if (result.ok) {
-      return await result.text();
+      return result.text();
     }
     throw new Error("Google drive read error");
   }

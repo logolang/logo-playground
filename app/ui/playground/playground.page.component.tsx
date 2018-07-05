@@ -1,9 +1,7 @@
 import * as React from "react";
-import { Subject } from "rxjs/Subject";
-import { BehaviorSubject } from "rxjs/BehaviorSubject";
+import { Subject } from "rxjs";
 
-import { as } from "app/utils/syntax-helpers";
-import { callActionSafe, ErrorDef } from "app/utils/error-helpers";
+import { callActionSafe } from "app/utils/error-helpers";
 
 import { checkIsMobileDevice } from "app/utils/device-helper";
 import { $T } from "app/i18n/strings";
@@ -12,7 +10,6 @@ import { Routes } from "app/routes";
 import { ErrorService } from "app/services/infrastructure/error.service";
 import { ProgramModel } from "app/services/program/program.model";
 import { ProgramExecutionContext } from "app/services/program/program-execution.context";
-import { NotificationService } from "app/services/infrastructure/notification.service";
 import { NavigationService } from "app/services/infrastructure/navigation.service";
 import { TitleService } from "app/services/infrastructure/title.service";
 import { IUserSettingsService, IUserSettings } from "app/services/customizations/user-settings.service";
@@ -23,10 +20,11 @@ import { EventsTrackingService, EventAction } from "app/services/infrastructure/
 import { LogoCodeSamplesService } from "app/services/program/logo-code-samples.service";
 
 import { MainMenuComponent } from "app/ui/main-menu.component";
-import { GoldenLayoutComponent, IPanelConfig } from "app/ui/_shared/golden-layout.component";
-import { CodePanelComponent, ICodePanelComponentProps } from "app/ui/playground/code-panel.component";
-import { OutputPanelComponent, IOutputPanelComponentProps } from "app/ui/playground/output-panel.component";
 import { LoadingComponent } from "app/ui/_generic/loading.component";
+import { ReactGoldenLayout } from "app/ui/_generic/react-golden-layout/react-golden-layout";
+import { ReactGoldenLayoutPanel } from "app/ui/_generic/react-golden-layout/react-golden-layout-panel";
+import { CodePanelComponent } from "app/ui/code-panel/code-panel.component";
+import { OutputPanelComponent } from "app/ui/output-panel/output-panel.component";
 import {
   playgroundDefaultLayout,
   playgroundDefaultMobileLayout
@@ -36,11 +34,18 @@ import "./playground.page.component.less";
 
 interface IComponentState {
   isLoading: boolean;
+
+  programId?: string;
+  storageType?: ProgramStorageType;
+  programName: string;
+  programCode: string;
+  hasChanges: boolean;
+
   userSettings?: IUserSettings;
-  pageLayoutConfigJSON?: string;
-  program?: ProgramModel;
   turtleImage?: HTMLImageElement;
   theme?: Theme;
+  codePanelTitle: string;
+  layoutLocalStorageKey?: string;
 }
 
 export interface IComponentProps {
@@ -49,9 +54,7 @@ export interface IComponentProps {
 }
 
 export class PlaygroundPageComponent extends React.Component<IComponentProps, IComponentState> {
-  private notificationService = resolveInject(NotificationService);
   private navigationService = resolveInject(NavigationService);
-
   private errorService = resolveInject(ErrorService);
   private titleService = resolveInject(TitleService);
   private programManagementService = resolveInject(ProgramManagementService);
@@ -60,28 +63,31 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
   private turtlesService = resolveInject(TurtlesService);
   private eventsTracking = resolveInject(EventsTrackingService);
   private demoSamplesService = resolveInject(LogoCodeSamplesService);
-  private executionService = new ProgramExecutionContext();
-  private layoutChangedSubject = new Subject<void>();
-  private codePanelTitle = new BehaviorSubject<string>("");
-  private outputPanelTitle = new BehaviorSubject<string>("");
+  private executionContext = new ProgramExecutionContext();
+  private resizeEventsSubject = new Subject<void>();
   private isMobileDevice = checkIsMobileDevice();
+
   private defaultLayoutConfigJSON = JSON.stringify(
     this.isMobileDevice ? playgroundDefaultMobileLayout : playgroundDefaultLayout
   );
 
   constructor(props: IComponentProps) {
     super(props);
-    this.state = this.buildDefaultState(this.props);
-  }
-
-  buildDefaultState(props: IComponentProps): IComponentState {
-    const state: IComponentState = {
-      isLoading: true
+    this.state = {
+      isLoading: true,
+      programCode: "",
+      hasChanges: false,
+      programName: "",
+      codePanelTitle: ""
     };
-    return state;
   }
 
   async componentWillReceiveProps(newProps: IComponentProps) {
+    if (this.state.programId === newProps.programId) {
+      /* Skip reload of data if we already have that program loaded.
+         Happens when we do navigation after "SaveAs" command in order to update browser URL */
+      return;
+    }
     if (newProps.programId != this.props.programId) {
       this.setState({ isLoading: true });
       await this.loadData(newProps);
@@ -93,28 +99,19 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
     await this.loadData(this.props);
   }
 
-  componentWillUnmount() {
-    /***/
+  private setProgramToState(program: ProgramModel) {
+    this.setState({
+      programCode: program.code,
+      programId: program.id,
+      programName: program.name,
+      storageType: program.storageType,
+      hasChanges: program.hasTempLocalModifications,
+      codePanelTitle: this.buildCodePanelTitle(program.name, program.id, program.hasTempLocalModifications)
+    });
   }
 
-  layoutChanged = async (newLayoutJSON: string): Promise<void> => {
-    await this.userSettingsService.update(
-      this.isMobileDevice
-        ? {
-            playgroundLayoutMobileJSON: newLayoutJSON
-          }
-        : {
-            playgroundLayoutJSON: newLayoutJSON
-          }
-    );
-    this.layoutChangedSubject.next();
-  };
-
   private onSaveAs = (program: ProgramModel) => {
-    this.setCodePanelTitle(program.name, program.id, program.hasTempLocalModifications);
-    this.setState({
-      program: program
-    });
+    this.setProgramToState(program);
     this.navigationService.navigate({
       route: Routes.codeLibrary.build({
         id: program.id
@@ -122,15 +119,17 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
     });
   };
 
-  private setCodePanelTitle(programName: string, programId: string, hasChanges: boolean) {
-    let title =
-      `<i class="fa fa-code" aria-hidden="true"></i> ` +
-      $T.program.program +
-      (programName ? ": <strong>" + programName + "</strong>" : "");
-    if (hasChanges && programId) {
-      title += ` <i class="fa fa-asterisk icon-sm" aria-hidden="true" title="${$T.program.programHasChanges}"></i>`;
+  private buildCodePanelTitle(programName: string, programId: string | undefined, hasChanges: boolean): string {
+    let title = `<i class="fa fa-code" aria-hidden="true"></i> `;
+    if (!programId) {
+      title += $T.program.codePanelTitle;
+    } else {
+      title += `${$T.program.program}: <strong>${programName}</strong>`;
+      if (hasChanges) {
+        title += ` <i class="fa fa-asterisk icon-sm" aria-hidden="true" title="${$T.program.programHasChanges}"></i>`;
+      }
     }
-    this.codePanelTitle.next(title);
+    return title;
   }
 
   async loadData(props: IComponentProps) {
@@ -174,24 +173,20 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
     const theme = this.themesService.getTheme(userSettings.themeName);
     const turtleImage = this.turtlesService.getTurtleImage(userSettings.turtleId);
 
-    this.setCodePanelTitle(programModel.name, programModel.id, programModel.hasTempLocalModifications);
-    this.outputPanelTitle.next(`<i class="fa fa-television" aria-hidden="true"></i> ` + $T.program.output);
-
+    this.setProgramToState(programModel);
     this.setState({
       isLoading: false,
-      program: programModel,
       userSettings,
       theme,
       turtleImage,
-      pageLayoutConfigJSON: this.isMobileDevice
-        ? userSettings.playgroundLayoutMobileJSON
-        : userSettings.playgroundLayoutJSON
+      layoutLocalStorageKey:
+        this.userSettingsService.userSettingsKey + ":playground-layout" + (this.isMobileDevice ? "-mobile" : "-desktop")
     });
 
     this.titleService.setDocumentTitle(programModel.name);
 
     setTimeout(() => {
-      this.executionService.executeProgram(programModel.code);
+      this.executionContext.executeProgram(programModel.code);
     }, 500);
   }
 
@@ -205,52 +200,56 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
               <LoadingComponent isLoading />
             </div>
           )}
-          {this.state.program &&
-            this.state.userSettings &&
+          {this.state.userSettings &&
             this.state.theme && (
-              <GoldenLayoutComponent
-                initialLayoutConfigJSON={this.state.pageLayoutConfigJSON}
-                defaultLayoutConfigJSON={this.defaultLayoutConfigJSON}
-                onLayoutChange={this.layoutChanged}
-                panelsReloadCheck={(oldPanels, newPanels) => {
-                  const oldProgramId = oldPanels[0].props.program.id;
-                  const newProgramId = newPanels[0].props.program.id;
-                  return newProgramId !== oldProgramId;
+              <ReactGoldenLayout
+                className="golden-layout-container"
+                configLayoutOverride={{
+                  settings: {
+                    showMaximiseIcon: false,
+                    showPopoutIcon: false,
+                    showCloseIcon: false
+                  },
+                  dimensions: { headerHeight: 32 }
                 }}
-                panels={[
-                  as<IPanelConfig<CodePanelComponent, ICodePanelComponentProps>>({
-                    title: this.codePanelTitle,
-                    componentName: "code-panel",
-                    componentType: CodePanelComponent,
-                    props: {
-                      saveCurrentEnabled: this.props.storageType === ProgramStorageType.gallery,
-                      program: this.state.program,
-                      editorTheme: this.state.theme.codeEditorThemeName,
-                      executionService: this.executionService,
-                      onSaveAs: this.onSaveAs,
-                      containerResized: this.layoutChangedSubject,
-                      hasChangesStatus: hasChanges =>
-                        this.setCodePanelTitle(this.state.program!.name, this.state.program!.id, hasChanges)
-                    }
-                  }),
-                  as<IPanelConfig<OutputPanelComponent, IOutputPanelComponentProps>>({
-                    title: this.outputPanelTitle,
-                    componentName: "output-panel",
-                    componentType: OutputPanelComponent,
-                    props: {
-                      logoExecutorProps: {
-                        runCommands: this.executionService.runCommands,
-                        stopCommands: this.executionService.stopCommands,
-                        makeScreenshotCommands: this.executionService.makeScreenshotCommands,
-                        onIsRunningChanged: this.executionService.onIsRunningChanged,
-                        isDarkTheme: this.state.theme.isDark,
-                        customTurtleImage: this.state.turtleImage,
-                        customTurtleSize: this.state.userSettings.turtleSize
-                      }
-                    }
-                  })
-                ]}
-              />
+                layoutLocalStorageKey={this.state.layoutLocalStorageKey}
+                defaultLayoutConfigJSON={this.defaultLayoutConfigJSON}
+                onLayoutChange={() => this.resizeEventsSubject.next()}
+              >
+                <ReactGoldenLayoutPanel id="code-panel" title={this.state.codePanelTitle}>
+                  <CodePanelComponent
+                    programId={this.state.programId}
+                    storageType={this.state.storageType}
+                    programName={this.state.programName}
+                    programCode={this.state.programCode}
+                    hasChanges={this.state.hasChanges}
+                    executionContext={this.executionContext}
+                    onCodeChange={newCode => this.setState({ programCode: newCode })}
+                    editorTheme={this.state.theme.codeEditorThemeName}
+                    onSaveAs={this.onSaveAs}
+                    resizeEvents={this.resizeEventsSubject}
+                    onHasChangesChange={hasChanges => {
+                      const codePanelTitle = this.buildCodePanelTitle(
+                        this.state.programName,
+                        this.state.programId,
+                        hasChanges
+                      );
+                      this.setState({ codePanelTitle, hasChanges });
+                    }}
+                  />
+                </ReactGoldenLayoutPanel>
+                <ReactGoldenLayoutPanel
+                  id="output-panel"
+                  title={`<i class="fa fa-television" aria-hidden="true"></i> ` + $T.program.outputPanelTitle}
+                >
+                  <OutputPanelComponent
+                    executionContext={this.executionContext}
+                    isDarkTheme={this.state.theme.isDark}
+                    turtleImage={this.state.turtleImage}
+                    turtleSize={this.state.userSettings.turtleSize}
+                  />
+                </ReactGoldenLayoutPanel>
+              </ReactGoldenLayout>
             )}
         </div>
       </div>

@@ -1,4 +1,3 @@
-import { getFileExtension, parseDateFromJson, stringifyDateAsJson } from "./formatter-helper";
 import { createCompareFunction } from "./syntax-helpers";
 
 interface Person {

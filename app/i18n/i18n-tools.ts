@@ -31,6 +31,9 @@ export class Template {
   }
 
   public val(...values: string[]) {
+    if (values.length != this.numberOfParameters) {
+      throw new Error("Number of parameters to template string is wrong!");
+    }
     if (i18n) {
       return i18n.translate(this._messageKey).fetch(...values);
     }

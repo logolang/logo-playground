@@ -16,8 +16,8 @@ interface IComponentProps {
   currentTutorialId: string;
   currentStepId: string;
   tutorials: ITutorialInfo[];
-  onSelect: (tutorial: ITutorialInfo) => void;
-  onCancel: () => void;
+  onSelect(tutorial: ITutorialInfo): void;
+  onCancel(): void;
 }
 
 export class TutorialSelectModalComponent extends React.Component<IComponentProps, IComponentState> {

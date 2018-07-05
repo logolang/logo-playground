@@ -7,23 +7,20 @@ interface IComponentState {
 }
 
 interface IComponentProps {
-  className?: string;
   isRunning: boolean;
-  runProgram: () => void;
-  stopProgram: () => void;
-  existingProgramName?: string;
-  revertChanges?: () => void;
-  saveAsNew?: () => void;
-  save?: () => void;
-  onShareProgram: () => void;
-  exportImage: () => void;
+  onRunProgram(): void;
+  onStopProgram(): void;
+  onRevertChanges?(): void;
+  onSaveProgramAsNew?(): void;
+  onSaveProgram?(): void;
+  onShareProgram(): void;
+  onExportImage(): void;
   onDeleteProgram?(): void;
 }
 
 export class ProgramControlsMenuComponent extends React.Component<IComponentProps, IComponentState> {
   constructor(props: IComponentProps) {
     super(props);
-
     this.state = {};
   }
 
@@ -38,7 +35,7 @@ export class ProgramControlsMenuComponent extends React.Component<IComponentProp
           <button
             type="button"
             className="button is-success is-borderless"
-            onClick={this.props.runProgram}
+            onClick={this.props.onRunProgram}
             title={$T.program.runDescription + " (F9)"}
           >
             {$T.program.run}
@@ -48,13 +45,17 @@ export class ProgramControlsMenuComponent extends React.Component<IComponentProp
           <button
             type="button"
             className="button is-warning is-borderless"
-            onClick={this.props.stopProgram}
+            onClick={this.props.onStopProgram}
             title={$T.program.stopDescription}
           >
             {$T.program.stop}
           </button>
         )}{" "}
-        <div className={cn("dropdown is-right is-borderless", { "is-active": this.state.menuIsActive })}>
+        <div
+          className={cn("dropdown is-right is-borderless", {
+            "is-active": this.state.menuIsActive
+          })}
+        >
           <div className="dropdown-trigger">
             <button
               className="button is-light"
@@ -67,36 +68,36 @@ export class ProgramControlsMenuComponent extends React.Component<IComponentProp
           </div>
           <div className="dropdown-menu" id="dropdown-menu6" role="menu">
             <div className="dropdown-content">
-              {this.props.revertChanges && (
+              {this.props.onRevertChanges && (
                 <a
                   className="dropdown-item"
                   onClick={() => {
                     this.setState({ menuIsActive: false });
-                    this.props.revertChanges && this.props.revertChanges();
+                    this.props.onRevertChanges && this.props.onRevertChanges();
                   }}
                 >
                   <i className="fa fa-undo icon-fixed-width" aria-hidden="true" />
                   {$T.program.revertChanges}
                 </a>
               )}
-              {this.props.save && (
+              {this.props.onSaveProgram && (
                 <a
                   className="dropdown-item"
                   onClick={() => {
                     this.setState({ menuIsActive: false });
-                    this.props.save && this.props.save();
+                    this.props.onSaveProgram && this.props.onSaveProgram();
                   }}
                 >
                   <i className="fa fa-check-square-o icon-fixed-width" aria-hidden="true" />
                   {$T.program.save}
                 </a>
               )}
-              {this.props.saveAsNew && (
+              {this.props.onSaveProgramAsNew && (
                 <a
                   className="dropdown-item"
                   onClick={() => {
                     this.setState({ menuIsActive: false });
-                    this.props.saveAsNew && this.props.saveAsNew();
+                    this.props.onSaveProgramAsNew && this.props.onSaveProgramAsNew();
                   }}
                 >
                   <i className="fa fa-clone icon-fixed-width" aria-hidden="true" />
@@ -133,7 +134,7 @@ export class ProgramControlsMenuComponent extends React.Component<IComponentProp
                 className="dropdown-item"
                 onClick={() => {
                   this.setState({ menuIsActive: false });
-                  this.props.exportImage();
+                  this.props.onExportImage();
                 }}
               >
                 <i className="fa fa-camera icon-fixed-width" aria-hidden="true" />

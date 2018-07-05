@@ -1,12 +1,12 @@
 import * as React from "react";
 import { LoginStatus, NotLoggenInStatus } from "app/services/login/current-user.service";
-import { Subject } from "rxjs/Subject";
+import { Subject } from "rxjs";
 import { IAuthService } from "app/services/login/auth.service";
 import { AuthProvider } from "app/services/login/user-info";
 import { $T } from "app/i18n/strings";
 
 export class GoogleAuthService implements IAuthService {
-  private isSignedIn: boolean = false;
+  private isSignedIn = false;
   private loginStatus: LoginStatus;
   private loginStatusSubject = new Subject<LoginStatus>();
 
@@ -58,9 +58,9 @@ export class GoogleAuthService implements IAuthService {
     this.updateSigninStatus(googleUser);
 
     // Listen for changes to current user.
-    auth.currentUser.listen((googleUser: any) => {
-      console.log("auth.currentUser.listen", googleUser);
-      this.updateSigninStatus(googleUser);
+    auth.currentUser.listen((updatedUser: any) => {
+      console.log("auth.currentUser.listen", updatedUser);
+      this.updateSigninStatus(updatedUser);
     });
   };
 
