@@ -22,7 +22,7 @@ export interface ICodeInputComponentProps {
   onHotkey?: (key: string) => void;
   onChanged: (code: string) => void;
   editorTheme: string;
-  containerResized?: Observable<void>;
+  resizeEvents?: Observable<void>;
 }
 
 export class CodeInputComponent extends React.Component<ICodeInputComponentProps, IComponentState> {
@@ -84,9 +84,9 @@ export class CodeInputComponent extends React.Component<ICodeInputComponentProps
       this.cm.addKeyMap(map);
     }
 
-    if (this.props.containerResized) {
+    if (this.props.resizeEvents) {
       this.subsriptions.push(
-        this.props.containerResized.subscribe(() => {
+        this.props.resizeEvents.subscribe(() => {
           this.cm.refresh();
         })
       );

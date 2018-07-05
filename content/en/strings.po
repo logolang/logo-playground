@@ -99,8 +99,8 @@ msgstr "Program has been saved in the personal library."
 msgid "gallery.syncronizing"
 msgstr "Synchronizing gallery with remote storage"
 
-msgid "program.code"
-msgstr "Code"
+msgid "program.codePanelTitle"
+msgstr "Program box"
 
 msgid "program.defaultProgramWelcomeComment"
 msgstr "Welcome to LOGO playground!"
@@ -111,8 +111,8 @@ msgstr "Image preview"
 msgid "program.imageUrl"
 msgstr "Image url"
 
-msgid "program.output"
-msgstr "Output"
+msgid "program.outputPanelTitle"
+msgstr "Drawing box"
 
 msgid "program.playgroundTitle"
 msgstr "Playground"
@@ -272,7 +272,7 @@ msgstr "Start"
 msgid "tutorial.stepIndicator"
 msgstr "Step %1$s of %2$s"
 
-msgid "tutorial.tutorial"
+msgid "tutorial.tutorialPanelTitle"
 msgstr "Tutorial"
 
 msgid "tutorial.tutorialsTitle"

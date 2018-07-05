@@ -20,7 +20,8 @@ interface IComponentState {
 }
 
 interface IComponentProps {
-  programModel: ProgramModel;
+  programName: string;
+  programCode: string;
   imageBase64: string;
   onClose(): void;
 }
@@ -34,7 +35,7 @@ export class ShareProgramModalComponent extends React.Component<IComponentProps,
 
     this.state = {
       errorMessage: "",
-      programName: this.props.programModel.name,
+      programName: this.props.programName,
       isSavingInProgress: false,
       publishedUrl: ""
     };
@@ -94,7 +95,7 @@ export class ShareProgramModalComponent extends React.Component<IComponentProps,
     this.setState({ isSavingInProgress: true, errorMessage: "" });
 
     const result = await callActionSafe(this.errorHandler, async () =>
-      this.gistService.post(this.state.programName, this.props.imageBase64, this.props.programModel)
+      this.gistService.post(this.state.programName, this.props.programCode)
     );
     this.setState({
       isSavingInProgress: false

@@ -10,14 +10,9 @@ export class LogoOutputGraphics {
   width: number;
   height: number;
 
-  constructor(
-    private sandBoxSelector: string,
-    private turtleSelector: string,
-    private turtleCustomImage?: HTMLImageElement,
-    private turtleSize?: number
-  ) {}
+  constructor(private sandBoxSelector: string, private turtleSelector: string) {}
 
-  initTurtle() {
+  initTurtle(turtleCustomImage?: HTMLImageElement, turtleSize?: number) {
     const CanvasTurtle: any = (window as any)["CanvasTurtle"];
     const canvas_element = $(this.sandBoxSelector) as HTMLCanvasElement;
     const canvas_ctx = canvas_element.getContext("2d");
@@ -27,16 +22,12 @@ export class LogoOutputGraphics {
     this.height = canvas_element.height;
 
     const turtleOptions = {
-      customTurtleGraphics: this.turtleCustomImage,
-      customTurtleSize: this.turtleSize
+      customTurtleGraphics: turtleCustomImage,
+      customTurtleSize: turtleSize
     };
 
     this.turtle = new CanvasTurtle(canvas_ctx, turtle_ctx, this.width, this.height, null, turtleOptions);
     return this.turtle;
-  }
-
-  destroy() {
-    /**/
   }
 
   resizeCanvas(width: number, height: number) {

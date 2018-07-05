@@ -23,8 +23,8 @@ export const $T = {
     error: "Sorry, error has occured"
   },
   program: {
-    code: "Code",
-    output: "Output",
+    codePanelTitle: "Program box",
+    outputPanelTitle: "Drawing box",
     program: "Program",
     programName: "Program name",
     publicUrl: "Public url",
@@ -64,7 +64,7 @@ export const $T = {
   },
   tutorial: {
     tutorialsTitle: "Tutorials",
-    tutorial: "Tutorial",
+    tutorialPanelTitle: "Tutorial",
     chooseTutorial: "Choose a tutorial",
     chooseAnotherTutorial: "Choose another tutorial",
     stepIndicator: new Template("Step %1$s of %2$s", 2),

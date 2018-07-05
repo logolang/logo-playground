@@ -1,15 +1,19 @@
-export const playgroundDefaultLayout = {
+import { GoldenLayoutConfig } from "app/ui/_generic/react-golden-layout/react-golden-layout";
+
+export const playgroundDefaultLayout: GoldenLayoutConfig = {
   content: [
     {
       type: "row",
       content: [
         {
+          isClosable: false,
           title: "",
           type: "component",
           componentName: "output-panel",
           width: 60
         },
         {
+          isClosable: false,
           title: "",
           type: "component",
           componentName: "code-panel",
@@ -20,7 +24,7 @@ export const playgroundDefaultLayout = {
   ]
 };
 
-export const playgroundDefaultMobileLayout = {
+export const playgroundDefaultMobileLayout: GoldenLayoutConfig = {
   settings: {
     reorderEnabled: false
   },
@@ -29,12 +33,14 @@ export const playgroundDefaultMobileLayout = {
       type: "column",
       content: [
         {
+          isClosable: false,
           title: "",
           type: "component",
           componentName: "code-panel",
           height: 45
         },
         {
+          isClosable: false,
           title: "",
           type: "component",
           componentName: "output-panel",

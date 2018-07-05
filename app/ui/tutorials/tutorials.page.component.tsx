@@ -11,12 +11,14 @@ import { ErrorService } from "app/services/infrastructure/error.service";
 import { TitleService } from "app/services/infrastructure/title.service";
 import { NavigationService } from "app/services/infrastructure/navigation.service";
 import { IUserSettingsService, IUserSettings } from "app/services/customizations/user-settings.service";
-import { ProgramModel } from "app/services/program/program.model";
-import { ProgramModelConverter } from "app/services/program/program-model.converter";
 import { ThemesService, Theme } from "app/services/customizations/themes.service";
 import { TurtlesService } from "app/services/customizations/turtles.service";
 import { ProgramExecutionContext } from "app/services/program/program-execution.context";
-import { TutorialsContentService, ITutorialInfo } from "app/services/tutorials/tutorials-content-service";
+import {
+  TutorialsContentService,
+  ITutorialInfo,
+  ITutorialStepContent
+} from "app/services/tutorials/tutorials-content-service";
 import { EventsTrackingService, EventAction } from "app/services/infrastructure/events-tracking.service";
 import { tutorialsDefaultLayout, tutorialsDefaultMobileLayout } from "app/ui/tutorials/tutorials-default-goldenlayout";
 import { MainMenuComponent } from "app/ui/main-menu.component";
@@ -24,20 +26,23 @@ import { LoadingComponent } from "app/ui/_generic/loading.component";
 import { ReactGoldenLayout } from "app/ui/_generic/react-golden-layout/react-golden-layout";
 import { ReactGoldenLayoutPanel } from "app/ui/_generic/react-golden-layout/react-golden-layout-panel";
 import { CodePanelComponent } from "app/ui/code-panel/code-panel.component";
-import { LogoExecutorComponent } from "app/ui/_generic/logo-executor/logo-executor.component";
 import { TutorialViewComponent } from "app/ui/tutorials/tutorial-view.component";
+import { OutputPanelComponent } from "app/ui/output-panel/output-panel.component";
 
 import "./tutorials.page.component.less";
 
 interface IComponentState {
   isLoading: boolean;
-  userSettings?: IUserSettings;
-  theme?: Theme;
-  turtleImage?: HTMLImageElement;
+
   tutorials?: ITutorialInfo[];
   tutorialId?: string;
   stepId?: string;
-  program?: ProgramModel;
+
+  programCode: string;
+
+  userSettings?: IUserSettings;
+  theme?: Theme;
+  turtleImage?: HTMLImageElement;
   layoutLocalStorageKey?: string;
 }
 
@@ -60,8 +65,7 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
 
   private isMobileDevice = checkIsMobileDevice();
   private executionContext = new ProgramExecutionContext();
-  private codeChangesStream = new Subject<string>();
-  private layoutChangesStream = new Subject<void>();
+  private resizeEventsSubject = new Subject<void>();
 
   private defaultLayoutConfigJSON = JSON.stringify(
     this.isMobileDevice ? tutorialsDefaultMobileLayout : tutorialsDefaultLayout
@@ -70,7 +74,8 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
   constructor(props: IComponentProps) {
     super(props);
     this.state = {
-      isLoading: true
+      isLoading: true,
+      programCode: ""
     };
   }
 
@@ -78,6 +83,15 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
     this.titleService.setDocumentTitle($T.tutorial.tutorialsTitle);
     this.eventsTracking.sendEvent(EventAction.tutorialsOpen);
     await this.loadData(this.props);
+  }
+
+  async componentWillReceiveProps(newProps: IComponentProps) {
+    if (
+      newProps.match.params.tutorialId != this.state.tutorialId ||
+      newProps.match.params.stepId != this.state.stepId
+    ) {
+      await this.loadData(newProps);
+    }
   }
 
   componentWillUnmount() {
@@ -104,8 +118,6 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
       return;
     }
 
-    const program = ProgramModelConverter.createNewProgram(undefined, "", "", "");
-
     let tutorialId = props.match.params.tutorialId;
     let stepId = props.match.params.stepId;
     if (!tutorialId || !stepId) {
@@ -124,7 +136,7 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
       turtleImage,
       theme,
       tutorials,
-      program,
+      programCode: "",
       tutorialId,
       stepId,
       layoutLocalStorageKey:
@@ -132,32 +144,26 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
     });
   }
 
-  onFixTheCode = (code: string) => {
-    if (this.state.program) {
-      this.codeChangesStream.next(code);
-      this.eventsTracking.sendEvent(EventAction.tutorialsFixTheCode);
+  handleLoadedTutorial = async (content: ITutorialStepContent) => {
+    if (content.initialCode) {
+      this.setState({ programCode: content.initialCode });
+      this.executionContext.executeProgram(content.initialCode);
     }
   };
 
-  onLoadedTutorial = async (tutorialId: string, stepId: string, initCode: string) => {
-    if (this.state.program) {
-      this.codeChangesStream.next(initCode);
-      this.executionContext.executeProgram(initCode);
-    }
-
+  handleNavigationRequest = async (tutorialId: string, stepId: string) => {
     await this.userSettingsService.update({
-      currentTutorialInfo: {
-        tutorialId,
-        stepId
-      }
+      currentTutorialInfo: { tutorialId, stepId }
     });
-
     this.navService.navigate({
-      route: Routes.tutorialSpecified.build({
-        tutorialId: tutorialId,
-        stepId: stepId
-      })
+      route: Routes.tutorialSpecified.build({ tutorialId, stepId })
     });
+  };
+
+  fixTheCode = (code: string) => {
+    this.setState({ programCode: code });
+    this.executionContext.executeProgram(code);
+    this.eventsTracking.sendEvent(EventAction.tutorialsFixTheCode);
   };
 
   render(): JSX.Element {
@@ -171,13 +177,11 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
             </div>
           )}
 
-          {!this.state.isLoading &&
-            this.state.userSettings &&
+          {this.state.userSettings &&
             this.state.theme &&
             this.state.tutorials &&
             this.state.tutorialId &&
-            this.state.stepId &&
-            this.state.program && (
+            this.state.stepId && (
               <ReactGoldenLayout
                 className="golden-layout-container"
                 configLayoutOverride={{
@@ -190,44 +194,44 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
                 }}
                 layoutLocalStorageKey={this.state.layoutLocalStorageKey}
                 defaultLayoutConfigJSON={this.defaultLayoutConfigJSON}
+                onLayoutChange={() => this.resizeEventsSubject.next()}
               >
                 <ReactGoldenLayoutPanel
                   id="code-panel"
-                  title={`<i class="fa fa-code" aria-hidden="true"></i> ${$T.program.code}`}
+                  title={`<i class="fa fa-code" aria-hidden="true"></i> ${$T.program.codePanelTitle}`}
                 >
                   <CodePanelComponent
-                    saveCurrentEnabled={false}
-                    program={this.state.program}
-                    editorTheme={this.state.theme.codeEditorThemeName}
+                    programName="Tutorial"
+                    programCode={this.state.programCode}
+                    hasChanges={false}
                     executionContext={this.executionContext}
-                    resizeEvents={this.layoutChangesStream}
-                    externalCodeChanges={this.codeChangesStream}
+                    onCodeChange={newCode => this.setState({ programCode: newCode })}
+                    editorTheme={this.state.theme.codeEditorThemeName}
+                    resizeEvents={this.resizeEventsSubject}
                   />
                 </ReactGoldenLayoutPanel>
                 <ReactGoldenLayoutPanel
                   id="output-panel"
-                  title={`<i class="fa fa-television" aria-hidden="true"></i> ${$T.program.output}`}
+                  title={`<i class="fa fa-television" aria-hidden="true"></i> ${$T.program.outputPanelTitle}`}
                 >
-                  <LogoExecutorComponent
-                    runCommands={this.executionContext.runCommands}
-                    stopCommands={this.executionContext.stopCommands}
-                    makeScreenshotCommands={this.executionContext.makeScreenshotCommands}
-                    onIsRunningChange={this.executionContext.onIsRunningChange}
+                  <OutputPanelComponent
+                    executionContext={this.executionContext}
                     isDarkTheme={this.state.theme.isDark}
-                    customTurtleImage={this.state.turtleImage}
-                    customTurtleSize={this.state.userSettings.turtleSize}
+                    turtleImage={this.state.turtleImage}
+                    turtleSize={this.state.userSettings.turtleSize}
                   />
                 </ReactGoldenLayoutPanel>
                 <ReactGoldenLayoutPanel
                   id="tutorial-panel"
-                  title={`<i class="fa fa-graduation-cap" aria-hidden="true"></i> ${$T.tutorial.tutorialsTitle}`}
+                  title={`<i class="fa fa-graduation-cap" aria-hidden="true"></i> ${$T.tutorial.tutorialPanelTitle}`}
                 >
                   <TutorialViewComponent
-                    onFixTheCode={this.onFixTheCode}
-                    onLoadedTutorial={this.onLoadedTutorial}
-                    initialStepId={this.state.stepId}
-                    initialTutorialId={this.state.tutorialId}
                     tutorials={this.state.tutorials}
+                    tutorialId={this.state.tutorialId}
+                    stepId={this.state.stepId}
+                    onTutorialContentLoaded={this.handleLoadedTutorial}
+                    onNavigationRequest={this.handleNavigationRequest}
+                    onFixTheCode={this.fixTheCode}
                   />
                 </ReactGoldenLayoutPanel>
               </ReactGoldenLayout>

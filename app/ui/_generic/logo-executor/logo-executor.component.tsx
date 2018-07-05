@@ -9,29 +9,20 @@ import { AlertMessageComponent } from "app/ui/_generic/alert-message.component";
 
 import "./logo-executor.component.less";
 
-export interface ICreateScreenshotCommand {
-  isSmall: boolean;
-  whenReady: (data: string) => void;
-}
-
 interface IComponentState {
   errorMessage: string;
 }
 
 export interface ILogoExecutorComponentProps {
   runCommands: Observable<string>;
-  stopCommands: Observable<void>;
-  makeScreenshotCommands?: Observable<ICreateScreenshotCommand>;
-  onIsRunningChange: Subject<boolean>;
+  onIsRunningChange?(isRunning: boolean): void;
   isDarkTheme: boolean;
-  customTurtleImage?: HTMLImageElement;
-  customTurtleSize?: number;
+  turtleImage?: HTMLImageElement;
+  turtleSize?: number;
 }
 
 export class LogoExecutorComponent extends React.Component<ILogoExecutorComponentProps, IComponentState> {
-  runSubscription: Subscription;
-  stopSubscription: Subscription;
-  makeScreenshotSubscription: Subscription;
+  runCommandsSubscription: Subscription;
   private logo: any;
   private graphics: LogoOutputGraphics;
   private isRunning: boolean;
@@ -45,31 +36,27 @@ export class LogoExecutorComponent extends React.Component<ILogoExecutorComponen
   }
 
   componentDidMount() {
-    this.graphics = new LogoOutputGraphics(
-      "#sandbox",
-      "#turtle",
-      this.props.customTurtleImage,
-      this.props.customTurtleSize
-    );
-    this.runSubscription = this.props.runCommands.subscribe(this.execute);
-    this.stopSubscription = this.props.stopCommands.subscribe(this.abort);
-    if (this.props.makeScreenshotCommands) {
-      this.makeScreenshotSubscription = this.props.makeScreenshotCommands.subscribe(this.makeScreenShot);
-    }
+    this.graphics = new LogoOutputGraphics("#sandbox", "#turtle");
+    this.runCommandsSubscription = this.props.runCommands.subscribe(this.execute);
   }
 
   componentWillUnmount() {
     this.abort();
-    if (this.runSubscription) {
-      this.runSubscription.unsubscribe();
-    }
-    if (this.stopSubscription) {
-      this.stopSubscription.unsubscribe();
-    }
-    if (this.makeScreenshotSubscription) {
-      this.makeScreenshotSubscription.unsubscribe();
+    if (this.runCommandsSubscription) {
+      this.runCommandsSubscription.unsubscribe();
     }
   }
+
+  /**
+   * Creates base64 encoded screenshot of graphic canvas
+   */
+  public createScreenshotBase64 = (isSmall: boolean): string => {
+    if (this.graphics) {
+      const base64 = this.graphics.createScreenshot(isSmall);
+      return base64;
+    }
+    return "";
+  };
 
   render(): JSX.Element {
     return (
@@ -85,6 +72,10 @@ export class LogoExecutorComponent extends React.Component<ILogoExecutorComponen
   }
 
   private execute = async (code: string): Promise<void> => {
+    if (!code) {
+      this.abort();
+      return;
+    }
     if (this.isRunning) {
       return;
     }
@@ -94,7 +85,7 @@ export class LogoExecutorComponent extends React.Component<ILogoExecutorComponen
     });
 
     this.isRunning = true;
-    this.props.onIsRunningChange.next(this.isRunning);
+    this.props.onIsRunningChange && this.props.onIsRunningChange(this.isRunning);
     const lightThemeInit = `setbg 7 setpencolor 0 cs`;
     const darkThemeInit = `setbg 0 setpencolor 7 cs`;
     const initCode = this.props.isDarkTheme ? darkThemeInit : lightThemeInit;
@@ -103,7 +94,10 @@ export class LogoExecutorComponent extends React.Component<ILogoExecutorComponen
 
     const LogoInterpreter: any = (window as any)["LogoInterpreter"];
 
-    this.logo = new LogoInterpreter(this.graphics.initTurtle(), new LogoOutputConsole("#console-output"));
+    this.logo = new LogoInterpreter(
+      this.graphics.initTurtle(this.props.turtleImage, this.props.turtleSize),
+      new LogoOutputConsole("#console-output")
+    );
 
     // Replace all non-breaking spaces to normal ones because jsLogo does not understand them
     // This nbsp might occur when typing code on mobile devices
@@ -112,7 +106,7 @@ export class LogoExecutorComponent extends React.Component<ILogoExecutorComponen
     try {
       await this.logo.run(polyfills + "\r\n" + initCode + "\r\n" + code);
       this.isRunning = false;
-      this.props.onIsRunningChange.next(this.isRunning);
+      this.props.onIsRunningChange && this.props.onIsRunningChange(this.isRunning);
     } catch (ex) {
       console.error("error", ex);
 
@@ -121,20 +115,13 @@ export class LogoExecutorComponent extends React.Component<ILogoExecutorComponen
       });
 
       this.isRunning = false;
-      this.props.onIsRunningChange.next(this.isRunning);
+      this.props.onIsRunningChange && this.props.onIsRunningChange(this.isRunning);
     }
   };
 
   private abort = (): void => {
     if (this.logo) {
       this.logo.bye();
-    }
-  };
-
-  private makeScreenShot = (params: ICreateScreenshotCommand) => {
-    if (this.graphics) {
-      const data = this.graphics.createScreenshot(params.isSmall);
-      params.whenReady(data);
     }
   };
 

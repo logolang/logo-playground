@@ -6,6 +6,7 @@ import * as keymaster from "keymaster";
 import { resolveInject } from "app/di";
 
 import { $T } from "app/i18n/strings";
+import { ensure } from "app/utils/syntax-helpers";
 import { Routes } from "app/routes";
 import { ProgramModel } from "app/services/program/program.model";
 import { NotificationService } from "app/services/infrastructure/notification.service";
@@ -25,14 +26,17 @@ import { DeleteProgramModalComponent } from "./delete-program-modal.component";
 import "./code-panel.component.less";
 
 export interface ICodePanelComponentProps {
+  programId?: string;
+  storageType?: ProgramStorageType;
+  programName: string;
+  programCode: string;
+  hasChanges: boolean;
   editorTheme: string;
-  executionContext: ProgramExecutionContext;
-  program: ProgramModel;
-  saveCurrentEnabled: boolean;
-  externalCodeChanges?: Observable<string>;
   resizeEvents?: Observable<void>;
-  onHasChangesChange?: (hasChanges: boolean) => void;
+  onCodeChange(newCode: string): void;
   onSaveAs?: (program: ProgramModel) => void;
+  onHasChangesChange?: (hasChanges: boolean) => void;
+  executionContext: ProgramExecutionContext;
 }
 
 interface IComponentState {
@@ -41,9 +45,7 @@ interface IComponentState {
   isShareModalActive?: boolean;
   isDeleteModalActive?: boolean;
   isTakeScreenshotModalActive?: boolean;
-  hasLocalTempChanges: boolean;
   screenshotDataToSave?: string;
-  code: string;
 }
 
 export class CodePanelComponent extends React.Component<ICodePanelComponentProps, IComponentState> {
@@ -57,30 +59,19 @@ export class CodePanelComponent extends React.Component<ICodePanelComponentProps
 
   constructor(props: ICodePanelComponentProps) {
     super(props);
-    this.state = {
-      hasLocalTempChanges: this.props.program.hasTempLocalModifications,
-      code: this.props.program.code
-    };
+    this.state = {};
   }
 
   componentDidMount() {
-    this.subscriptions.push(
-      this.props.executionContext.onIsRunningChange.subscribe(() => {
-        // Update state to force a component render.
-        this.setState({});
-      })
-    );
-    if (this.props.externalCodeChanges) {
-      this.subscriptions.push(
-        this.props.externalCodeChanges.subscribe(newCode => {
-          this.onCodeChanged(newCode);
-        })
-      );
-    }
     keymaster("f8, f9", () => {
-      this.onRunProgram();
+      this.runProgram();
       return false;
     });
+    this.subscriptions.push(
+      this.props.executionContext.onIsRunningChange.subscribe(() => {
+        this.forceUpdate();
+      })
+    );
   }
 
   componentWillUnmount() {
@@ -88,18 +79,17 @@ export class CodePanelComponent extends React.Component<ICodePanelComponentProps
     keymaster.unbind("f8, f9");
   }
 
-  onRunProgram = () => {
-    this.props.executionContext.executeProgram(this.state.code);
+  private runProgram = () => {
+    this.props.executionContext.executeProgram(this.props.programCode);
     this.eventsTracker.sendEvent(EventAction.programStart);
   };
 
-  onStopProgram = () => {
+  private stopProgram = () => {
     this.props.executionContext.stopProgram();
     this.eventsTracker.sendEvent(EventAction.programStop);
   };
 
   render(): JSX.Element {
-    const execService = this.props.executionContext;
     return (
       <div className="code-panel-container">
         {this.renderSaveModal()}
@@ -107,86 +97,77 @@ export class CodePanelComponent extends React.Component<ICodePanelComponentProps
         {this.state.isTakeScreenshotModalActive && (
           <ShareScreenshotModalComponent
             imageBase64={this.state.screenshotDataToSave || ""}
-            onClose={() => {
-              this.setState({ isTakeScreenshotModalActive: false });
-            }}
+            onClose={() => this.setState({ isTakeScreenshotModalActive: false })}
           />
         )}
         {this.state.isShareModalActive && (
           <ShareProgramModalComponent
-            programModel={this.props.program}
+            programName={this.props.programName}
+            programCode={this.props.programCode}
             imageBase64={this.state.screenshotDataToSave || ""}
-            onClose={() => {
-              this.setState({ isShareModalActive: false });
-            }}
+            onClose={() => this.setState({ isShareModalActive: false })}
           />
         )}
         {this.state.isDeleteModalActive && (
           <DeleteProgramModalComponent
-            program={this.props.program}
+            programName={this.props.programName}
             onClose={() => this.setState({ isDeleteModalActive: false })}
-            onDelete={this.handleProgramDeleteConfirmation}
+            onDelete={this.deleteProgram}
           />
         )}
 
         <ProgramControlsMenuComponent
-          isRunning={execService.isRunning}
-          existingProgramName={this.props.program.name}
-          runProgram={this.onRunProgram}
-          stopProgram={this.onStopProgram}
-          exportImage={this.exportScreenshot}
-          save={
-            this.props.program.storageType === ProgramStorageType.gallery &&
-            this.state.hasLocalTempChanges &&
-            this.props.program.id
+          isRunning={this.props.executionContext.isRunning}
+          onRunProgram={this.runProgram}
+          onStopProgram={this.stopProgram}
+          onExportImage={this.showExportScreenshotDialog}
+          onSaveProgram={
+            this.props.hasChanges && this.props.storageType === ProgramStorageType.gallery
               ? this.showSaveDialog
               : undefined
           }
-          saveAsNew={this.showSaveAsDialog}
+          onSaveProgramAsNew={this.showSaveAsDialog}
           onDeleteProgram={
-            this.props.program.storageType === ProgramStorageType.gallery ? this.handleDeleteProgramClick : undefined
+            this.props.storageType === ProgramStorageType.gallery ? this.showDeleteProgramDialog : undefined
           }
-          onShareProgram={this.shareProgram}
-          revertChanges={
-            this.state.hasLocalTempChanges && this.props.program.id ? this.revertCurrentProgram : undefined
-          }
+          onShareProgram={this.showShareProgramDialog}
+          onRevertChanges={this.props.hasChanges && this.props.storageType ? this.revertChanges : undefined}
         />
         <CodeInputComponent
           className="code-input-container"
           editorTheme={this.props.editorTheme}
-          code={this.state.code}
+          code={this.props.programCode}
           onChanged={this.onCodeChanged}
-          onHotkey={this.onRunProgram}
-          containerResized={this.props.resizeEvents}
+          onHotkey={this.runProgram}
+          resizeEvents={this.props.resizeEvents}
         />
       </div>
     );
   }
 
-  onCodeChanged = (newCode: string) => {
-    this.setState({ code: newCode });
+  private onCodeChanged = (newCode: string) => {
+    this.props.onCodeChange(newCode);
     if (this.saveTempCodeTimer) {
       clearTimeout(this.saveTempCodeTimer);
     }
     this.saveTempCodeTimer = setTimeout(async () => {
-      this.managementService.saveTempProgram(this.props.program.id, newCode);
-      if (!this.state.hasLocalTempChanges) {
-        this.setState({ hasLocalTempChanges: true });
+      this.managementService.saveTempProgram(this.props.programId, newCode);
+      if (!this.props.hasChanges) {
         this.props.onHasChangesChange && this.props.onHasChangesChange(true);
       }
     }, 500);
   };
 
-  renderSaveModal(): JSX.Element | null {
+  private renderSaveModal(): JSX.Element | null {
     if (this.state.isSaveModalActive) {
       return (
         <SaveProgramModalComponent
-          programName={this.props.program.name}
+          programName={this.props.programName}
           screenshot={this.state.screenshotDataToSave || ""}
           onClose={() => {
             this.setState({ isSaveModalActive: false });
           }}
-          onSave={this.saveProgramCallback}
+          onSave={this.saveProgram}
           allowRename={false}
         />
       );
@@ -194,16 +175,16 @@ export class CodePanelComponent extends React.Component<ICodePanelComponentProps
     return null;
   }
 
-  renderSaveAsModal(): JSX.Element | null {
+  private renderSaveAsModal(): JSX.Element | null {
     if (this.state.isSaveAsModalActive) {
       return (
         <SaveProgramModalComponent
-          programName={this.props.program.name}
+          programName={this.props.programName}
           screenshot={this.state.screenshotDataToSave || ""}
           onClose={() => {
             this.setState({ isSaveAsModalActive: false });
           }}
-          onSave={this.saveProgramAsCallback}
+          onSave={this.saveProgramAs}
           allowRename={true}
         />
       );
@@ -211,12 +192,12 @@ export class CodePanelComponent extends React.Component<ICodePanelComponentProps
     return null;
   }
 
-  handleDeleteProgramClick = () => {
+  private showDeleteProgramDialog = () => {
     this.setState({ isDeleteModalActive: true });
   };
 
-  handleProgramDeleteConfirmation = async () => {
-    await this.galleryService.remove(this.props.program.id);
+  private deleteProgram = async () => {
+    await this.galleryService.remove(ensure(this.props.programId));
     this.eventsTracker.sendEvent(EventAction.deleteProgramFromPersonalLibrary);
     this.navigationService.navigate({ route: Routes.galleryRoot.build({}) });
   };
@@ -237,56 +218,57 @@ export class CodePanelComponent extends React.Component<ICodePanelComponentProps
     });
   };
 
-  saveProgramCallback = async (newProgramName: string): Promise<void> => {
+  private saveProgram = async (newProgramName: string): Promise<void> => {
     const screenshot = await this.props.executionContext.getScreenshot(true);
-    await this.managementService.saveProgramToLibrary(
-      newProgramName,
-      screenshot,
-      this.state.code,
-      this.props.program,
-      true
-    );
+    await this.managementService.saveProgramToLibrary({
+      id: this.props.programId,
+      newCode: this.props.programCode,
+      newProgramName: newProgramName,
+      newScreenshot: screenshot
+    });
+
     this.notificationService.push({
       type: "success",
       title: $T.common.message,
       message: $T.gallery.programHasBeenSaved
     });
-    this.setState({ hasLocalTempChanges: false });
+
     this.props.onHasChangesChange && this.props.onHasChangesChange(false);
     this.eventsTracker.sendEvent(EventAction.saveProgramToPersonalLibrary);
   };
 
-  saveProgramAsCallback = async (newProgramName: string): Promise<void> => {
+  private saveProgramAs = async (newProgramName: string): Promise<void> => {
     const screenshot = await this.props.executionContext.getScreenshot(true);
-    const newProgram = await this.managementService.saveProgramToLibrary(
-      newProgramName,
-      screenshot,
-      this.state.code,
-      this.props.program,
-      false
-    );
+    const newProgram = await this.managementService.saveProgramToLibrary({
+      newCode: this.props.programCode,
+      newProgramName: newProgramName,
+      newScreenshot: screenshot
+    });
+    this.managementService.clearTempProgram(this.props.programId);
     this.notificationService.push({
       type: "success",
       title: $T.common.message,
       message: $T.gallery.programHasBeenSaved
     });
-    this.setState({ hasLocalTempChanges: false });
     this.eventsTracker.sendEvent(EventAction.saveProgramToPersonalLibrary);
     if (this.props.onSaveAs) {
       this.props.onSaveAs(newProgram);
     }
   };
 
-  revertCurrentProgram = async () => {
-    const code = await this.managementService.revertLocalTempChanges(this.props.program);
+  private revertChanges = async () => {
+    const code = await this.managementService.revertLocalTempChanges(
+      ensure(this.props.programId),
+      ensure(this.props.storageType)
+    );
     this.eventsTracker.sendEvent(EventAction.programResetChanges);
-    this.setState({ hasLocalTempChanges: false, code: code });
     this.props.onHasChangesChange && this.props.onHasChangesChange(false);
+    this.props.onCodeChange(code);
   };
 
-  exportScreenshot = async () => {
-    const data = await this.props.executionContext.getScreenshot(false);
-    if (!data) {
+  private showExportScreenshotDialog = async () => {
+    const screenshot = await this.props.executionContext.getScreenshot(false);
+    if (!screenshot) {
       this.notificationService.push({
         type: "primary",
         title: $T.common.message,
@@ -295,12 +277,15 @@ export class CodePanelComponent extends React.Component<ICodePanelComponentProps
     }
     this.setState({
       isTakeScreenshotModalActive: true,
-      screenshotDataToSave: data
+      screenshotDataToSave: screenshot
     });
   };
 
-  shareProgram = async () => {
-    const data = await this.props.executionContext.getScreenshot(true);
-    this.setState({ isShareModalActive: true, screenshotDataToSave: data });
+  private showShareProgramDialog = async () => {
+    const screenshot = await this.props.executionContext.getScreenshot(true);
+    this.setState({
+      isShareModalActive: true,
+      screenshotDataToSave: screenshot
+    });
   };
 }

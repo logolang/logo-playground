@@ -2,11 +2,9 @@ import * as React from "react";
 import * as cn from "classnames";
 import * as FileSaver from "file-saver";
 import { RouteComponentProps } from "react-router-dom";
-import { Subject } from "rxjs/Subject";
 import { BehaviorSubject } from "rxjs/BehaviorSubject";
 
-import { RandomHelper } from "app/utils/random-helper";
-import { callActionSafe, ErrorDef } from "app/utils/error-helpers";
+import { callActionSafe } from "app/utils/error-helpers";
 import { ensure } from "app/utils/syntax-helpers";
 import { resolveInject } from "app/di";
 import { $T } from "app/i18n/strings";
@@ -45,7 +43,6 @@ interface IComponentState {
   currentLocale?: ILocaleInfo;
   theme?: Theme;
   userSettings?: IUserSettings;
-  turtleImage?: HTMLImageElement;
 }
 
 interface IComponentProps extends RouteComponentProps<void> {}
@@ -64,8 +61,7 @@ export class UserProfilePageComponent extends React.Component<IComponentProps, I
   private demoSamplesService = resolveInject(LogoCodeSamplesService);
   private diSetup = resolveInject(DependecyInjectionSetupService);
 
-  private onIsRunningChanged = new Subject<boolean>();
-  private runCode = new BehaviorSubject<string>("");
+  private codeRunnerSubject = new BehaviorSubject<string>("");
   private exportInportService = new PersonalGalleryImportService();
 
   constructor(props: IComponentProps) {
@@ -93,19 +89,22 @@ export class UserProfilePageComponent extends React.Component<IComponentProps, I
     if (programs && userSettings) {
       const theme = this.themeService.getActiveTheme() || this.themeService.getTheme("Default");
       const locale = this.localizationService.getLocaleById(userSettings.localeId);
-      const turtleImage = this.turtleCustomizationService.getTurtleImage(userSettings.turtleId);
 
-      this.setState({
-        userSettings: userSettings,
-        theme: theme,
-        currentLocale: locale,
-        turtleImage: turtleImage,
-        programCount: programs.length
-      });
-
-      this.runCode.next(this.demoSamplesService.getRandomSample());
+      this.setState(
+        {
+          userSettings: userSettings,
+          theme: theme,
+          currentLocale: locale,
+          programCount: programs.length
+        },
+        this.runRandomProgram
+      );
     }
   }
+
+  private runRandomProgram = () => {
+    this.codeRunnerSubject.next(this.demoSamplesService.getRandomSample());
+  };
 
   private doExport = async () => {
     const programs = await callActionSafe(this.errorService.handleError, async () => this.galleryService.getAll());
@@ -204,7 +203,7 @@ export class UserProfilePageComponent extends React.Component<IComponentProps, I
                                       themeName: selectedTheme.name
                                     });
                                     this.themeService.setActiveTheme(selectedTheme.name);
-                                    await this.loadData();
+                                    this.forceUpdate(this.runRandomProgram);
                                   }
                                 }}
                               />
@@ -227,10 +226,8 @@ export class UserProfilePageComponent extends React.Component<IComponentProps, I
                                 renderItem={x => x.name}
                                 selectionChanged={async newTurtle => {
                                   if (newTurtle) {
-                                    await this.userSettingsService.update({
-                                      turtleId: newTurtle.id
-                                    });
-                                    await this.loadData();
+                                    await this.userSettingsService.update({ turtleId: newTurtle.id });
+                                    this.forceUpdate(this.runRandomProgram);
                                   }
                                 }}
                               />
@@ -253,10 +250,8 @@ export class UserProfilePageComponent extends React.Component<IComponentProps, I
                                 renderItem={x => x.description}
                                 selectionChanged={async newSize => {
                                   if (newSize) {
-                                    await this.userSettingsService.update({
-                                      turtleSize: newSize.size
-                                    });
-                                    await this.loadData();
+                                    await this.userSettingsService.update({ turtleSize: newSize.size });
+                                    this.forceUpdate(this.runRandomProgram);
                                   }
                                 }}
                               />
@@ -276,9 +271,7 @@ export class UserProfilePageComponent extends React.Component<IComponentProps, I
                           </p>
                           <p className="control">
                             <FileSelectorComponent
-                              className={cn({
-                                "is-loading": this.state.isImportingInProgress
-                              })}
+                              className={cn({ "is-loading": this.state.isImportingInProgress })}
                               buttonText={$T.settings.import}
                               onFileTextContentReady={this.onImport}
                             />
@@ -291,17 +284,12 @@ export class UserProfilePageComponent extends React.Component<IComponentProps, I
                   <div className="column">
                     <div className="card">
                       <div className="card-content">
-                        {[
-                          <LogoExecutorComponent
-                            key={`${JSON.stringify(this.state.userSettings)}`} //this is a hack to force component to be created each render in order to not handle prop change event
-                            onIsRunningChange={this.onIsRunningChanged}
-                            runCommands={this.runCode}
-                            stopCommands={new Subject<void>()}
-                            customTurtleImage={this.state.turtleImage}
-                            customTurtleSize={this.state.userSettings.turtleSize}
-                            isDarkTheme={this.state.theme.isDark}
-                          />
-                        ]}
+                        <LogoExecutorComponent
+                          runCommands={this.codeRunnerSubject}
+                          isDarkTheme={this.state.theme.isDark}
+                          turtleImage={this.turtleCustomizationService.getTurtleImage(this.state.userSettings.turtleId)}
+                          turtleSize={this.state.userSettings.turtleSize}
+                        />
                       </div>
                     </div>
                   </div>

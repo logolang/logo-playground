@@ -14,12 +14,13 @@ interface IComponentState {}
 
 interface IComponentProps {
   className?: string;
-  defaultLayoutConfigJSON: string;
-  layoutLocalStorageKey?: string;
   configLayoutOverride?: {
     settings?: goldenLayout.Settings;
     dimensions?: goldenLayout.Dimensions;
   };
+  defaultLayoutConfigJSON: string;
+  layoutLocalStorageKey?: string;
+  onLayoutChange?(layoutJSON: string): void;
 }
 
 export class ReactGoldenLayout extends React.Component<IComponentProps, IComponentState> {
@@ -120,10 +121,14 @@ export class ReactGoldenLayout extends React.Component<IComponentProps, ICompone
   };
 
   stateChangeHandler = () => {
+    const config = this.layoutHelper.layout.toConfig();
+    const json = JSON.stringify(config);
+
     if (this.props.layoutLocalStorageKey) {
-      const config = this.layoutHelper.layout.toConfig();
-      const json = JSON.stringify(config);
       window.localStorage.setItem(this.props.layoutLocalStorageKey, json);
+    }
+    if (this.props.onLayoutChange) {
+      this.props.onLayoutChange(json);
     }
   };
 

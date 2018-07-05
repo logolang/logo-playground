@@ -1,9 +1,12 @@
-export const tutorialsDefaultLayout = {
+import { GoldenLayoutConfig } from "app/ui/_generic/react-golden-layout/react-golden-layout";
+
+export const tutorialsDefaultLayout: GoldenLayoutConfig = {
   content: [
     {
       type: "row",
       content: [
         {
+          isClosable: false,
           title: "",
           type: "component",
           componentName: "tutorial-panel",
@@ -14,12 +17,14 @@ export const tutorialsDefaultLayout = {
           width: 60,
           content: [
             {
+              isClosable: false,
               title: "",
               type: "component",
               componentName: "output-panel",
               height: 60
             },
             {
+              isClosable: false,
               title: "",
               type: "component",
               componentName: "code-panel",
@@ -32,7 +37,7 @@ export const tutorialsDefaultLayout = {
   ]
 };
 
-export const tutorialsDefaultMobileLayout = {
+export const tutorialsDefaultMobileLayout: GoldenLayoutConfig = {
   settings: {
     reorderEnabled: false
   },
@@ -47,11 +52,13 @@ export const tutorialsDefaultMobileLayout = {
           activeItemIndex: 0,
           content: [
             {
+              isClosable: false,
               title: "",
               type: "component",
               componentName: "tutorial-panel"
             },
             {
+              isClosable: false,
               title: "",
               type: "component",
               componentName: "code-panel"
@@ -64,12 +71,13 @@ export const tutorialsDefaultMobileLayout = {
           activeItemIndex: 0,
           content: [
             {
+              isClosable: false,
               title: "",
               type: "component",
               componentName: "output-panel"
             }
           ]
-        }
+        } as any
       ]
     }
   ]

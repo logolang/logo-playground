@@ -14,6 +14,10 @@ The number indicates how far the turtle moves forward. Let's try it:
 
 Write down the command ```forward 50``` and execute your first program!
 
+```init
+;Please type your program here
+```
+
 ```result
 forward 50
 ```

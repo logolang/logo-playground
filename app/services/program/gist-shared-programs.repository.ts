@@ -66,14 +66,14 @@ export class GistSharedProgramsRepository {
     throw new Error("Sorry, there was an error!");
   }
 
-  async post(programName: string, screenshot: string, program: ProgramModel): Promise<string> {
+  async post(programName: string, code: string): Promise<string> {
     const payload = {
       description: programName,
       public: true,
       files: {} as any
     };
     payload.files[programName] = {
-      content: program.code
+      content: code
     };
     const response = await fetch(gistApiBaseUrl + "gists", {
       method: "post",
