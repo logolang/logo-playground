@@ -14,9 +14,7 @@ import { TitleService } from "app/services/infrastructure/title.service";
 import { EventsTrackingService, EventAction } from "app/services/infrastructure/events-tracking.service";
 
 import { MainMenuComponent } from "app/ui/main-menu.component";
-import { ModalComponent } from "app/ui/_generic/modal.component";
 import { NoDataComponent } from "app/ui/_generic/no-data.component";
-import { AlertMessageComponent } from "app/ui/_generic/alert-message.component";
 import { LoadingComponent } from "app/ui/_generic/loading.component";
 
 import "./gallery.page.component.less";

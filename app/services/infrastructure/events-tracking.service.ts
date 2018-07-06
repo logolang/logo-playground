@@ -1,6 +1,5 @@
 import { injectable } from "app/di";
-import { Subject } from "rxjs/Subject";
-import { ISubscription } from "rxjs/Subscription";
+import { Subject, Subscription } from "rxjs";
 
 export enum EventAction {
   userLogin = "user.login",
@@ -42,7 +41,7 @@ type EventHandler = (eventData: IEventData) => void;
 @injectable()
 export class EventsTrackingService {
   private eventsSubject = new Subject<IEventData>();
-  private subscriptions: { handler: EventHandler; subscription: ISubscription }[] = [];
+  private subscriptions: { handler: EventHandler; subscription: Subscription }[] = [];
 
   sendEvent(eventAction: EventAction, data?: string): void {
     const [category, action] = eventAction.split(".");

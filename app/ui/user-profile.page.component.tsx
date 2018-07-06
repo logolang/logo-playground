@@ -2,7 +2,7 @@ import * as React from "react";
 import * as cn from "classnames";
 import * as FileSaver from "file-saver";
 import { RouteComponentProps } from "react-router-dom";
-import { BehaviorSubject } from "rxjs/BehaviorSubject";
+import { BehaviorSubject } from "rxjs";
 
 import { callActionSafe } from "app/utils/error-helpers";
 import { ensure } from "app/utils/syntax-helpers";

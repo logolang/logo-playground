@@ -1,9 +1,8 @@
-import { Subject } from "rxjs/Subject";
-import { BehaviorSubject } from "rxjs/BehaviorSubject";
+import { Subject, BehaviorSubject } from "rxjs";
 
 export interface ICreateScreenshotCommand {
   isSmall: boolean;
-  whenReady: (data: string) => void;
+  whenReady(data: string): void;
 }
 
 export class ProgramExecutionContext {

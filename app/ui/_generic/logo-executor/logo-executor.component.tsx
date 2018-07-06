@@ -1,7 +1,7 @@
 import * as React from "react";
-import { Subscription, Subject, Observable } from "rxjs";
+import { Subscription, Observable } from "rxjs";
 import "app/../lib/logojs/logo.js";
-const polyfills = require("app/../lib/logojs/polyfills.logo.txt") as any;
+const polyfills = require("app/../lib/logojs/polyfills.logo.txt");
 
 import { LogoOutputGraphics } from "./logo-output-graphics";
 import { LogoOutputConsole } from "./logo-output-console";
@@ -126,24 +126,24 @@ export class LogoExecutorComponent extends React.Component<ILogoExecutorComponen
   };
 
   private resizeCanvas() {
-    if (this.graphics) {
-      const container = document.querySelector(".logo-executor-container");
-      if (container) {
-        const width = container.clientWidth;
-        const height = container.clientHeight;
-        if (width > 0 && height > 0) {
-          this.graphics.resizeCanvas(width, height);
-        } else {
-          // go up in the DOM tree to find parent with size and use it
-          let currentElement = container;
-          while (currentElement && !(currentElement.clientWidth > 0 && currentElement.clientHeight > 0)) {
-            currentElement = currentElement.parentElement as Element;
-          }
-          const width = currentElement.clientWidth;
-          const height = currentElement.clientHeight;
-          this.graphics.resizeCanvas(width || 400, height || 300);
-        }
+    if (!this.graphics) {
+      return;
+    }
+    const container = document.querySelector(".logo-executor-container");
+    if (!container) {
+      return;
+    }
+    const width = container.clientWidth;
+    const height = container.clientHeight;
+    if (width > 0 && height > 0) {
+      this.graphics.resizeCanvas(width, height);
+    } else {
+      // go up in the DOM tree to find parent with size and use it
+      let currentElement = container;
+      while (currentElement && !(currentElement.clientWidth > 0 && currentElement.clientHeight > 0)) {
+        currentElement = currentElement.parentElement as Element;
       }
+      this.graphics.resizeCanvas(currentElement.clientWidth || 400, currentElement.clientHeight || 300);
     }
   }
 }

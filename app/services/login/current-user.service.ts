@@ -1,5 +1,4 @@
-import { Subject } from "rxjs/Subject";
-import { Observable } from "rxjs/Observable";
+import { Subject, Observable } from "rxjs";
 
 import { UserInfo, AuthProvider } from "app/services/login/user-info";
 import { injectable } from "app/di";

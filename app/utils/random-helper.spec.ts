@@ -10,12 +10,15 @@ describe("RandomHelper", () => {
     let zerosCount = 0;
     let onesCount = 0;
     results.forEach(v => {
-      if (v === 0) {
-        zerosCount++;
-      } else if (v === 1) {
-        onesCount++;
-      } else {
-        throw new Error(`not expected value ${v}`);
+      switch (v) {
+        case 0:
+          zerosCount++;
+          break;
+        case 1:
+          onesCount++;
+          break;
+        default:
+          throw new Error(`not expected value ${v}`);
       }
     });
 

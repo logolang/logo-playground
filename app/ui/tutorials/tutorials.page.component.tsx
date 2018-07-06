@@ -1,6 +1,6 @@
 import * as React from "react";
 import { RouteComponentProps } from "react-router-dom";
-import { Subject } from "rxjs/Subject";
+import { Subject } from "rxjs";
 
 import { callActionSafe } from "app/utils/error-helpers";
 import { resolveInject } from "app/di";

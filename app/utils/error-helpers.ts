@@ -33,7 +33,7 @@ export async function normalizeError(ex: any): Promise<ErrorDef> {
 
   //check if coming from response object
   if (ex instanceof Response) {
-    let responseText: string = "";
+    let responseText = "";
     try {
       responseText = await ex.text();
     } catch (exception) {
@@ -59,7 +59,7 @@ export async function normalizeError(ex: any): Promise<ErrorDef> {
   }
 
   // Just use toString for all other errors
-  return new Error("Error: " + JSON.stringify(ex, null, 4));
+  return new Error("Error: " + JSON.stringify(ex, undefined, 4));
 }
 
 export async function callActionSafe<R>(

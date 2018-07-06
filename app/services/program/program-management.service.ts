@@ -99,7 +99,7 @@ export class ProgramManagementService {
   };
 
   private async loadProgramFromStorage(storageType?: ProgramStorageType, programId?: string): Promise<ProgramModel> {
-    let program: ProgramModel | undefined = undefined;
+    let program: ProgramModel | undefined;
 
     if (!storageType || !programId) {
       program = ProgramModelConverter.createNewProgram(undefined, "", "", "");

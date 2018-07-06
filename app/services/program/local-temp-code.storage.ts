@@ -8,7 +8,7 @@ import { CurrentUserService } from "app/services/login/current-user.service";
  */
 @injectable()
 export class LocalTempCodeStorage {
-  private storagePrefix: string = "";
+  private storagePrefix = "";
   constructor(@inject(CurrentUserService) private currentUser: CurrentUserService) {
     const userId = this.currentUser.getLoginStatus().userInfo.attributes.email || "guest";
     this.storagePrefix = "logo-playground.temp-code:" + userId + ":";

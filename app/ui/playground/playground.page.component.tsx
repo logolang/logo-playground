@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Subject } from "rxjs/Subject";
+import { Subject } from "rxjs";
 
 import { callActionSafe } from "app/utils/error-helpers";
 

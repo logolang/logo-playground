@@ -12,7 +12,7 @@ export class RandomHelper {
     return result;
   }
 
-  public static getRandomWord(wordMinLength: number = 6, wordMaxLength?: number): string {
+  public static getRandomWord(wordMinLength = 6, wordMaxLength?: number): string {
     wordMaxLength = wordMaxLength || wordMinLength;
     const vows = "awoeuyijo";
     const cons = "qrtpsdfghklzxcvbnm";
@@ -28,7 +28,7 @@ export class RandomHelper {
     return result;
   }
 
-  public static getRandomPhrase(phraseMinLength: number = 3, phraseMaxLength?: number): string {
+  public static getRandomPhrase(phraseMinLength = 3, phraseMaxLength?: number): string {
     phraseMaxLength = phraseMaxLength || phraseMinLength;
     const words: string[] = [];
     const phraseLength = RandomHelper.getRandomInt(phraseMinLength, phraseMaxLength);

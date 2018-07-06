@@ -9,9 +9,9 @@ interface IComponentState {
 interface IComponentProps {
   buttonText: string;
   className?: string;
-  onFileSelected?: (fileinfo: File) => void;
-  onFileBinaryContentReady?: (fileinfo: File, fileContent: ArrayBuffer) => void;
-  onFileTextContentReady?: (fileinfo: File, fileContent: string) => void;
+  onFileSelected?(fileinfo: File): void;
+  onFileBinaryContentReady?(fileinfo: File, fileContent: ArrayBuffer): void;
+  onFileTextContentReady?(fileinfo: File, fileContent: string): void;
 }
 
 export class FileSelectorComponent extends React.Component<IComponentProps, IComponentState> {
@@ -37,10 +37,9 @@ export class FileSelectorComponent extends React.Component<IComponentProps, ICom
         const reader = new FileReader();
         reader.readAsArrayBuffer(fileInfo);
         reader.onload = async evt => {
-          let fileBody = (evt.target as any).result as ArrayBuffer | undefined;
+          const fileBody = (evt.target as any).result as ArrayBuffer | undefined;
           if (fileBody && this.props.onFileBinaryContentReady) {
             this.props.onFileBinaryContentReady(fileInfo, fileBody);
-            fileBody = undefined;
             this.setState({ isLoading: false });
           }
         };
@@ -50,10 +49,9 @@ export class FileSelectorComponent extends React.Component<IComponentProps, ICom
         const reader = new FileReader();
         reader.readAsText(fileInfo, "UTF-8");
         reader.onload = async evt => {
-          let fileBody = (evt.target as any).result as string | undefined;
+          const fileBody = (evt.target as any).result as string | undefined;
           if (fileBody && this.props.onFileTextContentReady) {
             this.props.onFileTextContentReady(fileInfo, fileBody);
-            fileBody = undefined;
             this.setState({ isLoading: false });
           }
         };

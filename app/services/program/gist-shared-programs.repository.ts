@@ -42,24 +42,26 @@ export class GistSharedProgramsRepository {
     if (response.ok) {
       const result = (await response.json()) as SingleGistResponse;
       if (result.id != id_part) {
-        throw new Error("Gist api returned wrong id for request");
+        throw new Error("Gist API returned wrong id for request");
       }
-      for (const fileName in result.files) {
-        const file = result.files[fileName];
-        if (file.truncated) {
-          throw new Error("Requested resource is too big");
-        }
-        const program: ProgramModel = {
-          id: id,
-          code: file.content,
-          dateCreated: new Date(result.created_at),
-          dateLastEdited: new Date(result.updated_at),
-          name: file.filename,
-          screenshot: "",
-          hasTempLocalModifications: false
-        };
-        return program;
+      const fileNames = Object.keys(result.files);
+      if (fileNames.length != 1) {
+        throw new Error("Gist API should return only one file");
       }
+      const file = result.files[fileNames[0]];
+      if (file.truncated) {
+        throw new Error("Requested resource is too big");
+      }
+      const program: ProgramModel = {
+        id: id,
+        code: file.content,
+        dateCreated: new Date(result.created_at),
+        dateLastEdited: new Date(result.updated_at),
+        name: file.filename,
+        screenshot: "",
+        hasTempLocalModifications: false
+      };
+      return program;
     } else {
       console.error(await response.text());
     }

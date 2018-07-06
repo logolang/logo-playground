@@ -26,7 +26,7 @@ export class LogoOutputGraphics {
       customTurtleSize: turtleSize
     };
 
-    this.turtle = new CanvasTurtle(canvas_ctx, turtle_ctx, this.width, this.height, null, turtleOptions);
+    this.turtle = new CanvasTurtle(canvas_ctx, turtle_ctx, this.width, this.height, undefined, turtleOptions);
     return this.turtle;
   }
 

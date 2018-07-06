@@ -8,13 +8,13 @@ interface IComponentState {
 
 interface IComponentProps {
   isRunning: boolean;
-  onRunProgram: () => void;
-  onStopProgram: () => void;
-  onRevertChanges?: () => void;
-  onSaveProgramAsNew?: () => void;
-  onSaveProgram?: () => void;
-  onShareProgram: () => void;
-  onExportImage: () => void;
+  onRunProgram(): void;
+  onStopProgram(): void;
+  onRevertChanges?(): void;
+  onSaveProgramAsNew?(): void;
+  onSaveProgram?(): void;
+  onShareProgram(): void;
+  onExportImage(): void;
   onDeleteProgram?(): void;
 }
 

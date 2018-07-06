@@ -1,7 +1,8 @@
-import { Subject } from "rxjs/Subject";
+import { Subject } from "rxjs";
 
 import { container } from "app/di";
 import { normalizeError } from "app/utils/error-helpers";
+import { NULL } from "app/utils/syntax-helpers";
 
 import { AjaxService } from "app/services/infrastructure/ajax-service";
 import { AppConfigLoader } from "app/services/config/app-config-loader";
@@ -119,7 +120,7 @@ export class DependecyInjectionSetupService {
 
     switch (currentUserService.getLoginStatus().userInfo.attributes.authProvider) {
       case AuthProvider.none:
-        container.bind(PersonalGalleryRemoteRepository).toConstantValue(null as any);
+        container.bind(PersonalGalleryRemoteRepository).toConstantValue(NULL as any);
         break;
       case AuthProvider.google:
         container.bind(PersonalGalleryRemoteRepository).to(PersonalGalleryGoogleDriveRepository);

@@ -216,9 +216,9 @@ export class TutorialViewComponent extends React.Component<IComponentProps, ICom
     );
   }
 
-  renderSelectTutorialModal(): JSX.Element | null {
+  renderSelectTutorialModal() {
     if (!this.state.showSelectionTutorials || !this.state.currentTutorial || !this.state.currentStepInfo) {
-      return null;
+      return;
     }
     return (
       <TutorialSelectModalComponent
@@ -237,9 +237,9 @@ export class TutorialViewComponent extends React.Component<IComponentProps, ICom
     );
   }
 
-  renderFixTheCodeModal(): JSX.Element | null {
+  renderFixTheCodeModal() {
     if (!this.state.showFixTheCode || !this.state.currentStepContent) {
-      return null;
+      return;
     }
     const currentStep = this.state.currentStepContent;
     return (

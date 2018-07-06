@@ -19,8 +19,8 @@ interface IComponentState {}
 export interface ICodeInputComponentProps {
   className?: string;
   code: string;
-  onHotkey?: (key: string) => void;
-  onChanged: (code: string) => void;
+  onHotkey?(key: string): void;
+  onChanged(code: string): void;
   editorTheme: string;
   resizeEvents?: Observable<void>;
 }

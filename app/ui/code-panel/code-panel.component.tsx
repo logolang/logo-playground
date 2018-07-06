@@ -1,6 +1,5 @@
 import * as React from "react";
-import { ISubscription } from "rxjs/Subscription";
-import { Observable } from "rxjs/Observable";
+import { Observable, Subscription } from "rxjs";
 import * as keymaster from "keymaster";
 
 import { resolveInject } from "app/di";
@@ -34,8 +33,8 @@ export interface ICodePanelComponentProps {
   editorTheme: string;
   resizeEvents?: Observable<void>;
   onCodeChange(newCode: string): void;
-  onSaveAs?: (program: ProgramModel) => void;
-  onHasChangesChange?: (hasChanges: boolean) => void;
+  onSaveAs?(program: ProgramModel): void;
+  onHasChangesChange?(hasChanges: boolean): void;
   executionContext: ProgramExecutionContext;
 }
 
@@ -54,7 +53,7 @@ export class CodePanelComponent extends React.Component<ICodePanelComponentProps
   private managementService = resolveInject(ProgramManagementService);
   private galleryService = resolveInject(PersonalGalleryService);
   private eventsTracker = resolveInject(EventsTrackingService);
-  private subscriptions: ISubscription[] = [];
+  private subscriptions: Subscription[] = [];
   private saveTempCodeTimer: any = undefined;
 
   constructor(props: ICodePanelComponentProps) {
@@ -158,38 +157,38 @@ export class CodePanelComponent extends React.Component<ICodePanelComponentProps
     }, 500);
   };
 
-  private renderSaveModal(): JSX.Element | null {
-    if (this.state.isSaveModalActive) {
-      return (
-        <SaveProgramModalComponent
-          programName={this.props.programName}
-          screenshot={this.state.screenshotDataToSave || ""}
-          onClose={() => {
-            this.setState({ isSaveModalActive: false });
-          }}
-          onSave={this.saveProgram}
-          allowRename={false}
-        />
-      );
+  private renderSaveModal() {
+    if (!this.state.isSaveModalActive) {
+      return;
     }
-    return null;
+    return (
+      <SaveProgramModalComponent
+        programName={this.props.programName}
+        screenshot={this.state.screenshotDataToSave || ""}
+        onClose={() => {
+          this.setState({ isSaveModalActive: false });
+        }}
+        onSave={this.saveProgram}
+        allowRename={false}
+      />
+    );
   }
 
-  private renderSaveAsModal(): JSX.Element | null {
-    if (this.state.isSaveAsModalActive) {
-      return (
-        <SaveProgramModalComponent
-          programName={this.props.programName}
-          screenshot={this.state.screenshotDataToSave || ""}
-          onClose={() => {
-            this.setState({ isSaveAsModalActive: false });
-          }}
-          onSave={this.saveProgramAs}
-          allowRename={true}
-        />
-      );
+  private renderSaveAsModal() {
+    if (!this.state.isSaveAsModalActive) {
+      return;
     }
-    return null;
+    return (
+      <SaveProgramModalComponent
+        programName={this.props.programName}
+        screenshot={this.state.screenshotDataToSave || ""}
+        onClose={() => {
+          this.setState({ isSaveAsModalActive: false });
+        }}
+        onSave={this.saveProgramAs}
+        allowRename={true}
+      />
+    );
   }
 
   private showDeleteProgramDialog = () => {

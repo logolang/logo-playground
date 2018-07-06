@@ -1,6 +1,4 @@
 import * as React from "react";
-import * as cn from "classnames";
-import { ReactGoldenLayout } from "./react-golden-layout";
 import { ReactGoldenLayoutHelperContext } from "./react-golden-layout-context";
 import { GoldenLayoutHelper } from "./golden-layout.helper";
 

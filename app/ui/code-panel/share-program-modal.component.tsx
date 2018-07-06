@@ -5,7 +5,6 @@ import { resolveInject } from "app/di";
 import { ErrorDef, callActionSafe } from "app/utils/error-helpers";
 
 import { GistSharedProgramsRepository } from "app/services/program/gist-shared-programs.repository";
-import { ProgramModel } from "app/services/program/program.model";
 import { EventsTrackingService, EventAction } from "app/services/infrastructure/events-tracking.service";
 
 import { AlertMessageComponent } from "app/ui/_generic/alert-message.component";
