@@ -107,10 +107,8 @@ export const $T = {
     export: "Export",
     importCompletedTitle: "Import completed",
     addedProgramsMessage: new Plural("Added one program", "Added %d programs"),
-    youHaveNProgramsInLibrary: new Plural(
-      "You have one program in your library",
-      "You have %d programs in your library"
-    )
+    numberOfProgramsInLibrary: new Plural("1 program", "%d programs"),
+    emptyLibrary: "empty"
   },
   cheatSheet: {
     cheatSheetTitle: "Cheat sheet"

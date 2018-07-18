@@ -178,6 +178,9 @@ msgid "settings.addedProgramsMessage"
 msgstr[0] "Added one program"
 msgstr[1] "Added %d programs"
 
+msgid "settings.emptyLibrary"
+msgstr "empty"
+
 msgid "settings.export"
 msgstr "Export"
 
@@ -189,6 +192,10 @@ msgstr "Import completed"
 
 msgid "settings.language"
 msgstr "Language"
+
+msgid "settings.numberOfProgramsInLibrary"
+msgstr[0] "1 program"
+msgstr[1] "%d programs"
 
 msgid "settings.settingsTitle"
 msgstr "Settings"
@@ -237,10 +244,6 @@ msgstr "User interface theme"
 
 msgid "settings.userGuestNickName"
 msgstr "Guest"
-
-msgid "settings.youHaveNProgramsInLibrary"
-msgstr[0] "You have one program in your library"
-msgstr[1] "You have %d programs in your library"
 
 msgid "tutorial.back"
 msgstr "Back"

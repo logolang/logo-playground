@@ -29,6 +29,7 @@ import { MainMenuComponent } from "app/ui/main-menu.component";
 import { LogoExecutorComponent } from "app/ui/_generic/logo-executor/logo-executor.component";
 import { FileSelectorComponent } from "app/ui/_generic/file-selector.component";
 import { LogoCodeSamplesService } from "app/services/program/logo-code-samples.service";
+import { LoadingComponent } from "app/ui/_generic/loading.component";
 
 class LocaleSelector extends SimpleSelectComponent<ILocaleInfo> {}
 class ThemeSelector extends SimpleSelectComponent<Theme> {}
@@ -37,6 +38,7 @@ class TurtleSizeSelector extends SimpleSelectComponent<TurtleSize> {}
 
 interface IComponentState {
   userInfo: UserInfo;
+  isLoading: boolean;
   isSavingInProgress: boolean;
   isImportingInProgress?: boolean;
   programCount: number;
@@ -69,6 +71,7 @@ export class UserProfilePageComponent extends React.Component<IComponentProps, I
     const loginStatus = this.currentUser.getLoginStatus();
 
     this.state = {
+      isLoading: true,
       userInfo: loginStatus.userInfo,
       isSavingInProgress: false,
       programCount: 0
@@ -82,6 +85,7 @@ export class UserProfilePageComponent extends React.Component<IComponentProps, I
   }
 
   private async loadData() {
+    this.setState({ isLoading: true });
     const [programs, userSettings] = await Promise.all([
       callActionSafe(this.errorService.handleError, async () => this.galleryService.getAll()),
       callActionSafe(this.errorService.handleError, async () => this.userSettingsService.get())
@@ -95,7 +99,8 @@ export class UserProfilePageComponent extends React.Component<IComponentProps, I
           userSettings: userSettings,
           theme: theme,
           currentLocale: locale,
-          programCount: programs.length
+          programCount: programs.length,
+          isLoading: false
         },
         this.runRandomProgram
       );
@@ -103,7 +108,7 @@ export class UserProfilePageComponent extends React.Component<IComponentProps, I
   }
 
   private runRandomProgram = () => {
-    this.codeRunnerSubject.next(this.demoSamplesService.getRandomSample());
+    this.codeRunnerSubject.next("setpensize 1.5\n" + this.demoSamplesService.getRandomSample());
   };
 
   private doExport = async () => {
@@ -145,13 +150,17 @@ export class UserProfilePageComponent extends React.Component<IComponentProps, I
           <div className="container">
             <br />
             <PageHeaderComponent title={$T.settings.settingsTitle} />
-
+            {this.state.isLoading && (
+              <div className="main-loading-container">
+                <LoadingComponent isLoading />
+              </div>
+            )}
             {this.state.userSettings &&
               this.state.currentLocale &&
               this.state.theme &&
               this.state.userInfo && (
                 <div className="columns">
-                  <div className="column">
+                  <div className="column is-three-fifths-desktop">
                     <div className="card">
                       <div className="card-content">
                         <SignInStatusComponent />
@@ -213,56 +222,76 @@ export class UserProfilePageComponent extends React.Component<IComponentProps, I
 
                         <br />
 
-                        <label className="label">{$T.settings.turtleSkin}</label>
-                        <div className="field">
-                          <div className="control">
-                            <div className="select">
-                              <TurtleSelector
-                                items={this.turtleCustomizationService.getAllTurtles()}
-                                selectedItem={this.turtleCustomizationService
-                                  .getAllTurtles()
-                                  .find(x => x.id === ensure(this.state.userSettings).turtleId)}
-                                getItemIdentifier={x => x.id}
-                                renderItem={x => x.name}
-                                selectionChanged={async newTurtle => {
-                                  if (newTurtle) {
-                                    await this.userSettingsService.update({ turtleId: newTurtle.id });
-                                    this.forceUpdate(this.runRandomProgram);
-                                  }
-                                }}
-                              />
+                        <div className="columns">
+                          <div className="column">
+                            <label className="label">{$T.settings.turtleSkin}</label>
+                            <div className="field">
+                              <div className="control">
+                                <div className="select">
+                                  <TurtleSelector
+                                    items={this.turtleCustomizationService.getAllTurtles()}
+                                    selectedItem={this.turtleCustomizationService
+                                      .getAllTurtles()
+                                      .find(x => x.id === ensure(this.state.userSettings).turtleId)}
+                                    getItemIdentifier={x => x.id}
+                                    renderItem={x => x.name}
+                                    selectionChanged={async newTurtle => {
+                                      if (newTurtle) {
+                                        await this.userSettingsService.update({ turtleId: newTurtle.id });
+                                        this.forceUpdate(this.runRandomProgram);
+                                      }
+                                    }}
+                                  />
+                                </div>
+                              </div>
                             </div>
+
+                            <br />
+
+                            <label className="label">{$T.settings.turtleSize}</label>
+                            <div className="field">
+                              <div className="control">
+                                <div className="select">
+                                  <TurtleSizeSelector
+                                    items={this.turtleCustomizationService.getTurtleSizes()}
+                                    selectedItem={this.turtleCustomizationService
+                                      .getTurtleSizes()
+                                      .find(x => x.size === ensure(this.state.userSettings).turtleSize)}
+                                    getItemIdentifier={x => x.size.toString()}
+                                    renderItem={x => x.description}
+                                    selectionChanged={async newSize => {
+                                      if (newSize) {
+                                        await this.userSettingsService.update({ turtleSize: newSize.size });
+                                        this.forceUpdate(this.runRandomProgram);
+                                      }
+                                    }}
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="column">
+                            <LogoExecutorComponent
+                              runCommands={this.codeRunnerSubject}
+                              isDarkTheme={this.state.theme.isDark}
+                              turtleImage={this.turtleCustomizationService.getTurtleImage(
+                                this.state.userSettings.turtleId
+                              )}
+                              turtleSize={this.state.userSettings.turtleSize}
+                            />
                           </div>
                         </div>
 
                         <br />
 
-                        <label className="label">{$T.settings.turtleSize}</label>
-                        <div className="field">
-                          <div className="control">
-                            <div className="select">
-                              <TurtleSizeSelector
-                                items={this.turtleCustomizationService.getTurtleSizes()}
-                                selectedItem={this.turtleCustomizationService
-                                  .getTurtleSizes()
-                                  .find(x => x.size === ensure(this.state.userSettings).turtleSize)}
-                                getItemIdentifier={x => x.size.toString()}
-                                renderItem={x => x.description}
-                                selectionChanged={async newSize => {
-                                  if (newSize) {
-                                    await this.userSettingsService.update({ turtleSize: newSize.size });
-                                    this.forceUpdate(this.runRandomProgram);
-                                  }
-                                }}
-                              />
-                            </div>
-                          </div>
-                        </div>
-
-                        <br />
-
-                        <label className="label">{$T.gallery.personalLibrary}</label>
-                        <p>{$T.settings.youHaveNProgramsInLibrary.val(this.state.programCount)}</p>
+                        <label className="label">
+                          <span>{$T.gallery.personalLibrary}</span>{" "}
+                          <span>
+                            ({this.state.programCount > 0
+                              ? $T.settings.numberOfProgramsInLibrary.val(this.state.programCount)
+                              : $T.settings.emptyLibrary})
+                          </span>
+                        </label>
                         <div className="field is-grouped is-grouped-multiline">
                           <p className="control">
                             <a className="button" onClick={this.doExport}>
@@ -277,19 +306,6 @@ export class UserProfilePageComponent extends React.Component<IComponentProps, I
                             />
                           </p>
                         </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="column">
-                    <div className="card">
-                      <div className="card-content">
-                        <LogoExecutorComponent
-                          runCommands={this.codeRunnerSubject}
-                          isDarkTheme={this.state.theme.isDark}
-                          turtleImage={this.turtleCustomizationService.getTurtleImage(this.state.userSettings.turtleId)}
-                          turtleSize={this.state.userSettings.turtleSize}
-                        />
                       </div>
                     </div>
                   </div>

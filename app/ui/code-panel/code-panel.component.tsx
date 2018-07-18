@@ -198,6 +198,7 @@ export class CodePanelComponent extends React.Component<ICodePanelComponentProps
   private deleteProgram = async () => {
     await this.galleryService.remove(ensure(this.props.programId));
     this.eventsTracker.sendEvent(EventAction.deleteProgramFromPersonalLibrary);
+    this.setState({ isDeleteModalActive: false });
     this.navigationService.navigate({ route: Routes.galleryRoot.build({}) });
   };
 

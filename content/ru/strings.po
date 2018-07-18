@@ -179,6 +179,9 @@ msgstr[0] "Добавлена %d программа."
 msgstr[1] "Добавлено %d программы."
 msgstr[2] "Добавлено %d программ."
 
+msgid "settings.emptyLibrary"
+msgstr "пусто"
+
 msgid "settings.export"
 msgstr "Экспорт"
 
@@ -190,6 +193,11 @@ msgstr "Импорт завершен"
 
 msgid "settings.language"
 msgstr "Язык"
+
+msgid "settings.numberOfProgramsInLibrary"
+msgstr[0] "%d программа"
+msgstr[1] "%d программы"
+msgstr[2] "%d программ"
 
 msgid "settings.settingsTitle"
 msgstr "Настройки"
@@ -239,10 +247,6 @@ msgstr "Тема пользовательского интерфейса"
 msgid "settings.userGuestNickName"
 msgstr "Гость"
 
-msgid "settings.youHaveNProgramsInLibrary"
-msgstr[0] "У вас %d программа"
-msgstr[1] "У вас %d программы"
-msgstr[2] "У вас %d программ"
 
 msgid "tutorial.back"
 msgstr "Назад"
