@@ -1,7 +1,7 @@
 import * as goldenLayout from "golden-layout";
 
 export class GoldenLayoutHelper {
-  layout: goldenLayout;
+  layout?: goldenLayout;
 
   public setGoldenLayout(layout: goldenLayout) {
     this.layout = layout;
@@ -10,6 +10,7 @@ export class GoldenLayoutHelper {
   public destroy() {
     if (this.layout) {
       this.layout.destroy();
+      this.layout = undefined;
     }
   }
 
@@ -20,6 +21,9 @@ export class GoldenLayoutHelper {
   }
 
   public setPanelTitle(panelId: string, title: string) {
+    if (!this.layout) {
+      return;
+    }
     const panelContentItem = this.findGoldenLayoutContentItem(this.layout.root, panelId);
     if (!panelContentItem) {
       console.log("Error: cannot find panel in layout: " + panelId);

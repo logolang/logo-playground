@@ -32,24 +32,24 @@ export class ReactGoldenLayout extends React.Component<IComponentProps, ICompone
     width: window.innerWidth,
     height: window.innerHeight
   };
+  private isComponentMounted = false;
 
   constructor(props: IComponentProps) {
     super(props);
   }
 
   componentDidMount() {
-    // we need this timeout because of goldenlayout component issues
-    setTimeout(() => {
-      const layoutFromStorage =
-        this.props.layoutLocalStorageKey && window.localStorage.getItem(this.props.layoutLocalStorageKey);
-      if (!layoutFromStorage || !this.initLayoutWithConfig(layoutFromStorage)) {
-        this.initLayoutWithConfig(this.props.defaultLayoutConfigJSON);
-      }
-      window.addEventListener("resize", this.onWindowResize);
-    });
+    const layoutFromStorage =
+      this.props.layoutLocalStorageKey && window.localStorage.getItem(this.props.layoutLocalStorageKey);
+    if (!layoutFromStorage || !this.initLayoutWithConfig(layoutFromStorage)) {
+      this.initLayoutWithConfig(this.props.defaultLayoutConfigJSON);
+    }
+    window.addEventListener("resize", this.onWindowResize);
+    this.isComponentMounted = true;
   }
 
   componentWillUnmount() {
+    this.isComponentMounted = false;
     this.layoutHelper.destroy();
     window.removeEventListener("resize", this.onWindowResize);
   }
@@ -95,14 +95,26 @@ export class ReactGoldenLayout extends React.Component<IComponentProps, ICompone
         $this.panelDomContainersByIds[options.componentName] = container.getElement().get(0);
       };
 
+      const componentNames: string[] = [];
       React.Children.map(this.props.children, (child: React.ReactElement<ReactGoldenLayoutPanelProps>) => {
         if (child.type != ReactGoldenLayoutPanel) {
           console.error("Wrong child:", child);
           throw new Error("Invalid child, only ReactGoldenLayoutPanel are allowed as children, sorry");
         }
+        componentNames.push(child.props.id);
         layout.registerComponent(child.props.id, registerComponentCallback);
       });
       layout.init();
+
+      // validate panels
+      for (const componentName of componentNames) {
+        const panelConfig = this.layoutHelper.findGoldenLayoutContentItem(layout.root, componentName);
+        if (!panelConfig) {
+          console.error("Oops, missing panel in config: " + componentName);
+          return false;
+        }
+      }
+
       layout.on("stateChanged", this.onStateChanged);
     } catch (ex) {
       console.error(ex);
@@ -121,6 +133,9 @@ export class ReactGoldenLayout extends React.Component<IComponentProps, ICompone
   };
 
   stateChangeHandler = () => {
+    if (!this.isComponentMounted || !this.layoutHelper.layout) {
+      return;
+    }
     const config = this.layoutHelper.layout.toConfig();
     const json = JSON.stringify(config);
 
