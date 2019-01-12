@@ -14,9 +14,7 @@ import { TitleService } from "app/services/infrastructure/title.service";
 import { EventsTrackingService, EventAction } from "app/services/infrastructure/events-tracking.service";
 
 import { MainMenuComponent } from "app/ui/main-menu.component";
-import { ModalComponent } from "app/ui/_generic/modal.component";
 import { NoDataComponent } from "app/ui/_generic/no-data.component";
-import { AlertMessageComponent } from "app/ui/_generic/alert-message.component";
 import { LoadingComponent } from "app/ui/_generic/loading.component";
 
 import "./gallery.page.component.less";
@@ -119,10 +117,8 @@ export class GalleryPageComponent extends React.Component<IComponentProps, IComp
                   {$T.gallery.personalLibrary}
                   {this.state.isSyncronizing && (
                     <>
-                      &nbsp;&nbsp;<i
-                        className="fa fa-refresh fa-spin has-text-grey-lighter"
-                        title={$T.gallery.syncronizing}
-                      />
+                      &nbsp;&nbsp;
+                      <i className="fa fa-refresh fa-spin has-text-grey-lighter" title={$T.gallery.syncronizing} />
                     </>
                   )}
                 </h1>
@@ -139,15 +135,14 @@ export class GalleryPageComponent extends React.Component<IComponentProps, IComp
                 <br />
                 <br />
 
-                {this.state.samples &&
-                  this.state.samples.length > 0 && (
-                    <>
-                      <h1 className="title is-4">{$T.gallery.examplesGallery}</h1>
-                      <div className="program-cards-container">
-                        {this.state.samples.map(pr => this.renderProgramCard(pr, ProgramStorageType.samples, false))}
-                      </div>
-                    </>
-                  )}
+                {this.state.samples && this.state.samples.length > 0 && (
+                  <>
+                    <h1 className="title is-4">{$T.gallery.examplesGallery}</h1>
+                    <div className="program-cards-container">
+                      {this.state.samples.map(pr => this.renderProgramCard(pr, ProgramStorageType.samples, false))}
+                    </div>
+                  </>
+                )}
               </>
             )}
           </div>

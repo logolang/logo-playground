@@ -1,6 +1,5 @@
 import * as React from "react";
-import { ISubscription } from "rxjs/Subscription";
-import { Observable } from "rxjs/Observable";
+import { Subscription, Observable } from "rxjs";
 import * as keymaster from "keymaster";
 
 import { resolveInject } from "app/di";
@@ -52,7 +51,7 @@ export class CodePanelComponent extends React.Component<ICodePanelComponentProps
   private managementService = resolveInject(ProgramManagementService);
   private galleryService = resolveInject(PersonalGalleryService);
   private eventsTracker = resolveInject(EventsTrackingService);
-  private subscriptions: ISubscription[] = [];
+  private subscriptions: Subscription[] = [];
   private saveTempCodeTimer: any = undefined;
 
   constructor(props: ICodePanelComponentProps) {

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Subscription } from "rxjs/Subscription";
+import { Subscription } from "rxjs";
 
 import { resolveInject } from "app/di";
 import { DependecyInjectionSetupService } from "app/di-setup";
@@ -49,7 +49,8 @@ export class SignInStatusComponent extends React.Component<IComponentProps, ICom
       case AuthProvider.google:
         return (
           <>
-            <i className="fa fa-google" aria-hidden="true" />&nbsp;
+            <i className="fa fa-google" aria-hidden="true" />
+            &nbsp;
           </>
         );
     }

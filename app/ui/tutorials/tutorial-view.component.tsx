@@ -10,7 +10,7 @@ import {
   ITutorialStepContent
 } from "app/services/tutorials/tutorials-content-service";
 import { EventsTrackingService, EventAction } from "app/services/infrastructure/events-tracking.service";
-import { ErrorDef, callActionSafe } from "app/utils/error-helpers";
+import { callActionSafe } from "app/utils/error-helpers";
 import { ErrorService } from "app/services/infrastructure/error.service";
 
 import { TutorialSelectModalComponent } from "app/ui/tutorials/tutorial-select-modal.component";

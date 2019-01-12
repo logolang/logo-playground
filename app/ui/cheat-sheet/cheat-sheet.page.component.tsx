@@ -2,7 +2,7 @@ import * as React from "react";
 import { RouteComponentProps } from "react-router-dom";
 import * as markdown from "markdown-it";
 
-import { callActionSafe, ErrorDef } from "app/utils/error-helpers";
+import { callActionSafe } from "app/utils/error-helpers";
 
 import { resolveInject } from "app/di";
 import { $T } from "app/i18n/strings";

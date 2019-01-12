@@ -1,9 +1,8 @@
 import * as React from "react";
-import { Subject } from "rxjs/Subject";
-import { BehaviorSubject } from "rxjs/BehaviorSubject";
+import { Subject, BehaviorSubject } from "rxjs";
 
 import { as } from "app/utils/syntax-helpers";
-import { callActionSafe, ErrorDef } from "app/utils/error-helpers";
+import { callActionSafe } from "app/utils/error-helpers";
 
 import { checkIsMobileDevice } from "app/utils/device-helper";
 import { $T } from "app/i18n/strings";
@@ -211,53 +210,51 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
               <LoadingComponent isLoading />
             </div>
           )}
-          {this.state.program &&
-            this.state.userSettings &&
-            this.state.theme && (
-              <GoldenLayoutComponent
-                initialLayoutConfigJSON={this.state.pageLayoutConfigJSON}
-                defaultLayoutConfigJSON={this.defaultLayoutConfigJSON}
-                onLayoutChange={this.layoutChanged}
-                panelsReloadCheck={(oldPanels, newPanels) => {
-                  const oldProgramId = oldPanels[0].props.program.id;
-                  const newProgramId = newPanels[0].props.program.id;
-                  return newProgramId !== oldProgramId;
-                }}
-                panels={[
-                  as<IPanelConfig<CodePanelComponent, ICodePanelComponentProps>>({
-                    title: this.codePanelTitle,
-                    componentName: "code-panel",
-                    componentType: CodePanelComponent,
-                    props: {
-                      saveCurrentEnabled: this.props.storageType === ProgramStorageType.gallery,
-                      program: this.state.program,
-                      editorTheme: this.state.theme.codeEditorThemeName,
-                      executionService: this.executionService,
-                      onSaveAs: this.onSaveAs,
-                      containerResized: this.layoutChangedSubject,
-                      hasChangesStatus: hasChanges =>
-                        this.setCodePanelTitle(this.state.program!.name, this.state.program!.id, hasChanges)
+          {this.state.program && this.state.userSettings && this.state.theme && (
+            <GoldenLayoutComponent
+              initialLayoutConfigJSON={this.state.pageLayoutConfigJSON}
+              defaultLayoutConfigJSON={this.defaultLayoutConfigJSON}
+              onLayoutChange={this.layoutChanged}
+              panelsReloadCheck={(oldPanels, newPanels) => {
+                const oldProgramId = oldPanels[0].props.program.id;
+                const newProgramId = newPanels[0].props.program.id;
+                return newProgramId !== oldProgramId;
+              }}
+              panels={[
+                as<IPanelConfig<CodePanelComponent, ICodePanelComponentProps>>({
+                  title: this.codePanelTitle,
+                  componentName: "code-panel",
+                  componentType: CodePanelComponent,
+                  props: {
+                    saveCurrentEnabled: this.props.storageType === ProgramStorageType.gallery,
+                    program: this.state.program,
+                    editorTheme: this.state.theme.codeEditorThemeName,
+                    executionService: this.executionService,
+                    onSaveAs: this.onSaveAs,
+                    containerResized: this.layoutChangedSubject,
+                    hasChangesStatus: hasChanges =>
+                      this.setCodePanelTitle(this.state.program!.name, this.state.program!.id, hasChanges)
+                  }
+                }),
+                as<IPanelConfig<OutputPanelComponent, IOutputPanelComponentProps>>({
+                  title: this.outputPanelTitle,
+                  componentName: "output-panel",
+                  componentType: OutputPanelComponent,
+                  props: {
+                    logoExecutorProps: {
+                      runCommands: this.executionService.runCommands,
+                      stopCommands: this.executionService.stopCommands,
+                      makeScreenshotCommands: this.executionService.makeScreenshotCommands,
+                      onIsRunningChanged: this.executionService.onIsRunningChanged,
+                      isDarkTheme: this.state.theme.isDark,
+                      customTurtleImage: this.state.turtleImage,
+                      customTurtleSize: this.state.userSettings.turtleSize
                     }
-                  }),
-                  as<IPanelConfig<OutputPanelComponent, IOutputPanelComponentProps>>({
-                    title: this.outputPanelTitle,
-                    componentName: "output-panel",
-                    componentType: OutputPanelComponent,
-                    props: {
-                      logoExecutorProps: {
-                        runCommands: this.executionService.runCommands,
-                        stopCommands: this.executionService.stopCommands,
-                        makeScreenshotCommands: this.executionService.makeScreenshotCommands,
-                        onIsRunningChanged: this.executionService.onIsRunningChanged,
-                        isDarkTheme: this.state.theme.isDark,
-                        customTurtleImage: this.state.turtleImage,
-                        customTurtleSize: this.state.userSettings.turtleSize
-                      }
-                    }
-                  })
-                ]}
-              />
-            )}
+                  }
+                })
+              ]}
+            />
+          )}
         </div>
       </div>
     );
