@@ -1,8 +1,7 @@
 import * as React from "react";
 import * as cn from "classnames";
 import * as codemirror from "codemirror";
-import { Observable } from "rxjs/Observable";
-import { Subscription } from "rxjs/Subscription";
+import { Subscription, Observable } from "rxjs";
 
 import { ensure } from "app/utils/syntax-helpers";
 

@@ -1,6 +1,6 @@
 import * as React from "react";
 import { LoginStatus, NotLoggenInStatus } from "app/services/login/current-user.service";
-import { Subject } from "rxjs/Subject";
+import { Subject } from "rxjs";
 import { IAuthService } from "app/services/login/auth.service";
 import { AuthProvider } from "app/services/login/user-info";
 import { $T } from "app/i18n/strings";

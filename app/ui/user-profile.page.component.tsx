@@ -2,11 +2,10 @@ import * as React from "react";
 import * as cn from "classnames";
 import * as FileSaver from "file-saver";
 import { RouteComponentProps } from "react-router-dom";
-import { Subject } from "rxjs/Subject";
-import { BehaviorSubject } from "rxjs/BehaviorSubject";
+import { Subject, BehaviorSubject } from "rxjs";
 
 import { RandomHelper } from "app/utils/random-helper";
-import { callActionSafe, ErrorDef } from "app/utils/error-helpers";
+import { callActionSafe } from "app/utils/error-helpers";
 import { ensure } from "app/utils/syntax-helpers";
 import { resolveInject } from "app/di";
 import { $T } from "app/i18n/strings";
@@ -168,156 +167,153 @@ export class UserProfilePageComponent extends React.Component<IComponentProps, I
             <br />
             <PageHeaderComponent title={$T.settings.settingsTitle} />
 
-            {this.state.userSettings &&
-              this.state.currentLocale &&
-              this.state.theme &&
-              this.state.userInfo && (
-                <div className="columns">
-                  <div className="column">
-                    <div className="card">
-                      <div className="card-content">
-                        <SignInStatusComponent />
-                        <br />
+            {this.state.userSettings && this.state.currentLocale && this.state.theme && this.state.userInfo && (
+              <div className="columns">
+                <div className="column">
+                  <div className="card">
+                    <div className="card-content">
+                      <SignInStatusComponent />
+                      <br />
 
-                        <div className="field">
-                          <label className="label" htmlFor="language-selector">
-                            {$T.settings.language}
-                          </label>
-                          <div className="control">
-                            <div className="select">
-                              <LocaleSelector
-                                items={this.localizationService.getSupportedLocales()}
-                                selectedItem={this.state.currentLocale}
-                                getItemIdentifier={x => x.id}
-                                renderItem={x => x.name}
-                                idAttr="language-selector"
-                                selectionChanged={async selectedLocation => {
-                                  if (selectedLocation) {
-                                    await this.userSettingsService.update({ localeId: selectedLocation.id });
-                                    await this.diSetup.reset();
-                                  }
-                                }}
-                              />
-                            </div>
-                          </div>
-                        </div>
-
-                        <br />
-
-                        <div className="field">
-                          <label className="label" htmlFor="theme-selector">
-                            {$T.settings.uiTheme}
-                          </label>
-                          <div className="control is-expanded">
-                            <div className="select is-fullwidth">
-                              <ThemeSelector
-                                items={this.themeService.getAllThemes()}
-                                selectedItem={this.state.theme}
-                                getItemIdentifier={x => x.name}
-                                renderItem={x => `${x.name} - ${x.description}`}
-                                idAttr="theme-selector"
-                                selectionChanged={async selectedTheme => {
-                                  if (selectedTheme) {
-                                    this.setState({ theme: selectedTheme });
-                                    await this.userSettingsService.update({ themeName: selectedTheme.name });
-                                    this.themeService.setActiveTheme(selectedTheme.name);
-                                    await this.loadData();
-                                  }
-                                }}
-                              />
-                            </div>
-                          </div>
-                        </div>
-
-                        <br />
-
-                        <label className="label">{$T.settings.turtleSkin}</label>
-                        <div className="field">
-                          <div className="control">
-                            <div className="select">
-                              <TurtleSelector
-                                items={this.turtleCustomizationService.getAllTurtles()}
-                                selectedItem={this.turtleCustomizationService
-                                  .getAllTurtles()
-                                  .find(x => x.id === ensure(this.state.userSettings).turtleId)}
-                                getItemIdentifier={x => x.id}
-                                renderItem={x => x.name}
-                                selectionChanged={async newTurtle => {
-                                  if (newTurtle) {
-                                    await this.userSettingsService.update({ turtleId: newTurtle.id });
-                                    await this.loadData();
-                                  }
-                                }}
-                              />
-                            </div>
-                          </div>
-                        </div>
-
-                        <br />
-
-                        <label className="label">{$T.settings.turtleSize}</label>
-                        <div className="field">
-                          <div className="control">
-                            <div className="select">
-                              <TurtleSizeSelector
-                                items={this.turtleCustomizationService.getTurtleSizes()}
-                                selectedItem={this.turtleCustomizationService
-                                  .getTurtleSizes()
-                                  .find(x => x.size === ensure(this.state.userSettings).turtleSize)}
-                                getItemIdentifier={x => x.size.toString()}
-                                renderItem={x => x.description}
-                                selectionChanged={async newSize => {
-                                  if (newSize) {
-                                    await this.userSettingsService.update({ turtleSize: newSize.size });
-                                    await this.loadData();
-                                  }
-                                }}
-                              />
-                            </div>
-                          </div>
-                        </div>
-
-                        <br />
-
-                        <label className="label">{$T.gallery.personalLibrary}</label>
-                        <p>{$T.settings.youHaveNProgramsInLibrary.val(this.state.programCount)}</p>
-                        <div className="field is-grouped is-grouped-multiline">
-                          <p className="control">
-                            <a className="button" onClick={this.doExport}>
-                              {$T.settings.export}
-                            </a>
-                          </p>
-                          <p className="control">
-                            <FileSelectorComponent
-                              className={cn({ "is-loading": this.state.isImportingInProgress })}
-                              buttonText={$T.settings.import}
-                              onFileTextContentReady={this.onImport}
+                      <div className="field">
+                        <label className="label" htmlFor="language-selector">
+                          {$T.settings.language}
+                        </label>
+                        <div className="control">
+                          <div className="select">
+                            <LocaleSelector
+                              items={this.localizationService.getSupportedLocales()}
+                              selectedItem={this.state.currentLocale}
+                              getItemIdentifier={x => x.id}
+                              renderItem={x => x.name}
+                              idAttr="language-selector"
+                              selectionChanged={async selectedLocation => {
+                                if (selectedLocation) {
+                                  await this.userSettingsService.update({ localeId: selectedLocation.id });
+                                  await this.diSetup.reset();
+                                }
+                              }}
                             />
-                          </p>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </div>
 
-                  <div className="column">
-                    <div className="card">
-                      <div className="card-content">
-                        {[
-                          <LogoExecutorComponent
-                            key={`${JSON.stringify(this.state.userSettings)}`} //this is a hack to force component to be created each render in order to not handle prop change event
-                            onIsRunningChanged={this.onIsRunningChanged}
-                            runCommands={this.runCode}
-                            stopCommands={new Subject<void>()}
-                            customTurtleImage={this.state.turtleImage}
-                            customTurtleSize={this.state.userSettings.turtleSize}
-                            isDarkTheme={this.state.theme.isDark}
+                      <br />
+
+                      <div className="field">
+                        <label className="label" htmlFor="theme-selector">
+                          {$T.settings.uiTheme}
+                        </label>
+                        <div className="control is-expanded">
+                          <div className="select is-fullwidth">
+                            <ThemeSelector
+                              items={this.themeService.getAllThemes()}
+                              selectedItem={this.state.theme}
+                              getItemIdentifier={x => x.name}
+                              renderItem={x => `${x.name} - ${x.description}`}
+                              idAttr="theme-selector"
+                              selectionChanged={async selectedTheme => {
+                                if (selectedTheme) {
+                                  this.setState({ theme: selectedTheme });
+                                  await this.userSettingsService.update({ themeName: selectedTheme.name });
+                                  this.themeService.setActiveTheme(selectedTheme.name);
+                                  await this.loadData();
+                                }
+                              }}
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      <br />
+
+                      <label className="label">{$T.settings.turtleSkin}</label>
+                      <div className="field">
+                        <div className="control">
+                          <div className="select">
+                            <TurtleSelector
+                              items={this.turtleCustomizationService.getAllTurtles()}
+                              selectedItem={this.turtleCustomizationService
+                                .getAllTurtles()
+                                .find(x => x.id === ensure(this.state.userSettings).turtleId)}
+                              getItemIdentifier={x => x.id}
+                              renderItem={x => x.name}
+                              selectionChanged={async newTurtle => {
+                                if (newTurtle) {
+                                  await this.userSettingsService.update({ turtleId: newTurtle.id });
+                                  await this.loadData();
+                                }
+                              }}
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      <br />
+
+                      <label className="label">{$T.settings.turtleSize}</label>
+                      <div className="field">
+                        <div className="control">
+                          <div className="select">
+                            <TurtleSizeSelector
+                              items={this.turtleCustomizationService.getTurtleSizes()}
+                              selectedItem={this.turtleCustomizationService
+                                .getTurtleSizes()
+                                .find(x => x.size === ensure(this.state.userSettings).turtleSize)}
+                              getItemIdentifier={x => x.size.toString()}
+                              renderItem={x => x.description}
+                              selectionChanged={async newSize => {
+                                if (newSize) {
+                                  await this.userSettingsService.update({ turtleSize: newSize.size });
+                                  await this.loadData();
+                                }
+                              }}
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      <br />
+
+                      <label className="label">{$T.gallery.personalLibrary}</label>
+                      <p>{$T.settings.youHaveNProgramsInLibrary.val(this.state.programCount)}</p>
+                      <div className="field is-grouped is-grouped-multiline">
+                        <p className="control">
+                          <a className="button" onClick={this.doExport}>
+                            {$T.settings.export}
+                          </a>
+                        </p>
+                        <p className="control">
+                          <FileSelectorComponent
+                            className={cn({ "is-loading": this.state.isImportingInProgress })}
+                            buttonText={$T.settings.import}
+                            onFileTextContentReady={this.onImport}
                           />
-                        ]}
+                        </p>
                       </div>
                     </div>
                   </div>
                 </div>
-              )}
+
+                <div className="column">
+                  <div className="card">
+                    <div className="card-content">
+                      {[
+                        <LogoExecutorComponent
+                          key={`${JSON.stringify(this.state.userSettings)}`} //this is a hack to force component to be created each render in order to not handle prop change event
+                          onIsRunningChanged={this.onIsRunningChanged}
+                          runCommands={this.runCode}
+                          stopCommands={new Subject<void>()}
+                          customTurtleImage={this.state.turtleImage}
+                          customTurtleSize={this.state.userSettings.turtleSize}
+                          isDarkTheme={this.state.theme.isDark}
+                        />
+                      ]}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

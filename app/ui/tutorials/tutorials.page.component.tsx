@@ -1,9 +1,8 @@
 import * as React from "react";
 import { RouteComponentProps } from "react-router-dom";
-import { Subject } from "rxjs/Subject";
-import { BehaviorSubject } from "rxjs/BehaviorSubject";
+import { Subject, BehaviorSubject } from "rxjs";
 
-import { callActionSafe, ErrorDef } from "app/utils/error-helpers";
+import { callActionSafe } from "app/utils/error-helpers";
 import { as } from "app/utils/syntax-helpers";
 import { resolveInject } from "app/di";
 import { Routes } from "app/routes";

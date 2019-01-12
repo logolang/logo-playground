@@ -1,4 +1,4 @@
-import { Subject } from "rxjs/Subject";
+import { Subject } from "rxjs";
 
 import { container } from "app/di";
 import { normalizeError } from "app/utils/error-helpers";

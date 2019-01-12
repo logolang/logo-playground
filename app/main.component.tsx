@@ -1,6 +1,6 @@
 import * as React from "react";
 import { HashRouter } from "react-router-dom";
-import { Subscription } from "rxjs/Subscription";
+import { Subscription } from "rxjs";
 
 import { resolveInject } from "app/di";
 import { RandomHelper } from "app/utils/random-helper";
