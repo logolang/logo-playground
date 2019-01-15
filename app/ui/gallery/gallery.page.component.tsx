@@ -6,7 +6,7 @@ import { $T } from "app/i18n/strings";
 import { resolveInject } from "app/di";
 import { Routes } from "app/routes";
 import { ProgramModel, ProgramStorageType } from "app/services/program/program.model";
-import { GallerySection } from "./state.gallery";
+import { GallerySection } from "app/store/gallery/state.gallery";
 import { TitleService } from "app/services/infrastructure/title.service";
 import { EventsTrackingService, EventAction } from "app/services/infrastructure/events-tracking.service";
 
@@ -21,7 +21,7 @@ interface IComponentProps {
   isUserLoggedIn: boolean;
   programs: ProgramModel[];
   isLoading: boolean;
-  selectSection(section: GallerySection): void;
+  selectSection(section: GallerySection, options?: { forceLoad: boolean }): void;
 }
 
 export class GalleryPageComponent extends React.Component<IComponentProps, {}> {
@@ -31,7 +31,7 @@ export class GalleryPageComponent extends React.Component<IComponentProps, {}> {
   async componentDidMount() {
     this.titleService.setDocumentTitle($T.gallery.galleryTitle);
     this.eventsTracker.sendEvent(EventAction.openGallery);
-    this.props.selectSection(this.props.activeSection);
+    this.props.selectSection(this.props.activeSection, { forceLoad: true });
   }
 
   render(): JSX.Element {

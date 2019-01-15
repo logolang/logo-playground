@@ -10,16 +10,17 @@ export class PersonalGalleryService {
     @inject(PersonalGalleryRemoteRepository) private remoteProgramsRepository?: PersonalGalleryRemoteRepository
   ) {}
 
-  async getAll(): Promise<ProgramModel[] | undefined> {
-    const all =
-      (await (this.remoteProgramsRepository
-        ? this.remoteProgramsRepository.getAll()
-        : this.localProgramsRepository.getAll())) || [];
-    await this.localProgramsRepository.overwrite(all);
-    return all;
+  async getAll(): Promise<ProgramModel[]> {
+    if (this.remoteProgramsRepository) {
+      const programs = await this.remoteProgramsRepository.getAll();
+      this.localProgramsRepository.overwrite(programs);
+      return programs;
+    } else {
+      return await this.localProgramsRepository.getAll();
+    }
   }
 
-  async getAllLocal(): Promise<ProgramModel[] | undefined> {
+  async getAllLocal(): Promise<ProgramModel[]> {
     return this.localProgramsRepository.getAll();
   }
 

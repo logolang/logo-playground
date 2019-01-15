@@ -29,22 +29,21 @@ export class PersonalGalleryGoogleDriveRepository implements PersonalGalleryRemo
     this.googleDriveClient = new GoogleDriveClient();
   }
 
-  async getAll(): Promise<ProgramModel[] | undefined> {
+  async getAll(): Promise<ProgramModel[]> {
     const data = await this.getStoredData();
     if (data) {
       return data.programs;
     }
-    return undefined;
+    return [];
   }
 
   async get(id: string): Promise<ProgramModel> {
     const existingPrograms = (await this.getAll()) || [];
     const pr = existingPrograms.find(p => p.id === id);
-    if (pr) {
-      // return clone of program object - so original will be intact in memory if updates happen
-      return { ...pr };
+    if (!pr) {
+      throw new Error("Program is not found");
     }
-    throw new Error("Program is not found");
+    return pr;
   }
 
   async add(programs: ProgramModel[]): Promise<void> {

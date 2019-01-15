@@ -14,7 +14,7 @@ export class PersonalGalleryLocalRepository {
     this.storageKey = "logo-playground.gallery:" + userId;
   }
 
-  async getAll(): Promise<ProgramModel[] | undefined> {
+  async getAll(): Promise<ProgramModel[]> {
     const stored = this.storage.getItem(this.storageKey);
     if (stored) {
       const all = ProgramModelConverter.fromJson(JSON.parse(stored));
@@ -23,7 +23,7 @@ export class PersonalGalleryLocalRepository {
       }
       return all;
     }
-    return undefined;
+    return [];
   }
 
   async get(id: string): Promise<ProgramModel> {

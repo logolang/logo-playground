@@ -1,6 +1,6 @@
 import { connect } from "react-redux";
-import { AppState } from "app/store";
-import { galleryActionCreator } from "./actions.gallery";
+import { AppState } from "app/store/store";
+import { galleryActionCreator } from "app/store/gallery/actions.gallery";
 import { GalleryPageComponent } from "./gallery.page.component";
 
 export const GalleryPageContainer = connect(

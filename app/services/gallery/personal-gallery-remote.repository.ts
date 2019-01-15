@@ -1,7 +1,7 @@
 import { ProgramModel } from "app/services/program/program.model";
 
 export abstract class PersonalGalleryRemoteRepository {
-  abstract getAll(): Promise<ProgramModel[] | undefined>;
+  abstract getAll(): Promise<ProgramModel[]>;
   abstract get(id: string): Promise<ProgramModel>;
   abstract add(programs: ProgramModel[]): Promise<void>;
   abstract save(program: ProgramModel): Promise<void>;
