@@ -1,5 +1,3 @@
-import { ProgramStorageType } from "app/services/program/program-management.service";
-
 export interface ProgramModel {
   id: string;
   storageType?: ProgramStorageType;
@@ -9,4 +7,10 @@ export interface ProgramModel {
   dateCreated: Date;
   dateLastEdited: Date;
   hasTempLocalModifications: boolean;
+}
+
+export enum ProgramStorageType {
+  samples = "samples",
+  gallery = "gallery",
+  gist = "gist"
 }

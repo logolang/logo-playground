@@ -1,17 +1,11 @@
 import { injectable, inject } from "app/di";
 
-import { ProgramModel } from "app/services/program/program.model";
+import { ProgramModel, ProgramStorageType } from "app/services/program/program.model";
 import { GallerySamplesRepository } from "app/services/gallery/gallery-samples.repository";
 import { LocalTempCodeStorage } from "app/services/program/local-temp-code.storage";
 import { ProgramModelConverter } from "app/services/program/program-model.converter";
 import { GistSharedProgramsRepository } from "app/services/program/gist-shared-programs.repository";
 import { PersonalGalleryService } from "app/services/gallery/personal-gallery.service";
-
-export enum ProgramStorageType {
-  samples = "samples",
-  gallery = "gallery",
-  gist = "gist"
-}
 
 export interface IProgramToSaveAttributes {
   name: string;

@@ -1,8 +1,10 @@
 import * as React from "react";
 import { HashRouter } from "react-router-dom";
 import { Subscription } from "rxjs";
+import { Provider } from "react-redux";
 
 import { resolveInject } from "app/di";
+import { store } from "./store";
 import { RandomHelper } from "app/utils/random-helper";
 import { MessageTosterComponent } from "app/ui/_generic/message-toster.component";
 import { NavigationService } from "app/services/infrastructure/navigation.service";
@@ -42,24 +44,26 @@ export class MainComponent extends React.Component<{}, IComponentState> {
 
   render(): JSX.Element {
     return (
-      <React.Fragment key={this.state.renderKey}>
-        <MessageTosterComponent events={this.notificationService.getObservable()} />
-        <HashRouter
-          ref={(router: any) => {
-            if (this.navigationEventSubscription) {
-              this.navigationEventSubscription.unsubscribe();
-            }
-            if (router) {
-              // Subscribe to navigation service to perform navigation via React Router
-              this.navigationEventSubscription = this.navigationService.getObservable().subscribe(request => {
-                router.history.push(request.route);
-              });
-            }
-          }}
-        >
-          <RoutesComponent />
-        </HashRouter>
-      </React.Fragment>
+      <Provider store={store}>
+        <React.Fragment key={this.state.renderKey}>
+          <MessageTosterComponent events={this.notificationService.getObservable()} />
+          <HashRouter
+            ref={(router: any) => {
+              if (this.navigationEventSubscription) {
+                this.navigationEventSubscription.unsubscribe();
+              }
+              if (router) {
+                // Subscribe to navigation service to perform navigation via React Router
+                this.navigationEventSubscription = this.navigationService.getObservable().subscribe(request => {
+                  router.history.push(request.route);
+                });
+              }
+            }}
+          >
+            <RoutesComponent />
+          </HashRouter>
+        </React.Fragment>
+      </Provider>
     );
   }
 }

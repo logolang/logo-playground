@@ -223,7 +223,7 @@ export class TutorialsPageComponent extends React.Component<IComponentProps, ICo
                   }),
                   as<IPanelConfig<OutputPanelComponent, IOutputPanelComponentProps>>({
                     title: new BehaviorSubject(
-                      `<i class="fa fa-television" aria-hidden="true"></i> ` + $T.program.output
+                      `<i class="fas fa-desktop" aria-hidden="true"></i> ` + $T.program.output
                     ),
                     componentName: "output-panel",
                     componentType: OutputPanelComponent,

@@ -3,7 +3,7 @@ import { RandomHelper } from "app/utils/random-helper";
 import { injectable, inject } from "app/di";
 import { AppConfig } from "app/services/config/app-config";
 import { CurrentUserService } from "app/services/login/current-user.service";
-import { ProgramModel } from "app/services/program/program.model";
+import { ProgramModel, ProgramStorageType } from "app/services/program/program.model";
 import { GoogleDriveClient, IGoogleFileInfo } from "app/services/infrastructure/google-drive.client";
 import { ProgramsHtmlSerializerService } from "app/services/gallery/programs-html-serializer.service";
 import { PersonalGalleryRemoteRepository } from "./personal-gallery-remote.repository";
@@ -126,6 +126,9 @@ export class PersonalGalleryGoogleDriveRepository implements PersonalGalleryRemo
       fileHash: storageFileInfo.md5Checksum,
       programs
     };
+    for (const p of programs) {
+      p.storageType = ProgramStorageType.gallery;
+    }
     this.cachedData = data;
     return data;
   }
