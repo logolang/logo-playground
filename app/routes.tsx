@@ -2,20 +2,20 @@ import * as React from "react";
 import { Route, Redirect, Switch } from "react-router-dom";
 
 import { RouteInfo } from "app/utils/route-info";
+import { ProgramStorageType } from "./services/program/program.model";
 import { LoginPageComponent } from "app/ui/login.page.component";
-import { GalleryPageComponent } from "app/ui/gallery/gallery.page.component";
 import { UserProfilePageComponent } from "app/ui/user-profile.page.component";
 import { InfoPageComponent } from "app/ui/info.page.component";
 import { PlaygroundPageComponent } from "app/ui/playground/playground.page.component";
-import { ProgramStorageType } from "app/services/program/program-management.service";
 import { CheatSheetPageComponent } from "app/ui/cheat-sheet/cheat-sheet.page.component";
 import { TutorialsPageComponent, ITutorialPageRouteParams } from "app/ui/tutorials/tutorials.page.component";
+import { GalleryPageContainer } from "app/ui/gallery/gallery.page.container";
 
 export const RoutesComponent = (): JSX.Element => (
   <Switch>
     <Route path={Routes.loginRoot.path} component={LoginPageComponent} />
 
-    <Route path={Routes.galleryRoot.path} component={GalleryPageComponent} />
+    <Route exact path={Routes.galleryRoot.path} render={() => <GalleryPageContainer />} />
 
     <Route path={Routes.settingsRoot.path} component={UserProfilePageComponent} />
 
@@ -52,7 +52,7 @@ export const RoutesComponent = (): JSX.Element => (
     <Redirect from="/" to={Routes.galleryRoot.path} />
 
     {/* Default route will be used in case if nothing matches */}
-    <Route component={GalleryPageComponent} />
+    <Route render={() => <GalleryPageContainer />} />
   </Switch>
 );
 

@@ -1,15 +1,12 @@
 import * as React from "react";
-import { Link, RouteComponentProps } from "react-router-dom";
+import * as cn from "classnames";
+import { Link } from "react-router-dom";
 
-import { createCompareFunction } from "app/utils/syntax-helpers";
+import { $T } from "app/i18n/strings";
 import { resolveInject } from "app/di";
 import { Routes } from "app/routes";
-import { $T } from "app/i18n/strings";
-import { PersonalGalleryService } from "app/services/gallery/personal-gallery.service";
-import { ProgramModel } from "app/services/program/program.model";
-import { GallerySamplesRepository } from "app/services/gallery/gallery-samples.repository";
-import { ProgramStorageType, ProgramManagementService } from "app/services/program/program-management.service";
-import { CurrentUserService } from "app/services/login/current-user.service";
+import { ProgramModel, ProgramStorageType } from "app/services/program/program.model";
+import { GallerySection } from "./state.gallery";
 import { TitleService } from "app/services/infrastructure/title.service";
 import { EventsTrackingService, EventAction } from "app/services/infrastructure/events-tracking.service";
 
@@ -19,88 +16,23 @@ import { LoadingComponent } from "app/ui/_generic/loading.component";
 
 import "./gallery.page.component.less";
 
-interface IComponentState {
-  userName: string;
-  programs?: ProgramModel[];
-  samples?: ProgramModel[];
-  isLoading?: boolean;
-  isSyncronizing?: boolean;
-  errorMessge?: string;
-  programToDelete: ProgramModel | undefined;
+interface IComponentProps {
+  activeSection: GallerySection;
+  isUserLoggedIn: boolean;
+  programs: ProgramModel[];
+  isLoading: boolean;
+  selectSection(section: GallerySection): void;
 }
 
-interface IComponentProps extends RouteComponentProps<void> {}
-
-export class GalleryPageComponent extends React.Component<IComponentProps, IComponentState> {
-  private currentUser = resolveInject(CurrentUserService);
+export class GalleryPageComponent extends React.Component<IComponentProps, {}> {
   private titleService = resolveInject(TitleService);
-  private galleryService = resolveInject(PersonalGalleryService);
-  private samplesRepo = resolveInject(GallerySamplesRepository);
   private eventsTracker = resolveInject(EventsTrackingService);
-  private programManagementService = resolveInject(ProgramManagementService);
-
-  constructor(props: IComponentProps) {
-    super(props);
-
-    this.state = {
-      userName: this.currentUser.getLoginStatus().userInfo.attributes.name,
-      programToDelete: undefined,
-      isLoading: true,
-      isSyncronizing: true
-    };
-  }
 
   async componentDidMount() {
     this.titleService.setDocumentTitle($T.gallery.galleryTitle);
     this.eventsTracker.sendEvent(EventAction.openGallery);
-    await this.loadData();
+    this.props.selectSection(this.props.activeSection);
   }
-
-  async loadData() {
-    const sortingFunction = createCompareFunction<ProgramModel>([
-      { sortBy: x => x.hasTempLocalModifications, direction: "desc" },
-      { sortBy: x => x.dateLastEdited, direction: "desc" },
-      { sortBy: x => x.name }
-    ]);
-
-    const samples = await this.samplesRepo.getAll();
-    this.programManagementService.initLocalModificationsFlag(samples);
-    samples.sort(sortingFunction);
-
-    const programs = await this.galleryService.getAllLocal();
-    if (programs) {
-      this.programManagementService.initLocalModificationsFlag(programs);
-      programs.sort(sortingFunction);
-
-      this.setState({
-        samples,
-        programs,
-        isLoading: false
-      });
-    }
-
-    const programsFromRemote = await this.galleryService.getAll();
-    if (programsFromRemote) {
-      this.programManagementService.initLocalModificationsFlag(programsFromRemote);
-      programsFromRemote.sort(sortingFunction);
-    }
-
-    this.setState({
-      samples,
-      programs: programsFromRemote,
-      isLoading: false,
-      isSyncronizing: false
-    });
-  }
-
-  confirmDelete = async (): Promise<void> => {
-    if (this.state.programToDelete) {
-      await this.galleryService.remove(this.state.programToDelete.id);
-      this.eventsTracker.sendEvent(EventAction.deleteProgramFromPersonalLibrary);
-      this.setState({ programToDelete: undefined, isSyncronizing: true });
-    }
-    await this.loadData();
-  };
 
   render(): JSX.Element {
     return (
@@ -108,40 +40,20 @@ export class GalleryPageComponent extends React.Component<IComponentProps, IComp
         <MainMenuComponent />
         <div className="ex-page-content">
           <div className="container">
-            {this.state.isLoading ? (
+            <br />
+            {this.renderTabs()}
+            {this.props.isLoading ? (
               <LoadingComponent fullPage isLoading />
             ) : (
               <>
-                <br />
-                <h1 className="title is-4">
-                  {$T.gallery.personalLibrary}
-                  {this.state.isSyncronizing && (
-                    <>
-                      &nbsp;&nbsp;
-                      <i className="fa fa-refresh fa-spin has-text-grey-lighter" title={$T.gallery.syncronizing} />
-                    </>
-                  )}
-                </h1>
-                {this.state.programs && this.state.programs.length > 0 ? (
+                {this.props.programs.length > 0 ? (
                   <div className="program-cards-container">
-                    {this.state.programs.map(pr => this.renderProgramCard(pr, ProgramStorageType.gallery, true))}
+                    {this.props.programs.map(pr => this.renderProgramCard(pr))}
                   </div>
                 ) : (
-                  <>
+                  this.props.activeSection === GallerySection.PersonalLibrary && (
                     <NoDataComponent title="" description={$T.gallery.emptyLibrary} />
-                  </>
-                )}
-
-                <br />
-                <br />
-
-                {this.state.samples && this.state.samples.length > 0 && (
-                  <>
-                    <h1 className="title is-4">{$T.gallery.examplesGallery}</h1>
-                    <div className="program-cards-container">
-                      {this.state.samples.map(pr => this.renderProgramCard(pr, ProgramStorageType.samples, false))}
-                    </div>
-                  </>
+                  )
                 )}
               </>
             )}
@@ -151,9 +63,37 @@ export class GalleryPageComponent extends React.Component<IComponentProps, IComp
     );
   }
 
-  renderProgramCard(p: ProgramModel, storageType: ProgramStorageType, deleteBox: boolean): JSX.Element {
+  renderTabs() {
+    return (
+      <div className="tabs is-centered is-boxed">
+        <ul>
+          <li className={cn({ "is-active": this.props.activeSection === GallerySection.ExamplesAdvanced })}>
+            <a onClick={() => this.props.selectSection(GallerySection.ExamplesAdvanced)}>
+              <i className="fas fa-flask" />
+              &nbsp;<span>Examples</span>
+            </a>
+          </li>
+          <li className={cn({ "is-active": this.props.activeSection === GallerySection.ExamplesBasic })}>
+            <a onClick={() => this.props.selectSection(GallerySection.ExamplesBasic)}>
+              <i className="fa fa-puzzle-piece" />
+              &nbsp;<span>Shapes</span>
+            </a>
+          </li>
+          <li className={cn({ "is-active": this.props.activeSection === GallerySection.PersonalLibrary })}>
+            <a onClick={() => this.props.selectSection(GallerySection.PersonalLibrary)}>
+              <i className="fas fa-images" />
+              &nbsp;
+              <span>Library</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    );
+  }
+
+  renderProgramCard(p: ProgramModel): JSX.Element {
     const link =
-      storageType === ProgramStorageType.gallery
+      p.storageType === ProgramStorageType.gallery
         ? Routes.codeLibrary.build({ id: p.id })
         : Routes.codeExample.build({ id: p.id });
     return (

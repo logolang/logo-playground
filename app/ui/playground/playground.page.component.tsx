@@ -9,7 +9,7 @@ import { $T } from "app/i18n/strings";
 import { resolveInject } from "app/di";
 import { Routes } from "app/routes";
 import { ErrorService } from "app/services/infrastructure/error.service";
-import { ProgramModel } from "app/services/program/program.model";
+import { ProgramModel, ProgramStorageType } from "app/services/program/program.model";
 import { ProgramExecutionContext } from "app/services/program/program-execution.context";
 import { NotificationService } from "app/services/infrastructure/notification.service";
 import { NavigationService } from "app/services/infrastructure/navigation.service";
@@ -17,7 +17,7 @@ import { TitleService } from "app/services/infrastructure/title.service";
 import { IUserSettingsService, IUserSettings } from "app/services/customizations/user-settings.service";
 import { ThemesService, Theme } from "app/services/customizations/themes.service";
 import { TurtlesService } from "app/services/customizations/turtles.service";
-import { ProgramStorageType, ProgramManagementService } from "app/services/program/program-management.service";
+import { ProgramManagementService } from "app/services/program/program-management.service";
 import { EventsTrackingService, EventAction } from "app/services/infrastructure/events-tracking.service";
 
 import { MainMenuComponent } from "app/ui/main-menu.component";
@@ -178,7 +178,7 @@ export class PlaygroundPageComponent extends React.Component<IComponentProps, IC
     const turtleImage = this.turtlesService.getTurtleImage(userSettings.turtleId);
 
     this.setCodePanelTitle(programModel.name, programModel.id, programModel.hasTempLocalModifications);
-    this.outputPanelTitle.next(`<i class="fa fa-television" aria-hidden="true"></i> ` + $T.program.output);
+    this.outputPanelTitle.next(`<i class="fas fa-desktop" aria-hidden="true"></i> ` + $T.program.output);
 
     this.setState({
       isLoading: false,

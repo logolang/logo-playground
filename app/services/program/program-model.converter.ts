@@ -1,5 +1,4 @@
-import { ProgramStorageType } from "app/services/program/program-management.service";
-import { ProgramModel } from "app/services/program/program.model";
+import { ProgramModel, ProgramStorageType } from "app/services/program/program.model";
 
 interface ProgramSaveObject {
   id: string;

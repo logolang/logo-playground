@@ -6,10 +6,10 @@ import { resolveInject } from "app/di";
 
 import { $T } from "app/i18n/strings";
 import { Routes } from "app/routes";
-import { ProgramModel } from "app/services/program/program.model";
+import { ProgramModel, ProgramStorageType } from "app/services/program/program.model";
 import { NotificationService } from "app/services/infrastructure/notification.service";
 import { ProgramExecutionContext } from "app/services/program/program-execution.context";
-import { ProgramManagementService, ProgramStorageType } from "app/services/program/program-management.service";
+import { ProgramManagementService } from "app/services/program/program-management.service";
 import { EventsTrackingService, EventAction } from "app/services/infrastructure/events-tracking.service";
 import { PersonalGalleryService } from "app/services/gallery/personal-gallery.service";
 import { NavigationService } from "app/services/infrastructure/navigation.service";

@@ -49,7 +49,7 @@ export class SignInStatusComponent extends React.Component<IComponentProps, ICom
       case AuthProvider.google:
         return (
           <>
-            <i className="fa fa-google" aria-hidden="true" />
+            <i className="fab fa-google" aria-hidden="true" />
             &nbsp;
           </>
         );

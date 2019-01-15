@@ -1,7 +1,7 @@
 import { RandomHelper } from "app/utils/random-helper";
 import { injectable, inject } from "app/di";
 import { CurrentUserService } from "app/services/login/current-user.service";
-import { ProgramModel } from "app/services/program/program.model";
+import { ProgramModel, ProgramStorageType } from "app/services/program/program.model";
 import { ProgramModelConverter } from "app/services/program/program-model.converter";
 
 @injectable()
@@ -17,7 +17,11 @@ export class PersonalGalleryLocalRepository {
   async getAll(): Promise<ProgramModel[] | undefined> {
     const stored = this.storage.getItem(this.storageKey);
     if (stored) {
-      return ProgramModelConverter.fromJson(JSON.parse(stored));
+      const all = ProgramModelConverter.fromJson(JSON.parse(stored));
+      for (const p of all) {
+        p.storageType = ProgramStorageType.gallery;
+      }
+      return all;
     }
     return undefined;
   }

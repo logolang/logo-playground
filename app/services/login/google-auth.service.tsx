@@ -110,7 +110,7 @@ export class GoogleAuthService implements IAuthService {
       <div key="login-elem-google">
         <button type="button" className="button is-info" onClick={async () => this.signIn()}>
           <span className="icon">
-            <i className="fa fa-google" aria-hidden="true" />
+            <i className="fab fa-google" aria-hidden="true" />
           </span>
           <span>{$T.common.signInWithGoogle}</span>
         </button>
