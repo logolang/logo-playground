@@ -5,7 +5,7 @@ import { action, ActionType } from "typesafe-actions";
 import { createCompareFunction } from "app/utils/syntax-helpers";
 import { resolveInject } from "app/di";
 import { GallerySection } from "./state.gallery";
-import { GetState } from "app/store";
+import { GetState } from "app/store/store";
 import { ProgramModel } from "app/services/program/program.model";
 import { GallerySamplesRepository } from "app/services/gallery/gallery-samples.repository";
 import { ProgramManagementService } from "app/services/program/program-management.service";
@@ -18,25 +18,26 @@ export enum GalleryActionType {
 
 export const galleryActionCreator = {
   loadSection: loadSectionThunk,
-  loadSectionStarted: (section: GallerySection) => {
-    return action(GalleryActionType.LOAD_SECTION_STARTED, {
-      section
-    });
-  },
 
-  loadSectionCompleted: (section: GallerySection, programs: ProgramModel[]) => {
-    return action(GalleryActionType.LOAD_SECTION_COMPLETED, {
+  loadSectionStarted: (section: GallerySection) =>
+    action(GalleryActionType.LOAD_SECTION_STARTED, {
+      section
+    }),
+
+  loadSectionCompleted: (section: GallerySection, programs: ProgramModel[]) =>
+    action(GalleryActionType.LOAD_SECTION_COMPLETED, {
       section,
       programs
-    });
-  }
+    })
 };
 
-function loadSectionThunk(section: GallerySection) {
+function loadSectionThunk(section: GallerySection, options?: { forceLoad: boolean }) {
   return async (dispatch: Dispatch<Action>, getState: GetState) => {
     const state = getState().gallery;
     if (state.activeSection === section && state.programs.length > 0) {
-      return;
+      if (!options || !options.forceLoad) {
+        return;
+      }
     }
     dispatch(galleryActionCreator.loadSectionStarted(section));
 
@@ -69,17 +70,16 @@ function loadSectionThunk(section: GallerySection) {
         break;
       case GallerySection.PersonalLibrary:
         const cachedPrograms = await galleryService.getAllLocal();
-        if (cachedPrograms) {
+        if (cachedPrograms.length > 0) {
           programManagementService.initLocalModificationsFlag(cachedPrograms);
           cachedPrograms.sort(sortingFunction);
           dispatch(galleryActionCreator.loadSectionCompleted(section, cachedPrograms));
         }
+
         const programsFromRemote = await galleryService.getAll();
-        if (programsFromRemote) {
-          programManagementService.initLocalModificationsFlag(programsFromRemote);
-          programsFromRemote.sort(sortingFunction);
-          dispatch(galleryActionCreator.loadSectionCompleted(section, programsFromRemote));
-        }
+        programManagementService.initLocalModificationsFlag(programsFromRemote);
+        programsFromRemote.sort(sortingFunction);
+        dispatch(galleryActionCreator.loadSectionCompleted(section, programsFromRemote));
     }
   };
 }

@@ -2,8 +2,8 @@ import { createStore, combineReducers, AnyAction, applyMiddleware } from "redux"
 import { composeWithDevTools } from "redux-devtools-extension/developmentOnly";
 import thunk from "redux-thunk";
 
-import { reducers as galleryReducers } from "./ui/gallery/reducers.gallery";
-import { GalleryState, defaultGalleryState } from "./ui/gallery/state.gallery";
+import { reducers as galleryReducers } from "./gallery/reducers.gallery";
+import { GalleryState, defaultGalleryState } from "./gallery/state.gallery";
 
 export interface AppState {
   gallery: GalleryState;

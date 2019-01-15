@@ -4,7 +4,7 @@ import { Subscription } from "rxjs";
 import { Provider } from "react-redux";
 
 import { resolveInject } from "app/di";
-import { store } from "./store";
+import { store } from "./store/store";
 import { RandomHelper } from "app/utils/random-helper";
 import { MessageTosterComponent } from "app/ui/_generic/message-toster.component";
 import { NavigationService } from "app/services/infrastructure/navigation.service";
