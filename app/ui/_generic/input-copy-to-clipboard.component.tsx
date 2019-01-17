@@ -5,7 +5,7 @@ import { $T } from "app/i18n/strings";
 
 interface IComponentProps {
   text: string;
-  onCopied?: () => void;
+  onCopied?(): void;
 }
 
 interface IComponentState {

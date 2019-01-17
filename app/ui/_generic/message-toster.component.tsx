@@ -29,7 +29,7 @@ interface IComponentState {
 
 export class MessageTosterComponent extends React.Component<IComponentProps, IComponentState> {
   private messageSubscription: Subscription | undefined;
-  private id: number = 1;
+  private id = 1;
 
   constructor(props: IComponentProps) {
     super(props);

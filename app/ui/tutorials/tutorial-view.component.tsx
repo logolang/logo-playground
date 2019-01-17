@@ -2,7 +2,6 @@ import * as React from "react";
 
 import { $T } from "app/i18n/strings";
 import { resolveInject } from "app/di";
-import { NotificationService } from "app/services/infrastructure/notification.service";
 import {
   ITutorialInfo,
   TutorialsContentService,
@@ -34,12 +33,13 @@ export interface ITutorialNavigationRequest {
   stepId: string;
 }
 
-export interface ITutorialViewComponentProps {
-  onFixTheCode(newCode: string): void;
-  onLoadedTutorial(tutorialId: string, stepId: string, initCode: string): void;
+export interface IComponentProps {
+  tutorialId: string;
+  stepId: string;
   tutorials: ITutorialInfo[];
-  initialTutorialId: string;
-  initialStepId: string;
+  onFixTheCode(newCode: string): void;
+  onTutorialContentLoaded(tutorial: ITutorialStepContent): void;
+  onNavigationRequest(tutorialId: string, stepId: string): void;
 }
 
 interface IComponentState {
@@ -52,13 +52,12 @@ interface IComponentState {
   showFixTheCode: boolean;
 }
 
-export class TutorialViewComponent extends React.Component<ITutorialViewComponentProps, IComponentState> {
+export class TutorialViewComponent extends React.Component<IComponentProps, IComponentState> {
   private tutorialsLoader = resolveInject(TutorialsContentService);
-  private notificationService = resolveInject(NotificationService);
   private errorService = resolveInject(ErrorService);
   private eventsTracking = resolveInject(EventsTrackingService);
 
-  constructor(props: ITutorialViewComponentProps) {
+  constructor(props: IComponentProps) {
     super(props);
 
     this.state = {
@@ -69,7 +68,13 @@ export class TutorialViewComponent extends React.Component<ITutorialViewComponen
   }
 
   async componentDidMount() {
-    await this.loadTutorial(this.props.initialTutorialId, this.props.initialStepId);
+    await this.loadTutorial(this.props.tutorialId, this.props.stepId);
+  }
+
+  async componentWillReceiveProps(newProps: IComponentProps) {
+    if (this.props.tutorialId != newProps.tutorialId || this.props.stepId != newProps.stepId) {
+      await this.loadTutorial(newProps.tutorialId, newProps.stepId);
+    }
   }
 
   loadTutorial = async (tutorialId: string, stepId: string) => {
@@ -101,7 +106,7 @@ export class TutorialViewComponent extends React.Component<ITutorialViewComponen
       currentStepInfo
     });
 
-    this.props.onLoadedTutorial(tutorialId, stepId, currentStepContent.initialCode);
+    this.props.onTutorialContentLoaded(currentStepContent);
   };
 
   render(): JSX.Element {
@@ -211,9 +216,9 @@ export class TutorialViewComponent extends React.Component<ITutorialViewComponen
     );
   }
 
-  renderSelectTutorialModal(): JSX.Element | null {
+  renderSelectTutorialModal() {
     if (!this.state.showSelectionTutorials || !this.state.currentTutorial || !this.state.currentStepInfo) {
-      return null;
+      return;
     }
     return (
       <TutorialSelectModalComponent
@@ -226,15 +231,15 @@ export class TutorialViewComponent extends React.Component<ITutorialViewComponen
         onSelect={async tutorial => {
           this.eventsTracking.sendEvent(EventAction.tutorialsStart);
           this.setState({ showSelectionTutorials: false });
-          await this.loadTutorial(tutorial.id, tutorial.steps[0].id);
+          this.props.onNavigationRequest(tutorial.id, tutorial.steps[0].id);
         }}
       />
     );
   }
 
-  renderFixTheCodeModal(): JSX.Element | null {
+  renderFixTheCodeModal() {
     if (!this.state.showFixTheCode || !this.state.currentStepContent) {
-      return null;
+      return;
     }
     const currentStep = this.state.currentStepContent;
     return (
@@ -267,8 +272,7 @@ export class TutorialViewComponent extends React.Component<ITutorialViewComponen
 
         const newStepIndex = this.state.currentStepIndex + direction;
         const newStepId = this.state.currentTutorial.steps[newStepIndex].id;
-        this.setState({ isLoading: true });
-        await this.loadTutorial(this.state.currentTutorial.id, newStepId);
+        this.props.onNavigationRequest(this.state.currentTutorial.id, newStepId);
       }
     };
   };

@@ -1,35 +1,34 @@
-export const tutorialsDefaultLayout = {
+import { GoldenLayoutConfig } from "app/ui/_generic/react-golden-layout/react-golden-layout";
+
+export const tutorialsDefaultLayout: GoldenLayoutConfig = {
   content: [
     {
       type: "row",
       content: [
         {
+          isClosable: false,
           title: "",
-          type: "react-component",
-          component: "tutorial-panel",
+          type: "component",
           componentName: "tutorial-panel",
-          width: 40,
-          isClosable: false
+          width: 40
         },
         {
           type: "column",
           width: 60,
           content: [
             {
+              isClosable: false,
               title: "",
-              type: "react-component",
-              component: "output-panel",
+              type: "component",
               componentName: "output-panel",
-              height: 60,
-              isClosable: false
+              height: 60
             },
             {
+              isClosable: false,
               title: "",
-              type: "react-component",
-              component: "code-panel",
+              type: "component",
               componentName: "code-panel",
-              height: 40,
-              isClosable: false
+              height: 40
             }
           ]
         }
@@ -38,57 +37,47 @@ export const tutorialsDefaultLayout = {
   ]
 };
 
-export const tutorialsDefaultMobileLayout = {
+export const tutorialsDefaultMobileLayout: GoldenLayoutConfig = {
   settings: {
     reorderEnabled: false
   },
   content: [
     {
       type: "column",
-      isClosable: true,
-      title: "",
       content: [
         {
           type: "stack",
           width: 100,
-          height: 57.046411353202295,
+          height: 55,
           activeItemIndex: 0,
-          isClosable: true,
-          title: "",
           content: [
             {
-              title: "Tutorial",
+              isClosable: false,
+              title: "",
               type: "component",
-              component: "tutorial-panel",
-              componentName: "lm-react-component",
-              isClosable: false
+              componentName: "tutorial-panel"
             },
             {
-              title: "Code",
+              isClosable: false,
+              title: "",
               type: "component",
-              component: "code-panel",
-              componentName: "lm-react-component",
-              isClosable: false
+              componentName: "code-panel"
             }
           ]
         },
         {
           type: "stack",
-          height: 42.953588646797705,
-          isClosable: true,
-          title: "",
+          height: 45,
           activeItemIndex: 0,
           content: [
             {
-              title: "Output",
+              isClosable: false,
+              title: "",
               type: "component",
-              component: "output-panel",
-              componentName: "lm-react-component",
-              height: 55,
-              isClosable: false
+              componentName: "output-panel"
             }
           ]
-        }
+        } as any
       ]
     }
   ]

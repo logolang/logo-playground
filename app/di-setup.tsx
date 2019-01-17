@@ -2,6 +2,7 @@ import { Subject } from "rxjs";
 
 import { container } from "app/di";
 import { normalizeError } from "app/utils/error-helpers";
+import { NULL } from "app/utils/syntax-helpers";
 
 import { AjaxService } from "app/services/infrastructure/ajax-service";
 import { AppConfigLoader } from "app/services/config/app-config-loader";
@@ -37,6 +38,7 @@ import { PersonalGalleryRemoteRepository } from "app/services/gallery/personal-g
 import { updateStringsObject } from "app/i18n/i18n-tools";
 import { $T } from "app/i18n/strings";
 import { ErrorService } from "app/services/infrastructure/error.service";
+import { LogoCodeSamplesService } from "app/services/program/logo-code-samples.service";
 
 /**
  * Declaration for app info object injected by webpack
@@ -118,7 +120,7 @@ export class DependecyInjectionSetupService {
 
     switch (currentUserService.getLoginStatus().userInfo.attributes.authProvider) {
       case AuthProvider.none:
-        container.bind(PersonalGalleryRemoteRepository).toConstantValue(null as any);
+        container.bind(PersonalGalleryRemoteRepository).toConstantValue(NULL as any);
         break;
       case AuthProvider.google:
         container.bind(PersonalGalleryRemoteRepository).to(PersonalGalleryGoogleDriveRepository);
@@ -132,6 +134,7 @@ export class DependecyInjectionSetupService {
     container.bind(GistSharedProgramsRepository).to(GistSharedProgramsRepository);
 
     container.bind(ErrorService).to(ErrorService);
+    container.bind(LogoCodeSamplesService).to(LogoCodeSamplesService);
 
     console.log("finish setting up bindings");
   }

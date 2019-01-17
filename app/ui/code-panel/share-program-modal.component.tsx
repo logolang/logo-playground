@@ -5,7 +5,6 @@ import { resolveInject } from "app/di";
 import { ErrorDef, callActionSafe } from "app/utils/error-helpers";
 
 import { GistSharedProgramsRepository } from "app/services/program/gist-shared-programs.repository";
-import { ProgramModel } from "app/services/program/program.model";
 import { EventsTrackingService, EventAction } from "app/services/infrastructure/events-tracking.service";
 
 import { AlertMessageComponent } from "app/ui/_generic/alert-message.component";
@@ -20,7 +19,8 @@ interface IComponentState {
 }
 
 interface IComponentProps {
-  programModel: ProgramModel;
+  programName: string;
+  programCode: string;
   imageBase64: string;
   onClose(): void;
 }
@@ -34,7 +34,7 @@ export class ShareProgramModalComponent extends React.Component<IComponentProps,
 
     this.state = {
       errorMessage: "",
-      programName: this.props.programModel.name,
+      programName: this.props.programName,
       isSavingInProgress: false,
       publishedUrl: ""
     };
@@ -94,7 +94,7 @@ export class ShareProgramModalComponent extends React.Component<IComponentProps,
     this.setState({ isSavingInProgress: true, errorMessage: "" });
 
     const result = await callActionSafe(this.errorHandler, async () =>
-      this.gistService.post(this.state.programName, this.props.imageBase64, this.props.programModel)
+      this.gistService.post(this.state.programName, this.props.programCode)
     );
     this.setState({
       isSavingInProgress: false

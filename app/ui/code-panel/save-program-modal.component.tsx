@@ -48,7 +48,9 @@ export class SaveProgramModalComponent extends React.Component<IComponentProps, 
               type="text"
               readOnly={!this.props.allowRename}
               disabled={!this.props.allowRename}
-              className={cn("input", { "is-danger": !!this.state.errorMessage })}
+              className={cn("input", {
+                "is-danger": !!this.state.errorMessage
+              })}
               id="program-name-in-save-dialog"
               placeholder={$T.program.pleaseEnterNameForYourProgram}
               autoFocus

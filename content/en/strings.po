@@ -69,9 +69,6 @@ msgstr "Sign in with Google"
 msgid "common.signOut"
 msgstr "Sign out"
 
-msgid "common.signedVia"
-msgstr "You are signed in via"
-
 msgid "gallery.editedDate"
 msgstr "Edited"
 
@@ -102,8 +99,11 @@ msgstr "Program has been saved in the personal library."
 msgid "gallery.syncronizing"
 msgstr "Synchronizing gallery with remote storage"
 
-msgid "program.code"
-msgstr "Code"
+msgid "program.codePanelTitle"
+msgstr "Program box"
+
+msgid "program.defaultProgramWelcomeComment"
+msgstr "Welcome to LOGO playground!"
 
 msgid "program.imagePreview"
 msgstr "Image preview"
@@ -111,8 +111,8 @@ msgstr "Image preview"
 msgid "program.imageUrl"
 msgstr "Image url"
 
-msgid "program.output"
-msgstr "Output"
+msgid "program.outputPanelTitle"
+msgstr "Drawing box"
 
 msgid "program.playgroundTitle"
 msgstr "Playground"
@@ -178,6 +178,9 @@ msgid "settings.addedProgramsMessage"
 msgstr[0] "Added one program"
 msgstr[1] "Added %d programs"
 
+msgid "settings.emptyLibrary"
+msgstr "empty"
+
 msgid "settings.export"
 msgstr "Export"
 
@@ -189,6 +192,10 @@ msgstr "Import completed"
 
 msgid "settings.language"
 msgstr "Language"
+
+msgid "settings.numberOfProgramsInLibrary"
+msgstr[0] "1 program"
+msgstr[1] "%d programs"
 
 msgid "settings.settingsTitle"
 msgstr "Settings"
@@ -238,10 +245,6 @@ msgstr "User interface theme"
 msgid "settings.userGuestNickName"
 msgstr "Guest"
 
-msgid "settings.youHaveNProgramsInLibrary"
-msgstr[0] "You have one program in your library"
-msgstr[1] "You have %d programs in your library"
-
 msgid "tutorial.back"
 msgstr "Back"
 
@@ -272,7 +275,7 @@ msgstr "Start"
 msgid "tutorial.stepIndicator"
 msgstr "Step %1$s of %2$s"
 
-msgid "tutorial.tutorial"
+msgid "tutorial.tutorialPanelTitle"
 msgstr "Tutorial"
 
 msgid "tutorial.tutorialsTitle"

@@ -8,5 +8,3 @@ export class TitleService {
     document.title = title ? this.prefix + " - " + title : this.prefix;
   }
 }
-
-export interface ITitleService extends TitleService {}

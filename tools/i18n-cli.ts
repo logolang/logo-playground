@@ -51,7 +51,7 @@ for (const poFilename of poFilenames) {
   }
 
   // Add new items if they do not exist in poFile
-  for (const [key, poItem] of Object.entries(newEntries)) {
+  for (const poItem of Object.values(newEntries)) {
     if (!poFile.items.find(x => x.msgid === poItem.msgid)) {
       console.log(`Key ${poItem.msgid} added`);
       poFile.items.push(poItem);

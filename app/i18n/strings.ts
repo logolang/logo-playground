@@ -23,8 +23,8 @@ export const $T = {
     error: "Sorry, error has occured"
   },
   program: {
-    code: "Code",
-    output: "Output",
+    codePanelTitle: "Program box",
+    outputPanelTitle: "Drawing box",
     program: "Program",
     programName: "Program name",
     publicUrl: "Public url",
@@ -46,7 +46,8 @@ export const $T = {
     youAreGoingToDeleteProgram: "You are going to delete this program.",
     imagePreview: "Image preview",
     imageUrl: "Image url",
-    pleaseEnterNameForYourProgram: "Please enter the name for your program"
+    pleaseEnterNameForYourProgram: "Please enter the name for your program",
+    defaultProgramWelcomeComment: "Welcome to LOGO playground!"
   },
   gallery: {
     galleryTitle: "Gallery",
@@ -63,7 +64,7 @@ export const $T = {
   },
   tutorial: {
     tutorialsTitle: "Tutorials",
-    tutorial: "Tutorial",
+    tutorialPanelTitle: "Tutorial",
     chooseTutorial: "Choose a tutorial",
     chooseAnotherTutorial: "Choose another tutorial",
     stepIndicator: new Template("Step %1$s of %2$s", 2),
@@ -106,10 +107,8 @@ export const $T = {
     export: "Export",
     importCompletedTitle: "Import completed",
     addedProgramsMessage: new Plural("Added one program", "Added %d programs"),
-    youHaveNProgramsInLibrary: new Plural(
-      "You have one program in your library",
-      "You have %d programs in your library"
-    )
+    numberOfProgramsInLibrary: new Plural("1 program", "%d programs"),
+    emptyLibrary: "empty"
   },
   cheatSheet: {
     cheatSheetTitle: "Cheat sheet"

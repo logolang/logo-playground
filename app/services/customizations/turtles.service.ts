@@ -12,46 +12,45 @@ export interface TurtleSize {
   description: string;
 }
 
-const allTurtles: TurtleInfo[] = [
-  {
-    id: "tt12",
-    name: $T.settings.turtleSkins.tt12,
-    imageData: require("app/ui/images/turtles/tt12.svg") as string
-  },
-  {
-    id: "tt2",
-    name: $T.settings.turtleSkins.tt2,
-    imageData: require("app/ui/images/turtles/tt2.svg") as string
-  },
-  {
-    id: "tt9",
-    name: $T.settings.turtleSkins.tt9,
-    imageData: require("app/ui/images/turtles/tt9.svg") as string
-  },
-  {
-    id: "tt10",
-    name: $T.settings.turtleSkins.tt10,
-    imageData: require("app/ui/images/turtles/tt10.svg") as string
-  },
-  {
-    id: "tt11",
-    name: $T.settings.turtleSkins.tt11,
-    imageData: require("app/ui/images/turtles/tt11.svg") as string
-  },
-  {
-    id: "tt13",
-    name: $T.settings.turtleSkins.tt13,
-    imageData: require("app/ui/images/turtles/tt13.svg") as string
-  }
-];
-
 @injectable()
 export class TurtlesService {
   getAllTurtles(): TurtleInfo[] {
-    return allTurtles;
+    return [
+      {
+        id: "tt12",
+        name: $T.settings.turtleSkins.tt12,
+        imageData: require("app/ui/images/turtles/tt12.svg") as string
+      },
+      {
+        id: "tt2",
+        name: $T.settings.turtleSkins.tt2,
+        imageData: require("app/ui/images/turtles/tt2.svg") as string
+      },
+      {
+        id: "tt9",
+        name: $T.settings.turtleSkins.tt9,
+        imageData: require("app/ui/images/turtles/tt9.svg") as string
+      },
+      {
+        id: "tt10",
+        name: $T.settings.turtleSkins.tt10,
+        imageData: require("app/ui/images/turtles/tt10.svg") as string
+      },
+      {
+        id: "tt11",
+        name: $T.settings.turtleSkins.tt11,
+        imageData: require("app/ui/images/turtles/tt11.svg") as string
+      },
+      {
+        id: "tt13",
+        name: $T.settings.turtleSkins.tt13,
+        imageData: require("app/ui/images/turtles/tt13.svg") as string
+      }
+    ];
   }
 
   getTurtleInfo(turtleId: string): TurtleInfo {
+    const allTurtles = this.getAllTurtles();
     let turtleData = allTurtles.find(t => t.id === turtleId);
     if (!turtleData) {
       turtleData = allTurtles[0];

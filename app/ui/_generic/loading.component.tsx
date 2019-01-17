@@ -9,21 +9,19 @@ interface IComponentProps {
   fullPage?: boolean;
 }
 
-export class LoadingComponent extends React.Component<IComponentProps, {}> {
-  render(): JSX.Element | null {
-    if (this.props.isLoading) {
-      return (
-        <div
-          className={cn("ex-loading-indicator", this.props.className, {
-            "ex-loading-indicator-fullpage": this.props.fullPage
-          })}
-        >
-          <div className="ex-animated-dot" />
-          <div className="ex-animated-dot" />
-          <div className="ex-animated-dot" />
-        </div>
-      );
-    }
-    return null;
+export function LoadingComponent(props: IComponentProps) {
+  if (!props.isLoading) {
+    return <></>;
   }
+  return (
+    <div
+      className={cn("ex-loading-indicator", props.className, {
+        "ex-loading-indicator-fullpage": props.fullPage
+      })}
+    >
+      <div className="ex-animated-dot" />
+      <div className="ex-animated-dot" />
+      <div className="ex-animated-dot" />
+    </div>
+  );
 }
