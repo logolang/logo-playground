@@ -2,6 +2,7 @@ import * as React from "react";
 import * as cn from "classnames";
 import { Link } from "react-router-dom";
 
+import { ensure } from "app/utils/syntax-helpers";
 import { $T } from "app/i18n/strings";
 import { resolveInject } from "app/di";
 import { Routes } from "app/routes";
@@ -92,10 +93,7 @@ export class GalleryPageComponent extends React.Component<IComponentProps, {}> {
   }
 
   renderProgramCard(p: ProgramModel): JSX.Element {
-    const link =
-      p.storageType === ProgramStorageType.gallery
-        ? Routes.codeLibrary.build({ id: p.id })
-        : Routes.codeExample.build({ id: p.id });
+    const link = Routes.playgroundV2.build({ storageType: ensure(p.storageType), id: p.id });
     return (
       <div key={p.id} className="card program-card">
         <div className="card-image">
