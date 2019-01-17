@@ -7,6 +7,7 @@ import { LoginPageComponent } from "app/ui/login.page.component";
 import { UserProfilePageComponent } from "app/ui/user-profile.page.component";
 import { InfoPageComponent } from "app/ui/info.page.component";
 import { PlaygroundPageComponent } from "app/ui/playground/playground.page.component";
+import { PlaygroundContainer } from "app/ui/playgroundV2/container.playground";
 import { CheatSheetPageComponent } from "app/ui/cheat-sheet/cheat-sheet.page.component";
 import { TutorialsPageComponent, ITutorialPageRouteParams } from "app/ui/tutorials/tutorials.page.component";
 import { GalleryPageContainer } from "app/ui/gallery/gallery.page.container";
@@ -49,6 +50,15 @@ export const RoutesComponent = (): JSX.Element => (
     <Route exact path={Routes.tutorialsRoot.path} component={TutorialsPageComponent} />
     <Route exact path={Routes.tutorialSpecified.path} component={TutorialsPageComponent} />
 
+    <Route exact path={Routes.playgroundV2Default.path} render={props => <PlaygroundContainer />} />
+    <Route
+      exact
+      path={Routes.playgroundV2.path}
+      render={props => (
+        <PlaygroundContainer storageType={props.match.params.storageType} programId={props.match.params.id} />
+      )}
+    />
+
     <Redirect from="/" to={Routes.galleryRoot.path} />
 
     {/* Default route will be used in case if nothing matches */}
@@ -61,6 +71,10 @@ export class Routes {
   static readonly infoRoot = new RouteInfo("/info");
   static readonly settingsRoot = new RouteInfo("/settings");
   static readonly galleryRoot = new RouteInfo("/gallery");
+  static readonly playgroundV2 = new RouteInfo<{ storageType: ProgramStorageType; id: string }>(
+    "/code/:storageType/:id"
+  );
+  static readonly playgroundV2Default = new RouteInfo("/code");
   static readonly playground = new RouteInfo("/playground");
   static readonly codeGist = new RouteInfo<{ id: string }>("/shared/:id");
   static readonly codeLibrary = new RouteInfo<{ id: string }>("/library/:id");

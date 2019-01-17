@@ -66,7 +66,7 @@ export class MainMenuComponent extends React.Component<IComponentProps, ICompone
             <NavLink className="navbar-item" activeClassName="is-active" to={Routes.cheatSheetRoot.build({})}>
               {$T.cheatSheet.cheatSheetTitle}
             </NavLink>
-            <NavLink className="navbar-item" activeClassName="is-active" to={Routes.playground.build({})}>
+            <NavLink className="navbar-item" activeClassName="is-active" to={Routes.playgroundV2Default.build({})}>
               {$T.program.playgroundTitle}
             </NavLink>
           </div>
