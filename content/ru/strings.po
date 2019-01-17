@@ -69,9 +69,6 @@ msgstr "Войти через Google"
 msgid "common.signOut"
 msgstr "Выйти"
 
-msgid "common.signedVia"
-msgstr "Вы вошли через"
-
 msgid "gallery.editedDate"
 msgstr "Дата обновления"
 
@@ -102,8 +99,11 @@ msgstr "Программа сохранена успешно"
 msgid "gallery.syncronizing"
 msgstr "Синхронизация"
 
-msgid "program.code"
+msgid "program.codePanelTitle"
 msgstr "Код программы"
+
+msgid "program.defaultProgramWelcomeComment"
+msgstr "Добро пожаловать на игровую площадку Лого!"
 
 msgid "program.imagePreview"
 msgstr "Скриншот"
@@ -111,7 +111,7 @@ msgstr "Скриншот"
 msgid "program.imageUrl"
 msgstr "Публичная ссылка"
 
-msgid "program.output"
+msgid "program.outputPanelTitle"
 msgstr "Вывод"
 
 msgid "program.playgroundTitle"
@@ -179,6 +179,9 @@ msgstr[0] "Добавлена %d программа."
 msgstr[1] "Добавлено %d программы."
 msgstr[2] "Добавлено %d программ."
 
+msgid "settings.emptyLibrary"
+msgstr "пусто"
+
 msgid "settings.export"
 msgstr "Экспорт"
 
@@ -190,6 +193,11 @@ msgstr "Импорт завершен"
 
 msgid "settings.language"
 msgstr "Язык"
+
+msgid "settings.numberOfProgramsInLibrary"
+msgstr[0] "%d программа"
+msgstr[1] "%d программы"
+msgstr[2] "%d программ"
 
 msgid "settings.settingsTitle"
 msgstr "Настройки"
@@ -239,10 +247,6 @@ msgstr "Тема пользовательского интерфейса"
 msgid "settings.userGuestNickName"
 msgstr "Гость"
 
-msgid "settings.youHaveNProgramsInLibrary"
-msgstr[0] "У вас %d программа"
-msgstr[1] "У вас %d программы"
-msgstr[2] "У вас %d программ"
 
 msgid "tutorial.back"
 msgstr "Назад"
@@ -274,7 +278,7 @@ msgstr "Старт"
 msgid "tutorial.stepIndicator"
 msgstr "Шаг %1$s из %2$s"
 
-msgid "tutorial.tutorial"
+msgid "tutorial.tutorialPanelTitle"
 msgstr "Учебник"
 
 msgid "tutorial.tutorialsTitle"

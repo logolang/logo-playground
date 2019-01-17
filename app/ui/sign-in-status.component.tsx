@@ -53,8 +53,11 @@ export class SignInStatusComponent extends React.Component<IComponentProps, ICom
             &nbsp;
           </>
         );
+      case AuthProvider.none:
+        return <></>;
+      default:
+        throw new Error("Auth provider is not known");
     }
-    return null;
   }
 
   render(): JSX.Element {

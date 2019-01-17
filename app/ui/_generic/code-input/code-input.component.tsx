@@ -12,20 +12,20 @@ import "node_modules/codemirror/addon/display/placeholder.js";
 
 import "app/../lib/codemirror-logo/cm-logo.js";
 
-import "./code-input-logo.component.less";
+import "./code-input.component.less";
 
 interface IComponentState {}
 
 export interface ICodeInputComponentProps {
   className?: string;
   code: string;
-  onHotkey?: (key: string) => void;
-  onChanged: (code: string) => void;
+  onHotkey?(key: string): void;
+  onChanged(code: string): void;
   editorTheme: string;
-  containerResized?: Observable<void>;
+  resizeEvents?: Observable<void>;
 }
 
-export class CodeInputLogoComponent extends React.Component<ICodeInputComponentProps, IComponentState> {
+export class CodeInputComponent extends React.Component<ICodeInputComponentProps, IComponentState> {
   cm: codemirror.EditorFromTextArea;
   currentCode: string;
   subsriptions: Subscription[] = [];
@@ -84,9 +84,9 @@ export class CodeInputLogoComponent extends React.Component<ICodeInputComponentP
       this.cm.addKeyMap(map);
     }
 
-    if (this.props.containerResized) {
+    if (this.props.resizeEvents) {
       this.subsriptions.push(
-        this.props.containerResized.subscribe(() => {
+        this.props.resizeEvents.subscribe(() => {
           this.cm.refresh();
         })
       );
@@ -99,7 +99,7 @@ export class CodeInputLogoComponent extends React.Component<ICodeInputComponentP
 
   render(): JSX.Element {
     return (
-      <div className={cn("code-input-logo-component", this.props.className)}>
+      <div className={cn("code-input-component", this.props.className)}>
         <textarea ref="text-area" />
       </div>
     );

@@ -10,7 +10,7 @@ import { EventsTrackingService, EventAction } from "app/services/infrastructure/
 
 import { MainMenuComponent } from "app/ui/main-menu.component";
 import { LoadingComponent } from "app/ui/_generic/loading.component";
-import { CodeInputLogoComponent } from "../_shared/code-input-logo.component";
+import { CodeInputComponent } from "../_generic/code-input/code-input.component";
 
 interface IComponentProps {
   isLoading: boolean;
@@ -51,7 +51,7 @@ export class PlaygroundComponent extends React.Component<IComponentProps, {}> {
             <p>
               {this.props.programName} {this.props.hasModifications && <span>*</span>}
             </p>
-            <CodeInputLogoComponent
+            <CodeInputComponent
               className="code-input-container"
               editorTheme="eclipse"
               code={this.props.code}

@@ -6,7 +6,6 @@ import { callActionSafe } from "app/utils/error-helpers";
 
 import { resolveInject } from "app/di";
 import { $T } from "app/i18n/strings";
-import { NotificationService } from "app/services/infrastructure/notification.service";
 import { TitleService } from "app/services/infrastructure/title.service";
 import { LocalizedContentLoader } from "app/services/infrastructure/localized-content-loader";
 import { EventAction, EventsTrackingService } from "app/services/infrastructure/events-tracking.service";
@@ -24,7 +23,6 @@ interface IComponentState {
 interface IComponentProps extends RouteComponentProps<void> {}
 
 export class CheatSheetPageComponent extends React.Component<IComponentProps, IComponentState> {
-  private notificationService = resolveInject(NotificationService);
   private titleService = resolveInject(TitleService);
   private contentLoader = resolveInject(LocalizedContentLoader);
   private eventsTracking = resolveInject(EventsTrackingService);

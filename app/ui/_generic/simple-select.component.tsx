@@ -7,9 +7,9 @@ export interface IComponentProps<T> {
   idAttr?: string;
   items: T[];
   selectedItem?: T;
-  selectionChanged: (selectedItem: T | undefined) => void;
-  renderItem: (item: T) => JSX.Element | string;
-  getItemIdentifier: (item: T) => string;
+  selectionChanged(selectedItem: T | undefined): void;
+  renderItem(item: T): JSX.Element | string;
+  getItemIdentifier(item: T): string;
 }
 
 export class SimpleSelectComponent<T> extends React.Component<IComponentProps<T>, {}> {

@@ -16,8 +16,8 @@ interface IComponentProps {
   currentTutorialId: string;
   currentStepId: string;
   tutorials: ITutorialInfo[];
-  onSelect: (tutorial: ITutorialInfo) => void;
-  onCancel: () => void;
+  onSelect(tutorial: ITutorialInfo): void;
+  onCancel(): void;
 }
 
 export class TutorialSelectModalComponent extends React.Component<IComponentProps, IComponentState> {
@@ -102,18 +102,16 @@ export class TutorialSelectModalComponent extends React.Component<IComponentProp
                   <ul>
                     <li>
                       <ol>
-                        {t.steps
-                          .slice(0, t.steps.length - 1)
-                          .map(s => (
-                            <li key={s.id}>
-                              {s.id === this.props.currentStepId &&
-                              selectedTutorial.id === this.props.currentTutorialId ? (
-                                <strong>{s.name}</strong>
-                              ) : (
-                                <span>{s.name}</span>
-                              )}
-                            </li>
-                          ))}
+                        {t.steps.slice(0, t.steps.length - 1).map(s => (
+                          <li key={s.id}>
+                            {s.id === this.props.currentStepId &&
+                            selectedTutorial.id === this.props.currentTutorialId ? (
+                              <strong>{s.name}</strong>
+                            ) : (
+                              <span>{s.name}</span>
+                            )}
+                          </li>
+                        ))}
                       </ol>
                     </li>
                   </ul>

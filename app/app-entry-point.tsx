@@ -5,9 +5,6 @@ import "app/ui/_styles/app.less";
 
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-//Expose react and react router in order for golden layout work
-(window as any)["React"] = React;
-(window as any)["ReactDOM"] = ReactDOM;
 
 import { normalizeError } from "app/utils/error-helpers";
 import { DependecyInjectionSetupService } from "app/di-setup";

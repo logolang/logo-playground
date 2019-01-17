@@ -1,4 +1,5 @@
 import { getFileExtension, parseDateFromJson, stringifyDateAsJson } from "./formatter-helper";
+import { NULL } from "app/utils/syntax-helpers";
 
 describe("FormatterHelper", () => {
   it("should extract file extension properly", () => {
@@ -8,7 +9,7 @@ describe("FormatterHelper", () => {
     chai.expect(getFileExtension("model...")).to.be.eql("");
     chai.expect(getFileExtension("model")).to.be.eql("");
     chai.expect(getFileExtension("")).to.be.eql("");
-    chai.expect(getFileExtension(null as any)).to.be.eql("");
+    chai.expect(getFileExtension(NULL as any)).to.be.eql("");
     chai.expect(getFileExtension(undefined as any)).to.be.eql("");
   });
 

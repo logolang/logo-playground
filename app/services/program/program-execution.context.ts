@@ -2,13 +2,12 @@ import { Subject, BehaviorSubject } from "rxjs";
 
 export interface ICreateScreenshotCommand {
   isSmall: boolean;
-  whenReady: (data: string) => void;
+  whenReady(data: string): void;
 }
 
 export class ProgramExecutionContext {
   public runCommands = new Subject<string>();
-  public stopCommands = new Subject<void>();
-  public onIsRunningChanged = new BehaviorSubject<boolean>(false);
+  public onIsRunningChange = new BehaviorSubject<boolean>(false);
   public makeScreenshotCommands = new Subject<ICreateScreenshotCommand>();
   private hasProgramBeenExecutedOnce = false;
 
@@ -17,7 +16,7 @@ export class ProgramExecutionContext {
   }
 
   get isRunning() {
-    return this.onIsRunningChanged.getValue();
+    return this.onIsRunningChange.getValue();
   }
 
   executeProgram = (code: string) => {
@@ -26,16 +25,16 @@ export class ProgramExecutionContext {
   };
 
   stopProgram = () => {
-    this.stopCommands.next();
+    this.runCommands.next("");
   };
 
-  getScreenshot = async (small: boolean): Promise<string> => {
+  getScreenshot = async (isSmall: boolean): Promise<string> => {
     if (!this.hasProgramBeenExecutedOnce) {
       return "";
     }
     return new Promise<string>(resolve => {
       this.makeScreenshotCommands.next({
-        isSmall: small,
+        isSmall: isSmall,
         whenReady: (data: string) => {
           resolve(data);
         }

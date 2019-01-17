@@ -4,6 +4,7 @@ import { CurrentUserService } from "app/services/login/current-user.service";
 
 export abstract class IUserSettingsService {
   abstract get(): Promise<IUserSettings>;
+  abstract get userSettingsKey(): string;
   abstract update<K extends keyof IUserSettings>(update: Pick<IUserSettings, K>): Promise<void>;
 }
 
@@ -13,10 +14,6 @@ export interface IUserSettings {
   themeName: string;
   localeId: string;
   currentTutorialInfo?: ICurrentTutorialInfo;
-  playgroundLayoutJSON?: string;
-  playgroundLayoutMobileJSON?: string;
-  tutorialsLayoutJSON?: string;
-  tutorialsLayoutMobileJSON?: string;
 }
 
 export interface ICurrentTutorialInfo {
@@ -24,7 +21,8 @@ export interface ICurrentTutorialInfo {
   stepId: string;
 }
 
-@injectable() /**
+@injectable()
+/**
  * This service is to store and get user settings
  * This settings will be probably synchronized to some central settings storage, so User will be able to have them same on all computers and browsers
  * Currently using local browser storage
@@ -34,8 +32,7 @@ export class UserSettingsBrowserLocalStorageService implements IUserSettingsServ
   private currentData: IUserSettings;
 
   constructor(@inject(CurrentUserService) private currentUser: CurrentUserService) {
-    const userId = this.currentUser.getLoginStatus().userInfo.attributes.email || "guest";
-    this.localStorage = new LocalStorageService<IUserSettings>(`logo-playground.settings:${userId}`, {} as any);
+    this.localStorage = new LocalStorageService<IUserSettings>(this.userSettingsKey, {} as any);
     const settings = this.localStorage.getValue();
 
     //Apply default values
@@ -47,6 +44,11 @@ export class UserSettingsBrowserLocalStorageService implements IUserSettingsServ
 
   async saveDataToStorage(): Promise<void> {
     this.localStorage.setValue(this.currentData);
+  }
+
+  public get userSettingsKey() {
+    const userId = this.currentUser.getLoginStatus().userInfo.attributes.email || "guest";
+    return `logo-playground.settings:${userId}`;
   }
 
   async get(): Promise<IUserSettings> {
