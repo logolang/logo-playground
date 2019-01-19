@@ -8,8 +8,8 @@ import * as ReactDOM from "react-dom";
 
 import { normalizeError } from "app/utils/error-helpers";
 import { DependecyInjectionSetupService } from "app/di-setup";
-import { AlertMessageComponent } from "app/ui/_generic/alert-message.component";
-import { MainComponent } from "app/main.component";
+import { AlertMessage } from "app/ui/_generic/alert-message";
+import { Main } from "app/main";
 
 async function runApp() {
   const appHostDomElement = document.getElementById("app-container") || document.body;
@@ -18,7 +18,7 @@ async function runApp() {
     await diService.setup();
 
     // Render the app
-    ReactDOM.render(<MainComponent />, appHostDomElement);
+    ReactDOM.render(<Main />, appHostDomElement);
   } catch (ex) {
     const error = await normalizeError(ex);
     ReactDOM.render(
@@ -29,7 +29,7 @@ async function runApp() {
             <br />
             <br />
             <h1 className="title">Application failed</h1>
-            <AlertMessageComponent title={error.name} message={error.message} />
+            <AlertMessage title={error.name} message={error.message} />
           </div>
         </div>
       </div>,

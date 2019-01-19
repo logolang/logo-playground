@@ -13,7 +13,9 @@ import { ProgramManagementService } from "app/services/program/program-managemen
 export enum PlaygroundActionType {
   LOAD_PROGRAM_STARTED = "LOAD_PROGRAM_STARTED",
   LOAD_PROGRAM_COMPLETED = "LOAD_PROGRAM_COMPLETED",
-  CODE_CHANGED = "CODE_CHANGED"
+  CODE_CHANGED = "CODE_CHANGED",
+  RUN_PROGRAM = "RUN_PROGRAM",
+  STOP_PROGRAM = "STOP_PROGRAM"
 }
 
 export const playgroundActionCreator = {
@@ -34,7 +36,9 @@ export const playgroundActionCreator = {
   codeChanged: (code: string) =>
     action(PlaygroundActionType.CODE_CHANGED, {
       code
-    })
+    }),
+  runProgram: () => action(PlaygroundActionType.RUN_PROGRAM),
+  stopProgram: () => action(PlaygroundActionType.STOP_PROGRAM)
 };
 
 function loadProgramThunk(storageType?: ProgramStorageType, programId?: string) {

@@ -23,7 +23,7 @@ export function reducers(state: PlaygroundState | undefined, action: PlaygroundA
           isLoading: false,
           programName: action.payload.programModel.name,
           code: action.payload.programModel.code,
-          isRunning: false,
+          isRunning: true,
           hasModifications: false
         };
       }
@@ -33,6 +33,16 @@ export function reducers(state: PlaygroundState | undefined, action: PlaygroundA
         ...state,
         code: action.payload.code,
         hasModifications: true
+      };
+    case PlaygroundActionType.RUN_PROGRAM:
+      return {
+        ...state,
+        isRunning: true
+      };
+    case PlaygroundActionType.STOP_PROGRAM:
+      return {
+        ...state,
+        isRunning: false
       };
     default:
       return state;

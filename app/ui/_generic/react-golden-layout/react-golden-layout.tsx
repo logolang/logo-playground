@@ -3,16 +3,16 @@ import * as ReactDOM from "react-dom";
 import * as goldenLayout from "golden-layout";
 import {
   ReactGoldenLayoutPanel,
-  ReactGoldenLayoutPanelProps
+  Props as PanelProps
 } from "app/ui/_generic/react-golden-layout/react-golden-layout-panel";
 import { GoldenLayoutHelper } from "./golden-layout.helper";
 import { ReactGoldenLayoutHelperContext } from "app/ui/_generic/react-golden-layout/react-golden-layout-context";
 
 export type GoldenLayoutConfig = goldenLayout.Config;
 
-interface IComponentState {}
+interface State {}
 
-interface IComponentProps {
+interface Props {
   className?: string;
   configLayoutOverride?: {
     settings?: goldenLayout.Settings;
@@ -23,7 +23,7 @@ interface IComponentProps {
   onLayoutChange?(layoutJSON: string): void;
 }
 
-export class ReactGoldenLayout extends React.Component<IComponentProps, IComponentState> {
+export class ReactGoldenLayout extends React.Component<Props, State> {
   private goldenLayoutContainerRef: HTMLElement | undefined;
   private layoutHelper = new GoldenLayoutHelper();
   private panelDomContainersByIds: { [index: string]: HTMLElement } = {};
@@ -34,7 +34,7 @@ export class ReactGoldenLayout extends React.Component<IComponentProps, ICompone
   };
   private isComponentMounted = false;
 
-  constructor(props: IComponentProps) {
+  constructor(props: Props) {
     super(props);
   }
 
@@ -96,7 +96,7 @@ export class ReactGoldenLayout extends React.Component<IComponentProps, ICompone
       };
 
       const componentNames: string[] = [];
-      React.Children.map(this.props.children, (child: React.ReactElement<ReactGoldenLayoutPanelProps>) => {
+      React.Children.map(this.props.children, (child: React.ReactElement<PanelProps>) => {
         if (child.type != ReactGoldenLayoutPanel) {
           console.error("Wrong child:", child);
           throw new Error("Invalid child, only ReactGoldenLayoutPanel are allowed as children, sorry");
@@ -152,7 +152,7 @@ export class ReactGoldenLayout extends React.Component<IComponentProps, ICompone
       <div className={this.props.className} ref={x => (this.goldenLayoutContainerRef = x || undefined)}>
         {this.layoutHelper.layout && (
           <ReactGoldenLayoutHelperContext.Provider value={this.layoutHelper}>
-            {React.Children.map(this.props.children, (child: React.ReactElement<ReactGoldenLayoutPanelProps>) => {
+            {React.Children.map(this.props.children, (child: React.ReactElement<PanelProps>) => {
               const hostElement = this.panelDomContainersByIds[child.props.id];
               this.layoutHelper.setPanelTitle(child.props.id, child.props.title);
               if (hostElement) {

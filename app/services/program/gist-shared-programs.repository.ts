@@ -2,7 +2,6 @@ import * as fetch from "isomorphic-fetch";
 import { injectable } from "app/di";
 import { DictionaryLike } from "app/utils/syntax-helpers";
 import { ProgramModel } from "app/services/program/program.model";
-import { Routes } from "app/routes";
 
 const gistApiBaseUrl = "https://api.github.com/";
 
@@ -87,10 +86,7 @@ export class GistSharedProgramsRepository {
     });
     if (response.ok) {
       const result = (await response.json()) as SingleGistResponse;
-      const id = result.id;
-      return (
-        window.location.href.substr(0, window.location.href.indexOf("#")) + "#" + Routes.codeGist.build({ id: id })
-      );
+      return result.id;
     } else {
       console.error(await response.text());
     }
