@@ -1,9 +1,9 @@
-import { TutorialsState } from "./state.tutorials";
+import { TutorialsState, defaultTutorialsState } from "./state.tutorials";
 import { TutorialsActionType, TutorialsAction } from "./actions.tutorials";
 
 export function reducers(state: TutorialsState | undefined, action: TutorialsAction): TutorialsState {
-  if (!state) {
-    return null as any; // This effectively skips initial state because that is defined in the store initialization
+  if (!state || !action) {
+    return defaultTutorialsState;
   }
   switch (action.type) {
     case TutorialsActionType.LOAD_TUTORIALS_STARTED:

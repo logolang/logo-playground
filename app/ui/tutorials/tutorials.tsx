@@ -63,12 +63,6 @@ export class TutorialsPage extends React.Component<Props, State> {
     this.props.loadStep(this.props.tutorialId, this.props.stepId);
   }
 
-  async componentDidUpdate(oldProps: Props) {
-    if (oldProps.tutorialId != this.props.tutorialId || oldProps.stepId != this.props.stepId) {
-      this.props.loadStep(this.props.tutorialId, this.props.stepId);
-    }
-  }
-
   handleCodeChanged = (code: string) => {
     this.props.codeChanged(code);
   };

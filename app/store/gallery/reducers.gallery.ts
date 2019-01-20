@@ -1,9 +1,9 @@
-import { GalleryState, GallerySection } from "./state.gallery";
+import { GalleryState, defaultGalleryState } from "./state.gallery";
 import { GalleryAction, GalleryActionType } from "./actions.gallery";
 
 export function reducers(state: GalleryState | undefined, action: GalleryAction): GalleryState {
-  if (!state) {
-    return null as any; // This effectively skips initial state because that is defined in the store initialization
+  if (!state || !action) {
+    return defaultGalleryState;
   }
   switch (action.type) {
     case GalleryActionType.LOAD_SECTION_STARTED:
