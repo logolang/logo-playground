@@ -4,7 +4,6 @@ import { action, ActionType } from "typesafe-actions";
 
 import { resolveInject } from "app/di";
 import { GetState } from "app/store/store";
-import { stay } from "app/utils/async-helpers";
 import {
   ITutorialInfo,
   ITutorialStepContent,
@@ -17,9 +16,9 @@ export enum TutorialsActionType {
   LOAD_TUTORIALS_COMPLETED = "LOAD_TUTORIALS_COMPLETED",
   LOAD_STEP_STARTED = "LOAD_STEP_STARTED",
   LOAD_STEP_COMPLETED = "LOAD_STEP_COMPLETED",
-  CODE_CHANGED = "CODE_CHANGED",
-  RUN_PROGRAM = "RUN_PROGRAM",
-  STOP_PROGRAM = "STOP_PROGRAM",
+  CODE_CHANGED = "TUTORIALS_CODE_CHANGED",
+  RUN_PROGRAM = "TUTORIALS_RUN_PROGRAM",
+  STOP_PROGRAM = "TUTORIALS_STOP_PROGRAM",
   FIX_THE_CODE = "FIX_THE_CODE"
 }
 
@@ -67,9 +66,6 @@ function loadTutorialsThunk() {
     const tutorialsLoader = resolveInject(TutorialsContentService);
     const tutorials = await tutorialsLoader.getTutorialsList();
 
-    //TODO
-    await stay(1000);
-
     dispatch(tutorialsActionCreator.loadTutorialsCompleted(tutorials));
   };
 }
@@ -97,8 +93,6 @@ function loadStepThunk(tutorialId: string, stepId: string) {
     if (!stepInfo) {
       throw new Error("Step is not found: " + stepId);
     }
-    //TODO
-    await stay(1000);
 
     dispatch(tutorialsActionCreator.loadStepCompleted(tutorialId, stepId, tutorialInfo, stepInfo, stepContent));
   };

@@ -1,4 +1,4 @@
-import { PlaygroundState } from "./state.playground";
+import { PlaygroundState, defaultPlaygroundState } from "./state.playground";
 import { PlaygroundAction, PlaygroundActionType } from "./actions.playground";
 
 export function reducers(state: PlaygroundState | undefined, action: PlaygroundAction): PlaygroundState {
@@ -65,6 +65,12 @@ export function reducers(state: PlaygroundState | undefined, action: PlaygroundA
         newState.programName = action.payload.newName;
       }
       return newState;
+    }
+
+    case PlaygroundActionType.RESET_STATE: {
+      return {
+        ...defaultPlaygroundState
+      };
     }
 
     default:
