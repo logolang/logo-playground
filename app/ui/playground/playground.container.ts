@@ -2,13 +2,14 @@ import { connect } from "react-redux";
 import { AppState } from "app/store/store";
 import { playgroundActionCreator } from "app/store/playground/actions.playground";
 import { Playground } from "./playground";
+import { ProgramStorageType } from "app/services/program/program.model";
 
 export const PlaygroundContainer = connect(
-  (state: AppState) => ({
+  (state: AppState, ownProps: { storageType?: ProgramStorageType; programId?: string }) => ({
     /** State to props */
     isLoading: state.playground.isLoading,
-    // storageType: state.playground.storageType,
-    // programId: state.playground.programId,
+    storageType: ownProps.storageType,
+    programId: ownProps.programId,
     code: state.playground.code,
     programName: state.playground.programName,
     hasModifications: state.playground.hasModifications,
@@ -19,6 +20,9 @@ export const PlaygroundContainer = connect(
     loadProgram: playgroundActionCreator.loadProgram,
     codeChanged: playgroundActionCreator.codeChanged,
     runProgram: playgroundActionCreator.runProgram,
-    stopProgram: playgroundActionCreator.stopProgram
+    stopProgram: playgroundActionCreator.stopProgram,
+    saveAsProgram: playgroundActionCreator.saveAsProgram,
+    saveProgram: playgroundActionCreator.saveProgram,
+    deleteProgram: playgroundActionCreator.deleteProgram
   }
 )(Playground);

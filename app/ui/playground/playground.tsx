@@ -30,6 +30,9 @@ interface Props {
   codeChanged(code: string): void;
   runProgram(): void;
   stopProgram(): void;
+  deleteProgram(): void;
+  saveAsProgram(newName: string, screenShot: string): void;
+  saveProgram(screenShot: string): void;
 }
 
 export class Playground extends React.Component<Props, {}> {
@@ -75,19 +78,19 @@ export class Playground extends React.Component<Props, {}> {
   };
 
   handleDeleteProgram = () => {
-    alert("Not implemented yet");
+    this.props.deleteProgram();
   };
 
   handleRevertChanges = () => {
-    alert("Not implemented yet");
+    this.props.loadProgram(this.props.storageType, this.props.programId);
   };
 
   handleSave = () => {
-    alert("Not implemented yet");
+    this.props.saveProgram(this.getSmallProgramImage());
   };
 
   handleSaveAs = (newName: string) => {
-    alert("Not implemented yet " + newName);
+    this.props.saveAsProgram(newName, this.getSmallProgramImage());
   };
 
   render(): JSX.Element {

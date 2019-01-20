@@ -83,18 +83,6 @@ export class CodeMenu extends React.Component<Props, State> {
           </div>
           <div className="dropdown-menu" id="dropdown-menu6" role="menu">
             <div className="dropdown-content">
-              {this.props.isRevertEnabled && (
-                <a
-                  className="dropdown-item"
-                  onClick={() => {
-                    this.setState({ menuIsActive: false });
-                    this.props.onRevertChanges && this.props.onRevertChanges();
-                  }}
-                >
-                  <i className="fa fa-undo icon-fixed-width" aria-hidden="true" />
-                  {$T.program.revertChanges}
-                </a>
-              )}
               {this.props.isSaveEnabled && (
                 <a
                   className="dropdown-item"
@@ -103,7 +91,7 @@ export class CodeMenu extends React.Component<Props, State> {
                     this.props.onSave && this.props.onSave();
                   }}
                 >
-                  <i className="fa fa-check-square-o icon-fixed-width" aria-hidden="true" />
+                  <i className="far fa-check-square icon-fixed-width" aria-hidden="true" />
                   {$T.program.save}
                 </a>
               )}
@@ -121,6 +109,19 @@ export class CodeMenu extends React.Component<Props, State> {
                 <i className="fa fa-clone icon-fixed-width" aria-hidden="true" />
                 {$T.program.saveAs}
               </a>
+
+              {this.props.isRevertEnabled && (
+                <a
+                  className="dropdown-item"
+                  onClick={() => {
+                    this.setState({ menuIsActive: false });
+                    this.props.onRevertChanges && this.props.onRevertChanges();
+                  }}
+                >
+                  <i className="fa fa-undo icon-fixed-width" aria-hidden="true" />
+                  {$T.program.revertChanges}
+                </a>
+              )}
 
               {this.props.isDeleteEnabled && (
                 <a
@@ -206,11 +207,11 @@ export class CodeMenu extends React.Component<Props, State> {
     );
   }
 
-  private handleSaveAs = async (newProgramName: string): Promise<void> => {
+  private handleSaveAs = async (newProgramName: string) => {
     this.props.onSaveAs && this.props.onSaveAs(newProgramName);
   };
 
   private handleDelete = async () => {
-    //
+    this.props.onDeleteProgram && this.props.onDeleteProgram();
   };
 }

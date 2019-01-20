@@ -7,13 +7,8 @@ import { ProgramModelConverter } from "app/services/program/program-model.conver
 import { GistSharedProgramsRepository } from "app/services/program/gist-shared-programs.repository";
 import { PersonalGalleryService } from "app/services/gallery/personal-gallery.service";
 
-export interface IProgramToSaveAttributes {
-  name: string;
-  programId: string;
-}
-
 @injectable()
-export class ProgramManagementService {
+export class ProgramService {
   constructor(
     @inject(GallerySamplesRepository) private examplesRepository: GallerySamplesRepository,
     @inject(PersonalGalleryService) private personalGalleryService: PersonalGalleryService,
@@ -45,13 +40,6 @@ export class ProgramManagementService {
     this.clearTempProgram(program.id);
     return program.code;
   };
-
-  initLocalModificationsFlag(programs: ProgramModel[]) {
-    for (const program of programs) {
-      const tempCode = this.localTempStorage.getCode(program.id);
-      program.hasTempLocalModifications = !!tempCode;
-    }
-  }
 
   saveProgramToLibrary = async (options: {
     id?: string;
@@ -96,7 +84,7 @@ export class ProgramManagementService {
     let program: ProgramModel | undefined;
 
     if (!storageType || !programId) {
-      program = ProgramModelConverter.createNewProgram(undefined, "", "", "");
+      program = ProgramModelConverter.createNewProgram(ProgramStorageType.playground, "", "", "");
     } else {
       switch (storageType) {
         case ProgramStorageType.samples:

@@ -14,12 +14,7 @@ interface ProgramsSaveData {
 }
 
 export class ProgramModelConverter {
-  public static createNewProgram(
-    storageType: ProgramStorageType | undefined,
-    name: string,
-    code: string,
-    screenshot: string
-  ) {
+  public static createNewProgram(storageType: ProgramStorageType, name: string, code: string, screenshot: string) {
     const program: ProgramModel = {
       id: "",
       storageType: storageType,
@@ -77,7 +72,7 @@ export class ProgramModelConverter {
 
       const program: ProgramModel = {
         id: saveObject.id,
-        storageType: undefined,
+        storageType: ProgramStorageType.gallery,
         name: saveObject.name,
         code: saveObject.code,
         screenshot: saveObject.screenshot || "",

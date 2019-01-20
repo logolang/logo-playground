@@ -12,7 +12,7 @@ interface State {
 
 interface Props {
   programName: string;
-  onDelete(): Promise<void>;
+  onDelete(): void;
   onClose(): void;
 }
 
@@ -30,7 +30,7 @@ export class DeleteProgramModal extends React.Component<Props, State> {
     return (
       <Modal
         show
-        onConfirm={this.props.onDelete}
+        onConfirm={this.handleConfirm}
         actionButtonText={$T.common.delete}
         cancelButtonText={$T.common.cancel}
         title={$T.common.areYouSure}
@@ -53,4 +53,9 @@ export class DeleteProgramModal extends React.Component<Props, State> {
       </Modal>
     );
   }
+
+  handleConfirm = async () => {
+    this.props.onDelete();
+    this.props.onClose();
+  };
 }

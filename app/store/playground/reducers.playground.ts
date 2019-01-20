@@ -44,6 +44,29 @@ export function reducers(state: PlaygroundState | undefined, action: PlaygroundA
         ...state,
         isRunning: false
       };
+    case PlaygroundActionType.SYNC_PROGRAM_STARTED:
+      return {
+        ...state,
+        isLoading: true
+      };
+    case PlaygroundActionType.SYNC_PROGRAM_COMPLETED: {
+      const newState = {
+        ...state,
+        isLoading: false,
+        hasModifications: false
+      };
+      if (action.payload.newId) {
+        newState.programId = action.payload.newId;
+      }
+      if (action.payload.newStorageType) {
+        newState.storageType = action.payload.newStorageType;
+      }
+      if (action.payload.newName) {
+        newState.programName = action.payload.newName;
+      }
+      return newState;
+    }
+
     default:
       return state;
   }

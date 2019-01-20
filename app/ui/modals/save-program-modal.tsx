@@ -7,15 +7,13 @@ import { Modal } from "app/ui/_generic/modal";
 import { NoData } from "app/ui/_generic/no-data";
 
 interface State {
-  errorMessage: string;
   programName: string;
-  isSavingInProgress: boolean;
 }
 
 interface Props {
   programName: string;
   screenshot: string;
-  onSave(programName: string): Promise<void>;
+  onSave(programName: string): void;
   allowRename: boolean;
   onClose(): void;
 }
@@ -25,9 +23,7 @@ export class SaveProgramModal extends React.Component<Props, State> {
     super(props);
 
     this.state = {
-      errorMessage: "",
-      programName: this.props.programName,
-      isSavingInProgress: false
+      programName: this.props.programName
     };
   }
 
@@ -48,9 +44,7 @@ export class SaveProgramModal extends React.Component<Props, State> {
               type="text"
               readOnly={!this.props.allowRename}
               disabled={!this.props.allowRename}
-              className={cn("input", {
-                "is-danger": !!this.state.errorMessage
-              })}
+              className="input"
               id="program-name-in-save-dialog"
               placeholder={$T.program.pleaseEnterNameForYourProgram}
               autoFocus
@@ -67,7 +61,6 @@ export class SaveProgramModal extends React.Component<Props, State> {
                 }
               }}
             />
-            {this.state.errorMessage && <p className="help is-danger">{this.state.errorMessage}</p>}
           </div>
         </div>
         <div className="field">
@@ -89,18 +82,7 @@ export class SaveProgramModal extends React.Component<Props, State> {
   }
 
   saveProgramAction = async () => {
-    this.setState({ isSavingInProgress: true, errorMessage: "" });
-
-    try {
-      await this.props.onSave(this.state.programName);
-      this.props.onClose();
-    } catch (ex) {
-      const message = ex.toString();
-
-      this.setState({
-        isSavingInProgress: false,
-        errorMessage: message
-      });
-    }
+    this.props.onSave(this.state.programName);
+    this.props.onClose();
   };
 }

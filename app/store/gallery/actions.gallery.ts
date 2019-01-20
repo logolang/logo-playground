@@ -8,7 +8,6 @@ import { GallerySection } from "./state.gallery";
 import { GetState } from "app/store/store";
 import { ProgramModel } from "app/services/program/program.model";
 import { GallerySamplesRepository } from "app/services/gallery/gallery-samples.repository";
-import { ProgramManagementService } from "app/services/program/program-management.service";
 import { PersonalGalleryService } from "app/services/gallery/personal-gallery.service";
 
 export enum GalleryActionType {
@@ -48,14 +47,12 @@ function loadSectionThunk(section: GallerySection, options?: { forceLoad: boolea
     ]);
 
     const samplesRepo = resolveInject(GallerySamplesRepository);
-    const programManagementService = resolveInject(ProgramManagementService);
     const galleryService = resolveInject(PersonalGalleryService);
 
     switch (section) {
       case GallerySection.ExamplesAdvanced:
         {
           const samples = await samplesRepo.getAll("samples");
-          programManagementService.initLocalModificationsFlag(samples);
           samples.sort(sortingFunction);
           dispatch(galleryActionCreator.loadSectionCompleted(section, samples));
         }
@@ -63,7 +60,6 @@ function loadSectionThunk(section: GallerySection, options?: { forceLoad: boolea
       case GallerySection.ExamplesBasic:
         {
           const samples = await samplesRepo.getAll("shapes");
-          programManagementService.initLocalModificationsFlag(samples);
           samples.sort(sortingFunction);
           dispatch(galleryActionCreator.loadSectionCompleted(section, samples));
         }
@@ -71,13 +67,11 @@ function loadSectionThunk(section: GallerySection, options?: { forceLoad: boolea
       case GallerySection.PersonalLibrary:
         const cachedPrograms = await galleryService.getAllLocal();
         if (cachedPrograms.length > 0) {
-          programManagementService.initLocalModificationsFlag(cachedPrograms);
           cachedPrograms.sort(sortingFunction);
           dispatch(galleryActionCreator.loadSectionCompleted(section, cachedPrograms));
         }
 
         const programsFromRemote = await galleryService.getAll();
-        programManagementService.initLocalModificationsFlag(programsFromRemote);
         programsFromRemote.sort(sortingFunction);
         dispatch(galleryActionCreator.loadSectionCompleted(section, programsFromRemote));
     }
