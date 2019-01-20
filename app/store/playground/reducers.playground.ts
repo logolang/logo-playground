@@ -2,8 +2,8 @@ import { PlaygroundState, defaultPlaygroundState } from "./state.playground";
 import { PlaygroundAction, PlaygroundActionType } from "./actions.playground";
 
 export function reducers(state: PlaygroundState | undefined, action: PlaygroundAction): PlaygroundState {
-  if (!state) {
-    return null as any; // This effectively skips initial state because that is defined in the store initialization
+  if (!state || !action) {
+    return defaultPlaygroundState;
   }
   switch (action.type) {
     case PlaygroundActionType.LOAD_PROGRAM_STARTED:

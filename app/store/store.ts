@@ -17,18 +17,12 @@ export interface AppState {
 
 export type GetState = () => AppState;
 
-export const defaultAppState: AppState = {
-  gallery: defaultGalleryState,
-  playground: defaultPlaygroundState,
-  tutorials: defaultTutorialsState
-};
-
 export const store = createStore<AppState, AnyAction, {}, {}>(
   combineReducers({
     gallery: galleryReducers,
     playground: playgroundReducers,
     tutorials: tutorialsReducers
   }),
-  defaultAppState,
+  {},
   composeWithDevTools(applyMiddleware(thunk))
 );
