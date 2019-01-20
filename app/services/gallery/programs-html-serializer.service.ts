@@ -1,4 +1,4 @@
-import { ProgramModel } from "app/services/program/program.model";
+import { ProgramModel, ProgramStorageType } from "app/services/program/program.model";
 import { createCompareFunction, DictionaryLike } from "app/utils/syntax-helpers";
 
 const userpicImgCache: DictionaryLike<string> = {};
@@ -27,7 +27,7 @@ export class ProgramsHtmlSerializerService {
         code: code,
         screenshot: screenShotUrl,
         hasTempLocalModifications: false,
-        storageType: undefined
+        storageType: ProgramStorageType.gallery
       };
       result.push(program);
     }

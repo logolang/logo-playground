@@ -1,7 +1,7 @@
 import * as fetch from "isomorphic-fetch";
 import { injectable } from "app/di";
 import { DictionaryLike } from "app/utils/syntax-helpers";
-import { ProgramModel } from "app/services/program/program.model";
+import { ProgramModel, ProgramStorageType } from "app/services/program/program.model";
 
 const gistApiBaseUrl = "https://api.github.com/";
 
@@ -58,7 +58,8 @@ export class GistSharedProgramsRepository {
         dateLastEdited: new Date(result.updated_at),
         name: file.filename,
         screenshot: "",
-        hasTempLocalModifications: false
+        hasTempLocalModifications: false,
+        storageType: ProgramStorageType.gist
       };
       return program;
     } else {

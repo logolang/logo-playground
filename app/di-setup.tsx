@@ -27,7 +27,7 @@ import { TurtlesService } from "app/services/customizations/turtles.service";
 import { GallerySamplesRepository } from "app/services/gallery/gallery-samples.repository";
 import { GoogleAuthService } from "app/services/login/google-auth.service";
 import { LoginService } from "app/services/login/login.service";
-import { ProgramManagementService } from "app/services/program/program-management.service";
+import { ProgramService } from "app/services/program/program.service";
 import { GistSharedProgramsRepository } from "app/services/program/gist-shared-programs.repository";
 import { AuthProvider } from "app/services/login/user-info";
 import { PersonalGalleryGoogleDriveRepository } from "app/services/gallery/personal-gallery-googledrive.repository";
@@ -130,7 +130,7 @@ export class DependecyInjectionSetupService {
     container.bind(PersonalGalleryLocalRepository).to(PersonalGalleryLocalRepository);
     container.bind(PersonalGalleryService).to(PersonalGalleryService);
     container.bind(GallerySamplesRepository).to(GallerySamplesRepository);
-    container.bind(ProgramManagementService).to(ProgramManagementService);
+    container.bind(ProgramService).to(ProgramService);
     container.bind(GistSharedProgramsRepository).to(GistSharedProgramsRepository);
 
     container.bind(ErrorService).to(ErrorService);

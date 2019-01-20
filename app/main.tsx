@@ -9,7 +9,7 @@ import { RandomHelper } from "app/utils/random-helper";
 import { MessageToster } from "app/ui/_generic/message-toster";
 import { NavigationService } from "app/services/infrastructure/navigation.service";
 import { NotificationService } from "app/services/infrastructure/notification.service";
-import { Routes, RoutesComponent } from "app/routes";
+import { RoutesComponent } from "app/routes.component";
 import { DependecyInjectionSetupService } from "app/di-setup";
 import { ErrorService } from "app/services/infrastructure/error.service";
 

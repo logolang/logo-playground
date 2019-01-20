@@ -1,5 +1,5 @@
 import { ProgramsHtmlSerializerService } from "app/services/gallery/programs-html-serializer.service";
-import { ProgramModel } from "app/services/program/program.model";
+import { ProgramModel, ProgramStorageType } from "app/services/program/program.model";
 import { createCompareFunction } from "app/utils/syntax-helpers";
 
 const programsSpecialCharacters: ProgramModel[] = [
@@ -11,7 +11,7 @@ const programsSpecialCharacters: ProgramModel[] = [
     name: "prog1",
     screenshot: "s1",
     hasTempLocalModifications: false,
-    storageType: undefined
+    storageType: ProgramStorageType.gallery
   },
   {
     id: "2",
@@ -21,7 +21,7 @@ const programsSpecialCharacters: ProgramModel[] = [
     name: "prog2",
     screenshot: "s2",
     hasTempLocalModifications: false,
-    storageType: undefined
+    storageType: ProgramStorageType.gallery
   }
 ];
 
@@ -35,7 +35,7 @@ const programs: ProgramModel[] = [
     screenshot:
       "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==",
     hasTempLocalModifications: false,
-    storageType: undefined
+    storageType: ProgramStorageType.gallery
   }
 ];
 

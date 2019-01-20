@@ -1,6 +1,6 @@
 export interface ProgramModel {
   id: string;
-  storageType?: ProgramStorageType;
+  storageType: ProgramStorageType;
   name: string;
   code: string;
   screenshot: string;
@@ -12,5 +12,6 @@ export interface ProgramModel {
 export enum ProgramStorageType {
   samples = "samples",
   gallery = "gallery",
-  gist = "gist"
+  gist = "gist",
+  playground = "playground"
 }
