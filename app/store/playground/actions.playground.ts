@@ -10,6 +10,7 @@ import { ProgramService } from "app/services/program/program.service";
 import { PersonalGalleryService } from "app/services/gallery/personal-gallery.service";
 import { NavigationService } from "app/services/infrastructure/navigation.service";
 import { Routes } from "app/routes";
+import { LocalTempCodeStorage } from "app/services/program/local-temp-code.storage";
 
 export enum PlaygroundActionType {
   LOAD_PROGRAM_STARTED = "LOAD_PROGRAM_STARTED",
@@ -18,7 +19,8 @@ export enum PlaygroundActionType {
   RUN_PROGRAM = "RUN_PROGRAM",
   STOP_PROGRAM = "STOP_PROGRAM",
   SYNC_PROGRAM_STARTED = "SYNC_PROGRAM_STARTED",
-  SYNC_PROGRAM_COMPLETED = "SYNC_PROGRAM_COMPLETED"
+  SYNC_PROGRAM_COMPLETED = "SYNC_PROGRAM_COMPLETED",
+  RESET_STATE = "CLEAR_PROGRAM"
 }
 
 export const playgroundActionCreator = {
@@ -37,10 +39,8 @@ export const playgroundActionCreator = {
       programId
     }),
 
-  codeChanged: (code: string) =>
-    action(PlaygroundActionType.CODE_CHANGED, {
-      code
-    }),
+  codeChangedThunk: codeChangedThunk,
+  codeChangedAction: (code: string) => action(PlaygroundActionType.CODE_CHANGED, { code }),
 
   runProgram: () => action(PlaygroundActionType.RUN_PROGRAM),
   stopProgram: () => action(PlaygroundActionType.STOP_PROGRAM),
@@ -50,10 +50,12 @@ export const playgroundActionCreator = {
   syncProgramStarted: () => action(PlaygroundActionType.SYNC_PROGRAM_STARTED),
 
   syncProgramCompleted: (options: { newId?: string; newName?: string; newStorageType?: ProgramStorageType }) =>
-    action(PlaygroundActionType.SYNC_PROGRAM_COMPLETED, options)
+    action(PlaygroundActionType.SYNC_PROGRAM_COMPLETED, options),
+
+  clearProgram: () => action(PlaygroundActionType.RESET_STATE)
 };
 
-function loadProgramThunk(storageType?: ProgramStorageType, programId?: string) {
+function loadProgramThunk(storageType: ProgramStorageType, programId?: string) {
   return async (dispatch: Dispatch<Action>, getState: GetState) => {
     const state = getState().playground;
     if (state.storageType === storageType && state.programId === programId) {
@@ -62,10 +64,8 @@ function loadProgramThunk(storageType?: ProgramStorageType, programId?: string) 
     }
     dispatch(playgroundActionCreator.loadProgramStarted(storageType, programId));
 
-    await stay(2000);
-
     const programManagementService = resolveInject(ProgramService);
-    const programModel = await programManagementService.loadProgram(programId, storageType);
+    const programModel = await programManagementService.loadProgram(storageType, programId);
 
     dispatch(playgroundActionCreator.loadProgramCompleted(programModel, storageType, programId));
   };
@@ -90,8 +90,6 @@ function saveAsProgramThunk(newName: string, screenShot: string) {
         newStorageType: newProgram.storageType
       })
     );
-
-    await stay(200);
 
     const navService = resolveInject(NavigationService);
     navService.navigate({
@@ -128,6 +126,15 @@ function deleteProgramThunk() {
       const navService = resolveInject(NavigationService);
       navService.navigate({ route: Routes.gallery.build({}) });
     }
+  };
+}
+
+function codeChangedThunk(newCode: string) {
+  return async (dispatch: Dispatch<Action>, getState: GetState) => {
+    dispatch(playgroundActionCreator.codeChangedAction(newCode));
+
+    const localStorage = resolveInject(LocalTempCodeStorage);
+    localStorage.setCode("playground", newCode);
   };
 }
 

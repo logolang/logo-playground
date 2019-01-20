@@ -33,6 +33,7 @@ interface Props {
   deleteProgram(): void;
   saveAsProgram(newName: string, screenShot: string): void;
   saveProgram(screenShot: string): void;
+  clearProgram(): void;
 }
 
 export class Playground extends React.Component<Props, {}> {
@@ -55,6 +56,10 @@ export class Playground extends React.Component<Props, {}> {
     if (oldProps.storageType != this.props.storageType || oldProps.programId != this.props.programId) {
       this.props.loadProgram(this.props.storageType, this.props.programId);
     }
+  }
+
+  componentWillUnmount() {
+    this.props.clearProgram();
   }
 
   handleCodeChanged = (code: string) => {

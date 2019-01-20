@@ -16,29 +16,15 @@ export class ProgramService {
     @inject(GistSharedProgramsRepository) private gistRepository: GistSharedProgramsRepository
   ) {}
 
-  loadProgram = async (programId?: string, storageType?: ProgramStorageType): Promise<ProgramModel> => {
-    const program = await this.loadProgramFromStorage(storageType, programId);
-
-    const tempCode = this.localTempStorage.getCode(programId || "playground");
-    if (tempCode) {
-      program.code = tempCode;
-      program.hasTempLocalModifications = true;
+  loadProgram = async (storageType: ProgramStorageType, programId?: string): Promise<ProgramModel> => {
+    if (programId && storageType != ProgramStorageType.playground) {
+      const program = await this.loadProgramFromStorage(storageType, programId);
+      return program;
     }
+
+    const tempCode = this.localTempStorage.getCode("playground");
+    const program = ProgramModelConverter.createNewProgram(ProgramStorageType.playground, "", tempCode, "");
     return program;
-  };
-
-  saveTempProgram = (programId: string | undefined, code: string): void => {
-    this.localTempStorage.setCode(programId || "playground", code);
-  };
-
-  clearTempProgram = (programId: string | undefined): void => {
-    this.localTempStorage.setCode(programId || "playground", "");
-  };
-
-  revertLocalTempChanges = async (programId: string, storageType: ProgramStorageType): Promise<string> => {
-    const program = await this.loadProgramFromStorage(storageType, programId);
-    this.clearTempProgram(program.id);
-    return program.code;
   };
 
   saveProgramToLibrary = async (options: {
@@ -75,31 +61,26 @@ export class ProgramService {
       program.code = options.newCode;
       program.name = options.newProgramName;
       await this.personalGalleryService.save(program);
-      this.clearTempProgram(options.id);
       return program;
     }
   };
 
-  private async loadProgramFromStorage(storageType?: ProgramStorageType, programId?: string): Promise<ProgramModel> {
+  private async loadProgramFromStorage(storageType: ProgramStorageType, programId: string): Promise<ProgramModel> {
     let program: ProgramModel | undefined;
 
-    if (!storageType || !programId) {
-      program = ProgramModelConverter.createNewProgram(ProgramStorageType.playground, "", "", "");
-    } else {
-      switch (storageType) {
-        case ProgramStorageType.samples:
-          program = await this.examplesRepository.get(programId);
-          program.storageType = ProgramStorageType.samples;
-          break;
-        case ProgramStorageType.gallery:
-          program = await this.personalGalleryService.get(programId);
-          program.storageType = ProgramStorageType.gallery;
-          break;
-        case ProgramStorageType.gist:
-          program = await this.gistRepository.get(programId);
-          program.storageType = ProgramStorageType.gist;
-          break;
-      }
+    switch (storageType) {
+      case ProgramStorageType.samples:
+        program = await this.examplesRepository.get(programId);
+        program.storageType = ProgramStorageType.samples;
+        break;
+      case ProgramStorageType.gallery:
+        program = await this.personalGalleryService.get(programId);
+        program.storageType = ProgramStorageType.gallery;
+        break;
+      case ProgramStorageType.gist:
+        program = await this.gistRepository.get(programId);
+        program.storageType = ProgramStorageType.gist;
+        break;
     }
 
     if (!program) {

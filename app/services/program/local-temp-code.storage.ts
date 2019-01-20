@@ -9,6 +9,10 @@ import { CurrentUserService } from "app/services/login/current-user.service";
 @injectable()
 export class LocalTempCodeStorage {
   private storagePrefix = "";
+  private timerHandle: NodeJS.Timeout | undefined;
+  private id: string | undefined;
+  private code: string | undefined;
+
   constructor(@inject(CurrentUserService) private currentUser: CurrentUserService) {
     const userId = this.currentUser.getLoginStatus().userInfo.attributes.email || "guest";
     this.storagePrefix = "logo-playground.temp-code:" + userId + ":";
@@ -20,10 +24,18 @@ export class LocalTempCodeStorage {
   }
 
   setCode(id: string, code: string): void {
-    if (!code) {
-      localStorage.removeItem(this.storagePrefix + id);
-    } else {
-      localStorage.setItem(this.storagePrefix + id, code);
+    if (this.timerHandle) {
+      clearTimeout(this.timerHandle);
+      this.timerHandle = undefined;
     }
+    this.id = id;
+    this.code = code;
+    this.timerHandle = setTimeout(this.writeToStorage, 1000);
   }
+
+  private writeToStorage = () => {
+    localStorage.setItem(this.storagePrefix + this.id, this.code || "");
+    console.log("written");
+    this.timerHandle = undefined;
+  };
 }
