@@ -34,6 +34,7 @@ interface Props {
   saveAsProgram(newName: string, screenShot: string): void;
   saveProgram(screenShot: string): void;
   clearProgram(): void;
+  revertChanges(): void;
 }
 
 export class Playground extends React.Component<Props, {}> {
@@ -87,7 +88,7 @@ export class Playground extends React.Component<Props, {}> {
   };
 
   handleRevertChanges = () => {
-    this.props.loadProgram(this.props.storageType, this.props.programId);
+    this.props.revertChanges();
   };
 
   handleSave = () => {

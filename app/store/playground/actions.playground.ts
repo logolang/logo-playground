@@ -20,19 +20,20 @@ export enum PlaygroundActionType {
   STOP_PROGRAM = "STOP_PROGRAM",
   SYNC_PROGRAM_STARTED = "SYNC_PROGRAM_STARTED",
   SYNC_PROGRAM_COMPLETED = "SYNC_PROGRAM_COMPLETED",
-  RESET_STATE = "CLEAR_PROGRAM"
+  RESET_STATE = "CLEAR_PROGRAM",
+  REVERT_CHANGES = "REVERT_CHANGES"
 }
 
 export const playgroundActionCreator = {
   loadProgram: loadProgramThunk,
 
-  loadProgramStarted: (storageType?: ProgramStorageType, programId?: string) =>
+  loadProgramStarted: (storageType: ProgramStorageType, programId: string) =>
     action(PlaygroundActionType.LOAD_PROGRAM_STARTED, {
       storageType,
       programId
     }),
 
-  loadProgramCompleted: (programModel: ProgramModel, storageType?: ProgramStorageType, programId?: string) =>
+  loadProgramCompleted: (programModel: ProgramModel, storageType: ProgramStorageType, programId: string) =>
     action(PlaygroundActionType.LOAD_PROGRAM_COMPLETED, {
       programModel,
       storageType,
@@ -52,10 +53,12 @@ export const playgroundActionCreator = {
   syncProgramCompleted: (options: { newId?: string; newName?: string; newStorageType?: ProgramStorageType }) =>
     action(PlaygroundActionType.SYNC_PROGRAM_COMPLETED, options),
 
-  clearProgram: () => action(PlaygroundActionType.RESET_STATE)
+  clearProgram: () => action(PlaygroundActionType.RESET_STATE),
+
+  revertChanges: revertChangesThunk
 };
 
-function loadProgramThunk(storageType: ProgramStorageType, programId?: string) {
+function loadProgramThunk(storageType: ProgramStorageType, programId: string) {
   return async (dispatch: Dispatch<Action>, getState: GetState) => {
     const state = getState().playground;
     if (state.storageType === storageType && state.programId === programId) {
@@ -135,6 +138,18 @@ function codeChangedThunk(newCode: string) {
 
     const localStorage = resolveInject(LocalTempCodeStorage);
     localStorage.setCode("playground", newCode);
+  };
+}
+
+function revertChangesThunk() {
+  return async (dispatch: Dispatch<Action>, getState: GetState) => {
+    const state = getState().playground;
+    const { storageType, programId } = state;
+    dispatch(playgroundActionCreator.loadProgramStarted(storageType, programId));
+
+    const programManagementService = resolveInject(ProgramService);
+    const programModel = await programManagementService.loadProgram(storageType, programId);
+    dispatch(playgroundActionCreator.loadProgramCompleted(programModel, storageType, programId));
   };
 }
 
