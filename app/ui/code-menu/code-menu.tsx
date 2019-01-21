@@ -6,6 +6,8 @@ import { ShareProgramModal } from "app/ui/modals/share-program-modal";
 import { SaveProgramModal } from "app/ui/modals/save-program-modal";
 import { DeleteProgramModal } from "../modals/delete-program-modal";
 
+import "./code-menu.less";
+
 interface State {
   menuIsActive?: boolean;
   isTakeScreenshotModalActive?: boolean;
@@ -45,7 +47,7 @@ export class CodeMenu extends React.Component<Props, State> {
 
   render(): JSX.Element | null {
     return (
-      <div className="program-controls-menu-component">
+      <div className="code-menu-component">
         {!this.props.isRunning && (
           <button
             type="button"

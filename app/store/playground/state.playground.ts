@@ -2,8 +2,8 @@ import { ProgramStorageType } from "app/services/program/program.model";
 
 export interface PlaygroundState {
   isLoading: boolean;
-  storageType: ProgramStorageType | undefined;
-  programId: string | undefined;
+  storageType: ProgramStorageType;
+  programId: string;
   code: string;
   programName: string;
   hasModifications: boolean;

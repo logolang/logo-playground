@@ -24,6 +24,7 @@ export const PlaygroundContainer = connect(
     saveAsProgram: playgroundActionCreator.saveAsProgram,
     saveProgram: playgroundActionCreator.saveProgram,
     deleteProgram: playgroundActionCreator.deleteProgram,
-    clearProgram: playgroundActionCreator.clearProgram
+    clearProgram: playgroundActionCreator.clearProgram,
+    revertChanges: playgroundActionCreator.revertChanges
   }
 )(Playground);
