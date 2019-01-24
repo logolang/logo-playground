@@ -1,7 +1,5 @@
 import * as fetch from "isomorphic-fetch";
-import { injectable } from "app/di";
 
-@injectable()
 export class AjaxService {
   async getText(url: string): Promise<string> {
     const result = await fetch(url, {

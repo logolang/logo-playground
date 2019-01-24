@@ -7,28 +7,34 @@ import { callActionSafe } from "app/utils/error-helpers";
 import { ensure } from "app/utils/syntax-helpers";
 import { resolveInject } from "app/di";
 import { $T } from "app/i18n/strings";
-import { UserInfo } from "app/services/login/user-info";
-import { TurtlesService, TurtleInfo, TurtleSize } from "app/services/customizations/turtles.service";
+import {
+  TurtlesService,
+  TurtleInfo,
+  TurtleSize
+} from "app/services/customizations/turtles.service";
 import { Theme, ThemesService } from "app/services/customizations/themes.service";
 import { PersonalGalleryImportService } from "app/services/gallery/personal-gallery-import.service";
 import { LocalizationService, ILocaleInfo } from "app/services/customizations/localization.service";
-import { CurrentUserService } from "app/services/login/current-user.service";
-import { TitleService } from "app/services/infrastructure/title.service";
-import { IUserSettingsService, IUserSettings } from "app/services/customizations/user-settings.service";
+import {
+  IUserSettingsService,
+  IUserSettings
+} from "app/services/customizations/user-settings.service";
 import { NotificationService } from "app/services/infrastructure/notification.service";
 import { PersonalGalleryService } from "app/services/gallery/personal-gallery.service";
 import { ProgramsHtmlSerializerService } from "app/services/gallery/programs-html-serializer.service";
-import { EventsTrackingService, EventAction } from "app/services/infrastructure/events-tracking.service";
-import { DependecyInjectionSetupService } from "app/di-setup";
+import {
+  EventsTrackingService,
+  EventAction
+} from "app/services/infrastructure/events-tracking.service";
 import { ErrorService } from "app/services/infrastructure/error.service";
-import { SignInStatus } from "app/ui/sign-in-status";
 import { SimpleSelect } from "app/ui/_generic/simple-select";
 import { PageHeader } from "app/ui/_generic/page-header";
-import { MainMenu } from "app/ui/main-menu";
 import { LogoExecutor } from "app/ui/_generic/logo-executor/logo-executor";
 import { FileSelector } from "app/ui/_generic/file-selector";
 import { LogoCodeSamplesService } from "app/services/program/logo-code-samples.service";
 import { Loading } from "app/ui/_generic/loading";
+import { SignInStatusContainer } from "./sign-in-status.container";
+import { MainMenuContainer } from "./main-menu.container";
 
 class LocaleSelector extends SimpleSelect<ILocaleInfo> {}
 class ThemeSelector extends SimpleSelect<Theme> {}
@@ -36,7 +42,6 @@ class TurtleSelector extends SimpleSelect<TurtleInfo> {}
 class TurtleSizeSelector extends SimpleSelect<TurtleSize> {}
 
 interface State {
-  userInfo: UserInfo;
   isLoading: boolean;
   isSavingInProgress: boolean;
   isImportingInProgress?: boolean;
@@ -50,10 +55,8 @@ interface State {
 interface Props extends RouteComponentProps<void> {}
 
 export class UserProfilePage extends React.Component<Props, State> {
-  private titleService = resolveInject(TitleService);
   private notificationService = resolveInject(NotificationService);
   private errorService = resolveInject(ErrorService);
-  private currentUser = resolveInject(CurrentUserService);
   private userSettingsService = resolveInject(IUserSettingsService);
   private themeService = resolveInject(ThemesService);
   private turtleCustomizationService = resolveInject(TurtlesService);
@@ -61,17 +64,14 @@ export class UserProfilePage extends React.Component<Props, State> {
   private galleryService = resolveInject(PersonalGalleryService);
   private eventsTracking = resolveInject(EventsTrackingService);
   private demoSamplesService = resolveInject(LogoCodeSamplesService);
-  private diSetup = resolveInject(DependecyInjectionSetupService);
   private exportInportService = new PersonalGalleryImportService();
   private logoExecutor: LogoExecutor | null = null;
 
   constructor(props: Props) {
     super(props);
-    const loginStatus = this.currentUser.getLoginStatus();
 
     this.state = {
       isLoading: true,
-      userInfo: loginStatus.userInfo,
       isSavingInProgress: false,
       programCount: 0,
       code: ""
@@ -79,7 +79,6 @@ export class UserProfilePage extends React.Component<Props, State> {
   }
 
   async componentDidMount() {
-    this.titleService.setDocumentTitle($T.settings.settingsTitle);
     this.eventsTracking.sendEvent(EventAction.openSettings);
     await this.loadData();
   }
@@ -117,13 +116,11 @@ export class UserProfilePage extends React.Component<Props, State> {
   };
 
   private doExport = async () => {
-    const programs = await callActionSafe(this.errorService.handleError, async () => this.galleryService.getAll());
+    const programs = await callActionSafe(this.errorService.handleError, async () =>
+      this.galleryService.getAll()
+    );
     if (programs) {
-      const html = await new ProgramsHtmlSerializerService().serialize(
-        programs,
-        this.currentUser.getLoginStatus().userInfo.attributes.name,
-        this.currentUser.getLoginStatus().userInfo.attributes.imageUrl
-      );
+      const html = await new ProgramsHtmlSerializerService().serialize(programs, "User", "");
       const blob = new Blob([html], { type: "text/plain;charset=utf-8" });
       FileSaver.saveAs(blob, `my-logo-programs.html`);
     }
@@ -150,7 +147,7 @@ export class UserProfilePage extends React.Component<Props, State> {
   render(): JSX.Element {
     return (
       <div className="ex-page-container">
-        <MainMenu />
+        <MainMenuContainer />
         <div className="ex-page-content">
           <div className="container">
             <br />
@@ -164,7 +161,7 @@ export class UserProfilePage extends React.Component<Props, State> {
               <div className="column is-three-fifths-desktop">
                 <div className="card">
                   <div className="card-content">
-                    <SignInStatus />
+                    <SignInStatusContainer />
                     <br />
 
                     <div className="field">
@@ -184,7 +181,6 @@ export class UserProfilePage extends React.Component<Props, State> {
                                 await this.userSettingsService.update({
                                   localeId: selectedLocation.id
                                 });
-                                await this.diSetup.reset();
                               }
                             }}
                           />
@@ -240,7 +236,9 @@ export class UserProfilePage extends React.Component<Props, State> {
                                     renderItem={x => x.name}
                                     selectionChanged={async newTurtle => {
                                       if (newTurtle) {
-                                        await this.userSettingsService.update({ turtleId: newTurtle.id });
+                                        await this.userSettingsService.update({
+                                          turtleId: newTurtle.id
+                                        });
                                         this.forceUpdate(this.runRandomProgram);
                                       }
                                     }}
@@ -259,12 +257,16 @@ export class UserProfilePage extends React.Component<Props, State> {
                                     items={this.turtleCustomizationService.getTurtleSizes()}
                                     selectedItem={this.turtleCustomizationService
                                       .getTurtleSizes()
-                                      .find(x => x.size === ensure(this.state.userSettings).turtleSize)}
+                                      .find(
+                                        x => x.size === ensure(this.state.userSettings).turtleSize
+                                      )}
                                     getItemIdentifier={x => x.size.toString()}
                                     renderItem={x => x.description}
                                     selectionChanged={async newSize => {
                                       if (newSize) {
-                                        await this.userSettingsService.update({ turtleSize: newSize.size });
+                                        await this.userSettingsService.update({
+                                          turtleSize: newSize.size
+                                        });
                                         this.forceUpdate(this.runRandomProgram);
                                       }
                                     }}

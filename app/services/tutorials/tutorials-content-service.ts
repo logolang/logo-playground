@@ -1,6 +1,5 @@
 import * as markdown from "markdown-it";
 import { LocalizedContentLoader } from "app/services/infrastructure/localized-content-loader";
-import { injectable, inject } from "app/di";
 
 export interface ITutorialInfo {
   id: string;
@@ -24,11 +23,10 @@ export interface ITutorialStepContent {
 /**
  * Gets access to tutorials content
  */
-@injectable()
 export class TutorialsContentService {
   private tutorialInfos: ITutorialInfo[] = [];
 
-  constructor(@inject(LocalizedContentLoader) private contentLoader: LocalizedContentLoader) {}
+  constructor(private contentLoader: LocalizedContentLoader) {}
 
   async getTutorialsList(): Promise<ITutorialInfo[]> {
     if (this.tutorialInfos.length == 0) {
@@ -40,7 +38,9 @@ export class TutorialsContentService {
   }
 
   async getStep(tutorialId: string, stepId: string): Promise<ITutorialStepContent> {
-    let stepContent = await this.contentLoader.getFileContent(`tutorials/${tutorialId}/${stepId}.md`);
+    let stepContent = await this.contentLoader.getFileContent(
+      `tutorials/${tutorialId}/${stepId}.md`
+    );
     const md = new markdown({
       html: true // Enable HTML tags in source;
     });

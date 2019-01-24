@@ -5,20 +5,25 @@ import "app/ui/_styles/app.less";
 
 import * as React from "react";
 import * as ReactDOM from "react-dom";
+import { Provider } from "react-redux";
 
 import { normalizeError } from "app/utils/error-helpers";
-import { DependecyInjectionSetupService } from "app/di-setup";
 import { AlertMessage } from "app/ui/_generic/alert-message";
-import { Main } from "app/main";
+import { MainContainer } from "app/main.container";
+import { store } from "./store/store";
+import { userActionCreator } from "./store/user/actions.user";
 
 async function runApp() {
   const appHostDomElement = document.getElementById("app-container") || document.body;
-  const diService = new DependecyInjectionSetupService();
+  store.dispatch(userActionCreator.loadUser());
   try {
-    await diService.setup();
-
     // Render the app
-    ReactDOM.render(<Main />, appHostDomElement);
+    ReactDOM.render(
+      <Provider store={store}>
+        <MainContainer />
+      </Provider>,
+      appHostDomElement
+    );
   } catch (ex) {
     const error = await normalizeError(ex);
     ReactDOM.render(

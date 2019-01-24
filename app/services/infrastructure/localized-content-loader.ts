@@ -6,7 +6,6 @@ type DictionaryLike<V> = { [name: string]: V };
 /**
  * Loads requested files by ajax from content directory using provided locale
  */
-@injectable()
 export class LocalizedContentLoader {
   private cache: DictionaryLike<string> = {};
 

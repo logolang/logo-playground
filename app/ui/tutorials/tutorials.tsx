@@ -8,8 +8,14 @@ import {
   ITutorialStepContent,
   ITutorialStepInfo
 } from "app/services/tutorials/tutorials-content-service";
-import { EventsTrackingService, EventAction } from "app/services/infrastructure/events-tracking.service";
-import { tutorialsDefaultLayout, tutorialsDefaultMobileLayout } from "app/ui/tutorials/tutorials-default-goldenlayout";
+import {
+  EventsTrackingService,
+  EventAction
+} from "app/services/infrastructure/events-tracking.service";
+import {
+  tutorialsDefaultLayout,
+  tutorialsDefaultMobileLayout
+} from "app/ui/tutorials/tutorials-default-goldenlayout";
 import { MainMenu } from "app/ui/main-menu";
 import { Loading } from "app/ui/_generic/loading";
 import { ReactGoldenLayout } from "app/ui/_generic/react-golden-layout/react-golden-layout";
@@ -20,6 +26,7 @@ import { CodeInput } from "../_generic/code-input/code-input";
 import { LogoExecutor } from "../_generic/logo-executor/logo-executor";
 
 import "./tutorials.less";
+import { MainMenuContainer } from "../main-menu.container";
 
 interface State {}
 
@@ -50,7 +57,9 @@ export class TutorialsPage extends React.Component<Props, State> {
     this.isMobileDevice ? tutorialsDefaultMobileLayout : tutorialsDefaultLayout
   );
   private layoutLocalStorageKey =
-    this.userSettingsService.userSettingsKey + ":tutorials-layout" + (this.isMobileDevice ? "-mobile" : "-desktop");
+    this.userSettingsService.userSettingsKey +
+    ":tutorials-layout" +
+    (this.isMobileDevice ? "-mobile" : "-desktop");
   private logoExecutorRef: LogoExecutor | null = null;
 
   constructor(props: Props) {
@@ -98,7 +107,7 @@ export class TutorialsPage extends React.Component<Props, State> {
   render(): JSX.Element {
     return (
       <div className="ex-page-container">
-        <MainMenu />
+        <MainMenuContainer />
         <div className="ex-page-content tutorials-page-component">
           {this.props.isLoading && (
             <div className="main-loading-container">
@@ -144,7 +153,9 @@ export class TutorialsPage extends React.Component<Props, State> {
             </ReactGoldenLayoutPanel>
             <ReactGoldenLayoutPanel
               id="output-panel"
-              title={`<i class="fa fa-television" aria-hidden="true"></i> ${$T.program.outputPanelTitle}`}
+              title={`<i class="fa fa-television" aria-hidden="true"></i> ${
+                $T.program.outputPanelTitle
+              }`}
             >
               <LogoExecutor
                 ref={ref => (this.logoExecutorRef = ref)}
@@ -156,7 +167,9 @@ export class TutorialsPage extends React.Component<Props, State> {
             </ReactGoldenLayoutPanel>
             <ReactGoldenLayoutPanel
               id="tutorial-panel"
-              title={`<i class="fa fa-graduation-cap" aria-hidden="true"></i> ${$T.tutorial.tutorialPanelTitle}`}
+              title={`<i class="fa fa-graduation-cap" aria-hidden="true"></i> ${
+                $T.tutorial.tutorialPanelTitle
+              }`}
             >
               {!this.props.isStepLoading &&
               this.props.tutorials &&

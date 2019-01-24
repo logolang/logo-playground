@@ -1,5 +1,4 @@
 import { $T } from "app/i18n/strings";
-import { injectable } from "app/di";
 
 export interface TurtleInfo {
   id: string;
@@ -12,7 +11,6 @@ export interface TurtleSize {
   description: string;
 }
 
-@injectable()
 export class TurtlesService {
   getAllTurtles(): TurtleInfo[] {
     return [

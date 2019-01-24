@@ -1,4 +1,4 @@
-import { createStore, combineReducers, AnyAction, applyMiddleware } from "redux";
+import { createStore, combineReducers, applyMiddleware } from "redux";
 import { composeWithDevTools } from "redux-devtools-extension/developmentOnly";
 import thunk from "redux-thunk";
 
@@ -8,20 +8,24 @@ import { PlaygroundState, defaultPlaygroundState } from "./playground/state.play
 import { reducers as playgroundReducers } from "./playground/reducers.playground";
 import { TutorialsState, defaultTutorialsState } from "./tutorials/state.tutorials";
 import { reducers as tutorialsReducers } from "./tutorials/reducers.tutorials";
+import { UserState } from "./user/state.user";
+import { reducers as userReducers } from "./user/reducers.user";
 
 export interface AppState {
   gallery: GalleryState;
   playground: PlaygroundState;
   tutorials: TutorialsState;
+  user: UserState;
 }
 
 export type GetState = () => AppState;
 
-export const store = createStore<AppState, AnyAction, {}, {}>(
+export const store = createStore<AppState, any, {}, {}>(
   combineReducers({
     gallery: galleryReducers,
     playground: playgroundReducers,
-    tutorials: tutorialsReducers
+    tutorials: tutorialsReducers,
+    user: userReducers
   }),
   {},
   composeWithDevTools(applyMiddleware(thunk))

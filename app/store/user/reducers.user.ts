@@ -16,7 +16,11 @@ export function reducers(state: UserState | undefined, action: UserAction): User
       return {
         ...state,
         isLoading: false,
-        isLoggedIn: true
+        isLoggedIn: true,
+        name: action.payload.name,
+        id: action.payload.id,
+        email: action.payload.email,
+        imageUrl: action.payload.imageUrl
       };
 
     default:

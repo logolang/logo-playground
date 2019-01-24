@@ -4,8 +4,8 @@ interface IEventData {
   data?: string;
 }
 
-export class GoogleAnalyticsTrackerService {
-  trackEvent(event: IEventData): void {
+export class GoogleAnalyticsTracker {
+  trackEvent = (event: IEventData): void => {
     setTimeout(() => {
       const ga = (window as any).ga;
       if (ga) {
@@ -17,5 +17,5 @@ export class GoogleAnalyticsTrackerService {
         });
       }
     }, 0);
-  }
+  };
 }

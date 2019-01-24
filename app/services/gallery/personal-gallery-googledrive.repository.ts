@@ -1,10 +1,10 @@
 import { RandomHelper } from "app/utils/random-helper";
-
-import { injectable, inject } from "app/di";
 import { AppConfig } from "app/services/config/app-config";
-import { CurrentUserService } from "app/services/login/current-user.service";
 import { ProgramModel, ProgramStorageType } from "app/services/program/program.model";
-import { GoogleDriveClient, IGoogleFileInfo } from "app/services/infrastructure/google-drive.client";
+import {
+  GoogleDriveClient,
+  IGoogleFileInfo
+} from "app/services/infrastructure/google-drive.client";
 import { ProgramsHtmlSerializerService } from "app/services/gallery/programs-html-serializer.service";
 import { PersonalGalleryRemoteRepository } from "./personal-gallery-remote.repository";
 
@@ -16,16 +16,12 @@ interface IStoredData {
   programs: ProgramModel[];
 }
 
-@injectable()
 export class PersonalGalleryGoogleDriveRepository implements PersonalGalleryRemoteRepository {
   private googleDriveClient: GoogleDriveClient;
   private serializationService = new ProgramsHtmlSerializerService();
   private cachedData: IStoredData | undefined = undefined;
 
-  constructor(
-    @inject(CurrentUserService) private currentUser: CurrentUserService,
-    @inject(AppConfig) private appConfig: AppConfig
-  ) {
+  constructor(private userName: string, private userImage: string, private appConfig: AppConfig) {
     this.googleDriveClient = new GoogleDriveClient();
   }
 
@@ -89,8 +85,8 @@ export class PersonalGalleryGoogleDriveRepository implements PersonalGalleryRemo
   private async storeData(programsToStore: ProgramModel[], fileId: string | undefined) {
     const serializedData = await this.serializationService.serialize(
       programsToStore,
-      this.currentUser.getLoginStatus().userInfo.attributes.name,
-      this.currentUser.getLoginStatus().userInfo.attributes.imageUrl
+      this.userName,
+      this.userImage
     );
     if (fileId) {
       await this.googleDriveClient.updateFile(
@@ -134,8 +130,12 @@ export class PersonalGalleryGoogleDriveRepository implements PersonalGalleryRemo
 
   private async getStorageFileInfo(): Promise<IGoogleFileInfo | undefined> {
     const storageFileName = this.appConfig.services.googleDriveGalleryFilename;
-    const files = await this.googleDriveClient.listFiles("name = '" + storageFileName + "' and trashed = false");
-    const storageFile = files.files.find(f => f.name === storageFileName && !!f.md5Checksum && !f.trashed);
+    const files = await this.googleDriveClient.listFiles(
+      "name = '" + storageFileName + "' and trashed = false"
+    );
+    const storageFile = files.files.find(
+      f => f.name === storageFileName && !!f.md5Checksum && !f.trashed
+    );
     if (!storageFile) {
       console.log("storage file is not found");
       return undefined;

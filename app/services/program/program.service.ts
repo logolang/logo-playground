@@ -1,5 +1,3 @@
-import { injectable, inject } from "app/di";
-
 import { ProgramModel, ProgramStorageType } from "app/services/program/program.model";
 import { GallerySamplesRepository } from "app/services/gallery/gallery-samples.repository";
 import { LocalTempCodeStorage } from "app/services/program/local-temp-code.storage";
@@ -7,23 +5,30 @@ import { ProgramModelConverter } from "app/services/program/program-model.conver
 import { GistSharedProgramsRepository } from "app/services/program/gist-shared-programs.repository";
 import { PersonalGalleryService } from "app/services/gallery/personal-gallery.service";
 
-@injectable()
 export class ProgramService {
   constructor(
-    @inject(GallerySamplesRepository) private examplesRepository: GallerySamplesRepository,
-    @inject(PersonalGalleryService) private personalGalleryService: PersonalGalleryService,
-    @inject(LocalTempCodeStorage) private localTempStorage: LocalTempCodeStorage,
-    @inject(GistSharedProgramsRepository) private gistRepository: GistSharedProgramsRepository
+    private examplesRepository: GallerySamplesRepository,
+    private personalGalleryService: PersonalGalleryService,
+    private localTempStorage: LocalTempCodeStorage,
+    private gistRepository: GistSharedProgramsRepository
   ) {}
 
-  loadProgram = async (storageType: ProgramStorageType, programId?: string): Promise<ProgramModel> => {
+  loadProgram = async (
+    storageType: ProgramStorageType,
+    programId?: string
+  ): Promise<ProgramModel> => {
     if (programId && storageType != ProgramStorageType.playground) {
       const program = await this.loadProgramFromStorage(storageType, programId);
       return program;
     }
 
     const tempCode = this.localTempStorage.getCode("playground");
-    const program = ProgramModelConverter.createNewProgram(ProgramStorageType.playground, "", tempCode, "");
+    const program = ProgramModelConverter.createNewProgram(
+      ProgramStorageType.playground,
+      "",
+      tempCode,
+      ""
+    );
     return program;
   };
 
@@ -42,7 +47,9 @@ export class ProgramService {
         p => p.name.trim().toLowerCase() === options.newProgramName.trim().toLowerCase()
       );
       if (progWithSameName) {
-        throw new Error("Program with this name is already stored in library. Please enter different name.");
+        throw new Error(
+          "Program with this name is already stored in library. Please enter different name."
+        );
       }
       const newProgram = ProgramModelConverter.createNewProgram(
         ProgramStorageType.gallery,
@@ -65,7 +72,10 @@ export class ProgramService {
     }
   };
 
-  private async loadProgramFromStorage(storageType: ProgramStorageType, programId: string): Promise<ProgramModel> {
+  private async loadProgramFromStorage(
+    storageType: ProgramStorageType,
+    programId: string
+  ): Promise<ProgramModel> {
     let program: ProgramModel | undefined;
 
     switch (storageType) {

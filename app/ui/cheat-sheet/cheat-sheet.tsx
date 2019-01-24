@@ -5,13 +5,14 @@ import * as markdown from "markdown-it";
 import { callActionSafe } from "app/utils/error-helpers";
 
 import { resolveInject } from "app/di";
-import { $T } from "app/i18n/strings";
-import { TitleService } from "app/services/infrastructure/title.service";
 import { LocalizedContentLoader } from "app/services/infrastructure/localized-content-loader";
-import { EventAction, EventsTrackingService } from "app/services/infrastructure/events-tracking.service";
+import {
+  EventAction,
+  EventsTrackingService
+} from "app/services/infrastructure/events-tracking.service";
 import { ErrorService } from "app/services/infrastructure/error.service";
-import { MainMenu } from "app/ui/main-menu";
 import { Loading } from "app/ui/_generic/loading";
+import { MainMenuContainer } from "../main-menu.container";
 
 import "./cheat-sheet.less";
 
@@ -23,7 +24,6 @@ interface State {
 interface Props extends RouteComponentProps<void> {}
 
 export class CheatSheet extends React.Component<Props, State> {
-  private titleService = resolveInject(TitleService);
   private contentLoader = resolveInject(LocalizedContentLoader);
   private eventsTracking = resolveInject(EventsTrackingService);
   private errorService = resolveInject(ErrorService);
@@ -38,7 +38,6 @@ export class CheatSheet extends React.Component<Props, State> {
   }
 
   async componentDidMount() {
-    this.titleService.setDocumentTitle($T.cheatSheet.cheatSheetTitle);
     this.eventsTracking.sendEvent(EventAction.openCheatsheet);
     await this.loadData();
   }
@@ -66,7 +65,7 @@ export class CheatSheet extends React.Component<Props, State> {
   render(): JSX.Element {
     return (
       <div className="ex-page-container">
-        <MainMenu />
+        <MainMenuContainer />
         <div className="ex-page-content">
           <div className="container">
             <Loading fullPage isLoading={this.state.isLoading} />
@@ -74,7 +73,10 @@ export class CheatSheet extends React.Component<Props, State> {
             <div className="columns is-desktop">
               {this.state.content.map((content, index) => (
                 <div className="column is-one-third-desktop" key={index}>
-                  <div className="doc-section content" dangerouslySetInnerHTML={{ __html: content }} />
+                  <div
+                    className="doc-section content"
+                    dangerouslySetInnerHTML={{ __html: content }}
+                  />
                 </div>
               ))}
             </div>

@@ -1,97 +1,75 @@
-import { Subject } from "rxjs";
-
 import { container } from "app/di";
-import { normalizeError } from "app/utils/error-helpers";
 import { NULL } from "app/utils/syntax-helpers";
-
-import { AjaxService } from "app/services/infrastructure/ajax-service";
-import { AppConfigLoader } from "app/services/config/app-config-loader";
-import { CurrentUserService } from "app/services/login/current-user.service";
-import { LocalizedContentLoader } from "app/services/infrastructure/localized-content-loader";
-import { TutorialsContentService } from "app/services/tutorials/tutorials-content-service";
-import { PersonalGalleryLocalRepository } from "app/services/gallery/personal-gallery-local.repository";
-import { LocalTempCodeStorage } from "app/services/program/local-temp-code.storage";
+import { AuthProvider } from "./store/user/state.user";
+import { AjaxService } from "./services/infrastructure/ajax-service";
+import { AppInfo } from "./services/infrastructure/app-info";
+import { AppConfigLoader } from "./services/config/app-config-loader";
+import { AppConfig } from "./services/config/app-config";
+import { EventsTrackingService } from "./services/infrastructure/events-tracking.service";
+import { GoogleAnalyticsTracker } from "./services/infrastructure/google-analytics-tracker";
 import {
   UserSettingsBrowserLocalStorageService,
   IUserSettingsService
-} from "app/services/customizations/user-settings.service";
-import { NotificationService } from "app/services/infrastructure/notification.service";
-import { TitleService } from "app/services/infrastructure/title.service";
-import { LocalizationService } from "app/services/customizations/localization.service";
-import { NavigationService } from "app/services/infrastructure/navigation.service";
-import { ImageUploadImgurService, ImageUploadService } from "app/services/infrastructure/image-upload-imgur.service";
-import { AppInfo } from "app/services/infrastructure/app-info";
-import { AppConfig } from "app/services/config/app-config";
-import { ThemesService } from "app/services/customizations/themes.service";
-import { TurtlesService } from "app/services/customizations/turtles.service";
-import { GallerySamplesRepository } from "app/services/gallery/gallery-samples.repository";
-import { GoogleAuthService } from "app/services/login/google-auth.service";
-import { LoginService } from "app/services/login/login.service";
-import { ProgramService } from "app/services/program/program.service";
-import { GistSharedProgramsRepository } from "app/services/program/gist-shared-programs.repository";
-import { AuthProvider } from "app/services/login/user-info";
-import { PersonalGalleryGoogleDriveRepository } from "app/services/gallery/personal-gallery-googledrive.repository";
-import { EventsTrackingService, EventAction } from "app/services/infrastructure/events-tracking.service";
-import { GoogleAnalyticsTrackerService } from "app/services/infrastructure/google-analytics-tracker.service";
-import { PersonalGalleryService } from "app/services/gallery/personal-gallery.service";
-import { PersonalGalleryRemoteRepository } from "app/services/gallery/personal-gallery-remote.repository";
-import { updateStringsObject } from "app/i18n/i18n-tools";
-import { $T } from "app/i18n/strings";
-import { ErrorService } from "app/services/infrastructure/error.service";
-import { LogoCodeSamplesService } from "app/services/program/logo-code-samples.service";
+} from "./services/customizations/user-settings.service";
+import { LocalTempCodeStorage } from "./services/program/local-temp-code.storage";
+import { LocalizedContentLoader } from "./services/infrastructure/localized-content-loader";
+import { updateStringsObject } from "./i18n/i18n-tools";
+import { $T } from "./i18n/strings";
+import { LocalizationService } from "./services/customizations/localization.service";
+import { NotificationService } from "./services/infrastructure/notification.service";
+import { NavigationService } from "./services/infrastructure/navigation.service";
+import { TutorialsContentService } from "./services/tutorials/tutorials-content-service";
+import {
+  ImageUploadImgurService,
+  ImageUploadService
+} from "./services/infrastructure/image-upload-imgur.service";
+import { ThemesService } from "./services/customizations/themes.service";
+import { TurtlesService } from "./services/customizations/turtles.service";
+import { PersonalGalleryRemoteRepository } from "./services/gallery/personal-gallery-remote.repository";
+import { PersonalGalleryGoogleDriveRepository } from "./services/gallery/personal-gallery-googledrive.repository";
+import { PersonalGalleryLocalRepository } from "./services/gallery/personal-gallery-local.repository";
+import { PersonalGalleryService } from "./services/gallery/personal-gallery.service";
+import { GallerySamplesRepository } from "./services/gallery/gallery-samples.repository";
+import { ProgramService } from "./services/program/program.service";
+import { GistSharedProgramsRepository } from "./services/program/gist-shared-programs.repository";
+import { ErrorService } from "./services/infrastructure/error.service";
+import { LogoCodeSamplesService } from "./services/program/logo-code-samples.service";
 
 /**
  * Declaration for app info object injected by webpack
  */
 declare const APP_WEBPACK_STATIC_INFO: AppInfo;
 
-export class DependecyInjectionSetupService {
-  public onResetEvents = new Subject<void>();
-
-  public async setup() {
+export class DISetup {
+  public static async setup(options: {
+    userName: string;
+    userImage: string;
+    userEmail: string;
+    authProvider: AuthProvider;
+  }) {
     console.log("start setting up bindings");
-    container.bind(DependecyInjectionSetupService).toConstantValue(this);
 
-    container.bind(AjaxService).to(AjaxService);
+    const ajaxService = new AjaxService();
+    container.bind(AjaxService).toConstantValue(ajaxService);
     container.bind(AppInfo).toConstantValue(APP_WEBPACK_STATIC_INFO);
 
-    const appConfigLoader = new AppConfigLoader(container.get(AjaxService));
+    const appConfigLoader = new AppConfigLoader(ajaxService);
     const appConfig = await appConfigLoader.loadData();
     container.bind(AppConfig).toConstantValue(appConfig);
 
     const eventsTrackingService = new EventsTrackingService();
-    const googleTracking = new GoogleAnalyticsTrackerService();
-    eventsTrackingService.subscribe(event => {
-      googleTracking.trackEvent(event);
-    });
+    const googleTracking = new GoogleAnalyticsTracker();
+    eventsTrackingService.addTracker(googleTracking.trackEvent);
     container.bind(EventsTrackingService).toConstantValue(eventsTrackingService);
 
-    const authService = new GoogleAuthService(appConfig.services.googleClientId);
-    const currentUserService = new CurrentUserService();
-    const loginService = new LoginService(authService, currentUserService, eventsTrackingService);
-
-    currentUserService.loginStatusObservable.subscribe(loginStatus => {
-      if (loginStatus.isLoggedIn) {
-        eventsTrackingService.sendEvent(EventAction.userLogin, loginStatus.userInfo.attributes.email);
-      }
-    });
-
-    container.bind(CurrentUserService).toConstantValue(currentUserService);
-    container.bind(LoginService).toConstantValue(loginService);
-    try {
-      await loginService.tryLoginUserAutomatically();
-    } catch (ex) {
-      const err = await normalizeError(ex);
-      console.error("Error while loggin in", err);
-    }
-
-    const userSettingsService = new UserSettingsBrowserLocalStorageService(currentUserService);
+    const userSettingsService = new UserSettingsBrowserLocalStorageService(options.userEmail);
     container.bind(IUserSettingsService).toConstantValue(userSettingsService);
     const userSettings = await userSettingsService.get();
 
-    container.bind(LocalTempCodeStorage).to(LocalTempCodeStorage);
-
-    const localizedContentLoader = new LocalizedContentLoader(container.get(AjaxService), userSettings.localeId);
+    const localizedContentLoader = new LocalizedContentLoader(
+      container.get(AjaxService),
+      userSettings.localeId
+    );
     container.bind(LocalizedContentLoader).toConstantValue(localizedContentLoader);
 
     const poFile = await localizedContentLoader.getFileContent("strings.po");
@@ -99,13 +77,12 @@ export class DependecyInjectionSetupService {
     const localizationService = new LocalizationService();
     container.bind(LocalizationService).toConstantValue(localizationService);
 
-    container.bind(NotificationService).to(NotificationService);
-    container.bind(NavigationService).to(NavigationService);
+    container.bind(NotificationService).toConstantValue(new NotificationService());
+    container.bind(NavigationService).toConstantValue(new NavigationService());
 
-    const titleService = new TitleService($T.common.appTitle);
-    container.bind(TitleService).toConstantValue(titleService);
-
-    container.bind(TutorialsContentService).to(TutorialsContentService);
+    container
+      .bind(TutorialsContentService)
+      .toConstantValue(new TutorialsContentService(localizedContentLoader));
 
     const imageUploadService = new ImageUploadImgurService(
       appConfig.services.imgurServiceClientID,
@@ -116,32 +93,42 @@ export class DependecyInjectionSetupService {
     const themeService = new ThemesService();
     themeService.setActiveTheme(userSettings.themeName);
     container.bind(ThemesService).toConstantValue(themeService);
-    container.bind(TurtlesService).to(TurtlesService);
+    container.bind(TurtlesService).toConstantValue(new TurtlesService());
 
-    switch (currentUserService.getLoginStatus().userInfo.attributes.authProvider) {
-      case AuthProvider.none:
-        container.bind(PersonalGalleryRemoteRepository).toConstantValue(NULL as any);
-        break;
+    let remoteRepo: PersonalGalleryRemoteRepository | null = NULL;
+    switch (options.authProvider) {
       case AuthProvider.google:
-        container.bind(PersonalGalleryRemoteRepository).to(PersonalGalleryGoogleDriveRepository);
+        remoteRepo = new PersonalGalleryGoogleDriveRepository(
+          options.userName,
+          options.userImage,
+          appConfig
+        );
         break;
     }
+    container.bind(PersonalGalleryRemoteRepository).toConstantValue(remoteRepo as any);
 
-    container.bind(PersonalGalleryLocalRepository).to(PersonalGalleryLocalRepository);
-    container.bind(PersonalGalleryService).to(PersonalGalleryService);
-    container.bind(GallerySamplesRepository).to(GallerySamplesRepository);
-    container.bind(ProgramService).to(ProgramService);
-    container.bind(GistSharedProgramsRepository).to(GistSharedProgramsRepository);
+    const localRepo = new PersonalGalleryLocalRepository(options.userEmail);
+    container.bind(PersonalGalleryLocalRepository).toConstantValue(localRepo);
 
-    container.bind(ErrorService).to(ErrorService);
-    container.bind(LogoCodeSamplesService).to(LogoCodeSamplesService);
+    const galleryService = new PersonalGalleryService(localRepo, remoteRepo);
+    container.bind(PersonalGalleryService).toConstantValue(galleryService);
+
+    const samplesRepo = new GallerySamplesRepository(ajaxService);
+    container.bind(GallerySamplesRepository).toConstantValue(samplesRepo);
+
+    const gistRepo = new GistSharedProgramsRepository();
+    container.bind(GistSharedProgramsRepository).toConstantValue(gistRepo);
+
+    const localCodeStorage = new LocalTempCodeStorage(options.userEmail);
+    container.bind(LocalTempCodeStorage).toConstantValue(localCodeStorage);
+
+    container
+      .bind(ProgramService)
+      .toConstantValue(new ProgramService(samplesRepo, galleryService, localCodeStorage, gistRepo));
+
+    container.bind(ErrorService).toConstantValue(new ErrorService());
+    container.bind(LogoCodeSamplesService).toConstantValue(new LogoCodeSamplesService());
 
     console.log("finish setting up bindings");
-  }
-
-  public async reset() {
-    container.unbindAll();
-    await this.setup();
-    this.onResetEvents.next();
   }
 }

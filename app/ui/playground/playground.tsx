@@ -3,7 +3,10 @@ import * as React from "react";
 import { $T } from "app/i18n/strings";
 import { resolveInject } from "app/di";
 import { ProgramStorageType } from "app/services/program/program.model";
-import { EventsTrackingService, EventAction } from "app/services/infrastructure/events-tracking.service";
+import {
+  EventsTrackingService,
+  EventAction
+} from "app/services/infrastructure/events-tracking.service";
 import { IUserSettingsService } from "app/services/customizations/user-settings.service";
 import { checkIsMobileDevice } from "app/utils/device-helper";
 
@@ -14,9 +17,13 @@ import { Loading } from "app/ui/_generic/loading";
 import { CodeInput } from "app/ui/_generic/code-input/code-input";
 import { MainMenu } from "app/ui/main-menu";
 import { CodeMenu } from "app/ui/code-menu/code-menu";
-import { playgroundDefaultMobileLayout, playgroundDefaultLayout } from "./playground-default-goldenlayout";
+import {
+  playgroundDefaultMobileLayout,
+  playgroundDefaultLayout
+} from "./playground-default-goldenlayout";
 
 import "./playground.less";
+import { MainMenuContainer } from "../main-menu.container";
 
 interface Props {
   isLoading: boolean;
@@ -45,7 +52,9 @@ export class Playground extends React.Component<Props, {}> {
     this.isMobileDevice ? playgroundDefaultMobileLayout : playgroundDefaultLayout
   );
   private layoutLocalStorageKey =
-    this.userSettingsService.userSettingsKey + ":playground-layout" + (this.isMobileDevice ? "-mobile" : "-desktop");
+    this.userSettingsService.userSettingsKey +
+    ":playground-layout" +
+    (this.isMobileDevice ? "-mobile" : "-desktop");
   private logoExecutorRef: LogoExecutor | null = null;
 
   async componentDidMount() {
@@ -54,7 +63,10 @@ export class Playground extends React.Component<Props, {}> {
   }
 
   async componentDidUpdate(oldProps: Props) {
-    if (oldProps.storageType != this.props.storageType || oldProps.programId != this.props.programId) {
+    if (
+      oldProps.storageType != this.props.storageType ||
+      oldProps.programId != this.props.programId
+    ) {
       this.props.loadProgram(this.props.storageType, this.props.programId);
     }
   }
@@ -102,7 +114,7 @@ export class Playground extends React.Component<Props, {}> {
   render(): JSX.Element {
     return (
       <div className="ex-page-container">
-        <MainMenu />
+        <MainMenuContainer />
         <div className="ex-page-content playground-page-component">
           {this.props.isLoading && (
             <div className="main-loading-container">
@@ -137,7 +149,9 @@ export class Playground extends React.Component<Props, {}> {
                 createSmallScreenShotImageBase64={this.getSmallProgramImage}
                 isDeleteEnabled={this.props.storageType === ProgramStorageType.gallery}
                 onDeleteProgram={this.handleDeleteProgram}
-                isRevertEnabled={this.props.hasModifications && this.props.storageType !== undefined}
+                isRevertEnabled={
+                  this.props.hasModifications && this.props.storageType !== undefined
+                }
                 onRevertChanges={this.handleRevertChanges}
                 isSaveEnabled={this.props.storageType === ProgramStorageType.gallery}
                 onSave={this.handleSave}
@@ -172,7 +186,9 @@ export class Playground extends React.Component<Props, {}> {
     } else {
       title += `${$T.program.program}: <strong>${this.props.programName}</strong>`;
       if (this.props.hasModifications) {
-        title += ` <i class="fa fa-asterisk icon-sm" aria-hidden="true" title="${$T.program.programHasChanges}"></i>`;
+        title += ` <i class="fa fa-asterisk icon-sm" aria-hidden="true" title="${
+          $T.program.programHasChanges
+        }"></i>`;
       }
     }
     return title;

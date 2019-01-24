@@ -1,4 +1,3 @@
-import { injectable } from "app/di";
 import { RandomHelper } from "app/utils/random-helper";
 
 const codeSamples = [
@@ -75,7 +74,6 @@ arc 360 50
 `
 ];
 
-@injectable()
 export class LogoCodeSamplesService {
   private lastIndex = -1;
   public getRandomSample() {
