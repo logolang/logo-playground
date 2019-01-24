@@ -1,20 +1,17 @@
-import { injectable, inject } from "app/di";
-import { CurrentUserService } from "app/services/login/current-user.service";
-
 /**
  * This service is to store and get user temporary code stored in local browser
  * So this data is designed as not be to synchronized to whatever backend whenever
  * This data is persisted only in current browser
  */
-@injectable()
+
 export class LocalTempCodeStorage {
   private storagePrefix = "";
   private timerHandle: NodeJS.Timeout | undefined;
   private id: string | undefined;
   private code: string | undefined;
 
-  constructor(@inject(CurrentUserService) private currentUser: CurrentUserService) {
-    const userId = this.currentUser.getLoginStatus().userInfo.attributes.email || "guest";
+  constructor(userEmail: string) {
+    const userId = userEmail || "guest";
     this.storagePrefix = "logo-playground.temp-code:" + userId + ":";
   }
 

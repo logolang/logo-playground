@@ -1,16 +1,13 @@
 import { RandomHelper } from "app/utils/random-helper";
-import { injectable, inject } from "app/di";
-import { CurrentUserService } from "app/services/login/current-user.service";
 import { ProgramModel, ProgramStorageType } from "app/services/program/program.model";
 import { ProgramModelConverter } from "app/services/program/program-model.converter";
 
-@injectable()
 export class PersonalGalleryLocalRepository {
   storageKey = "";
   storage: Storage = window.localStorage;
 
-  constructor(@inject(CurrentUserService) private currentUser: CurrentUserService) {
-    const userId = this.currentUser.getLoginStatus().userInfo.attributes.email || "guest";
+  constructor(userEmail: string) {
+    const userId = userEmail || "guest";
     this.storageKey = "logo-playground.gallery:" + userId;
   }
 
@@ -62,7 +59,11 @@ export class PersonalGalleryLocalRepository {
     this.addAndSave([], programs, false);
   }
 
-  private addAndSave(oldPrograms: ProgramModel[], newPrograms: ProgramModel[], updateDate: boolean) {
+  private addAndSave(
+    oldPrograms: ProgramModel[],
+    newPrograms: ProgramModel[],
+    updateDate: boolean
+  ) {
     const all = [...oldPrograms];
     for (const program of newPrograms) {
       if (!program.id) {

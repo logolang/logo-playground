@@ -1,5 +1,4 @@
 import * as fetch from "isomorphic-fetch";
-import { injectable } from "app/di";
 import { DictionaryLike } from "app/utils/syntax-helpers";
 import { ProgramModel, ProgramStorageType } from "app/services/program/program.model";
 
@@ -20,7 +19,6 @@ interface GistFileDescriptor {
   content: string;
 }
 
-@injectable()
 export class GistSharedProgramsRepository {
   constructor() {
     /** */

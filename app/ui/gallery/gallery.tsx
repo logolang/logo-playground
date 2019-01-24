@@ -3,17 +3,19 @@ import * as cn from "classnames";
 import { Link } from "react-router-dom";
 
 import { ensure } from "app/utils/syntax-helpers";
-import { $T } from "app/i18n/strings";
 import { resolveInject } from "app/di";
+import { $T } from "app/i18n/strings";
 import { Routes } from "app/routes";
-import { ProgramModel, ProgramStorageType } from "app/services/program/program.model";
+import { ProgramModel } from "app/services/program/program.model";
 import { GallerySection } from "app/store/gallery/state.gallery";
-import { TitleService } from "app/services/infrastructure/title.service";
-import { EventsTrackingService, EventAction } from "app/services/infrastructure/events-tracking.service";
+import {
+  EventsTrackingService,
+  EventAction
+} from "app/services/infrastructure/events-tracking.service";
 
-import { MainMenu } from "app/ui/main-menu";
 import { NoData } from "app/ui/_generic/no-data";
 import { Loading } from "app/ui/_generic/loading";
+import { MainMenuContainer } from "../main-menu.container";
 
 import "./gallery.less";
 
@@ -26,11 +28,9 @@ interface Props {
 }
 
 export class Gallery extends React.Component<Props, {}> {
-  private titleService = resolveInject(TitleService);
   private eventsTracker = resolveInject(EventsTrackingService);
 
   async componentDidMount() {
-    this.titleService.setDocumentTitle($T.gallery.galleryTitle);
     this.eventsTracker.sendEvent(EventAction.openGallery);
     this.props.selectSection(this.props.activeSection, { forceLoad: true });
   }
@@ -38,7 +38,7 @@ export class Gallery extends React.Component<Props, {}> {
   render(): JSX.Element {
     return (
       <div className="ex-page-container gallery-component">
-        <MainMenu />
+        <MainMenuContainer />
         <div className="ex-page-content">
           <div className="container">
             <br />
@@ -68,19 +68,31 @@ export class Gallery extends React.Component<Props, {}> {
     return (
       <div className="tabs is-centered is-boxed">
         <ul>
-          <li className={cn({ "is-active": this.props.activeSection === GallerySection.ExamplesAdvanced })}>
+          <li
+            className={cn({
+              "is-active": this.props.activeSection === GallerySection.ExamplesAdvanced
+            })}
+          >
             <a onClick={() => this.props.selectSection(GallerySection.ExamplesAdvanced)}>
               <i className="fas fa-flask" />
               &nbsp;<span>Examples</span>
             </a>
           </li>
-          <li className={cn({ "is-active": this.props.activeSection === GallerySection.ExamplesBasic })}>
+          <li
+            className={cn({
+              "is-active": this.props.activeSection === GallerySection.ExamplesBasic
+            })}
+          >
             <a onClick={() => this.props.selectSection(GallerySection.ExamplesBasic)}>
               <i className="fa fa-puzzle-piece" />
               &nbsp;<span>Shapes</span>
             </a>
           </li>
-          <li className={cn({ "is-active": this.props.activeSection === GallerySection.PersonalLibrary })}>
+          <li
+            className={cn({
+              "is-active": this.props.activeSection === GallerySection.PersonalLibrary
+            })}
+          >
             <a onClick={() => this.props.selectSection(GallerySection.PersonalLibrary)}>
               <i className="fas fa-images" />
               &nbsp;
@@ -105,7 +117,11 @@ export class Gallery extends React.Component<Props, {}> {
                 <div className="gallery-img-title">
                   {p.hasTempLocalModifications && (
                     <>
-                      <i className="fa fa-asterisk icon-sm" aria-hidden="true" title={$T.program.programHasChanges} />
+                      <i
+                        className="fa fa-asterisk icon-sm"
+                        aria-hidden="true"
+                        title={$T.program.programHasChanges}
+                      />
                       &nbsp;
                     </>
                   )}

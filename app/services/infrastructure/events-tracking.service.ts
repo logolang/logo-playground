@@ -1,6 +1,3 @@
-import { injectable } from "app/di";
-import { Subject, Subscription } from "rxjs";
-
 export enum EventAction {
   userLogin = "user.login",
   userLogout = "user.logout",
@@ -38,23 +35,20 @@ interface IEventData {
 
 type EventHandler = (eventData: IEventData) => void;
 
-@injectable()
 export class EventsTrackingService {
-  private eventsSubject = new Subject<IEventData>();
-  private subscriptions: { handler: EventHandler; subscription: Subscription }[] = [];
+  private trackers: EventHandler[] = [];
 
   sendEvent(eventAction: EventAction, data?: string): void {
     const [category, action] = eventAction.split(".");
     if (!category || !action) {
       throw new Error("Event action ID is not valid - should be in 'CATEGORY.ACTION' format");
     }
-    this.eventsSubject.next({ category, action, data: data });
+    for (const tracker of this.trackers) {
+      tracker({ category, action, data: data });
+    }
   }
 
-  subscribe(handler: (eventData: IEventData) => void): void {
-    this.subscriptions.push({
-      handler: handler,
-      subscription: this.eventsSubject.subscribe(handler)
-    });
+  addTracker(trackFn: (eventData: IEventData) => void): void {
+    this.trackers.push(trackFn);
   }
 }

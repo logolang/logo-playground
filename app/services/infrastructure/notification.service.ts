@@ -1,7 +1,5 @@
 import { Subject, Observable } from "rxjs";
 
-import { injectable } from "app/di";
-
 type NotificationType = "danger" | "info" | "success" | "warning" | "primary";
 
 interface INotification {
@@ -11,7 +9,6 @@ interface INotification {
   closeTimeout?: number;
 }
 
-@injectable()
 export class NotificationService {
   private notificationsSubject = new Subject<INotification>();
 

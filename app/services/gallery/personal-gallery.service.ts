@@ -1,13 +1,11 @@
-import { injectable, inject } from "app/di";
 import { ProgramModel } from "app/services/program/program.model";
 import { PersonalGalleryLocalRepository } from "app/services/gallery/personal-gallery-local.repository";
 import { PersonalGalleryRemoteRepository } from "app/services/gallery/personal-gallery-remote.repository";
 
-@injectable()
 export class PersonalGalleryService {
   constructor(
-    @inject(PersonalGalleryLocalRepository) private localProgramsRepository: PersonalGalleryLocalRepository,
-    @inject(PersonalGalleryRemoteRepository) private remoteProgramsRepository?: PersonalGalleryRemoteRepository
+    private localProgramsRepository: PersonalGalleryLocalRepository,
+    private remoteProgramsRepository: PersonalGalleryRemoteRepository | null
   ) {}
 
   async getAll(): Promise<ProgramModel[]> {
@@ -25,7 +23,9 @@ export class PersonalGalleryService {
   }
 
   async get(id: string): Promise<ProgramModel> {
-    return this.remoteProgramsRepository ? this.remoteProgramsRepository.get(id) : this.localProgramsRepository.get(id);
+    return this.remoteProgramsRepository
+      ? this.remoteProgramsRepository.get(id)
+      : this.localProgramsRepository.get(id);
   }
 
   async add(programs: ProgramModel[]): Promise<void> {

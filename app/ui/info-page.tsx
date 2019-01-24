@@ -2,20 +2,20 @@ import * as React from "react";
 import { RouteComponentProps } from "react-router-dom";
 import * as markdown from "markdown-it";
 
-import { MainMenu } from "app/ui/main-menu";
-
-import { $T } from "app/i18n/strings";
 import { resolveInject } from "app/di";
-import { TitleService } from "app/services/infrastructure/title.service";
 import { AppInfo } from "app/services/infrastructure/app-info";
-import { EventsTrackingService, EventAction } from "app/services/infrastructure/events-tracking.service";
+import {
+  EventsTrackingService,
+  EventAction
+} from "app/services/infrastructure/events-tracking.service";
+
+import { MainMenuContainer } from "./main-menu.container";
 
 interface State {}
 
 interface Props extends RouteComponentProps<void> {}
 
 export class InfoPage extends React.Component<Props, State> {
-  private titleService = resolveInject(TitleService);
   private appInfo = resolveInject(AppInfo);
   private eventsTracking = resolveInject(EventsTrackingService);
   private thirdPartyCreditsMd: string;
@@ -23,7 +23,6 @@ export class InfoPage extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {};
-    this.titleService.setDocumentTitle($T.about.aboutTitle);
     this.eventsTracking.sendEvent(EventAction.openAbout);
 
     const contentMd = require("CREDITS.md") as string;
@@ -37,7 +36,7 @@ export class InfoPage extends React.Component<Props, State> {
   render(): JSX.Element {
     return (
       <div className="ex-page-container">
-        <MainMenu />
+        <MainMenuContainer />
         <div className="ex-page-content">
           <div className="container">
             <br />
