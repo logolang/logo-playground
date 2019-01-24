@@ -1,4 +1,4 @@
-import { container } from "app/di";
+import { container, resolveInject } from "app/di";
 import { NULL } from "app/utils/syntax-helpers";
 import { AuthProvider } from "./store/user/state.user";
 import { AjaxService } from "./services/infrastructure/ajax-service";
@@ -41,14 +41,7 @@ import { LogoCodeSamplesService } from "./services/program/logo-code-samples.ser
 declare const APP_WEBPACK_STATIC_INFO: AppInfo;
 
 export class DISetup {
-  public static async setup(options: {
-    userName: string;
-    userImage: string;
-    userEmail: string;
-    authProvider: AuthProvider;
-  }) {
-    console.log("start setting up bindings");
-
+  public static async setupConfig() {
     const ajaxService = new AjaxService();
     container.bind(AjaxService).toConstantValue(ajaxService);
     container.bind(AppInfo).toConstantValue(APP_WEBPACK_STATIC_INFO);
@@ -56,7 +49,17 @@ export class DISetup {
     const appConfigLoader = new AppConfigLoader(ajaxService);
     const appConfig = await appConfigLoader.loadData();
     container.bind(AppConfig).toConstantValue(appConfig);
+  }
 
+  public static async setup(options: {
+    userName: string;
+    userImage: string;
+    userEmail: string;
+    authProvider: AuthProvider;
+  }) {
+    console.log("start setting up bindings");
+    const ajaxService = resolveInject(AjaxService);
+    const appConfig = resolveInject(AppConfig);
     const eventsTrackingService = new EventsTrackingService();
     const googleTracking = new GoogleAnalyticsTracker();
     eventsTrackingService.addTracker(googleTracking.trackEvent);

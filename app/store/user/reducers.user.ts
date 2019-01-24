@@ -20,7 +20,8 @@ export function reducers(state: UserState | undefined, action: UserAction): User
         name: action.payload.name,
         id: action.payload.id,
         email: action.payload.email,
-        imageUrl: action.payload.imageUrl
+        imageUrl: action.payload.imageUrl,
+        authProvider: action.payload.authProvider
       };
 
     default:
