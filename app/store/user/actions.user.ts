@@ -5,6 +5,9 @@ import { GetState } from "app/store/store";
 import { stay } from "app/utils/async-helpers";
 import { DISetup } from "app/di-setup";
 import { AuthProvider } from "./state.user";
+import { GoogleAuthService } from "app/services/login/google-auth.service";
+import { resolveInject } from "app/di";
+import { AppConfig } from "app/services/config/app-config";
 
 export enum UserActionType {
   LOAD_USER_STARTED = "LOAD_USER_STARTED",
@@ -16,8 +19,13 @@ export const userActionCreator = {
 
   loadUserStarted: () => action(UserActionType.LOAD_USER_STARTED),
 
-  loadUserCompleted: (userInfo: { name: string; id: string; email: string; imageUrl: string }) =>
-    action(UserActionType.LOAD_USER_COMPLETED, userInfo),
+  loadUserCompleted: (userInfo: {
+    name: string;
+    id: string;
+    email: string;
+    imageUrl: string;
+    authProvider: AuthProvider;
+  }) => action(UserActionType.LOAD_USER_COMPLETED, userInfo),
 
   signIn: signInThunk,
 
@@ -27,14 +35,19 @@ export const userActionCreator = {
 function loadUserThunk() {
   return async (dispatch: Dispatch<Action>, getState: GetState) => {
     dispatch(userActionCreator.loadUserStarted());
-    await stay(2000);
+    await DISetup.setupConfig();
+    const config = resolveInject(AppConfig);
+    const ga = new GoogleAuthService(config.services.googleClientId);
+    const user = await ga.init();
+    console.log("user", user);
+    //await stay(2000);
 
     const userData = {
-      id: "1",
-      name: "olek",
-      email: "olek@",
-      imageUrl: "",
-      authProvider: AuthProvider.google
+      id: user ? user.id : "",
+      name: user ? user.name : "",
+      email: user ? user.email : "",
+      imageUrl: user ? user.imageUrl : "",
+      authProvider: user ? AuthProvider.google : AuthProvider.none
     };
 
     await DISetup.setup({
