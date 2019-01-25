@@ -5,7 +5,7 @@ import { Main } from "./main";
 export const MainContainer = connect(
   (state: AppState) => ({
     /** State to props */
-    isLoading: state.user.isLoading
+    isLoading: state.env.isLoading
   }),
   {
     /** Actions to props */

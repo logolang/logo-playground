@@ -1,6 +1,6 @@
-import { stay } from "app/utils/async-helpers";
-import { AjaxService } from "./ajax-service";
-import { DictionaryLike } from "app/utils/syntax-helpers";
+import { stay } from "app/utils/async";
+import { AjaxService } from "../infrastructure/ajax-service";
+import { DictionaryLike } from "app/utils/syntax";
 
 export class FakeAjaxService implements AjaxService {
   constructor(private objUrlMap: DictionaryLike<object>) {}

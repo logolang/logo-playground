@@ -3,7 +3,7 @@ import { Link, NavLink } from "react-router-dom";
 import * as cn from "classnames";
 
 import { Routes } from "app/routes";
-import { $T } from "app/i18n/strings";
+import { $T } from "app/i18n-strings";
 
 interface State {
   isMenuToggled?: boolean;

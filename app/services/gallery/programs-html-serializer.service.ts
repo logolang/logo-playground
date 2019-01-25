@@ -1,5 +1,5 @@
 import { ProgramModel, ProgramStorageType } from "app/services/program/program.model";
-import { createCompareFunction, DictionaryLike } from "app/utils/syntax-helpers";
+import { createCompareFunction, DictionaryLike } from "app/utils/syntax";
 
 const userpicImgCache: DictionaryLike<string> = {};
 
@@ -26,7 +26,6 @@ export class ProgramsHtmlSerializerService {
         dateLastEdited: new Date(articleElement.getAttribute("data-program-date-edited") || ""),
         code: code,
         screenshot: screenShotUrl,
-        hasTempLocalModifications: false,
         storageType: ProgramStorageType.gallery
       };
       result.push(program);
@@ -43,7 +42,8 @@ export class ProgramsHtmlSerializerService {
     const programsSorted = [...programs].sort(sortingFunction);
 
     const imageData64Url =
-      userpicImgCache[userpicUrl] || (userpicImgCache[userpicUrl] = await this.getImageBase64ByUrl(userpicUrl));
+      userpicImgCache[userpicUrl] ||
+      (userpicImgCache[userpicUrl] = await this.getImageBase64ByUrl(userpicUrl));
 
     const headBlock = `<head>
   <title>Logo personal library</title>
@@ -103,7 +103,9 @@ export class ProgramsHtmlSerializerService {
       tbody.appendChild(row);
     }
 
-    return "<!DOCTYPE html><html>" + headBlock + new XMLSerializer().serializeToString(body) + "</html>";
+    return (
+      "<!DOCTYPE html><html>" + headBlock + new XMLSerializer().serializeToString(body) + "</html>"
+    );
   }
 
   private serializeProgramToHtmlNode(program: ProgramModel) {

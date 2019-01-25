@@ -5,9 +5,9 @@ import { action, ActionType } from "typesafe-actions";
 import { resolveInject } from "app/di";
 import { GetState } from "app/store/store";
 import {
-  ITutorialInfo,
-  ITutorialStepContent,
-  ITutorialStepInfo,
+  TutorialInfo,
+  TutorialStepContent,
+  TutorialStepInfo,
   TutorialsContentService
 } from "app/services/tutorials/tutorials-content-service";
 
@@ -27,7 +27,7 @@ export const tutorialsActionCreator = {
 
   loadTutorialsStarted: () => action(TutorialsActionType.LOAD_TUTORIALS_STARTED),
 
-  loadTutorialsCompleted: (tutorials: ITutorialInfo[]) =>
+  loadTutorialsCompleted: (tutorials: TutorialInfo[]) =>
     action(TutorialsActionType.LOAD_TUTORIALS_COMPLETED, { tutorials }),
 
   loadStep: loadStepThunk,
@@ -38,9 +38,9 @@ export const tutorialsActionCreator = {
   loadStepCompleted: (
     tutorialId: string,
     stepId: string,
-    tutorialInfo: ITutorialInfo,
-    stepInfo: ITutorialStepInfo,
-    content: ITutorialStepContent
+    tutorialInfo: TutorialInfo,
+    stepInfo: TutorialStepInfo,
+    content: TutorialStepContent
   ) =>
     action(TutorialsActionType.LOAD_STEP_COMPLETED, {
       tutorialId,
@@ -94,7 +94,15 @@ function loadStepThunk(tutorialId: string, stepId: string) {
       throw new Error("Step is not found: " + stepId);
     }
 
-    dispatch(tutorialsActionCreator.loadStepCompleted(tutorialId, stepId, tutorialInfo, stepInfo, stepContent));
+    dispatch(
+      tutorialsActionCreator.loadStepCompleted(
+        tutorialId,
+        stepId,
+        tutorialInfo,
+        stepInfo,
+        stepContent
+      )
+    );
   };
 }
 

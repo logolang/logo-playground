@@ -2,15 +2,12 @@ import * as React from "react";
 import { RouteComponentProps } from "react-router-dom";
 import * as markdown from "markdown-it";
 
-import { callActionSafe } from "app/utils/error-helpers";
+import { callActionSafe } from "app/utils/error";
 
 import { resolveInject } from "app/di";
 import { LocalizedContentLoader } from "app/services/infrastructure/localized-content-loader";
-import {
-  EventAction,
-  EventsTrackingService
-} from "app/services/infrastructure/events-tracking.service";
-import { ErrorService } from "app/services/infrastructure/error.service";
+import { EventAction, EventsTrackingService } from "app/services/env/events-tracking.service";
+import { ErrorService } from "app/services/env/error.service";
 import { Loading } from "app/ui/_generic/loading";
 import { MainMenuContainer } from "../main-menu.container";
 

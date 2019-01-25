@@ -1,13 +1,13 @@
 import * as React from "react";
 
-import { $T } from "app/i18n/strings";
+import { $T } from "app/i18n-strings";
 import { resolveInject } from "app/di";
 import {
-  ITutorialInfo,
-  ITutorialStepInfo,
-  ITutorialStepContent
+  TutorialInfo,
+  TutorialStepInfo,
+  TutorialStepContent
 } from "app/services/tutorials/tutorials-content-service";
-import { EventsTrackingService, EventAction } from "app/services/infrastructure/events-tracking.service";
+import { EventsTrackingService, EventAction } from "app/services/env/events-tracking.service";
 
 import { TutorialSelectModal } from "app/ui/tutorials/tutorial-select-modal";
 import { Modal } from "app/ui/_generic/modal";
@@ -15,10 +15,10 @@ import { Modal } from "app/ui/_generic/modal";
 import "./tutorial-view.less";
 
 export interface Props {
-  tutorials: ITutorialInfo[];
-  currentTutorialInfo: ITutorialInfo;
-  currentStepInfo: ITutorialStepInfo;
-  currentStepContent: ITutorialStepContent;
+  tutorials: TutorialInfo[];
+  currentTutorialInfo: TutorialInfo;
+  currentStepInfo: TutorialStepInfo;
+  currentStepContent: TutorialStepContent;
   onFixTheCode(newCode: string): void;
   onNavigationRequest(tutorialId: string, stepId: string): void;
 }
@@ -44,7 +44,8 @@ export class TutorialView extends React.Component<Props, State> {
     const currentStepIndex = this.props.currentTutorialInfo.steps.findIndex(
       x => x.id === this.props.currentStepInfo.id
     );
-    const nextStepButtonDisabled = currentStepIndex >= this.props.currentTutorialInfo.steps.length - 1;
+    const nextStepButtonDisabled =
+      currentStepIndex >= this.props.currentTutorialInfo.steps.length - 1;
     const prevStepButtonDisabled = currentStepIndex <= 0;
 
     return (
@@ -110,7 +111,11 @@ export class TutorialView extends React.Component<Props, State> {
             )}
 
             {!nextStepButtonDisabled && (
-              <button type="button" className="button is-primary" onClick={this.navigateToNextStep(1)}>
+              <button
+                type="button"
+                className="button is-primary"
+                onClick={this.navigateToNextStep(1)}
+              >
                 <span className="icon">
                   <i className="fa fa-arrow-right" aria-hidden="true" />
                 </span>
@@ -190,7 +195,9 @@ export class TutorialView extends React.Component<Props, State> {
 
   navigateToNextStep = (direction: number) => {
     return async () => {
-      this.eventsTracking.sendEvent(direction > 0 ? EventAction.tutorialsNext : EventAction.tutorialsBack);
+      this.eventsTracking.sendEvent(
+        direction > 0 ? EventAction.tutorialsNext : EventAction.tutorialsBack
+      );
       const currentStepIndex = this.props.currentTutorialInfo.steps.findIndex(
         x => x.id === this.props.currentStepInfo.id
       );

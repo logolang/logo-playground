@@ -1,4 +1,4 @@
-import { createCompareFunction } from "./syntax-helpers";
+import { createCompareFunction } from "./syntax";
 
 interface Person {
   name: string;
@@ -43,7 +43,10 @@ describe("createCompareFunction", () => {
   it("should sort by date, and height asc", () => {
     const sample = [Dora_170_2000, Dora_160_2000, Wood_160_2018, Bart_180_1913, Adam_160_1984];
     sample.sort(
-      createCompareFunction([{ sortBy: x => x.dob, direction: "asc" }, { sortBy: x => x.height, direction: "asc" }])
+      createCompareFunction([
+        { sortBy: x => x.dob, direction: "asc" },
+        { sortBy: x => x.height, direction: "asc" }
+      ])
     );
     const expected = [Bart_180_1913, Adam_160_1984, Dora_160_2000, Dora_170_2000, Wood_160_2018];
     check(sample, expected);
@@ -52,7 +55,10 @@ describe("createCompareFunction", () => {
   it("should sort by date, and height desc", () => {
     const sample = [Wood_160_2018, Dora_170_2000, Bart_180_1913, Dora_160_2000, Adam_160_1984];
     sample.sort(
-      createCompareFunction([{ sortBy: x => x.dob, direction: "asc" }, { sortBy: x => x.height, direction: "desc" }])
+      createCompareFunction([
+        { sortBy: x => x.dob, direction: "asc" },
+        { sortBy: x => x.height, direction: "desc" }
+      ])
     );
     const expected = [Bart_180_1913, Adam_160_1984, Dora_170_2000, Dora_160_2000, Wood_160_2018];
     check(sample, expected);

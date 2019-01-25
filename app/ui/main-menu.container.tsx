@@ -1,16 +1,16 @@
 import { connect } from "react-redux";
 import { AppState } from "app/store/store";
 import { MainMenu } from "./main-menu";
-import { userActionCreator } from "app/store/user/actions.user";
+import { envActionCreator } from "app/store/env/actions.env";
 
 export const MainMenuContainer = connect(
   (state: AppState) => ({
     /** State to props */
-    isLoggedIn: state.user.isLoggedIn,
-    userImageUrl: state.user.imageUrl
+    isLoggedIn: state.env.isLoggedIn,
+    userImageUrl: state.env.imageUrl
   }),
   {
     /** Actions to props */
-    onLogout: userActionCreator.signOut
+    onLogout: envActionCreator.signOut
   }
 )(MainMenu);

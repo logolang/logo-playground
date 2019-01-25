@@ -1,18 +1,18 @@
-import { UserState, defaultUserState } from "./state.user";
-import { UserAction, UserActionType } from "./actions.user";
+import { EnvState, defaultEnvState } from "./state.env";
+import { EnvAction, EnvActionType } from "./actions.env";
 
-export function reducers(state: UserState | undefined, action: UserAction): UserState {
+export function reducers(state: EnvState | undefined, action: EnvAction): EnvState {
   if (!state || !action) {
-    return defaultUserState;
+    return defaultEnvState;
   }
   switch (action.type) {
-    case UserActionType.LOAD_USER_STARTED:
+    case EnvActionType.INIT_ENV_STARTED:
       return {
         ...state,
         isLoading: true,
         isLoggedIn: false
       };
-    case UserActionType.LOAD_USER_COMPLETED:
+    case EnvActionType.SIGN_IN_COMPLETED:
       return {
         ...state,
         isLoading: false,

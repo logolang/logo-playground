@@ -1,8 +1,4 @@
-import { AuthProvider } from "app/store/user/state.user";
-
-interface LoginInfo {
-  isLoggedIn: boolean;
-  authProvider: AuthProvider;
+interface UserInfo {
   email: string;
   imageUrl: string;
   name: string;
@@ -12,7 +8,7 @@ interface LoginInfo {
 export class GoogleAuthService {
   constructor(private googleClientId: string) {}
 
-  async init(): Promise<LoginInfo | undefined> {
+  async init(): Promise<UserInfo | undefined> {
     try {
       const gapi = await this.loadGApi();
 
@@ -57,13 +53,11 @@ export class GoogleAuthService {
     });
   }
 
-  private getLoginInfo = (googleUser: any): LoginInfo | undefined => {
+  private getLoginInfo = (googleUser: any): UserInfo | undefined => {
     const isSignedIn = googleUser && googleUser.isSignedIn();
     const profile = googleUser && googleUser.getBasicProfile();
     if (isSignedIn && profile) {
       const loginInfo = {
-        isLoggedIn: true,
-        authProvider: AuthProvider.google,
         email: profile.getEmail(),
         imageUrl: profile.getImageUrl(),
         name: profile.getName(),
@@ -80,7 +74,7 @@ export class GoogleAuthService {
     await auth.signOut();
   }
 
-  async signIn(): Promise<LoginInfo | undefined> {
+  async signIn(): Promise<UserInfo | undefined> {
     const gapi = (window as any).gapi;
     const auth = gapi.auth2.getAuthInstance();
     await auth.signIn();

@@ -1,9 +1,9 @@
 import * as React from "react";
 
-import { $T } from "app/i18n/strings";
+import { $T } from "app/i18n-strings";
 import { resolveInject } from "app/di";
 import { ImageUploadService } from "app/services/infrastructure/image-upload-imgur.service";
-import { EventsTrackingService, EventAction } from "app/services/infrastructure/events-tracking.service";
+import { EventsTrackingService, EventAction } from "app/services/env/events-tracking.service";
 
 import { AlertMessage } from "app/ui/_generic/alert-message";
 import { Loading } from "app/ui/_generic/loading";
@@ -62,13 +62,19 @@ export class ScreenshotModal extends React.Component<Props, State> {
         cancelButtonText={$T.common.cancel}
       >
         <Loading isLoading={this.state.isSavingInProgress} />
-        {this.state.errorMessage && <AlertMessage message={this.state.errorMessage} type="danger" />}
+        {this.state.errorMessage && (
+          <AlertMessage message={this.state.errorMessage} type="danger" />
+        )}
         {this.state.imgUrl && (
           <div className="share-screenshot-modal-component">
             <label className="label">{$T.program.imagePreview}</label>
             <div className="has-text-centered">
               <div className="box is-inline-block">
-                <img className="screenshot-img" src={this.state.imgUrl} style={{ maxHeight: 400 }} />
+                <img
+                  className="screenshot-img"
+                  src={this.state.imgUrl}
+                  style={{ maxHeight: 400 }}
+                />
               </div>
             </div>
             <br />

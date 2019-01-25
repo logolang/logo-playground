@@ -5,10 +5,10 @@ import { action, ActionType } from "typesafe-actions";
 import { resolveInject } from "app/di";
 import { GetState } from "app/store/store";
 import { ProgramStorageType, ProgramModel } from "app/services/program/program.model";
-import { stay } from "app/utils/async-helpers";
+import { stay } from "app/utils/async";
 import { ProgramService } from "app/services/program/program.service";
 import { PersonalGalleryService } from "app/services/gallery/personal-gallery.service";
-import { NavigationService } from "app/services/infrastructure/navigation.service";
+import { NavigationService } from "app/services/env/navigation.service";
 import { Routes } from "app/routes";
 import { LocalTempCodeStorage } from "app/services/program/local-temp-code.storage";
 
@@ -33,7 +33,11 @@ export const playgroundActionCreator = {
       programId
     }),
 
-  loadProgramCompleted: (programModel: ProgramModel, storageType: ProgramStorageType, programId: string) =>
+  loadProgramCompleted: (
+    programModel: ProgramModel,
+    storageType: ProgramStorageType,
+    programId: string
+  ) =>
     action(PlaygroundActionType.LOAD_PROGRAM_COMPLETED, {
       programModel,
       storageType,
@@ -50,8 +54,11 @@ export const playgroundActionCreator = {
   deleteProgram: deleteProgramThunk,
   syncProgramStarted: () => action(PlaygroundActionType.SYNC_PROGRAM_STARTED),
 
-  syncProgramCompleted: (options: { newId?: string; newName?: string; newStorageType?: ProgramStorageType }) =>
-    action(PlaygroundActionType.SYNC_PROGRAM_COMPLETED, options),
+  syncProgramCompleted: (options: {
+    newId?: string;
+    newName?: string;
+    newStorageType?: ProgramStorageType;
+  }) => action(PlaygroundActionType.SYNC_PROGRAM_COMPLETED, options),
 
   clearProgram: () => action(PlaygroundActionType.RESET_STATE),
 

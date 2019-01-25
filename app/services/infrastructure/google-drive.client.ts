@@ -1,4 +1,4 @@
-import { RandomHelper } from "app/utils/random-helper";
+import { RandomHelper } from "app/utils/random";
 
 export interface IGoogleFileInfo {
   name: string;
@@ -45,10 +45,19 @@ export class GoogleDriveClient {
     throw new Error("Google drive read error");
   }
 
-  public async uploadNewFile(fileName: string, fileContent: string, fileContentType: string): Promise<void> {
+  public async uploadNewFile(
+    fileName: string,
+    fileContent: string,
+    fileContentType: string
+  ): Promise<void> {
     const authToken = this.gapi.client.getToken();
     const formBoundary = "__" + RandomHelper.getRandomObjectId(32) + "__";
-    const requestBody = this.createFileUploadBody(formBoundary, fileName, fileContent, fileContentType);
+    const requestBody = this.createFileUploadBody(
+      formBoundary,
+      fileName,
+      fileContent,
+      fileContentType
+    );
     const url = "https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart";
     await fetch(url, {
       method: "POST",
@@ -70,7 +79,12 @@ export class GoogleDriveClient {
   ): Promise<void> {
     const authToken = this.gapi.client.getToken();
     const formBoundary = "__" + RandomHelper.getRandomObjectId(32) + "__";
-    const requestBody = this.createFileUploadBody(formBoundary, fileName, fileContent, fileContentType);
+    const requestBody = this.createFileUploadBody(
+      formBoundary,
+      fileName,
+      fileContent,
+      fileContentType
+    );
     const url = `https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=multipart`;
     await fetch(url, {
       method: "PATCH",

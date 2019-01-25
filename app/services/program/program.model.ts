@@ -6,7 +6,6 @@ export interface ProgramModel {
   screenshot: string;
   dateCreated: Date;
   dateLastEdited: Date;
-  hasTempLocalModifications: boolean;
 }
 
 export enum ProgramStorageType {

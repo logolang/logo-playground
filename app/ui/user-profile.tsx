@@ -3,30 +3,20 @@ import * as cn from "classnames";
 import * as FileSaver from "file-saver";
 import { RouteComponentProps } from "react-router-dom";
 
-import { callActionSafe } from "app/utils/error-helpers";
-import { ensure } from "app/utils/syntax-helpers";
+import { callActionSafe } from "app/utils/error";
+import { ensure } from "app/utils/syntax";
 import { resolveInject } from "app/di";
-import { $T } from "app/i18n/strings";
-import {
-  TurtlesService,
-  TurtleInfo,
-  TurtleSize
-} from "app/services/customizations/turtles.service";
-import { Theme, ThemesService } from "app/services/customizations/themes.service";
+import { $T } from "app/i18n-strings";
+import { TurtlesService, TurtleInfo, TurtleSize } from "app/services/env/turtles.service";
+import { Theme, ThemesService } from "app/services/env/themes.service";
 import { PersonalGalleryImportService } from "app/services/gallery/personal-gallery-import.service";
-import { LocalizationService, ILocaleInfo } from "app/services/customizations/localization.service";
-import {
-  IUserSettingsService,
-  IUserSettings
-} from "app/services/customizations/user-settings.service";
-import { NotificationService } from "app/services/infrastructure/notification.service";
+import { LocalizationService, ILocaleInfo } from "app/services/env/localization.service";
+import { UserSettingsService, UserSettings } from "app/services/env/user-settings.service";
+import { NotificationService } from "app/services/env/notification.service";
 import { PersonalGalleryService } from "app/services/gallery/personal-gallery.service";
 import { ProgramsHtmlSerializerService } from "app/services/gallery/programs-html-serializer.service";
-import {
-  EventsTrackingService,
-  EventAction
-} from "app/services/infrastructure/events-tracking.service";
-import { ErrorService } from "app/services/infrastructure/error.service";
+import { EventsTrackingService, EventAction } from "app/services/env/events-tracking.service";
+import { ErrorService } from "app/services/env/error.service";
 import { SimpleSelect } from "app/ui/_generic/simple-select";
 import { PageHeader } from "app/ui/_generic/page-header";
 import { LogoExecutor } from "app/ui/_generic/logo-executor/logo-executor";
@@ -48,7 +38,7 @@ interface State {
   programCount: number;
   currentLocale?: ILocaleInfo;
   theme?: Theme;
-  userSettings?: IUserSettings;
+  userSettings?: UserSettings;
   code: string;
 }
 
@@ -57,7 +47,7 @@ interface Props extends RouteComponentProps<void> {}
 export class UserProfilePage extends React.Component<Props, State> {
   private notificationService = resolveInject(NotificationService);
   private errorService = resolveInject(ErrorService);
-  private userSettingsService = resolveInject(IUserSettingsService);
+  private userSettingsService = resolveInject(UserSettingsService);
   private themeService = resolveInject(ThemesService);
   private turtleCustomizationService = resolveInject(TurtlesService);
   private localizationService = resolveInject(LocalizationService);

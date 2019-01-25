@@ -7,15 +7,15 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { Provider } from "react-redux";
 
-import { normalizeError } from "app/utils/error-helpers";
+import { normalizeError } from "app/utils/error";
 import { AlertMessage } from "app/ui/_generic/alert-message";
 import { MainContainer } from "app/main.container";
 import { store } from "./store/store";
-import { userActionCreator } from "./store/user/actions.user";
+import { envActionCreator } from "./store/env/actions.env";
 
 async function runApp() {
   const appHostDomElement = document.getElementById("app-container") || document.body;
-  store.dispatch(userActionCreator.loadUser());
+  store.dispatch(envActionCreator.initEnv());
   try {
     // Render the app
     ReactDOM.render(

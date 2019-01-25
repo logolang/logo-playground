@@ -1,9 +1,9 @@
-import { formatId } from "app/utils/formatter-helper";
+import { formatId } from "app/utils/formatter";
 
 import { ProgramModel, ProgramStorageType } from "app/services/program/program.model";
 import { AjaxService } from "app/services/infrastructure/ajax-service";
 import { ProgramsHtmlSerializerService } from "app/services/gallery/programs-html-serializer.service";
-import { DictionaryLike } from "app/utils/syntax-helpers";
+import { DictionaryLike } from "app/utils/syntax";
 
 export class GallerySamplesRepository {
   private cached_programs: DictionaryLike<ProgramModel[]> = {};

@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as cn from "classnames";
 import { AlertMessage } from "app/ui/_generic/alert-message";
-import { callActionSafe } from "app/utils/error-helpers";
+import { callActionSafe } from "app/utils/error";
 
 import "./modal.less";
 
@@ -93,13 +93,17 @@ export class Modal extends React.Component<Props, State> {
           </header>
           <section className={cn("modal-card-body")}>
             {this.props.children}
-            {this.state.errorMessage && <AlertMessage message={this.state.errorMessage} type="danger" />}
+            {this.state.errorMessage && (
+              <AlertMessage message={this.state.errorMessage} type="danger" />
+            )}
           </section>
           {!this.props.withoutFooter && (
             <footer className="modal-card-foot">
               {this.props.onConfirm && (
                 <button
-                  className={cn("button is-primary", { "is-loading": this.state.isActionInProgress })}
+                  className={cn("button is-primary", {
+                    "is-loading": this.state.isActionInProgress
+                  })}
                   onClick={this.executeAction}
                 >
                   {actionButtonText}

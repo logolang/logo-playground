@@ -3,11 +3,8 @@ import { RouteComponentProps } from "react-router-dom";
 import * as markdown from "markdown-it";
 
 import { resolveInject } from "app/di";
-import { AppInfo } from "app/services/infrastructure/app-info";
-import {
-  EventsTrackingService,
-  EventAction
-} from "app/services/infrastructure/events-tracking.service";
+import { AppInfo } from "app/services/env/app-info";
+import { EventsTrackingService, EventAction } from "app/services/env/events-tracking.service";
 
 import { MainMenuContainer } from "./main-menu.container";
 

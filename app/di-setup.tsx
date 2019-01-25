@@ -1,30 +1,27 @@
 import { container, resolveInject } from "app/di";
-import { NULL } from "app/utils/syntax-helpers";
-import { AuthProvider } from "./store/user/state.user";
+import { NULL } from "app/utils/syntax";
+import { AuthProvider } from "./store/env/state.env";
 import { AjaxService } from "./services/infrastructure/ajax-service";
-import { AppInfo } from "./services/infrastructure/app-info";
-import { AppConfigLoader } from "./services/config/app-config-loader";
-import { AppConfig } from "./services/config/app-config";
-import { EventsTrackingService } from "./services/infrastructure/events-tracking.service";
+import { AppInfo } from "./services/env/app-info";
+import { AppConfigLoader } from "./services/env/app-config-loader";
+import { AppConfig } from "./services/env/app-config";
+import { EventsTrackingService } from "./services/env/events-tracking.service";
 import { GoogleAnalyticsTracker } from "./services/infrastructure/google-analytics-tracker";
-import {
-  UserSettingsBrowserLocalStorageService,
-  IUserSettingsService
-} from "./services/customizations/user-settings.service";
+import { UserSettingsService } from "./services/env/user-settings.service";
 import { LocalTempCodeStorage } from "./services/program/local-temp-code.storage";
 import { LocalizedContentLoader } from "./services/infrastructure/localized-content-loader";
-import { updateStringsObject } from "./i18n/i18n-tools";
-import { $T } from "./i18n/strings";
-import { LocalizationService } from "./services/customizations/localization.service";
-import { NotificationService } from "./services/infrastructure/notification.service";
-import { NavigationService } from "./services/infrastructure/navigation.service";
+import { updateStringsObject } from "./utils/i18n";
+import { $T } from "./i18n-strings";
+import { LocalizationService } from "./services/env/localization.service";
+import { NotificationService } from "./services/env/notification.service";
+import { NavigationService } from "./services/env/navigation.service";
 import { TutorialsContentService } from "./services/tutorials/tutorials-content-service";
 import {
   ImageUploadImgurService,
   ImageUploadService
 } from "./services/infrastructure/image-upload-imgur.service";
-import { ThemesService } from "./services/customizations/themes.service";
-import { TurtlesService } from "./services/customizations/turtles.service";
+import { ThemesService } from "./services/env/themes.service";
+import { TurtlesService } from "./services/env/turtles.service";
 import { PersonalGalleryRemoteRepository } from "./services/gallery/personal-gallery-remote.repository";
 import { PersonalGalleryGoogleDriveRepository } from "./services/gallery/personal-gallery-googledrive.repository";
 import { PersonalGalleryLocalRepository } from "./services/gallery/personal-gallery-local.repository";
@@ -32,7 +29,7 @@ import { PersonalGalleryService } from "./services/gallery/personal-gallery.serv
 import { GallerySamplesRepository } from "./services/gallery/gallery-samples.repository";
 import { ProgramService } from "./services/program/program.service";
 import { GistSharedProgramsRepository } from "./services/program/gist-shared-programs.repository";
-import { ErrorService } from "./services/infrastructure/error.service";
+import { ErrorService } from "./services/env/error.service";
 import { LogoCodeSamplesService } from "./services/program/logo-code-samples.service";
 
 /**
@@ -65,8 +62,8 @@ export class DISetup {
     eventsTrackingService.addTracker(googleTracking.trackEvent);
     container.bind(EventsTrackingService).toConstantValue(eventsTrackingService);
 
-    const userSettingsService = new UserSettingsBrowserLocalStorageService(options.userEmail);
-    container.bind(IUserSettingsService).toConstantValue(userSettingsService);
+    const userSettingsService = new UserSettingsService(options.userEmail);
+    container.bind(UserSettingsService).toConstantValue(userSettingsService);
     const userSettings = await userSettingsService.get();
 
     const localizedContentLoader = new LocalizedContentLoader(

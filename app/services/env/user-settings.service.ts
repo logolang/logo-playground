@@ -1,37 +1,25 @@
-import { injectable, inject } from "app/di";
 import { LocalStorageService } from "app/services/infrastructure/local-storage.service";
 
-export abstract class IUserSettingsService {
-  abstract get(): Promise<IUserSettings>;
-  abstract get userSettingsKey(): string;
-  abstract update<K extends keyof IUserSettings>(update: Pick<IUserSettings, K>): Promise<void>;
-}
-
-export interface IUserSettings {
+export interface UserSettings {
   turtleId: string;
   turtleSize: number;
   themeName: string;
   localeId: string;
-  currentTutorialInfo?: ICurrentTutorialInfo;
+  currentTutorialId: string;
+  currentStepId: string;
 }
 
-export interface ICurrentTutorialInfo {
-  tutorialId: string;
-  stepId: string;
-}
-
-@injectable()
 /**
  * This service is to store and get user settings
  * This settings will be probably synchronized to some central settings storage, so User will be able to have them same on all computers and browsers
  * Currently using local browser storage
  */
-export class UserSettingsBrowserLocalStorageService implements IUserSettingsService {
-  private localStorage: LocalStorageService<IUserSettings>;
-  private currentData: IUserSettings;
+export class UserSettingsService {
+  private localStorage: LocalStorageService<UserSettings>;
+  private currentData: UserSettings;
 
   constructor(private userEmail: string) {
-    this.localStorage = new LocalStorageService<IUserSettings>(this.userSettingsKey, {} as any);
+    this.localStorage = new LocalStorageService<UserSettings>(this.userSettingsKey, {} as any);
     const settings = this.localStorage.getValue();
 
     //Apply default values
@@ -50,11 +38,11 @@ export class UserSettingsBrowserLocalStorageService implements IUserSettingsServ
     return `logo-playground.settings:${userId}`;
   }
 
-  async get(): Promise<IUserSettings> {
+  async get(): Promise<UserSettings> {
     return this.currentData;
   }
 
-  async update<K extends keyof IUserSettings>(update: Pick<IUserSettings, K>): Promise<void> {
+  async update<K extends keyof UserSettings>(update: Pick<UserSettings, K>): Promise<void> {
     Object.assign(this.currentData, update);
     return this.saveDataToStorage();
   }

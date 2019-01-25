@@ -1,95 +1,24 @@
-import * as fetch from "isomorphic-fetch";
-import { DictionaryLike } from "app/utils/syntax-helpers";
 import { ProgramModel, ProgramStorageType } from "app/services/program/program.model";
-
-const gistApiBaseUrl = "https://api.github.com/";
-
-interface SingleGistResponse {
-  id: string;
-  description: string;
-  files: DictionaryLike<GistFileDescriptor>;
-  created_at: string;
-  updated_at: string;
-}
-
-interface GistFileDescriptor {
-  filename: string;
-  size: number;
-  truncated: boolean;
-  content: string;
-}
+import { GistClient } from "../infrastructure/gist.client";
 
 export class GistSharedProgramsRepository {
-  constructor() {
-    /** */
-  }
+  private gistClient = new GistClient();
 
   async get(id: string): Promise<ProgramModel> {
-    const idvesion = id.split(":");
-    const id_part = idvesion.length == 2 ? idvesion[0] : id;
-    const version_part = idvesion.length == 2 ? idvesion[1] : "";
-    const relativeUrl = version_part ? `gists/${id_part}/${version_part}` : `gists/${id_part}`;
-    const response = await fetch(gistApiBaseUrl + relativeUrl, {
-      method: "get",
-      headers: new Headers({
-        Accept: "application/json",
-        "Content-Type": "application/json;charset=UTF-8"
-      })
-    });
-    if (response.ok) {
-      const result = (await response.json()) as SingleGistResponse;
-      if (result.id != id_part) {
-        throw new Error("Gist API returned wrong id for request");
-      }
-      const fileNames = Object.keys(result.files);
-      if (fileNames.length != 1) {
-        throw new Error("Gist API should return only one file");
-      }
-      const file = result.files[fileNames[0]];
-      if (file.truncated) {
-        throw new Error("Requested resource is too big");
-      }
-      const program: ProgramModel = {
-        id: id,
-        code: file.content,
-        dateCreated: new Date(result.created_at),
-        dateLastEdited: new Date(result.updated_at),
-        name: file.filename,
-        screenshot: "",
-        hasTempLocalModifications: false,
-        storageType: ProgramStorageType.gist
-      };
-      return program;
-    } else {
-      console.error(await response.text());
-    }
-    throw new Error("Sorry, there was an error!");
+    const data = await this.gistClient.get(id);
+    const program: ProgramModel = {
+      id: id,
+      code: data.text,
+      dateCreated: new Date(),
+      dateLastEdited: new Date(),
+      name: data.name,
+      screenshot: "",
+      storageType: ProgramStorageType.gist
+    };
+    return program;
   }
 
   async post(programName: string, code: string): Promise<string> {
-    const payload = {
-      description: programName,
-      public: true,
-      files: {} as any
-    };
-    payload.files[programName] = {
-      content: code
-    };
-    const response = await fetch(gistApiBaseUrl + "gists", {
-      method: "post",
-      headers: new Headers({
-        Accept: "application/json",
-        "Content-Type": "application/json;charset=UTF-8"
-      }),
-      body: JSON.stringify(payload)
-    });
-    if (response.ok) {
-      const result = (await response.json()) as SingleGistResponse;
-      return result.id;
-    } else {
-      console.error(await response.text());
-    }
-
-    throw new Error("Something went wrong");
+    return this.gistClient.post(programName, code);
   }
 }
