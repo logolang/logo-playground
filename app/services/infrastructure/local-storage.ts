@@ -1,4 +1,4 @@
-export class LocalStorageService<T> {
+export class LocalStorage<T> {
   constructor(private storageKey: string, private defaultValue: T) {}
 
   getValue(): T {

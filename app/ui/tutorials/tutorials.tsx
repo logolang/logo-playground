@@ -54,9 +54,7 @@ export class TutorialsPage extends React.Component<Props, State> {
     this.isMobileDevice ? tutorialsDefaultMobileLayout : tutorialsDefaultLayout
   );
   private layoutLocalStorageKey =
-    this.userSettingsService.userSettingsKey +
-    ":tutorials-layout" +
-    (this.isMobileDevice ? "-mobile" : "-desktop");
+    "logo-playground-v1.0:tutorials-layout" + (this.isMobileDevice ? "-mobile" : "-desktop");
   private logoExecutorRef: LogoExecutor | null = null;
 
   constructor(props: Props) {

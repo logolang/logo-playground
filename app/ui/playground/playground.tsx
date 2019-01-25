@@ -49,9 +49,7 @@ export class Playground extends React.Component<Props, {}> {
     this.isMobileDevice ? playgroundDefaultMobileLayout : playgroundDefaultLayout
   );
   private layoutLocalStorageKey =
-    this.userSettingsService.userSettingsKey +
-    ":playground-layout" +
-    (this.isMobileDevice ? "-mobile" : "-desktop");
+    "logo-playground-v1.0:playground-layout" + (this.isMobileDevice ? "-mobile" : "-desktop");
   private logoExecutorRef: LogoExecutor | null = null;
 
   async componentDidMount() {
