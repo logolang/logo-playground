@@ -1,4 +1,4 @@
-import { RandomHelper } from "./random-helper";
+import { RandomHelper } from "./random";
 
 describe("RandomHelper", () => {
   it("should generate int 0 or 1 with approx 50% probability", () => {

@@ -1,4 +1,3 @@
-import { injectable } from "app/di";
 import { AjaxService } from "app/services/infrastructure/ajax-service";
 
 type DictionaryLike<V> = { [name: string]: V };

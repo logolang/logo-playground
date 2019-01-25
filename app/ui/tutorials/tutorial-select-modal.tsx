@@ -1,22 +1,22 @@
 import * as React from "react";
 import * as cn from "classnames";
-import { ITutorialInfo } from "app/services/tutorials/tutorials-content-service";
-import { $T } from "app/i18n/strings";
+import { TutorialInfo } from "app/services/tutorials/tutorials-content-service";
+import { $T } from "app/i18n-strings";
 import { Modal } from "app/ui/_generic/modal";
 import { CollapsiblePanel } from "../_generic/collapsible-panel";
-import { DictionaryLike } from "app/utils/syntax-helpers";
+import { DictionaryLike } from "app/utils/syntax";
 
 import "./tutorial-select-modal.less";
 
 interface State {
-  currentSelectedTutorial: ITutorialInfo;
+  currentSelectedTutorial: TutorialInfo;
 }
 
 interface Props {
   currentTutorialId: string;
   currentStepId: string;
-  tutorials: ITutorialInfo[];
-  onSelect(tutorial: ITutorialInfo): void;
+  tutorials: TutorialInfo[];
+  onSelect(tutorial: TutorialInfo): void;
   onCancel(): void;
 }
 
@@ -32,7 +32,7 @@ export class TutorialSelectModal extends React.Component<Props, State> {
     };
   }
 
-  onSelect = (tutorial: ITutorialInfo) => {
+  onSelect = (tutorial: TutorialInfo) => {
     this.setState({
       currentSelectedTutorial: tutorial
     });
@@ -47,7 +47,7 @@ export class TutorialSelectModal extends React.Component<Props, State> {
   }
 
   render(): JSX.Element | null {
-    const groups: DictionaryLike<ITutorialInfo[]> = {};
+    const groups: DictionaryLike<TutorialInfo[]> = {};
     this.props.tutorials.forEach(t => (groups[t.level] = [...(groups[t.level] || []), t]));
 
     return (
@@ -68,14 +68,16 @@ export class TutorialSelectModal extends React.Component<Props, State> {
       >
         <div className="tutorial-select-modal-component tutorial-pick-menu-container">
           <aside className="menu">
-            {Object.entries(groups).map(([groupName, tutorials]) => this.renderTutorialsGroup(groupName, tutorials))}
+            {Object.entries(groups).map(([groupName, tutorials]) =>
+              this.renderTutorialsGroup(groupName, tutorials)
+            )}
           </aside>
         </div>
       </Modal>
     );
   }
 
-  renderTutorialsGroup(groupName: string, tutorials: ITutorialInfo[]) {
+  renderTutorialsGroup(groupName: string, tutorials: TutorialInfo[]) {
     const selectedTutorial = this.state.currentSelectedTutorial;
     return (
       <React.Fragment key={groupName}>
@@ -91,10 +93,17 @@ export class TutorialSelectModal extends React.Component<Props, State> {
                   onClick={() => this.onSelect(t)}
                 >
                   <i className="fa fa-arrow-circle-right" aria-hidden="true" />{" "}
-                  {selectedTutorial.id === t.id ? <strong>{t.label}</strong> : <span>{t.label}</span>}
+                  {selectedTutorial.id === t.id ? (
+                    <strong>{t.label}</strong>
+                  ) : (
+                    <span>{t.label}</span>
+                  )}
                 </a>
 
-                <CollapsiblePanel className="tutorial-description-container" isCollapsed={selectedTutorial.id !== t.id}>
+                <CollapsiblePanel
+                  className="tutorial-description-container"
+                  isCollapsed={selectedTutorial.id !== t.id}
+                >
                   <p className="tutorial-description">{t.description}</p>
                   <ul>
                     <li>

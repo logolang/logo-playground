@@ -1,11 +1,11 @@
 import * as React from "react";
 
-import { $T } from "app/i18n/strings";
+import { $T } from "app/i18n-strings";
 import { resolveInject } from "app/di";
-import { ErrorDef, callActionSafe } from "app/utils/error-helpers";
+import { ErrorDef, callActionSafe } from "app/utils/error";
 
 import { GistSharedProgramsRepository } from "app/services/program/gist-shared-programs.repository";
-import { EventsTrackingService, EventAction } from "app/services/infrastructure/events-tracking.service";
+import { EventsTrackingService, EventAction } from "app/services/env/events-tracking.service";
 
 import { AlertMessage } from "app/ui/_generic/alert-message";
 import { Modal } from "app/ui/_generic/modal";

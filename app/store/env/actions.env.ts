@@ -2,39 +2,40 @@ import { Dispatch } from "react";
 import { Action } from "redux";
 import { action, ActionType } from "typesafe-actions";
 import { GetState } from "app/store/store";
-import { stay } from "app/utils/async-helpers";
 import { DISetup } from "app/di-setup";
-import { AuthProvider } from "./state.user";
-import { GoogleAuthService } from "app/services/login/google-auth.service";
+import { AuthProvider } from "./state.env";
+import { GoogleAuthService } from "app/services/infrastructure/google-auth.service";
 import { resolveInject } from "app/di";
-import { AppConfig } from "app/services/config/app-config";
+import { AppConfig } from "app/services/env/app-config";
 
-export enum UserActionType {
-  LOAD_USER_STARTED = "LOAD_USER_STARTED",
-  LOAD_USER_COMPLETED = "LOAD_USER_COMPLETED"
+export enum EnvActionType {
+  INIT_ENV_STARTED = "INIT_ENV_STARTED",
+  SIGN_IN_COMPLETED = "SIGN_IN_COMPLETED",
+  SIGN_OUT_COMPLETED = "SIGN_OUT_COMPLETED"
 }
 
-export const userActionCreator = {
-  loadUser: loadUserThunk,
+export const envActionCreator = {
+  initEnv: initEnvThunk,
 
-  loadUserStarted: () => action(UserActionType.LOAD_USER_STARTED),
+  initEnvStarted: () => action(EnvActionType.INIT_ENV_STARTED),
 
-  loadUserCompleted: (userInfo: {
+  signInCompleted: (userInfo: {
     name: string;
     id: string;
     email: string;
     imageUrl: string;
     authProvider: AuthProvider;
-  }) => action(UserActionType.LOAD_USER_COMPLETED, userInfo),
+  }) => action(EnvActionType.SIGN_IN_COMPLETED, userInfo),
 
   signIn: signInThunk,
 
   signOut: signOutThunk
 };
 
-function loadUserThunk() {
+function initEnvThunk() {
   return async (dispatch: Dispatch<Action>, getState: GetState) => {
-    dispatch(userActionCreator.loadUserStarted());
+    dispatch(envActionCreator.initEnvStarted());
+
     await DISetup.setupConfig();
     const config = resolveInject(AppConfig);
     const ga = new GoogleAuthService(config.services.googleClientId);
@@ -57,7 +58,7 @@ function loadUserThunk() {
       authProvider: userData.authProvider
     });
 
-    dispatch(userActionCreator.loadUserCompleted(userData));
+    dispatch(envActionCreator.signInCompleted(userData));
   };
 }
 
@@ -73,4 +74,4 @@ function signOutThunk() {
   };
 }
 
-export type UserAction = ActionType<typeof userActionCreator>;
+export type EnvAction = ActionType<typeof envActionCreator>;

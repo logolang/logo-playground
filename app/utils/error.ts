@@ -54,7 +54,10 @@ export async function normalizeError(ex: any): Promise<ErrorDef> {
     return buildResponseError(
       ServerErrorName,
       ex.status,
-      responseError.error || responseError.message || responseError.errorMessage || ServerErrorDetailsNotAvailable
+      responseError.error ||
+        responseError.message ||
+        responseError.errorMessage ||
+        ServerErrorDetailsNotAvailable
     );
   }
 

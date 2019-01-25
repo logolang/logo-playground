@@ -1,4 +1,4 @@
-import { RandomHelper } from "./random-helper";
+import { RandomHelper } from "./random";
 
 const jsonStringifiedDate = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*))(?:Z|(\+|-)([\d|:]*))?$/;
 
@@ -44,7 +44,7 @@ export function getFileExtension(fileName: string): string {
 }
 
 /**
- * Convert date object to string using JSON format like 
+ * Convert date object to string using JSON format like
  */
 export function stringifyDateAsJson(dateValue: Date): string {
   return JSON.parse(JSON.stringify({ d: dateValue })).d;
@@ -54,7 +54,7 @@ export function stringifyDateAsJson(dateValue: Date): string {
  * Use to convert Date serialized in JSON objects as a second argument to JSON.parse
  * Example:
  * ```
- * JSON.parse(json, jsonDateReviver); 
+ * JSON.parse(json, jsonDateReviver);
  * ```
  */
 export function jsonDateReviver(key: string, value: any) {

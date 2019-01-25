@@ -1,5 +1,5 @@
-import { RandomHelper } from "app/utils/random-helper";
-import { AppConfig } from "app/services/config/app-config";
+import { RandomHelper } from "app/utils/random";
+import { AppConfig } from "app/services/env/app-config";
 import { ProgramModel, ProgramStorageType } from "app/services/program/program.model";
 import {
   GoogleDriveClient,

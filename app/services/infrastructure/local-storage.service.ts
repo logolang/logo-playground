@@ -9,11 +9,11 @@ export class LocalStorageService<T> {
     return this.defaultValue;
   }
 
-  setValue(value: T) {
-    window.localStorage.setItem(this.storageKey, JSON.stringify(value));
-  }
-
-  clearValue() {
-    window.localStorage.removeItem(this.storageKey);
+  setValue(value: T | undefined) {
+    if (value === undefined) {
+      window.localStorage.removeItem(this.storageKey);
+    } else {
+      window.localStorage.setItem(this.storageKey, JSON.stringify(value));
+    }
   }
 }

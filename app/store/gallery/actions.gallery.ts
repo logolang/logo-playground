@@ -2,7 +2,7 @@ import { Dispatch } from "react";
 import { Action } from "redux";
 import { action, ActionType } from "typesafe-actions";
 
-import { createCompareFunction } from "app/utils/syntax-helpers";
+import { createCompareFunction } from "app/utils/syntax";
 import { resolveInject } from "app/di";
 import { GallerySection } from "./state.gallery";
 import { GetState } from "app/store/store";
@@ -41,7 +41,6 @@ function loadSectionThunk(section: GallerySection, options?: { forceLoad: boolea
     dispatch(galleryActionCreator.loadSectionStarted(section));
 
     const sortingFunction = createCompareFunction<ProgramModel>([
-      { sortBy: x => x.hasTempLocalModifications, direction: "desc" },
       { sortBy: x => x.dateLastEdited, direction: "desc" },
       { sortBy: x => x.name }
     ]);

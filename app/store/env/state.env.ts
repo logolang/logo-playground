@@ -3,7 +3,7 @@ export enum AuthProvider {
   none = "none"
 }
 
-export interface UserState {
+export interface EnvState {
   isLoading: boolean;
   isLoggedIn: boolean;
   authProvider: AuthProvider;
@@ -13,7 +13,7 @@ export interface UserState {
   imageUrl: string;
 }
 
-export const defaultUserState: UserState = {
+export const defaultEnvState: EnvState = {
   isLoading: true,
   isLoggedIn: false,
   authProvider: AuthProvider.none,

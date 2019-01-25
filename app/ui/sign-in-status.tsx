@@ -1,6 +1,6 @@
 import * as React from "react";
-import { $T } from "app/i18n/strings";
-import { AuthProvider } from "app/store/user/state.user";
+import { $T } from "app/i18n-strings";
+import { AuthProvider } from "app/store/env/state.env";
 
 interface State {}
 

@@ -2,16 +2,13 @@ import * as React from "react";
 import * as cn from "classnames";
 import { Link } from "react-router-dom";
 
-import { ensure } from "app/utils/syntax-helpers";
+import { ensure } from "app/utils/syntax";
 import { resolveInject } from "app/di";
-import { $T } from "app/i18n/strings";
+import { $T } from "app/i18n-strings";
 import { Routes } from "app/routes";
 import { ProgramModel } from "app/services/program/program.model";
 import { GallerySection } from "app/store/gallery/state.gallery";
-import {
-  EventsTrackingService,
-  EventAction
-} from "app/services/infrastructure/events-tracking.service";
+import { EventsTrackingService, EventAction } from "app/services/env/events-tracking.service";
 
 import { NoData } from "app/ui/_generic/no-data";
 import { Loading } from "app/ui/_generic/loading";
@@ -113,20 +110,7 @@ export class Gallery extends React.Component<Props, {}> {
             <figure className="image is-4by3 gallery-img-container">
               <Link to={link}>
                 <img src={p.screenshot} />
-
-                <div className="gallery-img-title">
-                  {p.hasTempLocalModifications && (
-                    <>
-                      <i
-                        className="fa fa-asterisk icon-sm"
-                        aria-hidden="true"
-                        title={$T.program.programHasChanges}
-                      />
-                      &nbsp;
-                    </>
-                  )}
-                  {p.name}
-                </div>
+                <div className="gallery-img-title">{p.name}</div>
               </Link>
             </figure>
           ) : (

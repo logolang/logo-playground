@@ -1,14 +1,11 @@
 import * as React from "react";
 
-import { $T } from "app/i18n/strings";
+import { $T } from "app/i18n-strings";
 import { resolveInject } from "app/di";
 import { ProgramStorageType } from "app/services/program/program.model";
-import {
-  EventsTrackingService,
-  EventAction
-} from "app/services/infrastructure/events-tracking.service";
-import { IUserSettingsService } from "app/services/customizations/user-settings.service";
-import { checkIsMobileDevice } from "app/utils/device-helper";
+import { EventsTrackingService, EventAction } from "app/services/env/events-tracking.service";
+import { UserSettingsService } from "app/services/env/user-settings.service";
+import { checkIsMobileDevice } from "app/utils/device";
 
 import { ReactGoldenLayout } from "app/ui/_generic/react-golden-layout/react-golden-layout";
 import { ReactGoldenLayoutPanel } from "app/ui/_generic/react-golden-layout/react-golden-layout-panel";
@@ -46,7 +43,7 @@ interface Props {
 
 export class Playground extends React.Component<Props, {}> {
   private eventsTracker = resolveInject(EventsTrackingService);
-  private userSettingsService = resolveInject(IUserSettingsService);
+  private userSettingsService = resolveInject(UserSettingsService);
   private isMobileDevice = checkIsMobileDevice();
   private defaultLayoutConfigJSON = JSON.stringify(
     this.isMobileDevice ? playgroundDefaultMobileLayout : playgroundDefaultLayout

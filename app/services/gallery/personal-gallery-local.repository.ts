@@ -1,4 +1,4 @@
-import { RandomHelper } from "app/utils/random-helper";
+import { RandomHelper } from "app/utils/random";
 import { ProgramModel, ProgramStorageType } from "app/services/program/program.model";
 import { ProgramModelConverter } from "app/services/program/program-model.converter";
 

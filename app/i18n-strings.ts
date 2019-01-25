@@ -1,4 +1,4 @@
-import { Template, Plural } from "./i18n-tools";
+import { Template, Plural } from "./utils/i18n";
 
 export { Template, Plural };
 
@@ -38,7 +38,8 @@ export const $T = {
     saveToLibrary: "Save to personal library",
     takeScreenshot: "Take screenshot",
     screenshot: "Screenshot",
-    screenShotNotAvailable: "Screenshot is not available because program has not been executed yet.",
+    screenShotNotAvailable:
+      "Screenshot is not available because program has not been executed yet.",
     share: "Share",
     shareYourProgram: "Share your program",
     playgroundTitle: "Playground",

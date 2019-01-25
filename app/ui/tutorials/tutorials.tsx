@@ -1,17 +1,14 @@
 import * as React from "react";
 import { resolveInject } from "app/di";
-import { $T } from "app/i18n/strings";
-import { checkIsMobileDevice } from "app/utils/device-helper";
-import { IUserSettingsService } from "app/services/customizations/user-settings.service";
+import { $T } from "app/i18n-strings";
+import { checkIsMobileDevice } from "app/utils/device";
+import { UserSettingsService } from "app/services/env/user-settings.service";
 import {
-  ITutorialInfo,
-  ITutorialStepContent,
-  ITutorialStepInfo
+  TutorialInfo,
+  TutorialStepContent,
+  TutorialStepInfo
 } from "app/services/tutorials/tutorials-content-service";
-import {
-  EventsTrackingService,
-  EventAction
-} from "app/services/infrastructure/events-tracking.service";
+import { EventsTrackingService, EventAction } from "app/services/env/events-tracking.service";
 import {
   tutorialsDefaultLayout,
   tutorialsDefaultMobileLayout
@@ -37,10 +34,10 @@ interface Props {
   isRunning: boolean;
   tutorialId: string;
   stepId: string;
-  tutorials?: ITutorialInfo[];
-  currentTutorialInfo?: ITutorialInfo;
-  currentStepInfo?: ITutorialStepInfo;
-  currentStepContent?: ITutorialStepContent;
+  tutorials?: TutorialInfo[];
+  currentTutorialInfo?: TutorialInfo;
+  currentStepInfo?: TutorialStepInfo;
+  currentStepContent?: TutorialStepContent;
   loadStep(tutorialId: string, stepId: string): void;
   fixTheCode(): void;
   runProgram(): void;
@@ -49,7 +46,7 @@ interface Props {
 }
 
 export class TutorialsPage extends React.Component<Props, State> {
-  private userSettingsService = resolveInject(IUserSettingsService);
+  private userSettingsService = resolveInject(UserSettingsService);
   private eventsTracking = resolveInject(EventsTrackingService);
 
   private isMobileDevice = checkIsMobileDevice();

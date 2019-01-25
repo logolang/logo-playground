@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { $T } from "app/i18n/strings";
+import { $T } from "app/i18n-strings";
 
 import { Modal } from "app/ui/_generic/modal";
 import { AlertMessage } from "app/ui/_generic/alert-message";

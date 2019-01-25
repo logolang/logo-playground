@@ -14,7 +14,12 @@ interface ProgramsSaveData {
 }
 
 export class ProgramModelConverter {
-  public static createNewProgram(storageType: ProgramStorageType, name: string, code: string, screenshot: string) {
+  public static createNewProgram(
+    storageType: ProgramStorageType,
+    name: string,
+    code: string,
+    screenshot: string
+  ) {
     const program: ProgramModel = {
       id: "",
       storageType: storageType,
@@ -22,8 +27,7 @@ export class ProgramModelConverter {
       code: code,
       screenshot: screenshot,
       dateCreated: new Date(),
-      dateLastEdited: new Date(),
-      hasTempLocalModifications: false
+      dateLastEdited: new Date()
     };
     return program;
   }
@@ -77,8 +81,7 @@ export class ProgramModelConverter {
         code: saveObject.code,
         screenshot: saveObject.screenshot || "",
         dateCreated: new Date(saveObject.dateCreated),
-        dateLastEdited: new Date(saveObject.dateLastEdited),
-        hasTempLocalModifications: false
+        dateLastEdited: new Date(saveObject.dateLastEdited)
       };
       result.push(program);
     }

@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as cn from "classnames";
 
-import { $T } from "app/i18n/strings";
+import { $T } from "app/i18n-strings";
 
 import { Modal } from "app/ui/_generic/modal";
 import { NoData } from "app/ui/_generic/no-data";

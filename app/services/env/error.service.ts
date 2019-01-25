@@ -1,6 +1,6 @@
 import { Subject, Observable } from "rxjs";
 
-import { ErrorDef } from "app/utils/error-helpers";
+import { ErrorDef } from "app/utils/error";
 
 export class ErrorService {
   private errors = new Subject<ErrorDef>();

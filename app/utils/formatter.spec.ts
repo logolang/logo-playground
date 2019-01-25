@@ -1,5 +1,5 @@
-import { getFileExtension, parseDateFromJson, stringifyDateAsJson } from "./formatter-helper";
-import { NULL } from "app/utils/syntax-helpers";
+import { getFileExtension, parseDateFromJson, stringifyDateAsJson } from "./formatter";
+import { NULL } from "app/utils/syntax";
 
 describe("FormatterHelper", () => {
   it("should extract file extension properly", () => {

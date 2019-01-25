@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as cn from "classnames";
 import * as clipboard from "clipboard";
-import { $T } from "app/i18n/strings";
+import { $T } from "app/i18n-strings";
 
 interface Props {
   text: string;
@@ -45,7 +45,13 @@ export class InputCopyToClipboard extends React.Component<Props, State> {
       <>
         <div className="field">
           <div className="control has-icons-right">
-            <input id={this.componentId + "-url"} className="input" type="text" value={this.props.text} readOnly />
+            <input
+              id={this.componentId + "-url"}
+              className="input"
+              type="text"
+              value={this.props.text}
+              readOnly
+            />
             {this.state.isCopied && (
               <span className="icon is-small is-right">
                 <i className="fa fa-check" />

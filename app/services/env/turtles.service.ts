@@ -1,4 +1,4 @@
-import { $T } from "app/i18n/strings";
+import { $T } from "app/i18n-strings";
 
 export interface TurtleInfo {
   id: string;

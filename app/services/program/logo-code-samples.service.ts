@@ -1,4 +1,4 @@
-import { RandomHelper } from "app/utils/random-helper";
+import { RandomHelper } from "app/utils/random";
 
 const codeSamples = [
   `

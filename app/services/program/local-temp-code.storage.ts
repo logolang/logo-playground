@@ -32,7 +32,6 @@ export class LocalTempCodeStorage {
 
   private writeToStorage = () => {
     localStorage.setItem(this.storagePrefix + this.id, this.code || "");
-    console.log("written");
     this.timerHandle = undefined;
   };
 }

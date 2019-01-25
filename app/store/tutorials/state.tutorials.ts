@@ -1,7 +1,7 @@
 import {
-  ITutorialInfo,
-  ITutorialStepInfo,
-  ITutorialStepContent
+  TutorialInfo,
+  TutorialStepInfo,
+  TutorialStepContent
 } from "app/services/tutorials/tutorials-content-service";
 
 export interface TutorialsState {
@@ -11,10 +11,10 @@ export interface TutorialsState {
   isRunning: boolean;
   tutorialId: string;
   stepId: string;
-  tutorials?: ITutorialInfo[];
-  currentTutorialInfo?: ITutorialInfo;
-  currentStepInfo?: ITutorialStepInfo;
-  currentStepContent?: ITutorialStepContent;
+  tutorials?: TutorialInfo[];
+  currentTutorialInfo?: TutorialInfo;
+  currentStepInfo?: TutorialStepInfo;
+  currentStepContent?: TutorialStepContent;
 }
 
 export const defaultTutorialsState: TutorialsState = {

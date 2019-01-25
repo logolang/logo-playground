@@ -3,7 +3,7 @@ import * as cn from "classnames";
 import * as codemirror from "codemirror";
 import { Subscription, Observable } from "rxjs";
 
-import { ensure } from "app/utils/syntax-helpers";
+import { ensure } from "app/utils/syntax";
 
 import "node_modules/codemirror/addon/runmode/runmode.js";
 import "node_modules/codemirror/addon/edit/closebrackets.js";
