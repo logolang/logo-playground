@@ -1,6 +1,6 @@
 import { container, resolveInject } from "app/di";
 import { NULL } from "app/utils/syntax";
-import { AuthProvider } from "./store/env/state.env";
+import { AuthProvider, UserData } from "./store/env/state.env";
 import { AjaxService } from "./services/infrastructure/ajax-service";
 import { AppInfo } from "./services/env/app-info";
 import { AppConfigLoader } from "./services/env/app-config-loader";
@@ -48,12 +48,7 @@ export class DISetup {
     container.bind(AppConfig).toConstantValue(appConfig);
   }
 
-  public static async setup(options: {
-    userName: string;
-    userImage: string;
-    userEmail: string;
-    authProvider: AuthProvider;
-  }) {
+  public static async setup(options: { user: UserData }) {
     console.log("start setting up bindings");
     const ajaxService = resolveInject(AjaxService);
     const appConfig = resolveInject(AppConfig);
@@ -62,7 +57,7 @@ export class DISetup {
     eventsTrackingService.addTracker(googleTracking.trackEvent);
     container.bind(EventsTrackingService).toConstantValue(eventsTrackingService);
 
-    const userSettingsService = new UserSettingsService(options.userEmail);
+    const userSettingsService = new UserSettingsService(options.user.email);
     container.bind(UserSettingsService).toConstantValue(userSettingsService);
     const userSettings = await userSettingsService.get();
 
@@ -96,18 +91,18 @@ export class DISetup {
     container.bind(TurtlesService).toConstantValue(new TurtlesService());
 
     let remoteRepo: PersonalGalleryRemoteRepository | null = NULL;
-    switch (options.authProvider) {
+    switch (options.user.authProvider) {
       case AuthProvider.google:
         remoteRepo = new PersonalGalleryGoogleDriveRepository(
-          options.userName,
-          options.userImage,
+          options.user.name,
+          options.user.imageUrl,
           appConfig
         );
         break;
     }
     container.bind(PersonalGalleryRemoteRepository).toConstantValue(remoteRepo as any);
 
-    const localRepo = new PersonalGalleryLocalRepository(options.userEmail);
+    const localRepo = new PersonalGalleryLocalRepository(options.user.email);
     container.bind(PersonalGalleryLocalRepository).toConstantValue(localRepo);
 
     const galleryService = new PersonalGalleryService(localRepo, remoteRepo);
@@ -119,7 +114,7 @@ export class DISetup {
     const gistRepo = new GistSharedProgramsRepository();
     container.bind(GistSharedProgramsRepository).toConstantValue(gistRepo);
 
-    const localCodeStorage = new LocalTempCodeStorage(options.userEmail);
+    const localCodeStorage = new LocalTempCodeStorage(options.user.email);
     container.bind(LocalTempCodeStorage).toConstantValue(localCodeStorage);
 
     container

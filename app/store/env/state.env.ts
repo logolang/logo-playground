@@ -1,10 +1,11 @@
+import { UserSettings, defaultUserSettings } from "app/services/env/user-settings.service";
+
 export enum AuthProvider {
   google = "google",
   none = "none"
 }
 
-export interface EnvState {
-  isLoading: boolean;
+export interface UserData {
   isLoggedIn: boolean;
   authProvider: AuthProvider;
   id: string;
@@ -13,12 +14,23 @@ export interface EnvState {
   imageUrl: string;
 }
 
-export const defaultEnvState: EnvState = {
-  isLoading: true,
+export const anonymousUser: UserData = {
   isLoggedIn: false,
   authProvider: AuthProvider.none,
-  id: "",
-  name: "",
+  id: "guest",
+  name: "Guest",
   email: "",
   imageUrl: ""
+};
+
+export interface EnvState {
+  isLoading: boolean;
+  user: UserData;
+  userSettings: UserSettings;
+}
+
+export const defaultEnvState: EnvState = {
+  isLoading: true,
+  user: anonymousUser,
+  userSettings: defaultUserSettings
 };

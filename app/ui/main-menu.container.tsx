@@ -6,8 +6,8 @@ import { envActionCreator } from "app/store/env/actions.env";
 export const MainMenuContainer = connect(
   (state: AppState) => ({
     /** State to props */
-    isLoggedIn: state.env.isLoggedIn,
-    userImageUrl: state.env.imageUrl
+    isLoggedIn: state.env.user.isLoggedIn,
+    userImageUrl: state.env.user.imageUrl
   }),
   {
     /** Actions to props */
