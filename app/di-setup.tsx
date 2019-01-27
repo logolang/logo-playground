@@ -12,7 +12,6 @@ import { LocalTempCodeStorage } from "./services/program/local-temp-code.storage
 import { LocalizedContentLoader } from "./services/infrastructure/localized-content-loader";
 import { updateStringsObject } from "./utils/i18n";
 import { $T } from "./i18n-strings";
-import { LocalizationService } from "./services/env/localization.service";
 import { NotificationService } from "./services/env/notification.service";
 import { NavigationService } from "./services/env/navigation.service";
 import { TutorialsContentService } from "./services/tutorials/tutorials-content-service";
@@ -20,8 +19,6 @@ import {
   ImageUploadImgurService,
   ImageUploadService
 } from "./services/infrastructure/image-upload-imgur.service";
-import { ThemesService } from "./services/env/themes.service";
-import { TurtlesService } from "./services/env/turtles.service";
 import { PersonalGalleryRemoteRepository } from "./services/gallery/personal-gallery-remote.repository";
 import { PersonalGalleryGoogleDriveRepository } from "./services/gallery/personal-gallery-googledrive.repository";
 import { PersonalGalleryLocalRepository } from "./services/gallery/personal-gallery-local.repository";
@@ -69,8 +66,6 @@ export class DISetup {
 
     const poFile = await localizedContentLoader.getFileContent("strings.po");
     updateStringsObject($T, poFile);
-    const localizationService = new LocalizationService();
-    container.bind(LocalizationService).toConstantValue(localizationService);
 
     container.bind(NotificationService).toConstantValue(new NotificationService());
     container.bind(NavigationService).toConstantValue(new NavigationService());
@@ -84,11 +79,6 @@ export class DISetup {
       appConfig.services.imgurServiceUrl
     );
     container.bind(ImageUploadService).toConstantValue(imageUploadService);
-
-    const themeService = new ThemesService();
-    themeService.setActiveTheme(userSettings.themeName);
-    container.bind(ThemesService).toConstantValue(themeService);
-    container.bind(TurtlesService).toConstantValue(new TurtlesService());
 
     let remoteRepo: PersonalGalleryRemoteRepository | null = NULL;
     switch (options.user.authProvider) {

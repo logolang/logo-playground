@@ -2,7 +2,7 @@ import * as React from "react";
 import { Route, Redirect, Switch } from "react-router-dom";
 
 import { LoginPage } from "app/ui/login-page";
-import { UserProfilePage } from "app/ui/user-profile";
+import { UserProfileContainer } from "app/ui/user-profile.container";
 import { InfoPage } from "app/ui/info-page";
 import { PlaygroundContainer } from "app/ui/playground/playground.container";
 import { CheatSheet } from "app/ui/cheat-sheet/cheat-sheet";
@@ -16,7 +16,7 @@ export const RoutesComponent = (): JSX.Element => (
 
     <Route path={Routes.gallery.path} component={GalleryContainer} />
 
-    <Route path={Routes.settings.path} component={UserProfilePage} />
+    <Route path={Routes.settings.path} component={UserProfileContainer} />
 
     <Route path={Routes.infoPage.path} component={InfoPage} />
 
@@ -29,7 +29,10 @@ export const RoutesComponent = (): JSX.Element => (
       exact
       path={Routes.playground.path}
       render={props => (
-        <PlaygroundContainer storageType={props.match.params.storageType} programId={props.match.params.id} />
+        <PlaygroundContainer
+          storageType={props.match.params.storageType}
+          programId={props.match.params.id}
+        />
       )}
     />
 

@@ -7,13 +7,14 @@ import { AuthProvider, UserData, anonymousUser } from "./state.env";
 import { GoogleAuthService } from "app/services/infrastructure/google-auth.service";
 import { resolveInject } from "app/di";
 import { AppConfig } from "app/services/env/app-config";
-import { UserSettings, UserSettingsService } from "app/services/env/user-settings.service";
+import { UserSettingsService } from "app/services/env/user-settings.service";
+import { UserSettings } from "app/types/user-settings";
 
 export enum EnvActionType {
   INIT_ENV_STARTED = "INIT_ENV_STARTED",
   SIGN_IN_COMPLETED = "SIGN_IN_COMPLETED",
   SIGN_OUT_COMPLETED = "SIGN_OUT_COMPLETED",
-  APPLY_USER_SETTINGS = "APPLY_USER_SETTINGS"
+  APPLY_USER_SETTINGS_COMPLETED = "APPLY_USER_SETTINGS_COMPLETED"
 }
 
 export const envActionCreator = {
@@ -27,7 +28,10 @@ export const envActionCreator = {
 
   signOut: signOutThunk,
 
-  applyUserSettings: (settings: UserSettings) => action(EnvActionType.APPLY_USER_SETTINGS, settings)
+  applyUserSettingsCompleted: (settings: Partial<UserSettings>) =>
+    action(EnvActionType.APPLY_USER_SETTINGS_COMPLETED, settings),
+
+  applyUserSettings: applyUserSettingsThunk
 };
 
 function initEnvThunk() {
@@ -55,7 +59,7 @@ function initEnvThunk() {
 
     await DISetup.setup({ user: userData });
 
-    dispatch(envActionCreator.applyUserSettings(settings));
+    dispatch(envActionCreator.applyUserSettingsCompleted(settings));
     dispatch(envActionCreator.signInCompleted(userData));
   };
 }
@@ -69,6 +73,16 @@ function signInThunk(authProvider: AuthProvider) {
 function signOutThunk() {
   return async (dispatch: Dispatch<Action>, getState: GetState) => {
     console.error("Not implemented");
+  };
+}
+
+function applyUserSettingsThunk(settings: Partial<UserSettings>) {
+  return async (dispatch: Dispatch<Action>, getState: GetState) => {
+    const state = getState();
+    const settingsService = new UserSettingsService(state.env.user.email);
+    await settingsService.update(settings);
+    const newSettings = await settingsService.get();
+    dispatch(envActionCreator.applyUserSettingsCompleted(newSettings));
   };
 }
 

@@ -88,78 +88,8 @@
     <div id="theme_styles_should_be_inserted_straight_before_this_element"/>
 
     <script type="text/javascript">
-        var appThemeNameLocalStorageKey = 'logo-playground.uitheme';
-        var defaultTheme = {
-            name: "Default",
-            description: "Bulma as-is",
-            bodyClass: "is-light",
-            isDark: false,
-            codeEditorThemeName: "eclipse",
-            styleLinks: [
-                "content/css/bulma/default/bulmaswatch.min.css",
-                "content/css/codemirror/themes/eclipse.css",
-                "content/css/golden-layout/goldenlayout-light-theme.css"
-            ]
-        };
-
-        function getActiveTheme() {
-            try {
-                var storedThemeJSON = window.localStorage.getItem(appThemeNameLocalStorageKey);
-                if (storedThemeJSON) {
-                    var parsedTheme = JSON.parse(storedThemeJSON);
-                    if (parsedTheme.styleLinks && Array.isArray(parsedTheme.styleLinks)) {
-                        return parsedTheme;
-                    }
-                }
-            }
-            catch (ex) {
-            }
-        }
-
-        function injectCssLinks(links, themeName, allLoadedCallback) {
-            var linksToWait = links.length;
-            for(var i=0; i< links.length; ++i){
-                var linkUrl = links[i];
-                var link = document.createElement("link");
-                link.setAttribute("data-theme-name", themeName);
-                link.setAttribute("rel", "stylesheet");
-                link.setAttribute("type", "text/css");
-                link.setAttribute("href", linkUrl + "?<%=appGitVersion%>");
-                link.addEventListener("load", function() {
-                    --linksToWait;
-                    if (linksToWait == 0) {
-                        allLoadedCallback();
-                    }
-                });
-                var insertBeforeElement = document.getElementById("theme_styles_should_be_inserted_straight_before_this_element");
-                insertBeforeElement.parentElement.insertBefore(link, insertBeforeElement);
-            }
-        }
-
-        function activateTheme(theme, isFirstTime) {
-            window.localStorage.setItem(appThemeNameLocalStorageKey, JSON.stringify(theme));
-            document.body.className = theme.bodyClass;
-            injectCssLinks(theme.styleLinks, theme.name, function(){
-                if (!isFirstTime) {
-                    // remove old theme files
-                    var themeLinks = document.querySelectorAll("[data-theme-name]");
-                    for (var i = 0; i < themeLinks.length; ++i) {
-                        if (themeLinks[i].getAttribute("data-theme-name") !== theme.name) {
-                            themeLinks[i].remove();
-                        }
-                    }
-                }
-            });
-        }
-
-        window.themeManager = {
-            activateTheme: activateTheme,
-            getActiveTheme: getActiveTheme,
-            defaultTheme: defaultTheme
-        };
-
-        var theme = getActiveTheme() || defaultTheme;
-        activateTheme(theme, true);
+      // Themes manager
+      <%=require('!raw-loader!./ui/themes/themes-manager.js')%>
     </script>
 
     <% for (var css in htmlWebpackPlugin.files.css) { %>

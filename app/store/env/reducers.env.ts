@@ -18,10 +18,13 @@ export function reducers(state: EnvState | undefined, action: EnvAction): EnvSta
         isLoading: false,
         user: action.payload
       };
-    case EnvActionType.APPLY_USER_SETTINGS:
+    case EnvActionType.APPLY_USER_SETTINGS_COMPLETED:
       return {
         ...state,
-        userSettings: action.payload
+        userSettings: {
+          ...state.userSettings,
+          ...action.payload
+        }
       };
     default:
       return state;
