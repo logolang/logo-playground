@@ -26,7 +26,7 @@ export class GoldenLayoutHelper {
     }
     const panelContentItem = this.findGoldenLayoutContentItem(this.layout.root, panelId);
     if (!panelContentItem) {
-      console.log("Error: cannot find panel in layout: " + panelId);
+      console.error("Error: cannot find panel in layout: " + panelId);
       return;
     }
     panelContentItem.setTitle(title);

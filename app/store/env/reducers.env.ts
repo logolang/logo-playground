@@ -1,5 +1,6 @@
-import { EnvState, defaultEnvState, anonymousUser } from "./state.env";
+import { EnvState, defaultEnvState } from "./state.env";
 import { EnvAction, EnvActionType } from "./actions.env";
+import { anonymousUser } from "app/services/env/auth-service";
 
 export function reducers(state: EnvState | undefined, action: EnvAction): EnvState {
   if (!state || !action) {

@@ -1,6 +1,5 @@
 import { container, resolveInject } from "app/di";
 import { NULL } from "app/utils/syntax";
-import { AuthProvider, UserData } from "./store/env/state.env";
 import { AjaxService } from "./services/infrastructure/ajax-service";
 import { AppInfo } from "./services/env/app-info";
 import { AppConfigLoader } from "./services/env/app-config-loader";
@@ -28,6 +27,7 @@ import { ProgramService } from "./services/program/program.service";
 import { GistSharedProgramsRepository } from "./services/program/gist-shared-programs.repository";
 import { ErrorService } from "./services/env/error.service";
 import { LogoCodeSamplesService } from "./services/program/logo-code-samples.service";
+import { AuthService, UserData, AuthProvider } from "./services/env/auth-service";
 
 /**
  * Declaration for app info object injected by webpack
@@ -43,12 +43,15 @@ export class DISetup {
     const appConfigLoader = new AppConfigLoader(ajaxService);
     const appConfig = await appConfigLoader.loadData();
     container.bind(AppConfig).toConstantValue(appConfig);
+
+    const authService = new AuthService(appConfig);
+    container.bind(AuthService).toConstantValue(authService);
   }
 
   public static async setup(options: { user: UserData }) {
-    console.log("start setting up bindings");
     const ajaxService = resolveInject(AjaxService);
     const appConfig = resolveInject(AppConfig);
+
     const eventsTrackingService = new EventsTrackingService();
     const googleTracking = new GoogleAnalyticsTracker();
     eventsTrackingService.addTracker(googleTracking.trackEvent);
@@ -113,7 +116,9 @@ export class DISetup {
 
     container.bind(ErrorService).toConstantValue(new ErrorService());
     container.bind(LogoCodeSamplesService).toConstantValue(new LogoCodeSamplesService());
+  }
 
-    console.log("finish setting up bindings");
+  public static reset() {
+    container.unbindAll();
   }
 }

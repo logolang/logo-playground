@@ -3,12 +3,11 @@ import { Action } from "redux";
 import { action, ActionType } from "typesafe-actions";
 import { GetState } from "app/store/store";
 import { DISetup } from "app/di-setup";
-import { AuthProvider, UserData, anonymousUser } from "./state.env";
-import { GoogleAuthService } from "app/services/infrastructure/google-auth.service";
 import { resolveInject } from "app/di";
 import { AppConfig } from "app/services/env/app-config";
 import { UserSettingsService } from "app/services/env/user-settings.service";
 import { UserSettings } from "app/types/user-settings";
+import { AuthService, UserData, AuthProvider } from "app/services/env/auth-service";
 
 export enum EnvActionType {
   INIT_ENV_STARTED = "INIT_ENV_STARTED",
@@ -39,20 +38,8 @@ function initEnvThunk() {
     dispatch(envActionCreator.initEnvStarted());
 
     await DISetup.setupConfig();
-    const config = resolveInject(AppConfig);
-    const ga = new GoogleAuthService(config.services.googleClientId);
-    const user = await ga.init();
-    console.log("user", user);
-    const userData: UserData = user
-      ? {
-          isLoggedIn: true,
-          id: user.id,
-          name: user.name,
-          email: user.email,
-          imageUrl: user.imageUrl,
-          authProvider: AuthProvider.google
-        }
-      : anonymousUser;
+    const auth = resolveInject(AuthService);
+    const userData = await auth.init();
 
     const settingsService = new UserSettingsService(userData.email);
     const settings = await settingsService.get();
@@ -66,13 +53,19 @@ function initEnvThunk() {
 
 function signInThunk(authProvider: AuthProvider) {
   return async (dispatch: Dispatch<Action>, getState: GetState) => {
-    console.error("Not implemented");
+    const auth = resolveInject(AuthService);
+    await auth.signIn(authProvider);
+    DISetup.reset();
+    await initEnvThunk()(dispatch, getState);
   };
 }
 
 function signOutThunk() {
   return async (dispatch: Dispatch<Action>, getState: GetState) => {
-    console.error("Not implemented");
+    const auth = resolveInject(AuthService);
+    await auth.signOut();
+    DISetup.reset();
+    await initEnvThunk()(dispatch, getState);
   };
 }
 
