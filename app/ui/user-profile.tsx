@@ -1,110 +1,68 @@
 import * as React from "react";
-import * as cn from "classnames";
-import * as FileSaver from "file-saver";
-import { RouteComponentProps } from "react-router-dom";
-
-import { callActionSafe } from "app/utils/error";
-import { ensure } from "app/utils/syntax";
 import { resolveInject } from "app/di";
 import { $T } from "app/i18n-strings";
-import { TurtlesService, TurtleInfo, TurtleSize } from "app/services/env/turtles.service";
-import { Theme, ThemesService } from "app/services/env/themes.service";
-import { PersonalGalleryImportService } from "app/services/gallery/personal-gallery-import.service";
-import { LocalizationService, ILocaleInfo } from "app/services/env/localization.service";
-import { UserSettingsService, UserSettings } from "app/services/env/user-settings.service";
-import { NotificationService } from "app/services/env/notification.service";
-import { PersonalGalleryService } from "app/services/gallery/personal-gallery.service";
-import { ProgramsHtmlSerializerService } from "app/services/gallery/programs-html-serializer.service";
+import {
+  TurtleInfo,
+  TurtleSize,
+  getTurtles,
+  getTurtleSizes,
+  getTurtleImage
+} from "app/ui/turtles/turtles";
+import { Theme, getAllThemes, getActiveTheme, setActiveTheme } from "app/ui/themes/themes-helper";
 import { EventsTrackingService, EventAction } from "app/services/env/events-tracking.service";
-import { ErrorService } from "app/services/env/error.service";
 import { SimpleSelect } from "app/ui/_generic/simple-select";
 import { PageHeader } from "app/ui/_generic/page-header";
 import { LogoExecutor } from "app/ui/_generic/logo-executor/logo-executor";
-import { FileSelector } from "app/ui/_generic/file-selector";
 import { LogoCodeSamplesService } from "app/services/program/logo-code-samples.service";
-import { Loading } from "app/ui/_generic/loading";
 import { SignInStatusContainer } from "./sign-in-status.container";
 import { MainMenuContainer } from "./main-menu.container";
+import { UserSettings, locales } from "app/types/user-settings";
+import { UserData } from "app/store/env/state.env";
 
-class LocaleSelector extends SimpleSelect<ILocaleInfo> {}
+class LocaleSelector extends SimpleSelect<{ name: string; id: string }> {}
 class ThemeSelector extends SimpleSelect<Theme> {}
 class TurtleSelector extends SimpleSelect<TurtleInfo> {}
 class TurtleSizeSelector extends SimpleSelect<TurtleSize> {}
 
 interface State {
-  isLoading: boolean;
-  isSavingInProgress: boolean;
-  isImportingInProgress?: boolean;
-  programCount: number;
-  currentLocale?: ILocaleInfo;
-  theme?: Theme;
-  userSettings?: UserSettings;
   code: string;
 }
 
-interface Props extends RouteComponentProps<void> {}
+interface Props {
+  user: UserData;
+  userSettings: UserSettings;
+  applyUserSettings(settings: Partial<UserSettings>): void;
+}
 
 export class UserProfilePage extends React.Component<Props, State> {
-  private notificationService = resolveInject(NotificationService);
-  private errorService = resolveInject(ErrorService);
-  private userSettingsService = resolveInject(UserSettingsService);
-  private themeService = resolveInject(ThemesService);
-  private turtleCustomizationService = resolveInject(TurtlesService);
-  private localizationService = resolveInject(LocalizationService);
-  private galleryService = resolveInject(PersonalGalleryService);
   private eventsTracking = resolveInject(EventsTrackingService);
   private demoSamplesService = resolveInject(LogoCodeSamplesService);
-  private exportInportService = new PersonalGalleryImportService();
   private logoExecutor: LogoExecutor | null = null;
 
   constructor(props: Props) {
     super(props);
 
     this.state = {
-      isLoading: true,
-      isSavingInProgress: false,
-      programCount: 0,
-      code: ""
+      code: this.demoSamplesService.getRandomSample()
     };
   }
 
   async componentDidMount() {
     this.eventsTracking.sendEvent(EventAction.openSettings);
-    await this.loadData();
   }
 
-  private async loadData() {
-    this.setState({ isLoading: true });
-    const [programs, userSettings] = await Promise.all([
-      callActionSafe(this.errorService.handleError, async () => this.galleryService.getAll()),
-      callActionSafe(this.errorService.handleError, async () => this.userSettingsService.get())
-    ]);
-    if (programs && userSettings) {
-      const theme = this.themeService.getActiveTheme() || this.themeService.getTheme("Default");
-      const locale = this.localizationService.getLocaleById(userSettings.localeId);
-
-      this.setState(
-        {
-          userSettings: userSettings,
-          theme: theme,
-          currentLocale: locale,
-          programCount: programs.length,
-          isLoading: false
-        },
-        this.runRandomProgram
-      );
+  async componentDidUpdate(oldProps: Props) {
+    if (oldProps.userSettings !== this.props.userSettings) {
+      if (this.logoExecutor) {
+        this.logoExecutor.abort();
+      }
+      this.setState({
+        code: "setpensize 1.5\n" + this.demoSamplesService.getRandomSample()
+      });
     }
   }
 
-  private runRandomProgram = () => {
-    if (this.logoExecutor) {
-      this.logoExecutor.abort();
-    }
-    this.setState({
-      code: "setpensize 1.5\n" + this.demoSamplesService.getRandomSample()
-    });
-  };
-
+  /*
   private doExport = async () => {
     const programs = await callActionSafe(this.errorService.handleError, async () =>
       this.galleryService.getAll()
@@ -133,7 +91,7 @@ export class UserProfilePage extends React.Component<Props, State> {
       });
     }
   };
-
+*/
   render(): JSX.Element {
     return (
       <div className="ex-page-container">
@@ -142,11 +100,7 @@ export class UserProfilePage extends React.Component<Props, State> {
           <div className="container">
             <br />
             <PageHeader title={$T.settings.settingsTitle} />
-            {this.state.isLoading && (
-              <div className="main-loading-container">
-                <Loading isLoading />
-              </div>
-            )}
+
             <div className="columns">
               <div className="column is-three-fifths-desktop">
                 <div className="card">
@@ -161,14 +115,16 @@ export class UserProfilePage extends React.Component<Props, State> {
                       <div className="control">
                         <div className="select">
                           <LocaleSelector
-                            items={this.localizationService.getSupportedLocales()}
-                            selectedItem={this.state.currentLocale}
+                            items={locales}
+                            selectedItem={locales.find(
+                              x => x.id === this.props.userSettings.localeId
+                            )}
                             getItemIdentifier={x => x.id}
                             renderItem={x => x.name}
                             idAttr="language-selector"
                             selectionChanged={async selectedLocation => {
                               if (selectedLocation) {
-                                await this.userSettingsService.update({
+                                await this.props.applyUserSettings({
                                   localeId: selectedLocation.id
                                 });
                               }
@@ -187,19 +143,19 @@ export class UserProfilePage extends React.Component<Props, State> {
                       <div className="control is-expanded">
                         <div className="select is-fullwidth">
                           <ThemeSelector
-                            items={this.themeService.getAllThemes()}
-                            selectedItem={this.state.theme}
+                            items={getAllThemes()}
+                            selectedItem={getActiveTheme()}
                             getItemIdentifier={x => x.name}
                             renderItem={x => `${x.name} - ${x.description}`}
                             idAttr="theme-selector"
                             selectionChanged={async selectedTheme => {
                               if (selectedTheme) {
-                                this.setState({ theme: selectedTheme });
-                                await this.userSettingsService.update({
-                                  themeName: selectedTheme.name
+                                this.props.applyUserSettings({
+                                  themeName: selectedTheme.name,
+                                  isDarkTheme: selectedTheme.isDark,
+                                  editorTheme: selectedTheme.codeEditorThemeName
                                 });
-                                this.themeService.setActiveTheme(selectedTheme.name);
-                                this.forceUpdate(this.runRandomProgram);
+                                setActiveTheme(selectedTheme.name);
                               }
                             }}
                           />
@@ -211,81 +167,69 @@ export class UserProfilePage extends React.Component<Props, State> {
 
                     <div className="columns">
                       <div className="column">
-                        {this.state.userSettings && (
-                          <>
-                            <label className="label">{$T.settings.turtleSkin}</label>
-                            <div className="field">
-                              <div className="control">
-                                <div className="select">
-                                  <TurtleSelector
-                                    items={this.turtleCustomizationService.getAllTurtles()}
-                                    selectedItem={this.turtleCustomizationService
-                                      .getAllTurtles()
-                                      .find(x => x.id === ensure(this.state.userSettings).turtleId)}
-                                    getItemIdentifier={x => x.id}
-                                    renderItem={x => x.name}
-                                    selectionChanged={async newTurtle => {
-                                      if (newTurtle) {
-                                        await this.userSettingsService.update({
-                                          turtleId: newTurtle.id
-                                        });
-                                        this.forceUpdate(this.runRandomProgram);
-                                      }
-                                    }}
-                                  />
-                                </div>
-                              </div>
+                        <label className="label">{$T.settings.turtleSkin}</label>
+                        <div className="field">
+                          <div className="control">
+                            <div className="select">
+                              <TurtleSelector
+                                items={getTurtles()}
+                                selectedItem={getTurtles().find(
+                                  x => x.id === this.props.userSettings.turtleId
+                                )}
+                                getItemIdentifier={x => x.id}
+                                renderItem={x => x.name}
+                                selectionChanged={async newTurtle => {
+                                  if (newTurtle) {
+                                    this.props.applyUserSettings({
+                                      turtleId: newTurtle.id
+                                    });
+                                  }
+                                }}
+                              />
                             </div>
+                          </div>
+                        </div>
 
-                            <br />
+                        <br />
 
-                            <label className="label">{$T.settings.turtleSize}</label>
-                            <div className="field">
-                              <div className="control">
-                                <div className="select">
-                                  <TurtleSizeSelector
-                                    items={this.turtleCustomizationService.getTurtleSizes()}
-                                    selectedItem={this.turtleCustomizationService
-                                      .getTurtleSizes()
-                                      .find(
-                                        x => x.size === ensure(this.state.userSettings).turtleSize
-                                      )}
-                                    getItemIdentifier={x => x.size.toString()}
-                                    renderItem={x => x.description}
-                                    selectionChanged={async newSize => {
-                                      if (newSize) {
-                                        await this.userSettingsService.update({
-                                          turtleSize: newSize.size
-                                        });
-                                        this.forceUpdate(this.runRandomProgram);
-                                      }
-                                    }}
-                                  />
-                                </div>
-                              </div>
+                        <label className="label">{$T.settings.turtleSize}</label>
+                        <div className="field">
+                          <div className="control">
+                            <div className="select">
+                              <TurtleSizeSelector
+                                items={getTurtleSizes()}
+                                selectedItem={getTurtleSizes().find(
+                                  x => x.size === this.props.userSettings.turtleSize
+                                )}
+                                getItemIdentifier={x => x.size.toString()}
+                                renderItem={x => x.description}
+                                selectionChanged={async newSize => {
+                                  if (newSize) {
+                                    this.props.applyUserSettings({
+                                      turtleSize: newSize.size
+                                    });
+                                  }
+                                }}
+                              />
                             </div>
-                          </>
-                        )}
+                          </div>
+                        </div>
                       </div>
                       <div className="column">
-                        {this.state.theme && this.state.userSettings && (
-                          <LogoExecutor
-                            ref={ref => (this.logoExecutor = ref)}
-                            isRunning={true}
-                            code={this.state.code}
-                            onFinish={() => {}}
-                            isDarkTheme={this.state.theme.isDark}
-                            turtleImage={this.turtleCustomizationService.getTurtleImage(
-                              this.state.userSettings.turtleId
-                            )}
-                            turtleSize={this.state.userSettings.turtleSize}
-                          />
-                        )}
+                        <LogoExecutor
+                          ref={ref => (this.logoExecutor = ref)}
+                          isRunning={true}
+                          code={this.state.code}
+                          onFinish={() => {}}
+                          isDarkTheme={this.props.userSettings.isDarkTheme}
+                          turtleImage={getTurtleImage(this.props.userSettings.turtleId)}
+                          turtleSize={this.props.userSettings.turtleSize}
+                        />
                       </div>
                     </div>
 
                     <br />
-
+                    {/*
                     <label className="label">
                       <span>{$T.gallery.personalLibrary}</span>{" "}
                       <span>
@@ -310,6 +254,7 @@ export class UserProfilePage extends React.Component<Props, State> {
                         />
                       </p>
                     </div>
+                    /*/}
                   </div>
                 </div>
               </div>

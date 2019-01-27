@@ -36,6 +36,9 @@ export class LogoExecutor extends React.Component<Props, State> {
 
   componentDidMount() {
     this.graphics = new LogoOutputGraphics("#sandbox", "#turtle");
+    if (this.props.isRunning) {
+      this.execute();
+    }
   }
 
   componentWillUnmount() {
@@ -133,10 +136,16 @@ export class LogoExecutor extends React.Component<Props, State> {
     } else {
       // go up in the DOM tree to find parent with size and use it
       let currentElement = container;
-      while (currentElement && !(currentElement.clientWidth > 0 && currentElement.clientHeight > 0)) {
+      while (
+        currentElement &&
+        !(currentElement.clientWidth > 0 && currentElement.clientHeight > 0)
+      ) {
         currentElement = currentElement.parentElement as Element;
       }
-      this.graphics.resizeCanvas(currentElement.clientWidth || 400, currentElement.clientHeight || 300);
+      this.graphics.resizeCanvas(
+        currentElement.clientWidth || 400,
+        currentElement.clientHeight || 300
+      );
     }
   }
 }

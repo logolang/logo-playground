@@ -1,4 +1,4 @@
-import { UserSettings, defaultUserSettings } from "app/services/env/user-settings.service";
+import { UserSettings, defaultUserSettings } from "app/types/user-settings";
 
 export enum AuthProvider {
   google = "google",

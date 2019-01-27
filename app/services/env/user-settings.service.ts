@@ -1,22 +1,5 @@
 import { LocalStorage } from "app/services/infrastructure/local-storage";
-
-export interface UserSettings {
-  turtleId: string;
-  turtleSize: number;
-  themeName: string;
-  localeId: string;
-  currentTutorialId: string;
-  currentStepId: string;
-}
-
-export const defaultUserSettings: UserSettings = {
-  turtleId: "tt12",
-  turtleSize: 40,
-  themeName: "default",
-  localeId: "en",
-  currentTutorialId: "01-basics",
-  currentStepId: "01-intro"
-};
+import { UserSettings, defaultUserSettings } from "app/types/user-settings";
 
 /**
  * This service is to store and get user settings

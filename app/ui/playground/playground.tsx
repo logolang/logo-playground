@@ -12,7 +12,6 @@ import { ReactGoldenLayoutPanel } from "app/ui/_generic/react-golden-layout/reac
 import { LogoExecutor } from "app/ui/_generic/logo-executor/logo-executor";
 import { Loading } from "app/ui/_generic/loading";
 import { CodeInput } from "app/ui/_generic/code-input/code-input";
-import { MainMenu } from "app/ui/main-menu";
 import { CodeMenu } from "app/ui/code-menu/code-menu";
 import {
   playgroundDefaultMobileLayout,
@@ -21,6 +20,8 @@ import {
 
 import "./playground.less";
 import { MainMenuContainer } from "../main-menu.container";
+import { UserSettings } from "app/types/user-settings";
+import { getTurtleImage } from "../turtles/turtles";
 
 interface Props {
   isLoading: boolean;
@@ -30,6 +31,7 @@ interface Props {
   programName: string;
   hasModifications: boolean;
   isRunning: boolean;
+  userSettings: UserSettings;
   loadProgram(storageType?: ProgramStorageType, programId?: string): void;
   codeChanged(code: string): void;
   runProgram(): void;
@@ -43,7 +45,6 @@ interface Props {
 
 export class Playground extends React.Component<Props, {}> {
   private eventsTracker = resolveInject(EventsTrackingService);
-  private userSettingsService = resolveInject(UserSettingsService);
   private isMobileDevice = checkIsMobileDevice();
   private defaultLayoutConfigJSON = JSON.stringify(
     this.isMobileDevice ? playgroundDefaultMobileLayout : playgroundDefaultLayout
@@ -154,7 +155,7 @@ export class Playground extends React.Component<Props, {}> {
               />
               <CodeInput
                 className="code-input-container"
-                editorTheme="eclipse"
+                editorTheme={this.props.userSettings.editorTheme}
                 code={this.props.code}
                 onChanged={this.handleCodeChanged}
               />
@@ -165,7 +166,9 @@ export class Playground extends React.Component<Props, {}> {
                 isRunning={this.props.isRunning}
                 onFinish={this.handleStopProgram}
                 code={this.props.code}
-                isDarkTheme={false}
+                isDarkTheme={this.props.userSettings.isDarkTheme}
+                turtleImage={getTurtleImage(this.props.userSettings.turtleId)}
+                turtleSize={this.props.userSettings.turtleSize}
               />
             </ReactGoldenLayoutPanel>
           </ReactGoldenLayout>

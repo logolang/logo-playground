@@ -89,12 +89,12 @@ export const $T = {
     uiTheme: "User interface theme",
     turtleSkin: "Turtle outfit",
     turtleSkins: {
-      tt10: "Chilly Bob",
-      tt11: "Summer",
-      tt12: "Bright Runner",
-      tt13: "Deep Diver",
-      tt2: "Chameleon",
-      tt9: "Princess"
+      bob: "Chilly Bob",
+      summer: "Summer",
+      bright_runner: "Bright Runner",
+      diver: "Deep Diver",
+      chameleon: "Chameleon",
+      princess: "Princess"
     },
     turtleSize: "Turtle size",
     turtleSizes: {
