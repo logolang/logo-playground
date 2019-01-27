@@ -24,6 +24,8 @@ import { LogoExecutor } from "../_generic/logo-executor/logo-executor";
 
 import "./tutorials.less";
 import { MainMenuContainer } from "../main-menu.container";
+import { getTurtleImage } from "../turtles/turtles";
+import { UserSettings } from "app/types/user-settings";
 
 interface State {}
 
@@ -38,6 +40,7 @@ interface Props {
   currentTutorialInfo?: TutorialInfo;
   currentStepInfo?: TutorialStepInfo;
   currentStepContent?: TutorialStepContent;
+  userSettings: UserSettings;
   loadStep(tutorialId: string, stepId: string): void;
   fixTheCode(): void;
   runProgram(): void;
@@ -141,7 +144,7 @@ export class TutorialsPage extends React.Component<Props, State> {
               />
               <CodeInput
                 className="code-input-container"
-                editorTheme="eclipse"
+                editorTheme={this.props.userSettings.editorTheme}
                 code={this.props.code}
                 onChanged={this.handleCodeChanged}
               />
@@ -157,7 +160,9 @@ export class TutorialsPage extends React.Component<Props, State> {
                 isRunning={this.props.isRunning}
                 onFinish={this.handleStopProgram}
                 code={this.props.code}
-                isDarkTheme={false}
+                isDarkTheme={this.props.userSettings.isDarkTheme}
+                turtleImage={getTurtleImage(this.props.userSettings.turtleId)}
+                turtleSize={this.props.userSettings.turtleSize}
               />
             </ReactGoldenLayoutPanel>
             <ReactGoldenLayoutPanel

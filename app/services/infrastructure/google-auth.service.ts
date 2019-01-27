@@ -1,4 +1,4 @@
-interface UserInfo {
+export interface UserInfo {
   email: string;
   imageUrl: string;
   name: string;
@@ -10,15 +10,21 @@ export class GoogleAuthService {
 
   async init(): Promise<UserInfo | undefined> {
     try {
-      const gapi = await this.loadGApi();
+      let gapi = (window as any).gapi;
+      if (!gapi) {
+        throw new Error("Google API is not loaded");
+      }
+      if (!gapi.auth2) {
+        await this.loadGApiAuth();
 
-      await gapi.client.init({
-        clientId: this.googleClientId,
-        scope:
-          "profile email https://www.googleapis.com/auth/drive.appdata https://www.googleapis.com/auth/drive.file",
-        discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"],
-        prompt: "select_account"
-      });
+        await gapi.client.init({
+          clientId: this.googleClientId,
+          scope:
+            "profile email https://www.googleapis.com/auth/drive.appdata https://www.googleapis.com/auth/drive.file",
+          discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"],
+          prompt: "select_account"
+        });
+      }
 
       const auth = gapi.auth2.getAuthInstance();
 
@@ -30,15 +36,12 @@ export class GoogleAuthService {
     }
   }
 
-  private async loadGApi(): Promise<any> {
+  private async loadGApiAuth(): Promise<void> {
     const gapi = (window as any).gapi;
-    if (!gapi) {
-      return undefined;
-    }
     return new Promise((resolve, reject) => {
       gapi.load("client:auth2", {
         callback: () => {
-          resolve(gapi);
+          resolve();
         },
         onerror: () => {
           reject();
@@ -76,6 +79,7 @@ export class GoogleAuthService {
 
   async signIn(): Promise<UserInfo | undefined> {
     const gapi = (window as any).gapi;
+    await this.init();
     const auth = gapi.auth2.getAuthInstance();
     await auth.signIn();
     const googleUser = auth.currentUser.get();

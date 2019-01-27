@@ -17,7 +17,7 @@ import { LogoCodeSamplesService } from "app/services/program/logo-code-samples.s
 import { SignInStatusContainer } from "./sign-in-status.container";
 import { MainMenuContainer } from "./main-menu.container";
 import { UserSettings, locales } from "app/types/user-settings";
-import { UserData } from "app/store/env/state.env";
+import { UserData } from "app/services/env/auth-service";
 
 class LocaleSelector extends SimpleSelect<{ name: string; id: string }> {}
 class ThemeSelector extends SimpleSelect<Theme> {}

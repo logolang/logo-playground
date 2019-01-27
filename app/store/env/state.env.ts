@@ -1,27 +1,5 @@
 import { UserSettings, defaultUserSettings } from "app/types/user-settings";
-
-export enum AuthProvider {
-  google = "google",
-  none = "none"
-}
-
-export interface UserData {
-  isLoggedIn: boolean;
-  authProvider: AuthProvider;
-  id: string;
-  name: string;
-  email: string;
-  imageUrl: string;
-}
-
-export const anonymousUser: UserData = {
-  isLoggedIn: false,
-  authProvider: AuthProvider.none,
-  id: "guest",
-  name: "Guest",
-  email: "",
-  imageUrl: ""
-};
+import { anonymousUser, UserData } from "app/services/env/auth-service";
 
 export interface EnvState {
   isLoading: boolean;

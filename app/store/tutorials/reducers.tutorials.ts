@@ -1,7 +1,10 @@
 import { TutorialsState, defaultTutorialsState } from "./state.tutorials";
 import { TutorialsActionType, TutorialsAction } from "./actions.tutorials";
 
-export function reducers(state: TutorialsState | undefined, action: TutorialsAction): TutorialsState {
+export function reducers(
+  state: TutorialsState | undefined,
+  action: TutorialsAction
+): TutorialsState {
   if (!state || !action) {
     return defaultTutorialsState;
   }
@@ -30,7 +33,8 @@ export function reducers(state: TutorialsState | undefined, action: TutorialsAct
         isStepLoading: false,
         currentTutorialInfo: action.payload.tutorialInfo,
         currentStepInfo: action.payload.stepInfo,
-        currentStepContent: action.payload.content
+        currentStepContent: action.payload.content,
+        isRunning: true
       };
     case TutorialsActionType.CODE_CHANGED:
       return {
