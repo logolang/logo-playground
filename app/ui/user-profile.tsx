@@ -31,7 +31,7 @@ interface State {
 interface Props {
   user: UserData;
   userSettings: UserSettings;
-  applyUserSettings(settings: Partial<UserSettings>): void;
+  applyUserSettings(settings: Partial<UserSettings>, options?: { rebindServices: boolean }): void;
 }
 
 export class UserProfilePage extends React.Component<Props, State> {
@@ -101,135 +101,138 @@ export class UserProfilePage extends React.Component<Props, State> {
             <br />
             <PageHeader title={$T.settings.settingsTitle} />
 
+            <SignInStatusContainer />
+            <br />
+
+            <div className="field">
+              <label className="label" htmlFor="language-selector">
+                {$T.settings.language}
+              </label>
+              <div className="control">
+                <div className="select">
+                  <LocaleSelector
+                    items={locales}
+                    selectedItem={locales.find(x => x.id === this.props.userSettings.localeId)}
+                    getItemIdentifier={x => x.id}
+                    renderItem={x => x.name}
+                    id="language-selector"
+                    selectionChanged={async selectedLocation => {
+                      if (selectedLocation) {
+                        await this.props.applyUserSettings(
+                          { localeId: selectedLocation.id },
+                          { rebindServices: true }
+                        );
+                      }
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <br />
+
             <div className="columns">
-              <div className="column is-three-fifths-desktop">
-                <div className="card">
-                  <div className="card-content">
-                    <SignInStatusContainer />
-                    <br />
-
-                    <div className="field">
-                      <label className="label" htmlFor="language-selector">
-                        {$T.settings.language}
-                      </label>
-                      <div className="control">
-                        <div className="select">
-                          <LocaleSelector
-                            items={locales}
-                            selectedItem={locales.find(
-                              x => x.id === this.props.userSettings.localeId
-                            )}
-                            getItemIdentifier={x => x.id}
-                            renderItem={x => x.name}
-                            idAttr="language-selector"
-                            selectionChanged={async selectedLocation => {
-                              if (selectedLocation) {
-                                await this.props.applyUserSettings({
-                                  localeId: selectedLocation.id
-                                });
-                              }
-                            }}
-                          />
-                        </div>
-                      </div>
+              <div className="column">
+                <label className="label" htmlFor="theme-selector">
+                  {$T.settings.uiTheme}
+                </label>
+                <div className="field">
+                  <div className="control is-expanded">
+                    <div className="select is-fullwidth">
+                      <ThemeSelector
+                        items={getAllThemes()}
+                        selectedItem={getActiveTheme()}
+                        getItemIdentifier={x => x.name}
+                        renderItem={x => `${x.name} - ${x.description}`}
+                        id="theme-selector"
+                        selectionChanged={async selectedTheme => {
+                          if (selectedTheme) {
+                            this.props.applyUserSettings({
+                              themeName: selectedTheme.name,
+                              isDarkTheme: selectedTheme.isDark,
+                              editorTheme: selectedTheme.codeEditorThemeName
+                            });
+                            setActiveTheme(selectedTheme.name);
+                          }
+                        }}
+                      />
                     </div>
+                  </div>
+                </div>
 
-                    <br />
+                <br />
 
-                    <div className="field">
-                      <label className="label" htmlFor="theme-selector">
-                        {$T.settings.uiTheme}
-                      </label>
-                      <div className="control is-expanded">
-                        <div className="select is-fullwidth">
-                          <ThemeSelector
-                            items={getAllThemes()}
-                            selectedItem={getActiveTheme()}
-                            getItemIdentifier={x => x.name}
-                            renderItem={x => `${x.name} - ${x.description}`}
-                            idAttr="theme-selector"
-                            selectionChanged={async selectedTheme => {
-                              if (selectedTheme) {
-                                this.props.applyUserSettings({
-                                  themeName: selectedTheme.name,
-                                  isDarkTheme: selectedTheme.isDark,
-                                  editorTheme: selectedTheme.codeEditorThemeName
-                                });
-                                setActiveTheme(selectedTheme.name);
-                              }
-                            }}
-                          />
-                        </div>
-                      </div>
+                <label className="label" htmlFor="turtle-skin-selector">
+                  {$T.settings.turtleSkin}
+                </label>
+                <div className="field">
+                  <div className="control">
+                    <div className="select">
+                      <TurtleSelector
+                        id="turtle-skin-selector"
+                        items={getTurtles()}
+                        selectedItem={getTurtles().find(
+                          x => x.id === this.props.userSettings.turtleId
+                        )}
+                        getItemIdentifier={x => x.id}
+                        renderItem={x => x.name}
+                        selectionChanged={async newTurtle => {
+                          if (newTurtle) {
+                            this.props.applyUserSettings({
+                              turtleId: newTurtle.id
+                            });
+                          }
+                        }}
+                      />
                     </div>
+                  </div>
+                </div>
 
-                    <br />
+                <br />
 
-                    <div className="columns">
-                      <div className="column">
-                        <label className="label">{$T.settings.turtleSkin}</label>
-                        <div className="field">
-                          <div className="control">
-                            <div className="select">
-                              <TurtleSelector
-                                items={getTurtles()}
-                                selectedItem={getTurtles().find(
-                                  x => x.id === this.props.userSettings.turtleId
-                                )}
-                                getItemIdentifier={x => x.id}
-                                renderItem={x => x.name}
-                                selectionChanged={async newTurtle => {
-                                  if (newTurtle) {
-                                    this.props.applyUserSettings({
-                                      turtleId: newTurtle.id
-                                    });
-                                  }
-                                }}
-                              />
-                            </div>
-                          </div>
-                        </div>
-
-                        <br />
-
-                        <label className="label">{$T.settings.turtleSize}</label>
-                        <div className="field">
-                          <div className="control">
-                            <div className="select">
-                              <TurtleSizeSelector
-                                items={getTurtleSizes()}
-                                selectedItem={getTurtleSizes().find(
-                                  x => x.size === this.props.userSettings.turtleSize
-                                )}
-                                getItemIdentifier={x => x.size.toString()}
-                                renderItem={x => x.description}
-                                selectionChanged={async newSize => {
-                                  if (newSize) {
-                                    this.props.applyUserSettings({
-                                      turtleSize: newSize.size
-                                    });
-                                  }
-                                }}
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="column">
-                        <LogoExecutor
-                          ref={ref => (this.logoExecutor = ref)}
-                          isRunning={true}
-                          code={this.state.code}
-                          onFinish={() => {}}
-                          isDarkTheme={this.props.userSettings.isDarkTheme}
-                          turtleImage={getTurtleImage(this.props.userSettings.turtleId)}
-                          turtleSize={this.props.userSettings.turtleSize}
-                        />
-                      </div>
+                <label className="label" htmlFor="turtle-size-selector">
+                  {$T.settings.turtleSize}
+                </label>
+                <div className="field">
+                  <div className="control">
+                    <div className="select">
+                      <TurtleSizeSelector
+                        id="turtle-size-selector"
+                        items={getTurtleSizes()}
+                        selectedItem={getTurtleSizes().find(
+                          x => x.size === this.props.userSettings.turtleSize
+                        )}
+                        getItemIdentifier={x => x.size.toString()}
+                        renderItem={x => x.description}
+                        selectionChanged={async newSize => {
+                          if (newSize) {
+                            this.props.applyUserSettings({
+                              turtleSize: newSize.size
+                            });
+                          }
+                        }}
+                      />
                     </div>
+                  </div>
+                </div>
+              </div>
+              <div className="column">
+                <div className="card" style={{ height: 300 }}>
+                  <LogoExecutor
+                    ref={ref => (this.logoExecutor = ref)}
+                    isRunning={true}
+                    code={this.state.code}
+                    onFinish={() => {}}
+                    isDarkTheme={this.props.userSettings.isDarkTheme}
+                    turtleImage={getTurtleImage(this.props.userSettings.turtleId)}
+                    turtleSize={this.props.userSettings.turtleSize}
+                  />
+                </div>
+              </div>
+            </div>
 
-                    <br />
-                    {/*
+            <br />
+            {/*
                     <label className="label">
                       <span>{$T.gallery.personalLibrary}</span>{" "}
                       <span>
@@ -255,10 +258,6 @@ export class UserProfilePage extends React.Component<Props, State> {
                       </p>
                     </div>
                     /*/}
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </div>

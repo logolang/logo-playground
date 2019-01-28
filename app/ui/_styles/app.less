@@ -24,6 +24,10 @@ html {
   }
 }
 
+.content.content pre {
+  padding: 0.5em;
+}
+
 /* Application specific styles */
 .dark-navbar .ex-app-logo {
   background-image: url(../../../content/images/logo-logo-light.svg);
@@ -37,15 +41,21 @@ html {
 }
 
 .ex-page-container {
-  height: 100vh;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  height: 100vh;
 }
 
 .ex-page-content {
   display: flex;
+  flex-direction: column;
   overflow-y: auto;
   flex: auto;
-  justify-content: center;
+  padding-left: 20px;
+  padding-right: 20px;
+
+  &.is-fullscreen {
+    padding-left: 0px;
+    padding-right: 0px;
+  }
 }

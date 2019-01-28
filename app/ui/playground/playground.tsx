@@ -111,7 +111,7 @@ export class Playground extends React.Component<Props, {}> {
     return (
       <div className="ex-page-container">
         <MainMenuContainer />
-        <div className="ex-page-content playground-page-component">
+        <div className="ex-page-content is-fullscreen playground-page-component">
           {this.props.isLoading && (
             <div className="main-loading-container">
               <Loading isLoading />
@@ -193,6 +193,6 @@ export class Playground extends React.Component<Props, {}> {
   }
 
   private buildOutputPanelTitle(): string {
-    return `<i class="fa fa-television" aria-hidden="true"></i> ` + $T.program.outputPanelTitle;
+    return `<i class="fas fa-desktop" aria-hidden="true"></i> ` + $T.program.outputPanelTitle;
   }
 }

@@ -69,13 +69,21 @@ function signOutThunk() {
   };
 }
 
-function applyUserSettingsThunk(settings: Partial<UserSettings>) {
+function applyUserSettingsThunk(
+  settings: Partial<UserSettings>,
+  options?: { rebindServices: boolean }
+) {
   return async (dispatch: Dispatch<Action>, getState: GetState) => {
     const state = getState();
     const settingsService = new UserSettingsService(state.env.user.email);
     await settingsService.update(settings);
-    const newSettings = await settingsService.get();
-    dispatch(envActionCreator.applyUserSettingsCompleted(newSettings));
+    if (options && options.rebindServices) {
+      DISetup.reset();
+      await initEnvThunk()(dispatch, getState);
+    } else {
+      const newSettings = await settingsService.get();
+      dispatch(envActionCreator.applyUserSettingsCompleted(newSettings));
+    }
   };
 }
 

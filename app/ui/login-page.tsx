@@ -14,9 +14,9 @@ export class LoginPage extends React.Component<{}, {}> {
 
   render(): JSX.Element {
     return (
-      <div>
+      <div className="ex-page-container">
         <MainMenuContainer />
-        <div className="container">
+        <div className="ex-page-content container">
           <br />
           <SignInStatusContainer />
         </div>

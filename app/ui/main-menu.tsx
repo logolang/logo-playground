@@ -78,12 +78,12 @@ export class MainMenu extends React.Component<Props, State> {
           </div>
           <div className="navbar-end">
             <div className="navbar-item has-dropdown is-hoverable">
-              <span className="navbar-link is-active">
+              <span className="navbar-link">
                 {this.props.userImageUrl ? (
                   <img src={this.props.userImageUrl} />
                 ) : (
                   <span>
-                    <i className="fa fa-user-o" aria-hidden="true" />
+                    <i className="far fa-user" aria-hidden="true" />
                   </span>
                 )}
               </span>
@@ -111,7 +111,7 @@ export class MainMenu extends React.Component<Props, State> {
                     activeClassName="is-active"
                     to={Routes.loginPage.build({})}
                   >
-                    <i className="fa fa-sign-in icon-fixed-width" aria-hidden="true" />
+                    <i className="fas fa-sign-in-alt icon-fixed-width" aria-hidden="true" />
                     {$T.common.signIn}
                   </NavLink>
                 )}
@@ -121,7 +121,7 @@ export class MainMenu extends React.Component<Props, State> {
                     className="navbar-item"
                     onClick={this.handleMenuLogOutClick}
                   >
-                    <i className="fa fa-sign-out icon-fixed-width" aria-hidden="true" />
+                    <i className="fas fa-sign-out-alt icon-fixed-width" aria-hidden="true" />
                     {$T.common.signOut}
                   </a>
                 )}

@@ -4,7 +4,7 @@ export interface Props<T> {
   readOnly?: boolean;
   allowNotSelected?: boolean;
   className?: string;
-  idAttr?: string;
+  id?: string;
   items: T[];
   selectedItem?: T;
   selectionChanged(selectedItem: T | undefined): void;
@@ -36,13 +36,15 @@ export class SimpleSelect<T> extends React.Component<Props<T>, {}> {
   };
 
   render(): JSX.Element {
-    const selectedVal = this.props.selectedItem ? this.props.getItemIdentifier(this.props.selectedItem) : "";
+    const selectedVal = this.props.selectedItem
+      ? this.props.getItemIdentifier(this.props.selectedItem)
+      : "";
 
     return (
       <select
         disabled={this.props.readOnly}
         className={this.props.className}
-        id={this.props.idAttr}
+        id={this.props.id}
         value={selectedVal}
         onChange={this.props.readOnly ? undefined : this.onSelect}
       >
