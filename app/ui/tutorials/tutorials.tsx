@@ -106,7 +106,7 @@ export class TutorialsPage extends React.Component<Props, State> {
     return (
       <div className="ex-page-container">
         <MainMenuContainer />
-        <div className="ex-page-content tutorials-page-component">
+        <div className="ex-page-content is-fullscreen tutorials-page-component">
           {this.props.isLoading && (
             <div className="main-loading-container">
               <Loading isLoading />
@@ -151,7 +151,7 @@ export class TutorialsPage extends React.Component<Props, State> {
             </ReactGoldenLayoutPanel>
             <ReactGoldenLayoutPanel
               id="output-panel"
-              title={`<i class="fa fa-television" aria-hidden="true"></i> ${
+              title={`<i class="fas fa-desktop" aria-hidden="true"></i> ${
                 $T.program.outputPanelTitle
               }`}
             >

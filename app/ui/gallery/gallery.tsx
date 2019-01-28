@@ -36,7 +36,7 @@ export class Gallery extends React.Component<Props, {}> {
     return (
       <div className="ex-page-container gallery-component">
         <MainMenuContainer />
-        <div className="ex-page-content">
+        <div className="ex-page-content is-fullscreen">
           <div className="container">
             <br />
             {this.renderTabs()}
