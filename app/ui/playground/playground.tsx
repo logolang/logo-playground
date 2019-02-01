@@ -111,11 +111,7 @@ export class Playground extends React.Component<Props, {}> {
       <div className="ex-page-container">
         <MainMenuContainer />
         <div className="ex-page-content is-fullscreen playground-page-component">
-          {this.props.isLoading && (
-            <div className="main-loading-container">
-              <Loading isLoading />
-            </div>
-          )}
+          <Loading isLoading={this.props.isLoading} fullPage />
 
           <ReactGoldenLayout
             className="golden-layout-container"

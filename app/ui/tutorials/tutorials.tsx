@@ -104,11 +104,7 @@ export class TutorialsPage extends React.Component<Props, State> {
       <div className="ex-page-container">
         <MainMenuContainer />
         <div className="ex-page-content is-fullscreen tutorials-page-component">
-          {this.props.isLoading && (
-            <div className="main-loading-container">
-              <Loading isLoading />
-            </div>
-          )}
+          <Loading isLoading={this.props.isLoading} fullPage />
           <ReactGoldenLayout
             className="golden-layout-container"
             configLayoutOverride={{
@@ -168,22 +164,22 @@ export class TutorialsPage extends React.Component<Props, State> {
                 $T.tutorial.tutorialPanelTitle
               }`}
             >
+              <Loading isLoading={this.props.isStepLoading && !this.props.isLoading} />
+
               {!this.props.isStepLoading &&
-              this.props.tutorials &&
-              this.props.currentTutorialInfo &&
-              this.props.currentStepInfo &&
-              this.props.currentStepContent ? (
-                <TutorialView
-                  tutorials={this.props.tutorials}
-                  currentTutorialInfo={this.props.currentTutorialInfo}
-                  currentStepInfo={this.props.currentStepInfo}
-                  currentStepContent={this.props.currentStepContent}
-                  onNavigationRequest={this.handleNavigationRequest}
-                  onFixTheCode={this.handleFixTheCode}
-                />
-              ) : (
-                <Loading isLoading />
-              )}
+                this.props.tutorials &&
+                this.props.currentTutorialInfo &&
+                this.props.currentStepInfo &&
+                this.props.currentStepContent && (
+                  <TutorialView
+                    tutorials={this.props.tutorials}
+                    currentTutorialInfo={this.props.currentTutorialInfo}
+                    currentStepInfo={this.props.currentStepInfo}
+                    currentStepContent={this.props.currentStepContent}
+                    onNavigationRequest={this.handleNavigationRequest}
+                    onFixTheCode={this.handleFixTheCode}
+                  />
+                )}
             </ReactGoldenLayoutPanel>
           </ReactGoldenLayout>
         </div>

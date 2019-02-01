@@ -3,6 +3,7 @@ import { HashRouter } from "react-router-dom";
 import { RoutesComponent } from "./routes.component";
 import { NavigationService } from "../services/env/navigation.service";
 import { MessageToster, TosterMessage } from "./_generic/message-toster";
+import { Loading } from "./_generic/loading";
 
 interface Props {
   isLoading: boolean;
@@ -19,6 +20,7 @@ export class Main extends React.Component<Props, State> {
           messages={this.props.tosterMessages}
           onClose={this.props.onTosterMessageClose}
         />
+        <Loading isLoading={this.props.isLoading} fullPage />
         <HashRouter
           ref={(router: any) => {
             NavigationService.setNavigationHandler(route => {
