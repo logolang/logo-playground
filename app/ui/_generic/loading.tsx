@@ -5,7 +5,6 @@ import "./loading.less";
 
 interface Props {
   isLoading?: boolean;
-  className?: string;
   fullPage?: boolean;
 }
 
@@ -13,12 +12,20 @@ export function Loading(props: Props) {
   if (!props.isLoading) {
     return <></>;
   }
+
+  if (props.fullPage) {
+    return (
+      <div className="ex-loading-indicator-fullpage">
+        <div className="ex-loading-indicator">
+          <div className="ex-animated-dot" />
+          <div className="ex-animated-dot" />
+          <div className="ex-animated-dot" />
+        </div>
+      </div>
+    );
+  }
   return (
-    <div
-      className={cn("ex-loading-indicator", props.className, {
-        "ex-loading-indicator-fullpage": props.fullPage
-      })}
-    >
+    <div className="ex-loading-indicator">
       <div className="ex-animated-dot" />
       <div className="ex-animated-dot" />
       <div className="ex-animated-dot" />
