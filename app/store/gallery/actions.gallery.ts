@@ -3,12 +3,14 @@ import { Action } from "redux";
 import { action, ActionType } from "typesafe-actions";
 
 import { createCompareFunction } from "app/utils/syntax";
-import { resolveInject } from "app/di";
+import { resolve } from "app/di";
 import { GallerySection } from "./state.gallery";
 import { GetState } from "app/store/store";
 import { ProgramModel } from "app/services/program/program.model";
 import { GallerySamplesRepository } from "app/services/gallery/gallery-samples.repository";
 import { PersonalGalleryService } from "app/services/gallery/personal-gallery.service";
+import { normalizeError } from "app/utils/error";
+import { envActionCreator } from "../env/actions.env";
 
 export enum GalleryActionType {
   LOAD_SECTION_STARTED = "LOAD_SECTION_STARTED",
@@ -45,34 +47,40 @@ function loadSectionThunk(section: GallerySection, options?: { forceLoad: boolea
       { sortBy: x => x.name }
     ]);
 
-    const samplesRepo = resolveInject(GallerySamplesRepository);
-    const galleryService = resolveInject(PersonalGalleryService);
+    const samplesRepo = resolve(GallerySamplesRepository);
+    const galleryService = resolve(PersonalGalleryService);
 
-    switch (section) {
-      case GallerySection.ExamplesAdvanced:
-        {
-          const samples = await samplesRepo.getAll("samples");
-          samples.sort(sortingFunction);
-          dispatch(galleryActionCreator.loadSectionCompleted(section, samples));
-        }
-        break;
-      case GallerySection.ExamplesBasic:
-        {
-          const samples = await samplesRepo.getAll("shapes");
-          samples.sort(sortingFunction);
-          dispatch(galleryActionCreator.loadSectionCompleted(section, samples));
-        }
-        break;
-      case GallerySection.PersonalLibrary:
-        const cachedPrograms = await galleryService.getAllLocal();
-        if (cachedPrograms.length > 0) {
-          cachedPrograms.sort(sortingFunction);
-          dispatch(galleryActionCreator.loadSectionCompleted(section, cachedPrograms));
-        }
+    try {
+      switch (section) {
+        case GallerySection.ExamplesAdvanced:
+          {
+            const samples = await samplesRepo.getAll("samples");
+            samples.sort(sortingFunction);
+            dispatch(galleryActionCreator.loadSectionCompleted(section, samples));
+          }
+          break;
+        case GallerySection.ExamplesBasic:
+          {
+            const samples = await samplesRepo.getAll("shapes");
+            samples.sort(sortingFunction);
+            dispatch(galleryActionCreator.loadSectionCompleted(section, samples));
+          }
+          break;
+        case GallerySection.PersonalLibrary:
+          const cachedPrograms = await galleryService.getAllLocal();
+          if (cachedPrograms.length > 0) {
+            cachedPrograms.sort(sortingFunction);
+            dispatch(galleryActionCreator.loadSectionCompleted(section, cachedPrograms));
+          }
 
-        const programsFromRemote = await galleryService.getAll();
-        programsFromRemote.sort(sortingFunction);
-        dispatch(galleryActionCreator.loadSectionCompleted(section, programsFromRemote));
+          const programsFromRemote = await galleryService.getAll();
+          programsFromRemote.sort(sortingFunction);
+          dispatch(galleryActionCreator.loadSectionCompleted(section, programsFromRemote));
+      }
+    } catch (error) {
+      const errDef = await normalizeError(error);
+      dispatch(envActionCreator.handleError(errDef));
+      dispatch(galleryActionCreator.loadSectionCompleted(section, []));
     }
   };
 }

@@ -2,7 +2,7 @@ import { Dispatch } from "react";
 import { Action } from "redux";
 import { action, ActionType } from "typesafe-actions";
 
-import { resolveInject } from "app/di";
+import { resolve } from "app/di";
 import { GetState } from "app/store/store";
 import {
   TutorialInfo,
@@ -10,6 +10,8 @@ import {
   TutorialStepInfo,
   TutorialsContentService
 } from "app/services/tutorials/tutorials-content-service";
+import { normalizeError } from "app/utils/error";
+import { envActionCreator } from "../env/actions.env";
 
 export enum TutorialsActionType {
   LOAD_TUTORIALS_STARTED = "LOAD_TUTORIALS_STARTED",
@@ -62,11 +64,14 @@ export const tutorialsActionCreator = {
 function loadTutorialsThunk() {
   return async (dispatch: Dispatch<Action>, getState: GetState) => {
     dispatch(tutorialsActionCreator.loadTutorialsStarted());
-
-    const tutorialsLoader = resolveInject(TutorialsContentService);
-    const tutorials = await tutorialsLoader.getTutorialsList();
-
-    dispatch(tutorialsActionCreator.loadTutorialsCompleted(tutorials));
+    try {
+      const tutorialsLoader = resolve(TutorialsContentService);
+      const tutorials = await tutorialsLoader.getTutorialsList();
+      dispatch(tutorialsActionCreator.loadTutorialsCompleted(tutorials));
+    } catch (error) {
+      const errDef = await normalizeError(error);
+      dispatch(envActionCreator.handleError(errDef));
+    }
   };
 }
 
@@ -78,31 +83,35 @@ function loadStepThunk(tutorialId: string, stepId: string) {
     }
     tutorials = getState().tutorials.tutorials;
     if (!tutorials) {
-      throw new Error("Tutorials are stillnot initialized?");
+      throw new Error("Tutorials are still not initialized?");
     }
 
     dispatch(tutorialsActionCreator.loadStepStarted(tutorialId, stepId));
+    try {
+      const tutorialsLoader = resolve(TutorialsContentService);
+      const stepContent = await tutorialsLoader.getStep(tutorialId, stepId);
+      const tutorialInfo = tutorials.find(t => t.id === tutorialId);
+      if (!tutorialInfo) {
+        throw new Error("Tutorial is not found: " + tutorialId);
+      }
+      const stepInfo = tutorialInfo.steps.find(s => s.id === stepId);
+      if (!stepInfo) {
+        throw new Error("Step is not found: " + stepId);
+      }
 
-    const tutorialsLoader = resolveInject(TutorialsContentService);
-    const stepContent = await tutorialsLoader.getStep(tutorialId, stepId);
-    const tutorialInfo = tutorials.find(t => t.id === tutorialId);
-    if (!tutorialInfo) {
-      throw new Error("Tutorial is not found: " + tutorialId);
+      dispatch(
+        tutorialsActionCreator.loadStepCompleted(
+          tutorialId,
+          stepId,
+          tutorialInfo,
+          stepInfo,
+          stepContent
+        )
+      );
+    } catch (error) {
+      const errDef = await normalizeError(error);
+      dispatch(envActionCreator.handleError(errDef));
     }
-    const stepInfo = tutorialInfo.steps.find(s => s.id === stepId);
-    if (!stepInfo) {
-      throw new Error("Step is not found: " + stepId);
-    }
-
-    dispatch(
-      tutorialsActionCreator.loadStepCompleted(
-        tutorialId,
-        stepId,
-        tutorialInfo,
-        stepInfo,
-        stepContent
-      )
-    );
   };
 }
 

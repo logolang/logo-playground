@@ -1,19 +1,26 @@
-import { Container, inject, injectable } from "inversify";
-
-const container = new Container({ defaultScope: "Singleton" });
-export { container, inject, injectable };
+import { DictionaryLike } from "./utils/syntax";
 
 interface Abstract<T> {
   prototype: T;
+  name: string;
 }
 
-export function resolveInject<T>(serviceIdentifier: Abstract<T>): T {
-  const all = container.getAll(serviceIdentifier);
-  if (all.length == 0) {
-    throw new Error("No binding is configured " + serviceIdentifier);
+let bindings: DictionaryLike<any> = {};
+
+export function resetBindings() {
+  bindings = {};
+}
+
+export function register<T>(serviceIdentifier: Abstract<T>, instance: T): void {
+  const name = serviceIdentifier.name;
+  bindings[name] = instance;
+}
+
+export function resolve<T>(serviceIdentifier: Abstract<T>): T {
+  const name = serviceIdentifier.name;
+  const instance = bindings[name];
+  if (!instance) {
+    throw new Error("Missed registration for " + name);
   }
-  if (all.length > 1) {
-    console.error("Found multiple bindings!!", serviceIdentifier);
-  }
-  return all[0];
+  return instance;
 }

@@ -3,17 +3,21 @@ import { Action } from "redux";
 import { action, ActionType } from "typesafe-actions";
 import { GetState } from "app/store/store";
 import { DISetup } from "app/di-setup";
-import { resolveInject } from "app/di";
-import { AppConfig } from "app/services/env/app-config";
+import { resolve } from "app/di";
 import { UserSettingsService } from "app/services/env/user-settings.service";
 import { UserSettings } from "app/types/user-settings";
 import { AuthService, UserData, AuthProvider } from "app/services/env/auth-service";
+import { ErrorDef } from "app/utils/error";
+import { NotificationType } from "./state.env";
 
 export enum EnvActionType {
   INIT_ENV_STARTED = "INIT_ENV_STARTED",
   SIGN_IN_COMPLETED = "SIGN_IN_COMPLETED",
   SIGN_OUT_COMPLETED = "SIGN_OUT_COMPLETED",
-  APPLY_USER_SETTINGS_COMPLETED = "APPLY_USER_SETTINGS_COMPLETED"
+  APPLY_USER_SETTINGS_COMPLETED = "APPLY_USER_SETTINGS_COMPLETED",
+  ERROR = "ERROR",
+  SHOW_NOTIFICATION = "SHOW_NOTIFICATION",
+  CLOSE_NOTIFICATION = "CLOSE_NOTIFICATION"
 }
 
 export const envActionCreator = {
@@ -30,7 +34,16 @@ export const envActionCreator = {
   applyUserSettingsCompleted: (settings: Partial<UserSettings>) =>
     action(EnvActionType.APPLY_USER_SETTINGS_COMPLETED, settings),
 
-  applyUserSettings: applyUserSettingsThunk
+  applyUserSettings: applyUserSettingsThunk,
+
+  handleError: (errDef: ErrorDef) => action(EnvActionType.ERROR, { errDef }),
+
+  showNotification: (type: NotificationType, title: string, message: string) =>
+    action(EnvActionType.SHOW_NOTIFICATION, { type, title, message }),
+
+  showNotificationAutoClose: showNotificationAutoCloseThunk,
+
+  closeNotification: (id: string) => action(EnvActionType.CLOSE_NOTIFICATION, { id })
 };
 
 function initEnvThunk() {
@@ -38,7 +51,7 @@ function initEnvThunk() {
     dispatch(envActionCreator.initEnvStarted());
 
     await DISetup.setupConfig();
-    const auth = resolveInject(AuthService);
+    const auth = resolve(AuthService);
     const userData = await auth.init();
 
     const settingsService = new UserSettingsService(userData.email);
@@ -53,7 +66,7 @@ function initEnvThunk() {
 
 function signInThunk(authProvider: AuthProvider) {
   return async (dispatch: Dispatch<Action>, getState: GetState) => {
-    const auth = resolveInject(AuthService);
+    const auth = resolve(AuthService);
     await auth.signIn(authProvider);
     DISetup.reset();
     await initEnvThunk()(dispatch, getState);
@@ -62,7 +75,7 @@ function signInThunk(authProvider: AuthProvider) {
 
 function signOutThunk() {
   return async (dispatch: Dispatch<Action>, getState: GetState) => {
-    const auth = resolveInject(AuthService);
+    const auth = resolve(AuthService);
     await auth.signOut();
     DISetup.reset();
     await initEnvThunk()(dispatch, getState);
@@ -84,6 +97,16 @@ function applyUserSettingsThunk(
       const newSettings = await settingsService.get();
       dispatch(envActionCreator.applyUserSettingsCompleted(newSettings));
     }
+  };
+}
+
+function showNotificationAutoCloseThunk(type: NotificationType, title: string, message: string) {
+  return async (dispatch: Dispatch<Action>, getState: GetState) => {
+    dispatch(envActionCreator.showNotification(type, title, message));
+    const lastmessageId = getState().env.notifications[0].id;
+    setTimeout(() => {
+      dispatch(envActionCreator.closeNotification(lastmessageId));
+    }, 3000);
   };
 }
 

@@ -1,7 +1,7 @@
 import * as React from "react";
 
 import { $T } from "app/i18n-strings";
-import { resolveInject } from "app/di";
+import { resolve } from "app/di";
 import { ErrorDef, callActionSafe } from "app/utils/error";
 
 import { GistSharedProgramsRepository } from "app/services/program/gist-shared-programs.repository";
@@ -26,8 +26,8 @@ interface Props {
 }
 
 export class ShareProgramModal extends React.Component<Props, State> {
-  private gistService = resolveInject(GistSharedProgramsRepository);
-  private eventsTracking = resolveInject(EventsTrackingService);
+  private gistService = resolve(GistSharedProgramsRepository);
+  private eventsTracking = resolve(EventsTrackingService);
 
   constructor(props: Props) {
     super(props);

@@ -3,9 +3,9 @@ import * as cn from "classnames";
 import { Link } from "react-router-dom";
 
 import { ensure } from "app/utils/syntax";
-import { resolveInject } from "app/di";
+import { resolve } from "app/di";
 import { $T } from "app/i18n-strings";
-import { Routes } from "app/routes";
+import { Routes } from "app/ui/routes";
 import { ProgramModel } from "app/services/program/program.model";
 import { GallerySection } from "app/store/gallery/state.gallery";
 import { EventsTrackingService, EventAction } from "app/services/env/events-tracking.service";
@@ -25,7 +25,7 @@ interface Props {
 }
 
 export class Gallery extends React.Component<Props, {}> {
-  private eventsTracker = resolveInject(EventsTrackingService);
+  private eventsTracker = resolve(EventsTrackingService);
 
   async componentDidMount() {
     this.eventsTracker.sendEvent(EventAction.openGallery);

@@ -1,8 +1,7 @@
 /**
- * Describes static application info information
- * Object of this class is to be injected via webpack
+ * Declaration for app info object injected by webpack
  */
-export abstract class AppInfo {
+declare const APP_WEBPACK_STATIC_INFO: {
   gitVersion: string;
   buildVersion: string;
   name: string;
@@ -10,4 +9,5 @@ export abstract class AppInfo {
   version: string;
   isDevBuild: boolean;
   builtOn: string;
-}
+};
+export const APP_INFO = APP_WEBPACK_STATIC_INFO;

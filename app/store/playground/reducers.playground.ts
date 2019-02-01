@@ -1,7 +1,10 @@
 import { PlaygroundState, defaultPlaygroundState } from "./state.playground";
 import { PlaygroundAction, PlaygroundActionType } from "./actions.playground";
 
-export function reducers(state: PlaygroundState | undefined, action: PlaygroundAction): PlaygroundState {
+export function reducers(
+  state: PlaygroundState | undefined,
+  action: PlaygroundAction
+): PlaygroundState {
   if (!state || !action) {
     return defaultPlaygroundState;
   }
@@ -13,11 +16,14 @@ export function reducers(state: PlaygroundState | undefined, action: PlaygroundA
         storageType: action.payload.storageType,
         programId: action.payload.programId,
         programName: "Loading...",
-        isRunning: false,
-        hasModifications: false
+        isRunning: false
       };
+
     case PlaygroundActionType.LOAD_PROGRAM_COMPLETED:
-      if (action.payload.storageType === state.storageType && action.payload.programId === state.programId) {
+      if (
+        action.payload.storageType === state.storageType &&
+        action.payload.programId === state.programId
+      ) {
         return {
           ...state,
           isLoading: false,
@@ -28,27 +34,32 @@ export function reducers(state: PlaygroundState | undefined, action: PlaygroundA
         };
       }
       return state;
+
     case PlaygroundActionType.CODE_CHANGED:
       return {
         ...state,
         code: action.payload.code,
         hasModifications: true
       };
+
     case PlaygroundActionType.RUN_PROGRAM:
       return {
         ...state,
         isRunning: true
       };
+
     case PlaygroundActionType.STOP_PROGRAM:
       return {
         ...state,
         isRunning: false
       };
+
     case PlaygroundActionType.SYNC_PROGRAM_STARTED:
       return {
         ...state,
         isLoading: true
       };
+
     case PlaygroundActionType.SYNC_PROGRAM_COMPLETED: {
       const newState = {
         ...state,
@@ -64,6 +75,14 @@ export function reducers(state: PlaygroundState | undefined, action: PlaygroundA
       if (action.payload.newName) {
         newState.programName = action.payload.newName;
       }
+      return newState;
+    }
+
+    case PlaygroundActionType.SYNC_PROGRAM_FAILED: {
+      const newState = {
+        ...state,
+        isLoading: false
+      };
       return newState;
     }
 
