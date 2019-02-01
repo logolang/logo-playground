@@ -1,6 +1,7 @@
 import * as React from "react";
 import { HashRouter } from "react-router-dom";
 import { RoutesComponent } from "app/routes.component";
+import { NavigationService } from "./services/env/navigation.service";
 
 interface Props {
   isLoading: boolean;
@@ -8,12 +9,16 @@ interface Props {
 interface State {}
 
 export class Main extends React.Component<Props, State> {
-  private routerRef: HashRouter | null = null;
-
   render(): JSX.Element {
     return (
       <React.Fragment>
-        <HashRouter ref={ref => (this.routerRef = ref)}>
+        <HashRouter
+          ref={(router: any) => {
+            NavigationService.setNavigationHandler(route => {
+              router && router.history.push(route);
+            });
+          }}
+        >
           {!this.props.isLoading && <RoutesComponent />}
         </HashRouter>
       </React.Fragment>

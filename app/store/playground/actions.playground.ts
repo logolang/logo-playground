@@ -101,13 +101,12 @@ function saveAsProgramThunk(newName: string, screenShot: string) {
       })
     );
 
-    const navService = resolveInject(NavigationService);
-    navService.navigate({
-      route: Routes.playground.build({
+    NavigationService.navigate(
+      Routes.playground.build({
         storageType: newProgram.storageType,
         id: newProgram.id
       })
-    });
+    );
   };
 }
 
@@ -133,8 +132,7 @@ function deleteProgramThunk() {
       dispatch(playgroundActionCreator.syncProgramStarted());
       const galleryService = resolveInject(PersonalGalleryService);
       await galleryService.remove(state.programId);
-      const navService = resolveInject(NavigationService);
-      navService.navigate({ route: Routes.gallery.build({}) });
+      NavigationService.navigate(Routes.gallery.build({}));
     }
   };
 }
