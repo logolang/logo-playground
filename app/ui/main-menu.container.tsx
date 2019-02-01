@@ -11,6 +11,7 @@ export const MainMenuContainer = connect(
   }),
   {
     /** Actions to props */
-    onLogout: envActionCreator.signOut
+    onLogout: envActionCreator.signOut,
+    onError: envActionCreator.handleError
   }
 )(MainMenu);

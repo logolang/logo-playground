@@ -1,7 +1,6 @@
 import * as React from "react";
 import * as cn from "classnames";
 import * as codemirror from "codemirror";
-import { Subscription, Observable } from "rxjs";
 
 import { ensure } from "app/utils/syntax";
 
@@ -22,13 +21,11 @@ export interface Props {
   onHotkey?(key: string): void;
   onChanged(code: string): void;
   editorTheme: string;
-  resizeEvents?: Observable<void>;
 }
 
 export class CodeInput extends React.Component<Props, State> {
   cm: codemirror.EditorFromTextArea;
   currentCode: string;
-  subsriptions: Subscription[] = [];
 
   constructor(props: Props) {
     super(props);
@@ -82,18 +79,6 @@ export class CodeInput extends React.Component<Props, State> {
       };
       this.cm.addKeyMap(map);
     }
-
-    if (this.props.resizeEvents) {
-      this.subsriptions.push(
-        this.props.resizeEvents.subscribe(() => {
-          this.cm.refresh();
-        })
-      );
-    }
-  }
-
-  componentWillUnmount() {
-    this.subsriptions.forEach(s => s.unsubscribe());
   }
 
   render(): JSX.Element {

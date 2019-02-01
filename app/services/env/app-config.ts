@@ -1,6 +1,3 @@
-import { injectable } from "app/di";
-
-@injectable()
 export class AppConfig {
   services: {
     appApiUrl: string;
@@ -9,4 +6,21 @@ export class AppConfig {
     googleClientId: string;
     googleDriveGalleryFilename: string;
   };
+}
+
+export async function loadConfig(): Promise<AppConfig> {
+  var headers = new Headers();
+  headers.append("pragma", "no-cache");
+  headers.append("cache-control", "no-cache");
+
+  const result = await fetch("content/config/config.json", {
+    credentials: "same-origin",
+    method: "get",
+    headers: headers
+  });
+
+  if (result.ok) {
+    return result.json();
+  }
+  throw result;
 }

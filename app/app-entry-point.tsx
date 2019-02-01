@@ -9,7 +9,7 @@ import { Provider } from "react-redux";
 
 import { normalizeError } from "app/utils/error";
 import { AlertMessage } from "app/ui/_generic/alert-message";
-import { MainContainer } from "app/main.container";
+import { MainContainer } from "app/ui/main.container";
 import { store } from "./store/store";
 import { envActionCreator } from "./store/env/actions.env";
 

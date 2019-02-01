@@ -1,8 +1,7 @@
 import * as React from "react";
-import { resolveInject } from "app/di";
+import { resolve } from "app/di";
 import { $T } from "app/i18n-strings";
 import { checkIsMobileDevice } from "app/utils/device";
-import { UserSettingsService } from "app/services/env/user-settings.service";
 import {
   TutorialInfo,
   TutorialStepContent,
@@ -13,7 +12,6 @@ import {
   tutorialsDefaultLayout,
   tutorialsDefaultMobileLayout
 } from "app/ui/tutorials/tutorials-default-goldenlayout";
-import { MainMenu } from "app/ui/main-menu";
 import { Loading } from "app/ui/_generic/loading";
 import { ReactGoldenLayout } from "app/ui/_generic/react-golden-layout/react-golden-layout";
 import { ReactGoldenLayoutPanel } from "app/ui/_generic/react-golden-layout/react-golden-layout-panel";
@@ -49,8 +47,7 @@ interface Props {
 }
 
 export class TutorialsPage extends React.Component<Props, State> {
-  private userSettingsService = resolveInject(UserSettingsService);
-  private eventsTracking = resolveInject(EventsTrackingService);
+  private eventsTracking = resolve(EventsTrackingService);
 
   private isMobileDevice = checkIsMobileDevice();
   private defaultLayoutConfigJSON = JSON.stringify(

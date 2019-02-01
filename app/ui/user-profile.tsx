@@ -1,5 +1,5 @@
 import * as React from "react";
-import { resolveInject } from "app/di";
+import { resolve } from "app/di";
 import { $T } from "app/i18n-strings";
 import {
   TurtleInfo,
@@ -35,8 +35,8 @@ interface Props {
 }
 
 export class UserProfilePage extends React.Component<Props, State> {
-  private eventsTracking = resolveInject(EventsTrackingService);
-  private demoSamplesService = resolveInject(LogoCodeSamplesService);
+  private eventsTracking = resolve(EventsTrackingService);
+  private demoSamplesService = resolve(LogoCodeSamplesService);
   private logoExecutor: LogoExecutor | null = null;
 
   constructor(props: Props) {

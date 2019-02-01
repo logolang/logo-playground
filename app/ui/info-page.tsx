@@ -1,20 +1,18 @@
 import * as React from "react";
-import { RouteComponentProps } from "react-router-dom";
 import * as markdown from "markdown-it";
 
-import { resolveInject } from "app/di";
-import { AppInfo } from "app/services/env/app-info";
+import { resolve } from "app/di";
+import { APP_INFO } from "app/services/env/app-info";
 import { EventsTrackingService, EventAction } from "app/services/env/events-tracking.service";
 
 import { MainMenuContainer } from "./main-menu.container";
 
 interface State {}
 
-interface Props extends RouteComponentProps<void> {}
+interface Props {}
 
 export class InfoPage extends React.Component<Props, State> {
-  private appInfo = resolveInject(AppInfo);
-  private eventsTracking = resolveInject(EventsTrackingService);
+  private eventsTracking = resolve(EventsTrackingService);
   private thirdPartyCreditsMd: string;
 
   constructor(props: Props) {
@@ -39,7 +37,7 @@ export class InfoPage extends React.Component<Props, State> {
             <br />
             <h1 className="title">Logo playground</h1>
             <br />
-            <h2 className="subtitle">{this.appInfo.description}</h2>
+            <h2 className="subtitle">{APP_INFO.description}</h2>
             <br />
             <div className="card">
               <div className="card-content">
@@ -47,14 +45,14 @@ export class InfoPage extends React.Component<Props, State> {
                 <p>
                   Project is hosted on{" "}
                   <a href="https://github.com/logolang/logo-playground">
-                    <i className="fa fa-github" aria-hidden="true" /> Github
+                    <i className="fab fa-github" aria-hidden="true" /> Github
                   </a>
                 </p>
                 <p>
-                  Deployed on <strong>{this.appInfo.builtOn}</strong>
+                  Deployed on <strong>{APP_INFO.builtOn}</strong>
                 </p>
                 <p>
-                  Code version <strong>{this.appInfo.gitVersion}</strong>
+                  Code version <strong>{APP_INFO.gitVersion}</strong>
                 </p>
               </div>
             </div>

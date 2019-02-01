@@ -5,7 +5,7 @@ import { PersonalGalleryRemoteRepository } from "app/services/gallery/personal-g
 export class PersonalGalleryService {
   constructor(
     private localProgramsRepository: PersonalGalleryLocalRepository,
-    private remoteProgramsRepository: PersonalGalleryRemoteRepository | null
+    private remoteProgramsRepository?: PersonalGalleryRemoteRepository
   ) {}
 
   async getAll(): Promise<ProgramModel[]> {

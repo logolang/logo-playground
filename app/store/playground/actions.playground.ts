@@ -2,15 +2,16 @@ import { Dispatch } from "react";
 import { Action } from "redux";
 import { action, ActionType } from "typesafe-actions";
 
-import { resolveInject } from "app/di";
+import { resolve } from "app/di";
 import { GetState } from "app/store/store";
 import { ProgramStorageType, ProgramModel } from "app/services/program/program.model";
-import { stay } from "app/utils/async";
 import { ProgramService } from "app/services/program/program.service";
 import { PersonalGalleryService } from "app/services/gallery/personal-gallery.service";
 import { NavigationService } from "app/services/env/navigation.service";
-import { Routes } from "app/routes";
+import { Routes } from "app/ui/routes";
 import { LocalTempCodeStorage } from "app/services/program/local-temp-code.storage";
+import { normalizeError } from "app/utils/error";
+import { envActionCreator } from "../env/actions.env";
 
 export enum PlaygroundActionType {
   LOAD_PROGRAM_STARTED = "LOAD_PROGRAM_STARTED",
@@ -20,6 +21,7 @@ export enum PlaygroundActionType {
   STOP_PROGRAM = "STOP_PROGRAM",
   SYNC_PROGRAM_STARTED = "SYNC_PROGRAM_STARTED",
   SYNC_PROGRAM_COMPLETED = "SYNC_PROGRAM_COMPLETED",
+  SYNC_PROGRAM_FAILED = "SYNC_PROGRAM_FAILED",
   RESET_STATE = "CLEAR_PROGRAM",
   REVERT_CHANGES = "REVERT_CHANGES"
 }
@@ -52,6 +54,7 @@ export const playgroundActionCreator = {
   saveProgram: saveProgramThunk,
   saveAsProgram: saveAsProgramThunk,
   deleteProgram: deleteProgramThunk,
+
   syncProgramStarted: () => action(PlaygroundActionType.SYNC_PROGRAM_STARTED),
 
   syncProgramCompleted: (options: {
@@ -60,8 +63,9 @@ export const playgroundActionCreator = {
     newStorageType?: ProgramStorageType;
   }) => action(PlaygroundActionType.SYNC_PROGRAM_COMPLETED, options),
 
-  clearProgram: () => action(PlaygroundActionType.RESET_STATE),
+  syncProgramFailed: () => action(PlaygroundActionType.SYNC_PROGRAM_FAILED),
 
+  clearProgram: () => action(PlaygroundActionType.RESET_STATE),
   revertChanges: revertChangesThunk
 };
 
@@ -74,39 +78,51 @@ function loadProgramThunk(storageType: ProgramStorageType, programId: string) {
     }
     dispatch(playgroundActionCreator.loadProgramStarted(storageType, programId));
 
-    const programManagementService = resolveInject(ProgramService);
-    const programModel = await programManagementService.loadProgram(storageType, programId);
-
-    dispatch(playgroundActionCreator.loadProgramCompleted(programModel, storageType, programId));
+    try {
+      const programManagementService = resolve(ProgramService);
+      const programModel = await programManagementService.loadProgram(storageType, programId);
+      dispatch(playgroundActionCreator.loadProgramCompleted(programModel, storageType, programId));
+    } catch (error) {
+      const errDef = await normalizeError(error);
+      dispatch(envActionCreator.handleError(errDef));
+      NavigationService.navigate(Routes.gallery.build({}));
+    }
   };
 }
 
 function saveAsProgramThunk(newName: string, screenShot: string) {
   return async (dispatch: Dispatch<Action>, getState: GetState) => {
     dispatch(playgroundActionCreator.syncProgramStarted());
-    const state = getState().playground;
-    const programService = resolveInject(ProgramService);
 
-    const newProgram = await programService.saveProgramToLibrary({
-      newProgramName: newName,
-      newScreenshot: screenShot,
-      newCode: state.code
-    });
+    try {
+      const state = getState().playground;
+      const programService = resolve(ProgramService);
 
-    dispatch(
-      playgroundActionCreator.syncProgramCompleted({
-        newId: newProgram.id,
-        newName: newName,
-        newStorageType: newProgram.storageType
-      })
-    );
+      const newProgram = await programService.saveProgramToLibrary({
+        newProgramName: newName,
+        newScreenshot: screenShot,
+        newCode: state.code
+      });
 
-    NavigationService.navigate(
-      Routes.playground.build({
-        storageType: newProgram.storageType,
-        id: newProgram.id
-      })
-    );
+      dispatch(
+        playgroundActionCreator.syncProgramCompleted({
+          newId: newProgram.id,
+          newName: newName,
+          newStorageType: newProgram.storageType
+        })
+      );
+
+      NavigationService.navigate(
+        Routes.playground.build({
+          storageType: newProgram.storageType,
+          id: newProgram.id
+        })
+      );
+    } catch (error) {
+      const errDef = await normalizeError(error);
+      dispatch(envActionCreator.handleError(errDef));
+      dispatch(playgroundActionCreator.syncProgramFailed());
+    }
   };
 }
 
@@ -114,14 +130,20 @@ function saveProgramThunk(screenShot: string) {
   return async (dispatch: Dispatch<Action>, getState: GetState) => {
     dispatch(playgroundActionCreator.syncProgramStarted());
     const state = getState().playground;
-    const programService = resolveInject(ProgramService);
-    await programService.saveProgramToLibrary({
-      id: state.programId,
-      newProgramName: state.programName,
-      newScreenshot: screenShot,
-      newCode: state.code
-    });
-    dispatch(playgroundActionCreator.syncProgramCompleted({}));
+    try {
+      const programService = resolve(ProgramService);
+      await programService.saveProgramToLibrary({
+        id: state.programId,
+        newProgramName: state.programName,
+        newScreenshot: screenShot,
+        newCode: state.code
+      });
+      dispatch(playgroundActionCreator.syncProgramCompleted({}));
+    } catch (error) {
+      const errDef = await normalizeError(error);
+      dispatch(envActionCreator.handleError(errDef));
+      dispatch(playgroundActionCreator.syncProgramFailed());
+    }
   };
 }
 
@@ -129,10 +151,16 @@ function deleteProgramThunk() {
   return async (dispatch: Dispatch<Action>, getState: GetState) => {
     const state = getState().playground;
     if (state.programId) {
-      dispatch(playgroundActionCreator.syncProgramStarted());
-      const galleryService = resolveInject(PersonalGalleryService);
-      await galleryService.remove(state.programId);
-      NavigationService.navigate(Routes.gallery.build({}));
+      try {
+        dispatch(playgroundActionCreator.syncProgramStarted());
+        const galleryService = resolve(PersonalGalleryService);
+        await galleryService.remove(state.programId);
+        NavigationService.navigate(Routes.gallery.build({}));
+      } catch (error) {
+        const errDef = await normalizeError(error);
+        dispatch(envActionCreator.handleError(errDef));
+        dispatch(playgroundActionCreator.syncProgramFailed());
+      }
     }
   };
 }
@@ -141,7 +169,7 @@ function codeChangedThunk(newCode: string) {
   return async (dispatch: Dispatch<Action>, getState: GetState) => {
     dispatch(playgroundActionCreator.codeChangedAction(newCode));
 
-    const localStorage = resolveInject(LocalTempCodeStorage);
+    const localStorage = resolve(LocalTempCodeStorage);
     localStorage.setCode("playground", newCode);
   };
 }
@@ -150,11 +178,16 @@ function revertChangesThunk() {
   return async (dispatch: Dispatch<Action>, getState: GetState) => {
     const state = getState().playground;
     const { storageType, programId } = state;
-    dispatch(playgroundActionCreator.loadProgramStarted(storageType, programId));
-
-    const programManagementService = resolveInject(ProgramService);
-    const programModel = await programManagementService.loadProgram(storageType, programId);
-    dispatch(playgroundActionCreator.loadProgramCompleted(programModel, storageType, programId));
+    dispatch(playgroundActionCreator.syncProgramStarted());
+    try {
+      const programManagementService = resolve(ProgramService);
+      const programModel = await programManagementService.loadProgram(storageType, programId);
+      dispatch(playgroundActionCreator.loadProgramCompleted(programModel, storageType, programId));
+    } catch (error) {
+      const errDef = await normalizeError(error);
+      dispatch(envActionCreator.handleError(errDef));
+      dispatch(playgroundActionCreator.syncProgramFailed());
+    }
   };
 }
 

@@ -1,7 +1,7 @@
 import * as React from "react";
 
 import { $T } from "app/i18n-strings";
-import { resolveInject } from "app/di";
+import { resolve } from "app/di";
 import {
   TutorialInfo,
   TutorialStepInfo,
@@ -29,7 +29,7 @@ interface State {
 }
 
 export class TutorialView extends React.Component<Props, State> {
-  private eventsTracking = resolveInject(EventsTrackingService);
+  private eventsTracking = resolve(EventsTrackingService);
 
   constructor(props: Props) {
     super(props);

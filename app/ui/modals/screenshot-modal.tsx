@@ -1,7 +1,7 @@
 import * as React from "react";
 
 import { $T } from "app/i18n-strings";
-import { resolveInject } from "app/di";
+import { resolve } from "app/di";
 import { ImageUploadService } from "app/services/infrastructure/image-upload-imgur.service";
 import { EventsTrackingService, EventAction } from "app/services/env/events-tracking.service";
 
@@ -22,8 +22,8 @@ interface Props {
 }
 
 export class ScreenshotModal extends React.Component<Props, State> {
-  private imageUploadService = resolveInject(ImageUploadService);
-  private eventsTracking = resolveInject(EventsTrackingService);
+  private imageUploadService = resolve(ImageUploadService);
+  private eventsTracking = resolve(EventsTrackingService);
 
   constructor(props: Props) {
     super(props);

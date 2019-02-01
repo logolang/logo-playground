@@ -5,7 +5,6 @@ import { LoginPage } from "app/ui/login-page";
 import { UserProfileContainer } from "app/ui/user-profile.container";
 import { InfoPage } from "app/ui/info-page";
 import { PlaygroundContainer } from "app/ui/playground/playground.container";
-import { CheatSheet } from "app/ui/cheat-sheet/cheat-sheet";
 import { TutorialsContainer } from "app/ui/tutorials/tutorials.container";
 import { GalleryContainer } from "app/ui/gallery/gallery.container";
 import { Routes } from "./routes";
@@ -19,8 +18,6 @@ export const RoutesComponent = (): JSX.Element => (
     <Route path={Routes.settings.path} component={UserProfileContainer} />
 
     <Route path={Routes.infoPage.path} component={InfoPage} />
-
-    <Route path={Routes.cheatSheet.path} component={CheatSheet} />
 
     <Route path={Routes.tutorials.path} component={TutorialsContainer} />
 
