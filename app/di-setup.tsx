@@ -12,7 +12,6 @@ import { LocalizedContentLoader } from "./services/infrastructure/localized-cont
 import { updateStringsObject } from "./utils/i18n";
 import { $T } from "./i18n-strings";
 import { NotificationService } from "./services/env/notification.service";
-import { NavigationService } from "./services/env/navigation.service";
 import { TutorialsContentService } from "./services/tutorials/tutorials-content-service";
 import {
   ImageUploadImgurService,
@@ -71,7 +70,6 @@ export class DISetup {
     updateStringsObject($T, poFile);
 
     container.bind(NotificationService).toConstantValue(new NotificationService());
-    container.bind(NavigationService).toConstantValue(new NavigationService());
 
     container
       .bind(TutorialsContentService)

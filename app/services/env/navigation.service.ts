@@ -1,20 +1,13 @@
-import { Subject, Observable } from "rxjs";
+export type NavigationHandler = (route: string) => void;
 
-import { injectable } from "app/di";
-
-interface INavigationRequest {
-  route: string;
-}
-
-@injectable()
 export class NavigationService {
-  private subject = new Subject<INavigationRequest>();
+  private static navHandler: NavigationHandler | undefined;
 
-  navigate(request: INavigationRequest): void {
-    this.subject.next(request);
+  public static setNavigationHandler(navHandler: NavigationHandler) {
+    this.navHandler = navHandler;
   }
 
-  getObservable(): Observable<INavigationRequest> {
-    return this.subject.asObservable();
+  public static navigate(route: string): void {
+    this.navHandler && this.navHandler(route);
   }
 }
