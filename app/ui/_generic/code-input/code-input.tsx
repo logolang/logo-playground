@@ -1,8 +1,7 @@
 import * as React from "react";
 import * as cn from "classnames";
 import * as codemirror from "codemirror";
-
-import { ensure } from "app/utils/syntax";
+import * as keymaster from "keymaster";
 
 import "node_modules/codemirror/addon/runmode/runmode.js";
 import "node_modules/codemirror/addon/edit/closebrackets.js";
@@ -18,9 +17,10 @@ interface State {}
 export interface Props {
   className?: string;
   code: string;
-  onHotkey?(key: string): void;
   onChanged(code: string): void;
   editorTheme: string;
+  hotKeys?: string[];
+  onHotkey?(hotkey: string): void;
 }
 
 export class CodeInput extends React.Component<Props, State> {
@@ -68,18 +68,28 @@ export class CodeInput extends React.Component<Props, State> {
         this.props.onChanged(newVal);
       }
     });
-    if (this.props.onHotkey) {
-      const map = {
-        F8: () => {
-          ensure(this.props.onHotkey)("f8");
-        },
-        F9: () => {
-          ensure(this.props.onHotkey)("f9");
-        }
-      };
-      this.cm.addKeyMap(map);
+
+    if (this.props.hotKeys) {
+      for (const hotkey of this.props.hotKeys) {
+        keymaster(hotkey, () => {
+          this.handleHotkey(hotkey);
+          return false;
+        });
+      }
     }
   }
+
+  componentWillUnmount() {
+    if (this.props.hotKeys) {
+      for (const hotkey of this.props.hotKeys) {
+        keymaster.unbind(hotkey);
+      }
+    }
+  }
+
+  handleHotkey = (hotkey: string) => {
+    this.props.onHotkey && this.props.onHotkey(hotkey);
+  };
 
   render(): JSX.Element {
     return (
