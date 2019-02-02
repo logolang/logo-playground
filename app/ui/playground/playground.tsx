@@ -153,6 +153,8 @@ export class Playground extends React.Component<Props, {}> {
                 editorTheme={this.props.userSettings.editorTheme}
                 code={this.props.code}
                 onChanged={this.handleCodeChanged}
+                hotKeys={["f9"]}
+                onHotkey={this.handleRunProgram}
               />
             </ReactGoldenLayoutPanel>
             <ReactGoldenLayoutPanel id="output-panel" title={this.buildOutputPanelTitle()}>
