@@ -21,6 +21,7 @@ export interface Props {
   editorTheme: string;
   hotKeys?: string[];
   onHotkey?(hotkey: string): void;
+  resizeIncrement?: any;
 }
 
 export class CodeInput extends React.Component<Props, State> {
@@ -41,6 +42,9 @@ export class CodeInput extends React.Component<Props, State> {
       if (nextProps.code != this.currentCode) {
         this.currentCode = nextProps.code;
         this.cm.setValue(nextProps.code);
+      }
+      if (nextProps.resizeIncrement != this.props.resizeIncrement) {
+        this.cm.refresh();
       }
     }
   }
@@ -70,13 +74,20 @@ export class CodeInput extends React.Component<Props, State> {
     });
 
     if (this.props.hotKeys) {
+      const keyMap: codemirror.KeyMap = {};
       for (const hotkey of this.props.hotKeys) {
+        keyMap[hotkey.toUpperCase()] = () => {
+          this.handleHotkey(hotkey);
+        };
         keymaster(hotkey, () => {
           this.handleHotkey(hotkey);
           return false;
         });
       }
+      this.cm.addKeyMap(keyMap);
     }
+
+    window.addEventListener("resize", this.handleWindowResize);
   }
 
   componentWillUnmount() {
@@ -85,10 +96,20 @@ export class CodeInput extends React.Component<Props, State> {
         keymaster.unbind(hotkey);
       }
     }
+    window.removeEventListener("resize", this.handleWindowResize);
   }
 
   handleHotkey = (hotkey: string) => {
     this.props.onHotkey && this.props.onHotkey(hotkey);
+  };
+
+  handleWindowResize = () => {
+    // TODO: use debounce
+    setTimeout(() => {
+      if (this.cm) {
+        this.cm.refresh();
+      }
+    }, 300);
   };
 
   render(): JSX.Element {

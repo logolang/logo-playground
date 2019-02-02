@@ -42,7 +42,11 @@ interface Props {
   revertChanges(): void;
 }
 
-export class Playground extends React.Component<Props, {}> {
+interface State {
+  resizeIncrement: number;
+}
+
+export class Playground extends React.Component<Props, State> {
   private eventsTracker = resolve(EventsTrackingService);
   private isMobileDevice = checkIsMobileDevice();
   private defaultLayoutConfigJSON = JSON.stringify(
@@ -51,6 +55,11 @@ export class Playground extends React.Component<Props, {}> {
   private layoutLocalStorageKey =
     "logo-playground-v1.0:playground-layout" + (this.isMobileDevice ? "-mobile" : "-desktop");
   private logoExecutorRef: LogoExecutor | null = null;
+
+  constructor(props: Props) {
+    super(props);
+    this.state = { resizeIncrement: 1 };
+  }
 
   async componentDidMount() {
     this.eventsTracker.sendEvent(EventAction.openPlayground);
@@ -125,9 +134,9 @@ export class Playground extends React.Component<Props, {}> {
             }}
             layoutLocalStorageKey={this.layoutLocalStorageKey}
             defaultLayoutConfigJSON={this.defaultLayoutConfigJSON}
-            onLayoutChange={() => {
-              /** */
-            }}
+            onLayoutChange={() =>
+              this.setState({ resizeIncrement: this.state.resizeIncrement + 1 })
+            }
           >
             <ReactGoldenLayoutPanel id="code-panel" title={this.buildCodePanelTitle()}>
               <CodeMenu
@@ -155,6 +164,7 @@ export class Playground extends React.Component<Props, {}> {
                 onChanged={this.handleCodeChanged}
                 hotKeys={["f9"]}
                 onHotkey={this.handleRunProgram}
+                resizeIncrement={this.state.resizeIncrement}
               />
             </ReactGoldenLayoutPanel>
             <ReactGoldenLayoutPanel id="output-panel" title={this.buildOutputPanelTitle()}>
