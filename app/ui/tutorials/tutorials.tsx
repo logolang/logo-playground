@@ -25,7 +25,9 @@ import { MainMenuContainer } from "../main-menu.container";
 import { getTurtleImage } from "../turtles/turtles";
 import { UserSettings } from "app/types/user-settings";
 
-interface State {}
+interface State {
+  resizeIncrement: number;
+}
 
 interface Props {
   isLoading: boolean;
@@ -59,7 +61,7 @@ export class TutorialsPage extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
-    this.state = {};
+    this.state = { resizeIncrement: 1 };
   }
 
   async componentDidMount() {
@@ -117,9 +119,9 @@ export class TutorialsPage extends React.Component<Props, State> {
             }}
             layoutLocalStorageKey={this.layoutLocalStorageKey}
             defaultLayoutConfigJSON={this.defaultLayoutConfigJSON}
-            onLayoutChange={() => {
-              /** */
-            }}
+            onLayoutChange={() =>
+              this.setState({ resizeIncrement: this.state.resizeIncrement + 1 })
+            }
           >
             <ReactGoldenLayoutPanel
               id="code-panel"
@@ -142,6 +144,7 @@ export class TutorialsPage extends React.Component<Props, State> {
                 onChanged={this.handleCodeChanged}
                 hotKeys={["f9"]}
                 onHotkey={this.handleRunProgram}
+                resizeIncrement={this.state.resizeIncrement}
               />
             </ReactGoldenLayoutPanel>
             <ReactGoldenLayoutPanel
