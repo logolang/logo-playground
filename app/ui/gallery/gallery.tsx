@@ -14,6 +14,7 @@ import { EventsTrackingService, EventAction } from "app/services/env/events-trac
 import { ProgramsHtmlSerializer } from "app/services/gallery/programs-html-serializer";
 
 import { NoData } from "app/ui/_generic/no-data";
+import { TileGrid } from "../_generic/tile-grid";
 import { Loading } from "app/ui/_generic/loading";
 import { MainMenuContainer } from "../main-menu.container";
 import { ImportProgramsContainerContainer } from "../modals/import-programs-modal.container";
@@ -84,9 +85,11 @@ export class Gallery extends React.Component<Props, State> {
                   </div>
                 )}
                 {this.props.programs.length > 0 ? (
-                  <div className="program-cards-container">
-                    {this.props.programs.map(pr => this.renderProgramCard(pr))}
-                  </div>
+                  <TileGrid
+                    tileWidth={250}
+                    tileWidthMobile={170}
+                    tiles={this.props.programs.map(pr => this.renderProgramCard(pr))}
+                  />
                 ) : (
                   this.props.activeSection === GallerySection.PersonalLibrary && (
                     <NoData title="" description={$T.gallery.emptyLibrary} />
@@ -143,7 +146,7 @@ export class Gallery extends React.Component<Props, State> {
   renderProgramCard(p: ProgramModel): JSX.Element {
     const link = Routes.playground.build({ storageType: ensure(p.storageType), id: p.id });
     return (
-      <div key={p.id} className="card program-card">
+      <div className="card program-card">
         <div className="card-image">
           {p.screenshot ? (
             <figure className="image is-4by3 gallery-img-container">
