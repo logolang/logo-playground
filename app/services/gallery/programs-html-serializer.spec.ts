@@ -1,4 +1,4 @@
-import { ProgramsHtmlSerializerService } from "app/services/gallery/programs-html-serializer.service";
+import { ProgramsHtmlSerializer } from "app/services/gallery/programs-html-serializer";
 import { ProgramModel, ProgramStorageType } from "app/services/program/program.model";
 import { createCompareFunction } from "app/utils/syntax";
 
@@ -40,7 +40,7 @@ const sortFn = createCompareFunction<ProgramModel>([{ sortBy: x => x.name }]);
 
 describe("Programs HTML serializer service", () => {
   programsSpecialCharacters.sort(sortFn);
-  const service = new ProgramsHtmlSerializerService();
+  const service = new ProgramsHtmlSerializer();
 
   it("should serialize programs to html string", async () => {
     const serialized = await service.serialize(programsSpecialCharacters, "Olek", "");

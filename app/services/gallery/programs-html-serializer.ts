@@ -1,13 +1,17 @@
 import { ProgramModel, ProgramStorageType } from "app/services/program/program.model";
 import { createCompareFunction, DictionaryLike } from "app/utils/syntax";
+import { $T } from "app/i18n-strings";
 
 const userpicImgCache: DictionaryLike<string> = {};
 
-export class ProgramsHtmlSerializerService {
+export class ProgramsHtmlSerializer {
   public parse(serialized: string): ProgramModel[] {
     const result: ProgramModel[] = [];
     const bodyStartIndex = serialized.indexOf("<body");
     const bodyEndIndex = serialized.indexOf("</html>");
+    if (bodyStartIndex < 0 || bodyEndIndex < 0) {
+      throw new Error($T.gallery.wrongFileFormatForImport);
+    }
     const bodyXml = serialized.substring(bodyStartIndex, bodyEndIndex);
     const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(bodyXml, "application/xml");

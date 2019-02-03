@@ -1,6 +1,7 @@
 import * as React from "react";
 import * as cn from "classnames";
 import { Link } from "react-router-dom";
+import * as FileSaver from "file-saver";
 
 import { ensure } from "app/utils/syntax";
 import { resolve } from "app/di";
@@ -8,29 +9,50 @@ import { $T } from "app/i18n-strings";
 import { Routes } from "app/ui/routes";
 import { ProgramModel } from "app/services/program/program.model";
 import { GallerySection } from "app/store/gallery/state.gallery";
+import { UserData } from "app/services/env/auth-service";
 import { EventsTrackingService, EventAction } from "app/services/env/events-tracking.service";
+import { ProgramsHtmlSerializer } from "app/services/gallery/programs-html-serializer";
 
 import { NoData } from "app/ui/_generic/no-data";
 import { Loading } from "app/ui/_generic/loading";
 import { MainMenuContainer } from "../main-menu.container";
+import { ImportProgramsContainerContainer } from "../modals/import-programs-modal.container";
 
 import "./gallery.less";
 
+interface State {}
+
 interface Props {
   activeSection: GallerySection;
-  isUserLoggedIn: boolean;
+  user: UserData;
   programs: ProgramModel[];
   isLoading: boolean;
   selectSection(section: GallerySection, options?: { forceLoad: boolean }): void;
+  showImportModal(): void;
 }
 
-export class Gallery extends React.Component<Props, {}> {
+export class Gallery extends React.Component<Props, State> {
   private eventsTracker = resolve(EventsTrackingService);
+
+  constructor(props: Props) {
+    super(props);
+    this.state = {};
+  }
 
   async componentDidMount() {
     this.eventsTracker.sendEvent(EventAction.openGallery);
     this.props.selectSection(this.props.activeSection, { forceLoad: true });
   }
+
+  handleExportClick = async () => {
+    const html = await new ProgramsHtmlSerializer().serialize(
+      this.props.programs,
+      this.props.user.name,
+      this.props.user.imageUrl
+    );
+    const blob = new Blob([html], { type: "text/plain;charset=utf-8" });
+    FileSaver.saveAs(blob, `my-logo-programs.html`);
+  };
 
   render(): JSX.Element {
     return (
@@ -44,6 +66,23 @@ export class Gallery extends React.Component<Props, {}> {
               <Loading fullPage isLoading />
             ) : (
               <>
+                {this.props.activeSection === GallerySection.PersonalLibrary && (
+                  <div className="field is-grouped export-import-buttons-group">
+                    <p className="control">
+                      <button type="button" className="button" onClick={this.props.showImportModal}>
+                        Import
+                      </button>
+                    </p>
+                    {this.props.programs.length > 0 && (
+                      <p className="control">
+                        <button type="button" className="button" onClick={this.handleExportClick}>
+                          Export
+                        </button>
+                      </p>
+                    )}
+                    <ImportProgramsContainerContainer />
+                  </div>
+                )}
                 {this.props.programs.length > 0 ? (
                   <div className="program-cards-container">
                     {this.props.programs.map(pr => this.renderProgramCard(pr))}

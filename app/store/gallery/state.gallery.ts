@@ -10,10 +10,16 @@ export interface GalleryState {
   activeSection: GallerySection;
   programs: ProgramModel[];
   isLoading: boolean;
+
+  showImportModal: boolean;
+  importErrorMessage?: string;
+  isImportInProgress: boolean;
 }
 
 export const defaultGalleryState: GalleryState = {
   activeSection: GallerySection.ExamplesAdvanced,
   isLoading: true,
-  programs: []
+  programs: [],
+  showImportModal: false,
+  isImportInProgress: false
 };

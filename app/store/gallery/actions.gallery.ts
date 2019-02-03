@@ -11,10 +11,16 @@ import { GallerySamplesRepository } from "app/services/gallery/gallery-samples.r
 import { PersonalGalleryService } from "app/services/gallery/personal-gallery.service";
 import { normalizeError } from "app/utils/error";
 import { envActionCreator } from "../env/actions.env";
+import { PersonalGalleryImportService } from "app/services/gallery/personal-gallery-import.service";
+import { NotificationType } from "../env/state.env";
+import { $T } from "app/i18n-strings";
 
 export enum GalleryActionType {
   LOAD_SECTION_STARTED = "LOAD_SECTION_STARTED",
-  LOAD_SECTION_COMPLETED = "LOAD_SECTION_COMPLETED"
+  LOAD_SECTION_COMPLETED = "LOAD_SECTION_COMPLETED",
+  TOGGLE_IMPORT_MODAL = "TOGGLE_IMPORT_MODAL",
+  IMPORT_STARTED = "IMPORT_STARTED",
+  IMPORT_COMPLETED = "IMPORT_COMPLETED"
 }
 
 export const galleryActionCreator = {
@@ -29,7 +35,14 @@ export const galleryActionCreator = {
     action(GalleryActionType.LOAD_SECTION_COMPLETED, {
       section,
       programs
-    })
+    }),
+
+  toggleImportModal: (show: boolean) => action(GalleryActionType.TOGGLE_IMPORT_MODAL, { show }),
+
+  import: importThunk,
+  importStarted: () => action(GalleryActionType.IMPORT_STARTED),
+  importCompleted: (success: boolean, errorMessage?: string) =>
+    action(GalleryActionType.IMPORT_COMPLETED, { success, errorMessage })
 };
 
 function loadSectionThunk(section: GallerySection, options?: { forceLoad: boolean }) {
@@ -81,6 +94,30 @@ function loadSectionThunk(section: GallerySection, options?: { forceLoad: boolea
       const errDef = await normalizeError(error);
       dispatch(envActionCreator.handleError(errDef));
       dispatch(galleryActionCreator.loadSectionCompleted(section, []));
+    }
+  };
+}
+
+function importThunk(programsHtml: string) {
+  return async (dispatch: Dispatch<any>, getState: GetState) => {
+    dispatch(galleryActionCreator.importStarted());
+    try {
+      const importService = resolve(PersonalGalleryImportService);
+      const count = await importService.import(programsHtml);
+      dispatch(galleryActionCreator.importCompleted(true));
+      dispatch(
+        envActionCreator.showNotificationAutoClose(
+          NotificationType.info,
+          $T.gallery.importCompletedTitle,
+          $T.gallery.addedProgramsMessage.val(count)
+        )
+      );
+      dispatch(
+        galleryActionCreator.loadSection(GallerySection.PersonalLibrary, { forceLoad: true })
+      );
+    } catch (e) {
+      const ex = await normalizeError(e);
+      dispatch(galleryActionCreator.importCompleted(false, ex.message));
     }
   };
 }

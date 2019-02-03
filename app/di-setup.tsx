@@ -22,6 +22,7 @@ import { ProgramService } from "./services/program/program.service";
 import { GistSharedProgramsRepository } from "./services/program/gist-shared-programs.repository";
 import { LogoCodeSamplesService } from "./services/program/logo-code-samples.service";
 import { AuthService, UserData, AuthProvider } from "./services/env/auth-service";
+import { PersonalGalleryImportService } from "./services/gallery/personal-gallery-import.service";
 
 export class DISetup {
   public static async setupConfig() {
@@ -89,6 +90,8 @@ export class DISetup {
     );
 
     register(LogoCodeSamplesService, new LogoCodeSamplesService());
+
+    register(PersonalGalleryImportService, new PersonalGalleryImportService(galleryService));
   }
 
   public static reset() {

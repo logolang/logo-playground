@@ -6,12 +6,12 @@ import { Gallery } from "./gallery";
 export const GalleryContainer = connect(
   (state: AppState) => ({
     activeSection: state.gallery.activeSection,
-    //TODO
-    isUserLoggedIn: true,
     programs: state.gallery.programs,
-    isLoading: state.gallery.isLoading
+    isLoading: state.gallery.isLoading,
+    user: state.env.user
   }),
   {
-    selectSection: galleryActionCreator.loadSection
+    selectSection: galleryActionCreator.loadSection,
+    showImportModal: () => galleryActionCreator.toggleImportModal(true)
   }
 )(Gallery);
