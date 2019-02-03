@@ -7,6 +7,7 @@ import {
 } from "app/ui/_generic/react-golden-layout/react-golden-layout-panel";
 import { GoldenLayoutHelper } from "./golden-layout.helper";
 import { ReactGoldenLayoutHelperContext } from "app/ui/_generic/react-golden-layout/react-golden-layout-context";
+import { debounce } from "app/utils/debounce";
 
 export type GoldenLayoutConfig = goldenLayout.Config;
 
@@ -27,7 +28,6 @@ export class ReactGoldenLayout extends React.Component<Props, State> {
   private goldenLayoutContainerRef: HTMLElement | undefined;
   private layoutHelper = new GoldenLayoutHelper();
   private panelDomContainersByIds: { [index: string]: HTMLElement } = {};
-  private stateChangedTimer: any;
   private oldWindowDimensions = {
     width: window.innerWidth,
     height: window.innerHeight
@@ -40,7 +40,8 @@ export class ReactGoldenLayout extends React.Component<Props, State> {
 
   componentDidMount() {
     const layoutFromStorage =
-      this.props.layoutLocalStorageKey && window.localStorage.getItem(this.props.layoutLocalStorageKey);
+      this.props.layoutLocalStorageKey &&
+      window.localStorage.getItem(this.props.layoutLocalStorageKey);
     if (!layoutFromStorage || !this.initLayoutWithConfig(layoutFromStorage)) {
       this.initLayoutWithConfig(this.props.defaultLayoutConfigJSON);
     }
@@ -99,7 +100,9 @@ export class ReactGoldenLayout extends React.Component<Props, State> {
       React.Children.map(this.props.children, (child: React.ReactElement<PanelProps>) => {
         if (child.type != ReactGoldenLayoutPanel) {
           console.error("Wrong child:", child);
-          throw new Error("Invalid child, only ReactGoldenLayoutPanel are allowed as children, sorry");
+          throw new Error(
+            "Invalid child, only ReactGoldenLayoutPanel are allowed as children, sorry"
+          );
         }
         componentNames.push(child.props.id);
         layout.registerComponent(child.props.id, registerComponentCallback);
@@ -108,14 +111,17 @@ export class ReactGoldenLayout extends React.Component<Props, State> {
 
       // validate panels
       for (const componentName of componentNames) {
-        const panelConfig = this.layoutHelper.findGoldenLayoutContentItem(layout.root, componentName);
+        const panelConfig = this.layoutHelper.findGoldenLayoutContentItem(
+          layout.root,
+          componentName
+        );
         if (!panelConfig) {
           console.error("Oops, missing panel in config: " + componentName);
           return false;
         }
       }
 
-      layout.on("stateChanged", this.onStateChanged);
+      layout.on("stateChanged", this.handleLayoutStateChanged);
     } catch (ex) {
       console.error(ex);
       return false;
@@ -125,14 +131,7 @@ export class ReactGoldenLayout extends React.Component<Props, State> {
     return true;
   }
 
-  onStateChanged = () => {
-    if (this.stateChangedTimer) {
-      clearTimeout(this.stateChangedTimer);
-    }
-    this.stateChangedTimer = setTimeout(this.stateChangeHandler, 500);
-  };
-
-  stateChangeHandler = () => {
+  handleLayoutStateChanged = debounce(() => {
     if (!this.isComponentMounted || !this.layoutHelper.layout) {
       return;
     }
@@ -145,11 +144,14 @@ export class ReactGoldenLayout extends React.Component<Props, State> {
     if (this.props.onLayoutChange) {
       this.props.onLayoutChange(json);
     }
-  };
+  }, 500);
 
   render(): JSX.Element {
     return (
-      <div className={this.props.className} ref={x => (this.goldenLayoutContainerRef = x || undefined)}>
+      <div
+        className={this.props.className}
+        ref={x => (this.goldenLayoutContainerRef = x || undefined)}
+      >
         {this.layoutHelper.layout && (
           <ReactGoldenLayoutHelperContext.Provider value={this.layoutHelper}>
             {React.Children.map(this.props.children, (child: React.ReactElement<PanelProps>) => {

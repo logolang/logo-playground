@@ -2,6 +2,7 @@ import * as React from "react";
 import * as cn from "classnames";
 import * as codemirror from "codemirror";
 import * as keymaster from "keymaster";
+import { debounce } from "app/utils/debounce";
 
 import "node_modules/codemirror/addon/runmode/runmode.js";
 import "node_modules/codemirror/addon/edit/closebrackets.js";
@@ -103,14 +104,11 @@ export class CodeInput extends React.Component<Props, State> {
     this.props.onHotkey && this.props.onHotkey(hotkey);
   };
 
-  handleWindowResize = () => {
-    // TODO: use debounce
-    setTimeout(() => {
-      if (this.cm) {
-        this.cm.refresh();
-      }
-    }, 300);
-  };
+  handleWindowResize = debounce(() => {
+    if (this.cm) {
+      this.cm.refresh();
+    }
+  }, 300);
 
   render(): JSX.Element {
     return (
