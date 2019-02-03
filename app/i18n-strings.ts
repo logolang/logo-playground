@@ -61,7 +61,13 @@ export const $T = {
       "You are not authenticated. Your personal gallery is persisted in your browser local storage. Please sign in if you want to synchronize your gallery.",
     programHasBeenSaved: "Program has been saved in the personal library.",
     syncronizing: "Synchronizing gallery with remote storage",
-    emptyLibrary: "You do not have any programs stored in personal library yet."
+    emptyLibrary: "You do not have any programs stored in personal library yet.",
+    import: "Import",
+    export: "Export",
+    importCompletedTitle: "Import completed",
+    addedProgramsMessage: new Plural("Added one program", "Added %d programs"),
+    numberOfProgramsInLibrary: new Plural("1 program", "%d programs"),
+    wrongFileFormatForImport: "Looks like import file is corrupted or this format is not supported."
   },
   tutorial: {
     tutorialsTitle: "Tutorials",
@@ -103,13 +109,7 @@ export const $T = {
       medium: "Medium",
       large: "Large",
       huge: "Huge"
-    },
-    import: "Import",
-    export: "Export",
-    importCompletedTitle: "Import completed",
-    addedProgramsMessage: new Plural("Added one program", "Added %d programs"),
-    numberOfProgramsInLibrary: new Plural("1 program", "%d programs"),
-    emptyLibrary: "empty"
+    }
   },
   cheatSheet: {
     cheatSheetTitle: "Cheat sheet"

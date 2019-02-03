@@ -2,7 +2,7 @@ import { formatId } from "app/utils/formatter";
 
 import { ProgramModel, ProgramStorageType } from "app/services/program/program.model";
 import { AjaxService } from "app/services/infrastructure/ajax-service";
-import { ProgramsHtmlSerializerService } from "app/services/gallery/programs-html-serializer.service";
+import { ProgramsHtmlSerializer } from "app/services/gallery/programs-html-serializer";
 import { DictionaryLike } from "app/utils/syntax";
 
 export class GallerySamplesRepository {
@@ -15,7 +15,7 @@ export class GallerySamplesRepository {
       return this.cached_programs[libName];
     }
     const html = await this.ajax.getText(`content/${libName}.html`);
-    const parser = new ProgramsHtmlSerializerService();
+    const parser = new ProgramsHtmlSerializer();
     const data = parser.parse(html);
 
     for (const pr of data) {

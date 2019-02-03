@@ -1,5 +1,6 @@
 import { ProgramModel } from "app/services/program/program.model";
 import { PersonalGalleryService } from "app/services/gallery/personal-gallery.service";
+import { ProgramsHtmlSerializer } from "./programs-html-serializer";
 
 function getIncrementalName(name: string, checkExist: (name: string) => boolean) {
   let counter = 1;
@@ -12,8 +13,15 @@ function getIncrementalName(name: string, checkExist: (name: string) => boolean)
 }
 
 export class PersonalGalleryImportService {
-  async importAll(galleryService: PersonalGalleryService, importingPrograms: ProgramModel[]): Promise<number> {
-    const existingPrograms = (await galleryService.getAll()) || [];
+  constructor(private galleryService: PersonalGalleryService) {}
+
+  async import(programsHtml: string) {
+    const programs = new ProgramsHtmlSerializer().parse(programsHtml);
+    return this.importAll(programs);
+  }
+
+  async importAll(importingPrograms: ProgramModel[]): Promise<number> {
+    const existingPrograms = (await this.galleryService.getAll()) || [];
     const programsToAdd: ProgramModel[] = [];
     let added = 0;
     for (const importingProgram of importingPrograms) {
@@ -41,7 +49,7 @@ export class PersonalGalleryImportService {
         added++;
       }
     }
-    await galleryService.add(programsToAdd);
+    await this.galleryService.add(programsToAdd);
     return added;
   }
 }

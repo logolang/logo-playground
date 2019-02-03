@@ -21,6 +21,24 @@ export function reducers(state: GalleryState | undefined, action: GalleryAction)
         };
       }
       return state;
+    case GalleryActionType.TOGGLE_IMPORT_MODAL:
+      return {
+        ...state,
+        showImportModal: action.payload.show
+      };
+    case GalleryActionType.IMPORT_STARTED:
+      return {
+        ...state,
+        importErrorMessage: "",
+        isImportInProgress: true
+      };
+    case GalleryActionType.IMPORT_COMPLETED:
+      return {
+        ...state,
+        showImportModal: !action.payload.success,
+        importErrorMessage: action.payload.errorMessage,
+        isImportInProgress: false
+      };
     default:
       return state;
   }

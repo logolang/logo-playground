@@ -5,7 +5,7 @@ import {
   GoogleDriveClient,
   IGoogleFileInfo
 } from "app/services/infrastructure/google-drive.client";
-import { ProgramsHtmlSerializerService } from "app/services/gallery/programs-html-serializer.service";
+import { ProgramsHtmlSerializer } from "app/services/gallery/programs-html-serializer";
 import { PersonalGalleryRemoteRepository } from "./personal-gallery-remote.repository";
 
 const storageFileContentType = "text/html; charset=UTF-8";
@@ -18,7 +18,7 @@ interface IStoredData {
 
 export class PersonalGalleryGoogleDriveRepository implements PersonalGalleryRemoteRepository {
   private googleDriveClient: GoogleDriveClient;
-  private serializationService = new ProgramsHtmlSerializerService();
+  private serializationService = new ProgramsHtmlSerializer();
   private cachedData: IStoredData | undefined = undefined;
 
   constructor(private userName: string, private userImage: string, private appConfig: AppConfig) {
