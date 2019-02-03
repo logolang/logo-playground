@@ -1,3 +1,5 @@
+import { debounce } from "app/utils/debounce";
+
 /**
  * This service is to store and get user temporary code stored in local browser
  * So this data is designed as not be to synchronized to whatever backend whenever
@@ -6,9 +8,11 @@
 
 export class LocalTempCodeStorage {
   private storagePrefix = "";
-  private timerHandle: NodeJS.Timeout | undefined;
-  private id: string | undefined;
-  private code: string | undefined;
+
+  private writeToStorage = debounce((id: string, code: string) => {
+    console.log("code is written, yo!");
+    localStorage.setItem(this.storagePrefix + id, code || "");
+  }, 500);
 
   constructor(userEmail: string) {
     const userId = userEmail || "guest";
@@ -21,17 +25,6 @@ export class LocalTempCodeStorage {
   }
 
   setCode(id: string, code: string): void {
-    if (this.timerHandle) {
-      clearTimeout(this.timerHandle);
-      this.timerHandle = undefined;
-    }
-    this.id = id;
-    this.code = code;
-    this.timerHandle = setTimeout(this.writeToStorage, 1000);
+    this.writeToStorage(id, code);
   }
-
-  private writeToStorage = () => {
-    localStorage.setItem(this.storagePrefix + this.id, this.code || "");
-    this.timerHandle = undefined;
-  };
 }

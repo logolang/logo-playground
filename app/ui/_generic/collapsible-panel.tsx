@@ -1,5 +1,6 @@
 import * as cn from "classnames";
 import * as React from "react";
+import { debounce } from "app/utils/debounce";
 
 interface State {
   panelHeight: string;
@@ -15,7 +16,6 @@ export interface Props {
  */
 export class CollapsiblePanel extends React.Component<Props, State> {
   readonly animationDuration = 300;
-  resizeTimeoutHandle: any = undefined;
 
   constructor(props: Props) {
     super(props);
@@ -32,12 +32,9 @@ export class CollapsiblePanel extends React.Component<Props, State> {
     window.removeEventListener("resize", this.onWindowResize);
   }
 
-  onWindowResize = () => {
-    if (this.resizeTimeoutHandle) {
-      clearTimeout(this.resizeTimeoutHandle);
-    }
-    this.resizeTimeoutHandle = setTimeout(this.handleResize, 500);
-  };
+  onWindowResize = debounce(() => {
+    this.handleResize();
+  }, 500);
 
   handleResize = () => {
     const panelInnerDiv = this.refs["panelBodyInner"] as HTMLElement;
