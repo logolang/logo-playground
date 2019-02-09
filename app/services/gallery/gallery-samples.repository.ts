@@ -1,20 +1,28 @@
 import { formatId } from "app/utils/formatter";
 
 import { ProgramModel, ProgramStorageType } from "app/services/program/program.model";
-import { AjaxService } from "app/services/infrastructure/ajax-service";
 import { ProgramsHtmlSerializer } from "app/services/gallery/programs-html-serializer";
 import { DictionaryLike } from "app/utils/syntax";
 
 export class GallerySamplesRepository {
   private cached_programs: DictionaryLike<ProgramModel[]> = {};
 
-  constructor(private ajax: AjaxService) {}
+  constructor() {}
 
   async getAll(libName: string): Promise<ProgramModel[]> {
     if (this.cached_programs[libName]) {
       return this.cached_programs[libName];
     }
-    const html = await this.ajax.getText(`content/${libName}.html`);
+
+    const result = await fetch(`content/${libName}.html`, {
+      method: "get",
+      credentials: "same-origin"
+    });
+    if (!result.ok) {
+      throw result;
+    }
+
+    const html = await result.text();
     const parser = new ProgramsHtmlSerializer();
     const data = parser.parse(html);
 
