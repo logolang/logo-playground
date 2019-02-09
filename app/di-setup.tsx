@@ -1,6 +1,5 @@
-import { register, resetBindings, resolve } from "app/di";
-import { AjaxService } from "./services/infrastructure/ajax-service";
-import { AppConfig, loadConfig } from "./services/env/app-config";
+import { register, resetBindings } from "app/di";
+import { AppConfig } from "./services/env/app-config";
 import { EventsTrackingService } from "./services/env/events-tracking.service";
 import { GoogleAnalyticsTracker } from "./services/infrastructure/google-analytics-tracker";
 import { UserSettingsService } from "./services/env/user-settings.service";
@@ -21,32 +20,29 @@ import { GallerySamplesRepository } from "./services/gallery/gallery-samples.rep
 import { ProgramService } from "./services/program/program.service";
 import { SharedProgramsRepository } from "./services/program/shared-programs.repository";
 import { LogoCodeSamplesService } from "./services/program/logo-code-samples.service";
-import { AuthService, UserData, AuthProvider } from "./services/env/auth-service";
+import { UserData, AuthProvider, AuthService } from "./services/env/auth-service";
 import { PersonalGalleryImportService } from "./services/gallery/personal-gallery-import.service";
 
 export class DISetup {
-  public static async setupConfig() {
-    const appConfig = await loadConfig();
-    register(AppConfig, appConfig);
+  public static async setup(options: { appConfig: AppConfig }) {
+    resetBindings();
+
+    const { appConfig } = options;
 
     const authService = new AuthService(appConfig);
     register(AuthService, authService);
-  }
-
-  public static async setup(options: { user: UserData }) {
-    const appConfig = resolve(AppConfig);
-    const ajaxService = new AjaxService();
+    const user = await authService.init();
 
     const eventsTrackingService = new EventsTrackingService();
     const googleTracking = new GoogleAnalyticsTracker();
     eventsTrackingService.addTracker(googleTracking.trackEvent);
     register(EventsTrackingService, eventsTrackingService);
 
-    const userSettingsService = new UserSettingsService(options.user.email);
+    const userSettingsService = new UserSettingsService(user.email);
     register(UserSettingsService, userSettingsService);
     const userSettings = await userSettingsService.get();
 
-    const localizedContentLoader = new LocalizedContentLoader(ajaxService, userSettings.localeId);
+    const localizedContentLoader = new LocalizedContentLoader(userSettings.localeId);
     register(LocalizedContentLoader, localizedContentLoader);
 
     const poFile = await localizedContentLoader.getFileContent("strings.po");
@@ -60,18 +56,14 @@ export class DISetup {
     );
     register(ImageUploadService, imageUploadService);
 
-    const samplesRepo = new GallerySamplesRepository(ajaxService);
+    const samplesRepo = new GallerySamplesRepository();
     register(GallerySamplesRepository, samplesRepo);
 
-    const localRepo = new PersonalGalleryLocalRepository(options.user.email);
+    const localRepo = new PersonalGalleryLocalRepository(user.email);
     let remoteRepo: PersonalGalleryRemoteRepository | undefined = undefined;
-    switch (options.user.authProvider) {
+    switch (user.authProvider) {
       case AuthProvider.google:
-        remoteRepo = new PersonalGalleryGoogleDriveRepository(
-          options.user.name,
-          options.user.imageUrl,
-          appConfig
-        );
+        remoteRepo = new PersonalGalleryGoogleDriveRepository(user.name, user.imageUrl, appConfig);
         break;
     }
 
@@ -81,7 +73,7 @@ export class DISetup {
     const sharedProgramsRepo = new SharedProgramsRepository(appConfig);
     register(SharedProgramsRepository, sharedProgramsRepo);
 
-    const localCodeStorage = new LocalTempCodeStorage(options.user.email);
+    const localCodeStorage = new LocalTempCodeStorage(user.email);
     register(LocalTempCodeStorage, localCodeStorage);
 
     register(
@@ -92,9 +84,10 @@ export class DISetup {
     register(LogoCodeSamplesService, new LogoCodeSamplesService());
 
     register(PersonalGalleryImportService, new PersonalGalleryImportService(galleryService));
-  }
 
-  public static reset() {
-    resetBindings();
+    return {
+      user,
+      userSettings
+    };
   }
 }

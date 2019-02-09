@@ -9,6 +9,7 @@ import { UserSettings } from "app/types/user-settings";
 import { AuthService, UserData, AuthProvider } from "app/services/env/auth-service";
 import { ErrorDef } from "app/utils/error";
 import { NotificationType } from "./state.env";
+import { loadConfig } from "app/services/env/app-config";
 
 export enum EnvActionType {
   INIT_ENV_STARTED = "INIT_ENV_STARTED",
@@ -49,36 +50,27 @@ export const envActionCreator = {
 function initEnvThunk() {
   return async (dispatch: Dispatch<Action>, getState: GetState) => {
     dispatch(envActionCreator.initEnvStarted());
+    const appConfig = await loadConfig();
+    const initInfo = await DISetup.setup({ appConfig });
 
-    await DISetup.setupConfig();
-    const auth = resolve(AuthService);
-    const userData = await auth.init();
-
-    const settingsService = new UserSettingsService(userData.email);
-    const settings = await settingsService.get();
-
-    await DISetup.setup({ user: userData });
-
-    dispatch(envActionCreator.applyUserSettingsCompleted(settings));
-    dispatch(envActionCreator.signInCompleted(userData));
+    dispatch(envActionCreator.applyUserSettingsCompleted(initInfo.userSettings));
+    dispatch(envActionCreator.signInCompleted(initInfo.user));
   };
 }
 
 function signInThunk(authProvider: AuthProvider) {
-  return async (dispatch: Dispatch<Action>, getState: GetState) => {
+  return async (dispatch: Dispatch<any>, getState: GetState) => {
     const auth = resolve(AuthService);
     await auth.signIn(authProvider);
-    DISetup.reset();
-    await initEnvThunk()(dispatch, getState);
+    dispatch(envActionCreator.initEnv());
   };
 }
 
 function signOutThunk() {
-  return async (dispatch: Dispatch<Action>, getState: GetState) => {
+  return async (dispatch: Dispatch<any>, getState: GetState) => {
     const auth = resolve(AuthService);
     await auth.signOut();
-    DISetup.reset();
-    await initEnvThunk()(dispatch, getState);
+    dispatch(envActionCreator.initEnv());
   };
 }
 
@@ -86,13 +78,11 @@ function applyUserSettingsThunk(
   settings: Partial<UserSettings>,
   options?: { rebindServices: boolean }
 ) {
-  return async (dispatch: Dispatch<Action>, getState: GetState) => {
-    const state = getState();
-    const settingsService = new UserSettingsService(state.env.user.email);
+  return async (dispatch: Dispatch<any>, getState: GetState) => {
+    const settingsService = resolve(UserSettingsService);
     await settingsService.update(settings);
     if (options && options.rebindServices) {
-      DISetup.reset();
-      await initEnvThunk()(dispatch, getState);
+      dispatch(envActionCreator.initEnv());
     } else {
       const newSettings = await settingsService.get();
       dispatch(envActionCreator.applyUserSettingsCompleted(newSettings));

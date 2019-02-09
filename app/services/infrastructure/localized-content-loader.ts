@@ -1,6 +1,4 @@
-import { AjaxService } from "app/services/infrastructure/ajax-service";
-
-type DictionaryLike<V> = { [name: string]: V };
+import { DictionaryLike } from "app/utils/syntax";
 
 /**
  * Loads requested files by ajax from content directory using provided locale
@@ -8,7 +6,7 @@ type DictionaryLike<V> = { [name: string]: V };
 export class LocalizedContentLoader {
   private cache: DictionaryLike<string> = {};
 
-  constructor(private ajax: AjaxService, private localeId: string) {}
+  constructor(private localeId: string) {}
 
   async getFileContent(relativePath: string): Promise<string> {
     try {
@@ -27,9 +25,16 @@ export class LocalizedContentLoader {
       return fromCache;
     }
     try {
-      const result = await this.ajax.getText(`content/${locale}/${relativePath}`);
-      this.cache[resKey] = result;
-      return result;
+      const result = await fetch(`content/${locale}/${relativePath}`, {
+        method: "get",
+        credentials: "same-origin"
+      });
+      if (!result.ok) {
+        throw result;
+      }
+      const content = await result.text();
+      this.cache[resKey] = content;
+      return content;
     } catch (ex) {
       throw ex;
     }
