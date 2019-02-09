@@ -11,6 +11,6 @@ export interface ProgramModel {
 export enum ProgramStorageType {
   samples = "samples",
   gallery = "gallery",
-  gist = "gist",
+  shared = "shared",
   playground = "playground"
 }

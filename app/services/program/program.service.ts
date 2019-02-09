@@ -2,7 +2,7 @@ import { ProgramModel, ProgramStorageType } from "app/services/program/program.m
 import { GallerySamplesRepository } from "app/services/gallery/gallery-samples.repository";
 import { LocalTempCodeStorage } from "app/services/program/local-temp-code.storage";
 import { ProgramModelConverter } from "app/services/program/program-model.converter";
-import { GistSharedProgramsRepository } from "app/services/program/gist-shared-programs.repository";
+import { SharedProgramsRepository } from "app/services/program/shared-programs.repository";
 import { PersonalGalleryService } from "app/services/gallery/personal-gallery.service";
 
 export class ProgramService {
@@ -10,7 +10,7 @@ export class ProgramService {
     private examplesRepository: GallerySamplesRepository,
     private personalGalleryService: PersonalGalleryService,
     private localTempStorage: LocalTempCodeStorage,
-    private gistRepository: GistSharedProgramsRepository
+    private sharedProgramsRepository: SharedProgramsRepository
   ) {}
 
   loadProgram = async (
@@ -87,9 +87,9 @@ export class ProgramService {
         program = await this.personalGalleryService.get(programId);
         program.storageType = ProgramStorageType.gallery;
         break;
-      case ProgramStorageType.gist:
-        program = await this.gistRepository.get(programId);
-        program.storageType = ProgramStorageType.gist;
+      case ProgramStorageType.shared:
+        program = await this.sharedProgramsRepository.get(programId);
+        program.storageType = ProgramStorageType.shared;
         break;
     }
 

@@ -19,7 +19,7 @@ import { PersonalGalleryLocalRepository } from "./services/gallery/personal-gall
 import { PersonalGalleryService } from "./services/gallery/personal-gallery.service";
 import { GallerySamplesRepository } from "./services/gallery/gallery-samples.repository";
 import { ProgramService } from "./services/program/program.service";
-import { GistSharedProgramsRepository } from "./services/program/gist-shared-programs.repository";
+import { SharedProgramsRepository } from "./services/program/shared-programs.repository";
 import { LogoCodeSamplesService } from "./services/program/logo-code-samples.service";
 import { AuthService, UserData, AuthProvider } from "./services/env/auth-service";
 import { PersonalGalleryImportService } from "./services/gallery/personal-gallery-import.service";
@@ -78,15 +78,15 @@ export class DISetup {
     const galleryService = new PersonalGalleryService(localRepo, remoteRepo);
     register(PersonalGalleryService, galleryService);
 
-    const gistRepo = new GistSharedProgramsRepository();
-    register(GistSharedProgramsRepository, gistRepo);
+    const sharedProgramsRepo = new SharedProgramsRepository(appConfig);
+    register(SharedProgramsRepository, sharedProgramsRepo);
 
     const localCodeStorage = new LocalTempCodeStorage(options.user.email);
     register(LocalTempCodeStorage, localCodeStorage);
 
     register(
       ProgramService,
-      new ProgramService(samplesRepo, galleryService, localCodeStorage, gistRepo)
+      new ProgramService(samplesRepo, galleryService, localCodeStorage, sharedProgramsRepo)
     );
 
     register(LogoCodeSamplesService, new LogoCodeSamplesService());
