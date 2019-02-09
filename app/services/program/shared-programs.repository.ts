@@ -1,11 +1,14 @@
 import { ProgramModel, ProgramStorageType } from "app/services/program/program.model";
-import { GistClient } from "../infrastructure/gist.client";
+import { AppConfig } from "../env/app-config";
+import { SharedProgramsUrlEncoder } from "../infrastructure/shared-programs-url-encoder";
 
-export class GistSharedProgramsRepository {
-  private gistClient = new GistClient();
+export class SharedProgramsRepository {
+  constructor(private config: AppConfig) {}
+
+  private repo = new SharedProgramsUrlEncoder();
 
   async get(id: string): Promise<ProgramModel> {
-    const data = await this.gistClient.get(id);
+    const data = await this.repo.get(id);
     const program: ProgramModel = {
       id: id,
       code: data.text,
@@ -13,12 +16,12 @@ export class GistSharedProgramsRepository {
       dateLastEdited: new Date(),
       name: data.name,
       screenshot: "",
-      storageType: ProgramStorageType.gist
+      storageType: ProgramStorageType.shared
     };
     return program;
   }
 
   async post(programName: string, code: string): Promise<string> {
-    return this.gistClient.post(programName, code);
+    return this.repo.post(programName, code);
   }
 }

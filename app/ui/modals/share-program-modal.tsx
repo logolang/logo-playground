@@ -4,8 +4,10 @@ import { $T } from "app/i18n-strings";
 import { resolve } from "app/di";
 import { ErrorDef, callActionSafe } from "app/utils/error";
 
-import { GistSharedProgramsRepository } from "app/services/program/gist-shared-programs.repository";
+import { SharedProgramsRepository } from "app/services/program/shared-programs.repository";
 import { EventsTrackingService, EventAction } from "app/services/env/events-tracking.service";
+import { ProgramStorageType } from "app/services/program/program.model";
+import { Routes } from "../routes";
 
 import { AlertMessage } from "app/ui/_generic/alert-message";
 import { Modal } from "app/ui/_generic/modal";
@@ -26,7 +28,7 @@ interface Props {
 }
 
 export class ShareProgramModal extends React.Component<Props, State> {
-  private gistService = resolve(GistSharedProgramsRepository);
+  private sharedProgramsRepo = resolve(SharedProgramsRepository);
   private eventsTracking = resolve(EventsTrackingService);
 
   constructor(props: Props) {
@@ -94,15 +96,21 @@ export class ShareProgramModal extends React.Component<Props, State> {
     this.setState({ isSavingInProgress: true, errorMessage: "" });
 
     const result = await callActionSafe(this.errorHandler, async () =>
-      this.gistService.post(this.state.programName, this.props.programCode)
+      this.sharedProgramsRepo.post(this.state.programName, this.props.programCode)
     );
     this.setState({
       isSavingInProgress: false
     });
+
     if (result) {
-      this.eventsTracking.sendEvent(EventAction.shareProgramToGist);
+      const baseAppUrl = window.location.toString();
+      const programUrl =
+        baseAppUrl.substr(0, baseAppUrl.indexOf("#") + 1) +
+        Routes.playground.build({ storageType: ProgramStorageType.shared, id: result });
+
+      this.eventsTracking.sendEvent(EventAction.shareProgram);
       this.setState({
-        publishedUrl: result
+        publishedUrl: programUrl
       });
     }
   };

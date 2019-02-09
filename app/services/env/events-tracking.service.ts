@@ -13,8 +13,8 @@ export enum EventAction {
   tutorialsFixTheCode = "tutorials.fixTheCode",
 
   shareScreenshot = "share.screenshot",
-  shareProgramToGist = "share.programToGist",
-  openProgramFromSharedGist = "share.openFromGist",
+  shareProgram = "share.program_share",
+  openSharedProgram = "share.program_open",
 
   openProgramFromPersonalLibrary = "personalLibrary.openProgram",
   saveProgramToPersonalLibrary = "personalLibrary.saveProgram",
