@@ -3,7 +3,7 @@ import * as cn from "classnames";
 import { TutorialInfo } from "app/services/tutorials/tutorials-content-service";
 import { $T } from "app/i18n-strings";
 import { Modal } from "app/ui/_generic/modal";
-import { CollapsiblePanel } from "../_generic/collapsible-panel";
+import { CollapsiblePanel } from "app/ui/_generic/collapsible-panel";
 import { DictionaryLike } from "app/utils/syntax";
 
 import "./tutorial-select-modal.less";

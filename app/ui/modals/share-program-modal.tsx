@@ -7,7 +7,7 @@ import { ErrorDef, callActionSafe } from "app/utils/error";
 import { SharedProgramsRepository } from "app/services/program/shared-programs.repository";
 import { EventsTrackingService, EventAction } from "app/services/env/events-tracking.service";
 import { ProgramStorageType } from "app/services/program/program.model";
-import { Routes } from "../routes";
+import { Routes } from "app/ui/routes";
 
 import { AlertMessage } from "app/ui/_generic/alert-message";
 import { Modal } from "app/ui/_generic/modal";

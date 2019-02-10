@@ -1,5 +1,4 @@
 import * as React from "react";
-import * as cn from "classnames";
 
 import { $T } from "app/i18n-strings";
 

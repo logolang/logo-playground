@@ -1,6 +1,7 @@
-import { LocalStorage } from "../infrastructure/local-storage";
 import { AppConfig } from "./app-config";
-import { GoogleAuthService, UserInfo } from "../infrastructure/google-auth.service";
+import { LocalStorage } from "app/services/infrastructure/local-storage";
+import { GoogleAuthService, UserInfo } from "app/services/infrastructure/google-auth.service";
+import { localStoragePrefix } from "app/services/constants";
 
 export enum AuthProvider {
   google = "google",
@@ -29,8 +30,8 @@ export interface UserData {
 export const anonymousUser: UserData = {
   isLoggedIn: false,
   authProvider: AuthProvider.none,
-  id: "guest",
-  name: "Guest",
+  id: "",
+  name: "",
   email: "",
   imageUrl: ""
 };
@@ -39,7 +40,7 @@ export class AuthService {
   constructor(private config: AppConfig) {}
 
   private localStorage = new LocalStorage<LoginStatus>(
-    "logo-playground-v1.0:login-status",
+    localStoragePrefix + "login-status",
     defaultStatus
   );
 

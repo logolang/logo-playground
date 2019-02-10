@@ -1,5 +1,4 @@
 import * as LZString from "lz-string";
-import { normalizeError } from "app/utils/error";
 
 export class SharedProgramsUrlEncoder {
   constructor() {
@@ -15,8 +14,8 @@ export class SharedProgramsUrlEncoder {
       }
       return { name, text };
     } catch (ex) {
-      const err = await normalizeError(ex);
-      return { name: "Error", text: err.message };
+      console.error(ex);
+      throw new Error("Error during decoding of shared program");
     }
   }
 

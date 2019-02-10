@@ -54,8 +54,9 @@ export const $T = {
     galleryTitle: "Gallery",
     galleryImage: "Gallery image",
     noImage: "No image",
-    personalLibrary: "Personal library",
-    examplesGallery: "Examples gallery",
+    library: "Library",
+    examples: "Examples",
+    shapes: "Shapes",
     editedDate: "Edited",
     notLoggedInText:
       "You are not authenticated. Your personal gallery is persisted in your browser local storage. Please sign in if you want to synchronize your gallery.",
@@ -67,7 +68,10 @@ export const $T = {
     importCompletedTitle: "Import completed",
     addedProgramsMessage: new Plural("Added one program", "Added %d programs"),
     numberOfProgramsInLibrary: new Plural("1 program", "%d programs"),
-    wrongFileFormatForImport: "Looks like import file is corrupted or this format is not supported."
+    wrongFileFormatForImport:
+      "Looks like import file is corrupted or this format is not supported.",
+    importModalTitle: "Import programs to library",
+    chooseAFile: "Choose a file…"
   },
   tutorial: {
     tutorialsTitle: "Tutorials",

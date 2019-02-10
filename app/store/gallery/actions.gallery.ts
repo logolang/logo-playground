@@ -3,16 +3,16 @@ import { Action } from "redux";
 import { action, ActionType } from "typesafe-actions";
 
 import { createCompareFunction } from "app/utils/syntax";
+import { normalizeError } from "app/utils/error";
 import { resolve } from "app/di";
 import { GallerySection } from "./state.gallery";
 import { GetState } from "app/store/store";
+import { envActionCreator } from "app/store/env/actions.env";
+import { NotificationType } from "app/store/env/state.env";
 import { ProgramModel } from "app/services/program/program.model";
 import { GallerySamplesRepository } from "app/services/gallery/gallery-samples.repository";
 import { PersonalGalleryService } from "app/services/gallery/personal-gallery.service";
-import { normalizeError } from "app/utils/error";
-import { envActionCreator } from "../env/actions.env";
 import { PersonalGalleryImportService } from "app/services/gallery/personal-gallery-import.service";
-import { NotificationType } from "../env/state.env";
 import { $T } from "app/i18n-strings";
 
 export enum GalleryActionType {
@@ -44,6 +44,8 @@ export const galleryActionCreator = {
   importCompleted: (success: boolean, errorMessage?: string) =>
     action(GalleryActionType.IMPORT_COMPLETED, { success, errorMessage })
 };
+
+export type GalleryAction = ActionType<typeof galleryActionCreator>;
 
 function loadSectionThunk(section: GallerySection, options?: { forceLoad: boolean }) {
   return async (dispatch: Dispatch<Action>, getState: GetState) => {
@@ -121,5 +123,3 @@ function importThunk(programsHtml: string) {
     }
   };
 }
-
-export type GalleryAction = ActionType<typeof galleryActionCreator>;

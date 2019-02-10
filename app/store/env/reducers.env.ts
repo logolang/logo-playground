@@ -1,11 +1,11 @@
-import { EnvState, defaultEnvState } from "./state.env";
+import { EnvState, defaultEnvState, NotificationType } from "./state.env";
 import { EnvAction, EnvActionType } from "./actions.env";
 import { anonymousUser } from "app/services/env/auth-service";
-import { NotificationType } from "./state.env";
+import { $T } from "app/i18n-strings";
 
 let incrementalId: number = 0;
 
-export function reducers(state: EnvState | undefined, action: EnvAction): EnvState {
+export default function reducers(state: EnvState | undefined, action: EnvAction): EnvState {
   if (!state || !action) {
     return defaultEnvState;
   }
@@ -38,7 +38,7 @@ export function reducers(state: EnvState | undefined, action: EnvAction): EnvSta
           {
             id: (++incrementalId).toString(),
             type: NotificationType.danger,
-            title: "Error",
+            title: $T.common.error,
             message: action.payload.errDef.message
           }
         ]

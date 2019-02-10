@@ -1,7 +1,10 @@
 import { GalleryState, defaultGalleryState } from "./state.gallery";
 import { GalleryAction, GalleryActionType } from "./actions.gallery";
 
-export function reducers(state: GalleryState | undefined, action: GalleryAction): GalleryState {
+export default function reducers(
+  state: GalleryState | undefined,
+  action: GalleryAction
+): GalleryState {
   if (!state || !action) {
     return defaultGalleryState;
   }

@@ -4,6 +4,7 @@
     const googleAnalyticsTrackingId = appConfig.services.googleAnalyticsTrackingId;
     const appGitVersion = htmlWebpackPlugin.options.variables.appGitVersion;
     const loadingSvg = require('!raw-loader!content/images/square-logo-light.svg');
+    const themesManagerRawJS = require('!raw-loader!./ui/themes/themes-manager.js');
 %><!DOCTYPE html>
 <html style="overflow: hidden;">
 
@@ -88,8 +89,7 @@
     <div id="theme_styles_should_be_inserted_straight_before_this_element"/>
 
     <script type="text/javascript">
-      // Themes manager
-      <%=require('!raw-loader!./ui/themes/themes-manager.js')%>
+      <%=themesManagerRawJS%>
     </script>
 
     <% for (var css in htmlWebpackPlugin.files.css) { %>

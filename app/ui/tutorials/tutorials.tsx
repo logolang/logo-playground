@@ -1,13 +1,17 @@
 import * as React from "react";
 import { resolve } from "app/di";
 import { $T } from "app/i18n-strings";
+
 import { checkIsMobileDevice } from "app/utils/device";
 import {
   TutorialInfo,
   TutorialStepContent,
   TutorialStepInfo
 } from "app/services/tutorials/tutorials-content-service";
+import { UserSettings } from "app/services/env/user-settings";
 import { EventsTrackingService, EventAction } from "app/services/env/events-tracking.service";
+import { localStoragePrefix } from "app/services/constants";
+
 import {
   tutorialsDefaultLayout,
   tutorialsDefaultMobileLayout
@@ -16,14 +20,13 @@ import { Loading } from "app/ui/_generic/loading";
 import { ReactGoldenLayout } from "app/ui/_generic/react-golden-layout/react-golden-layout";
 import { ReactGoldenLayoutPanel } from "app/ui/_generic/react-golden-layout/react-golden-layout-panel";
 import { TutorialView } from "app/ui/tutorials/tutorial-view";
-import { CodeMenu } from "../code-menu/code-menu";
-import { CodeInput } from "../_generic/code-input/code-input";
-import { LogoExecutor } from "../_generic/logo-executor/logo-executor";
+import { CodeMenu } from "app/ui/code-menu/code-menu";
+import { CodeInput } from "app/ui/_generic/code-input/code-input";
+import { LogoExecutor } from "app/ui/_generic/logo-executor/logo-executor";
+import { MainMenuContainer } from "app/ui/main-menu.container";
+import { getTurtleImage } from "app/ui/turtles/turtles";
 
 import "./tutorials.less";
-import { MainMenuContainer } from "../main-menu.container";
-import { getTurtleImage } from "../turtles/turtles";
-import { UserSettings } from "app/types/user-settings";
 
 interface State {
   resizeIncrement: number;
@@ -56,7 +59,7 @@ export class TutorialsPage extends React.Component<Props, State> {
     this.isMobileDevice ? tutorialsDefaultMobileLayout : tutorialsDefaultLayout
   );
   private layoutLocalStorageKey =
-    "logo-playground-v1.0:tutorials-layout" + (this.isMobileDevice ? "-mobile" : "-desktop");
+    localStoragePrefix + "tutorials-layout" + (this.isMobileDevice ? "-mobile" : "-desktop");
   private logoExecutorRef: LogoExecutor | null = null;
 
   constructor(props: Props) {

@@ -1,7 +1,10 @@
-import { ProgramModel, ProgramStorageType } from "app/services/program/program.model";
+import {
+  ProgramModel,
+  ProgramStorageType,
+  createNewProgram
+} from "app/services/program/program.model";
 import { GallerySamplesRepository } from "app/services/gallery/gallery-samples.repository";
-import { LocalTempCodeStorage } from "app/services/program/local-temp-code.storage";
-import { ProgramModelConverter } from "app/services/program/program-model.converter";
+import { LocalPlaygroundCodeStorage } from "app/services/program/local-playground-code.storage";
 import { SharedProgramsRepository } from "app/services/program/shared-programs.repository";
 import { PersonalGalleryService } from "app/services/gallery/personal-gallery.service";
 
@@ -9,7 +12,7 @@ export class ProgramService {
   constructor(
     private examplesRepository: GallerySamplesRepository,
     private personalGalleryService: PersonalGalleryService,
-    private localTempStorage: LocalTempCodeStorage,
+    private localTempStorage: LocalPlaygroundCodeStorage,
     private sharedProgramsRepository: SharedProgramsRepository
   ) {}
 
@@ -22,13 +25,11 @@ export class ProgramService {
       return program;
     }
 
-    const tempCode = this.localTempStorage.getCode("playground");
-    const program = ProgramModelConverter.createNewProgram(
-      ProgramStorageType.playground,
-      "",
-      tempCode,
-      ""
-    );
+    const tempCode = this.localTempStorage.getCode();
+    const program = createNewProgram({
+      storageType: ProgramStorageType.playground,
+      code: tempCode
+    });
     return program;
   };
 
@@ -51,12 +52,12 @@ export class ProgramService {
           "Program with this name is already stored in library. Please enter different name."
         );
       }
-      const newProgram = ProgramModelConverter.createNewProgram(
-        ProgramStorageType.gallery,
-        options.newProgramName,
-        options.newCode,
-        options.newScreenshot
-      );
+      const newProgram = createNewProgram({
+        storageType: ProgramStorageType.gallery,
+        name: options.newProgramName,
+        code: options.newCode,
+        screenshot: options.newScreenshot
+      });
       await this.personalGalleryService.add([newProgram]);
       return newProgram;
     } else {

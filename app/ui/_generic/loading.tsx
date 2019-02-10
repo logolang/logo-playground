@@ -1,5 +1,4 @@
 import * as React from "react";
-import * as cn from "classnames";
 
 import "./loading.less";
 

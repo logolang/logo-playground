@@ -3,15 +3,15 @@ import { Action } from "redux";
 import { action, ActionType } from "typesafe-actions";
 
 import { resolve } from "app/di";
+import { normalizeError } from "app/utils/error";
+import { Routes } from "app/ui/routes";
 import { GetState } from "app/store/store";
+import { envActionCreator } from "../env/actions.env";
 import { ProgramStorageType, ProgramModel } from "app/services/program/program.model";
 import { ProgramService } from "app/services/program/program.service";
 import { PersonalGalleryService } from "app/services/gallery/personal-gallery.service";
 import { NavigationService } from "app/services/env/navigation.service";
-import { Routes } from "app/ui/routes";
-import { LocalTempCodeStorage } from "app/services/program/local-temp-code.storage";
-import { normalizeError } from "app/utils/error";
-import { envActionCreator } from "../env/actions.env";
+import { LocalPlaygroundCodeStorage } from "app/services/program/local-playground-code.storage";
 
 export enum PlaygroundActionType {
   LOAD_PROGRAM_STARTED = "LOAD_PROGRAM_STARTED",
@@ -68,6 +68,8 @@ export const playgroundActionCreator = {
   clearProgram: () => action(PlaygroundActionType.RESET_STATE),
   revertChanges: revertChangesThunk
 };
+
+export type PlaygroundAction = ActionType<typeof playgroundActionCreator>;
 
 function loadProgramThunk(storageType: ProgramStorageType, programId: string) {
   return async (dispatch: Dispatch<Action>, getState: GetState) => {
@@ -169,8 +171,8 @@ function codeChangedThunk(newCode: string) {
   return async (dispatch: Dispatch<Action>, getState: GetState) => {
     dispatch(playgroundActionCreator.codeChangedAction(newCode));
 
-    const localStorage = resolve(LocalTempCodeStorage);
-    localStorage.setCode("playground", newCode);
+    const localStorage = resolve(LocalPlaygroundCodeStorage);
+    localStorage.setCode(newCode);
   };
 }
 
@@ -190,5 +192,3 @@ function revertChangesThunk() {
     }
   };
 }
-
-export type PlaygroundAction = ActionType<typeof playgroundActionCreator>;

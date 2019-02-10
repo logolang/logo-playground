@@ -1,13 +1,11 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import * as goldenLayout from "golden-layout";
-import {
-  ReactGoldenLayoutPanel,
-  Props as PanelProps
-} from "app/ui/_generic/react-golden-layout/react-golden-layout-panel";
-import { GoldenLayoutHelper } from "./golden-layout.helper";
-import { ReactGoldenLayoutHelperContext } from "app/ui/_generic/react-golden-layout/react-golden-layout-context";
 import { debounce } from "app/utils/debounce";
+
+import { ReactGoldenLayoutPanel, Props as PanelProps } from "./react-golden-layout-panel";
+import { GoldenLayoutHelper } from "./golden-layout.helper";
+import { ReactGoldenLayoutHelperContext } from "./react-golden-layout-context";
 
 export type GoldenLayoutConfig = goldenLayout.Config;
 

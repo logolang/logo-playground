@@ -1,7 +1,7 @@
 import { TutorialsState, defaultTutorialsState } from "./state.tutorials";
 import { TutorialsActionType, TutorialsAction } from "./actions.tutorials";
 
-export function reducers(
+export default function reducers(
   state: TutorialsState | undefined,
   action: TutorialsAction
 ): TutorialsState {

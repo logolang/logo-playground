@@ -3,7 +3,7 @@ import { AppConfig } from "./services/env/app-config";
 import { EventsTrackingService } from "./services/env/events-tracking.service";
 import { GoogleAnalyticsTracker } from "./services/infrastructure/google-analytics-tracker";
 import { UserSettingsService } from "./services/env/user-settings.service";
-import { LocalTempCodeStorage } from "./services/program/local-temp-code.storage";
+import { LocalPlaygroundCodeStorage } from "./services/program/local-playground-code.storage";
 import { LocalizedContentLoader } from "./services/infrastructure/localized-content-loader";
 import { updateStringsObject } from "./utils/i18n";
 import { $T } from "./i18n-strings";
@@ -70,11 +70,11 @@ export class DISetup {
     const galleryService = new PersonalGalleryService(localRepo, remoteRepo);
     register(PersonalGalleryService, galleryService);
 
-    const sharedProgramsRepo = new SharedProgramsRepository(appConfig);
+    const sharedProgramsRepo = new SharedProgramsRepository();
     register(SharedProgramsRepository, sharedProgramsRepo);
 
-    const localCodeStorage = new LocalTempCodeStorage(user.email);
-    register(LocalTempCodeStorage, localCodeStorage);
+    const localCodeStorage = new LocalPlaygroundCodeStorage(user.email);
+    register(LocalPlaygroundCodeStorage, localCodeStorage);
 
     register(
       ProgramService,
