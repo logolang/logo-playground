@@ -4,8 +4,8 @@ import * as cn from "classnames";
 import { $T } from "app/i18n-strings";
 
 import { Modal } from "app/ui/_generic/modal";
-import { Loading } from "../_generic/loading";
-import { AlertMessage } from "../_generic/alert-message";
+import { Loading } from "app/ui/_generic/loading";
+import { AlertMessage } from "app/ui/_generic/alert-message";
 
 interface State {
   fileName?: string;
@@ -62,10 +62,10 @@ export class ImportProgramsModal extends React.Component<Props, State> {
     return (
       <Modal
         show={this.props.showImportModal}
-        title={"Import programs to your library"}
+        title={$T.gallery.importModalTitle}
         cancelButtonText={$T.common.cancel}
         onCancel={this.handleCancel}
-        actionButtonText={"Import"}
+        actionButtonText={$T.gallery.import}
         onConfirm={
           this.state.fileName && !this.props.isImportInProgress ? this.handleImportClick : undefined
         }
@@ -86,7 +86,7 @@ export class ImportProgramsModal extends React.Component<Props, State> {
                   <span className="file-icon">
                     <i className="fas fa-upload" />
                   </span>
-                  <span className="file-label">Choose a file…</span>
+                  <span className="file-label">{$T.gallery.chooseAFile}</span>
                 </span>
                 {this.state.fileName && <span className="file-name">{this.state.fileName}</span>}
               </label>

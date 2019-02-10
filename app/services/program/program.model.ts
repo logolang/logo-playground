@@ -14,3 +14,21 @@ export enum ProgramStorageType {
   shared = "shared",
   playground = "playground"
 }
+
+export function createNewProgram(options: {
+  storageType: ProgramStorageType;
+  name?: string;
+  code?: string;
+  screenshot?: string;
+}) {
+  const program: ProgramModel = {
+    id: "",
+    storageType: options.storageType,
+    name: options.name || "",
+    code: options.code || "",
+    screenshot: options.screenshot || "",
+    dateCreated: new Date(),
+    dateLastEdited: new Date()
+  };
+  return program;
+}

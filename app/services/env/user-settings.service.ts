@@ -1,5 +1,6 @@
 import { LocalStorage } from "app/services/infrastructure/local-storage";
-import { UserSettings, defaultUserSettings } from "app/types/user-settings";
+import { UserSettings, defaultUserSettings } from "./user-settings";
+import { localStoragePrefix } from "app/services/constants";
 
 /**
  * This service is to store and get user settings
@@ -11,7 +12,7 @@ export class UserSettingsService {
   private currentData: UserSettings;
 
   constructor(userEmail: string) {
-    const storageKey = `logo-playground-v1.0:settings:${userEmail || "guest"}`;
+    const storageKey = localStoragePrefix + `settings:${userEmail || "guest"}`;
     this.localStorage = new LocalStorage<UserSettings>(storageKey, defaultUserSettings);
     const settings = this.localStorage.getValue();
     this.currentData = settings;

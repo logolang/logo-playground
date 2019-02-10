@@ -14,10 +14,10 @@ import { EventsTrackingService, EventAction } from "app/services/env/events-trac
 import { ProgramsHtmlSerializer } from "app/services/gallery/programs-html-serializer";
 
 import { NoData } from "app/ui/_generic/no-data";
-import { TileGrid } from "../_generic/tile-grid";
+import { TileGrid } from "app/ui/_generic/tile-grid";
 import { Loading } from "app/ui/_generic/loading";
-import { MainMenuContainer } from "../main-menu.container";
-import { ImportProgramsContainerContainer } from "../modals/import-programs-modal.container";
+import { MainMenuContainer } from "app/ui/main-menu.container";
+import { ImportProgramsContainerContainer } from "app/ui/modals/import-programs-modal.container";
 
 import "./gallery.less";
 
@@ -71,13 +71,13 @@ export class Gallery extends React.Component<Props, State> {
                   <div className="field is-grouped export-import-buttons-group">
                     <p className="control">
                       <button type="button" className="button" onClick={this.props.showImportModal}>
-                        Import
+                        {$T.gallery.import}
                       </button>
                     </p>
                     {this.props.programs.length > 0 && (
                       <p className="control">
                         <button type="button" className="button" onClick={this.handleExportClick}>
-                          Export
+                          {$T.gallery.export}
                         </button>
                       </p>
                     )}
@@ -114,7 +114,7 @@ export class Gallery extends React.Component<Props, State> {
           >
             <a onClick={() => this.props.selectSection(GallerySection.ExamplesAdvanced)}>
               <i className="fas fa-flask" />
-              &nbsp;<span>Examples</span>
+              &nbsp;<span>{$T.gallery.examples}</span>
             </a>
           </li>
           <li
@@ -124,7 +124,7 @@ export class Gallery extends React.Component<Props, State> {
           >
             <a onClick={() => this.props.selectSection(GallerySection.ExamplesBasic)}>
               <i className="fa fa-puzzle-piece" />
-              &nbsp;<span>Shapes</span>
+              &nbsp;<span>{$T.gallery.shapes}</span>
             </a>
           </li>
           <li
@@ -135,7 +135,7 @@ export class Gallery extends React.Component<Props, State> {
             <a onClick={() => this.props.selectSection(GallerySection.PersonalLibrary)}>
               <i className="fas fa-images" />
               &nbsp;
-              <span>Library</span>
+              <span>{$T.gallery.library}</span>
             </a>
           </li>
         </ul>

@@ -4,7 +4,7 @@ import { $T } from "app/i18n-strings";
 import { ScreenshotModal } from "app/ui/modals/screenshot-modal";
 import { ShareProgramModal } from "app/ui/modals/share-program-modal";
 import { SaveProgramModal } from "app/ui/modals/save-program-modal";
-import { DeleteProgramModal } from "../modals/delete-program-modal";
+import { DeleteProgramModal } from "app/ui/modals/delete-program-modal";
 
 import "./code-menu.less";
 

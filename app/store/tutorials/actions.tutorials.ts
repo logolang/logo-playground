@@ -3,15 +3,15 @@ import { Action } from "redux";
 import { action, ActionType } from "typesafe-actions";
 
 import { resolve } from "app/di";
+import { normalizeError } from "app/utils/error";
 import { GetState } from "app/store/store";
+import { envActionCreator } from "app/store/env/actions.env";
 import {
   TutorialInfo,
   TutorialStepContent,
   TutorialStepInfo,
   TutorialsContentService
 } from "app/services/tutorials/tutorials-content-service";
-import { normalizeError } from "app/utils/error";
-import { envActionCreator } from "../env/actions.env";
 
 export enum TutorialsActionType {
   LOAD_TUTORIALS_STARTED = "LOAD_TUTORIALS_STARTED",
@@ -60,6 +60,8 @@ export const tutorialsActionCreator = {
 
   fixTheCode: () => action(TutorialsActionType.FIX_THE_CODE)
 };
+
+export type TutorialsAction = ActionType<typeof tutorialsActionCreator>;
 
 function loadTutorialsThunk() {
   return async (dispatch: Dispatch<Action>, getState: GetState) => {
@@ -114,5 +116,3 @@ function loadStepThunk(tutorialId: string, stepId: string) {
     }
   };
 }
-
-export type TutorialsAction = ActionType<typeof tutorialsActionCreator>;

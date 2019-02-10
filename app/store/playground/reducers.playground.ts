@@ -1,7 +1,7 @@
 import { PlaygroundState, defaultPlaygroundState } from "./state.playground";
 import { PlaygroundAction, PlaygroundActionType } from "./actions.playground";
 
-export function reducers(
+export default function reducers(
   state: PlaygroundState | undefined,
   action: PlaygroundAction
 ): PlaygroundState {

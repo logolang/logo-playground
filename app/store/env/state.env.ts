@@ -1,4 +1,4 @@
-import { UserSettings, defaultUserSettings } from "app/types/user-settings";
+import { UserSettings, defaultUserSettings } from "app/services/env/user-settings";
 import { anonymousUser, UserData } from "app/services/env/auth-service";
 
 export enum NotificationType {

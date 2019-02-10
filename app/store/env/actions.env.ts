@@ -5,7 +5,7 @@ import { GetState } from "app/store/store";
 import { DISetup } from "app/di-setup";
 import { resolve } from "app/di";
 import { UserSettingsService } from "app/services/env/user-settings.service";
-import { UserSettings } from "app/types/user-settings";
+import { UserSettings } from "app/services/env/user-settings";
 import { AuthService, UserData, AuthProvider } from "app/services/env/auth-service";
 import { ErrorDef } from "app/utils/error";
 import { NotificationType } from "./state.env";
@@ -46,6 +46,8 @@ export const envActionCreator = {
 
   closeNotification: (id: string) => action(EnvActionType.CLOSE_NOTIFICATION, { id })
 };
+
+export type EnvAction = ActionType<typeof envActionCreator>;
 
 function initEnvThunk() {
   return async (dispatch: Dispatch<Action>, getState: GetState) => {
@@ -99,5 +101,3 @@ function showNotificationAutoCloseThunk(type: NotificationType, title: string, m
     }, 3000);
   };
 }
-
-export type EnvAction = ActionType<typeof envActionCreator>;

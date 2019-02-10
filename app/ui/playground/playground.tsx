@@ -6,21 +6,23 @@ import { ProgramStorageType } from "app/services/program/program.model";
 import { EventsTrackingService, EventAction } from "app/services/env/events-tracking.service";
 import { checkIsMobileDevice } from "app/utils/device";
 
+import { localStoragePrefix } from "app/services/constants";
+import { UserSettings } from "app/services/env/user-settings";
+
 import { ReactGoldenLayout } from "app/ui/_generic/react-golden-layout/react-golden-layout";
 import { ReactGoldenLayoutPanel } from "app/ui/_generic/react-golden-layout/react-golden-layout-panel";
 import { LogoExecutor } from "app/ui/_generic/logo-executor/logo-executor";
 import { Loading } from "app/ui/_generic/loading";
 import { CodeInput } from "app/ui/_generic/code-input/code-input";
 import { CodeMenu } from "app/ui/code-menu/code-menu";
+import { MainMenuContainer } from "app/ui/main-menu.container";
+import { getTurtleImage } from "app/ui/turtles/turtles";
 import {
   playgroundDefaultMobileLayout,
   playgroundDefaultLayout
 } from "./playground-default-goldenlayout";
 
 import "./playground.less";
-import { MainMenuContainer } from "../main-menu.container";
-import { UserSettings } from "app/types/user-settings";
-import { getTurtleImage } from "../turtles/turtles";
 
 interface Props {
   isLoading: boolean;
@@ -53,7 +55,7 @@ export class Playground extends React.Component<Props, State> {
     this.isMobileDevice ? playgroundDefaultMobileLayout : playgroundDefaultLayout
   );
   private layoutLocalStorageKey =
-    "logo-playground-v1.0:playground-layout" + (this.isMobileDevice ? "-mobile" : "-desktop");
+    localStoragePrefix + "playground-layout" + (this.isMobileDevice ? "-mobile" : "-desktop");
   private logoExecutorRef: LogoExecutor | null = null;
 
   constructor(props: Props) {

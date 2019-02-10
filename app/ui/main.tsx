@@ -1,9 +1,9 @@
 import * as React from "react";
 import { HashRouter } from "react-router-dom";
 import { RoutesComponent } from "./routes.component";
-import { NavigationService } from "../services/env/navigation.service";
-import { MessageToster, TosterMessage } from "./_generic/message-toster";
-import { Loading } from "./_generic/loading";
+import { NavigationService } from "app/services/env/navigation.service";
+import { MessageToster, TosterMessage } from "app/ui/_generic/message-toster";
+import { Loading } from "app/ui/_generic/loading";
 
 interface Props {
   isLoading: boolean;

@@ -1,9 +1,8 @@
 import { ProgramModel, ProgramStorageType } from "app/services/program/program.model";
-import { AppConfig } from "../env/app-config";
-import { SharedProgramsUrlEncoder } from "../infrastructure/shared-programs-url-encoder";
+import { SharedProgramsUrlEncoder } from "app/services/infrastructure/shared-programs-url-encoder";
 
 export class SharedProgramsRepository {
-  constructor(private config: AppConfig) {}
+  constructor() {}
 
   private repo = new SharedProgramsUrlEncoder();
 

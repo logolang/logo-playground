@@ -34,7 +34,7 @@ export class PersonalGalleryGoogleDriveRepository implements PersonalGalleryRemo
   }
 
   async get(id: string): Promise<ProgramModel> {
-    const existingPrograms = (await this.getAll()) || [];
+    const existingPrograms = await this.getAll();
     const pr = existingPrograms.find(p => p.id === id);
     if (!pr) {
       throw new Error("Program is not found");
