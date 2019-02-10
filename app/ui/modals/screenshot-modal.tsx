@@ -57,7 +57,7 @@ export class ScreenshotModal extends React.Component<Props, State> {
       <Modal
         show
         withoutFooter
-        title={$T.program.screenshot}
+        title={$T.program.screenshotModalTitle}
         onCancel={this.props.onClose}
         cancelButtonText={$T.common.cancel}
       >

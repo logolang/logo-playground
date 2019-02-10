@@ -50,7 +50,7 @@ export class ShareProgramModal extends React.Component<Props, State> {
     return (
       <Modal
         show
-        title={$T.program.shareYourProgram}
+        title={$T.program.shareYourProgramModalTitle}
         onConfirm={this.state.publishedUrl ? undefined : this.shareProgramAction}
         onCancel={this.props.onClose}
         withoutFooter={!!this.state.publishedUrl}

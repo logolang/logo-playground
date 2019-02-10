@@ -42,21 +42,6 @@ msgstr "Удалить"
 msgid "common.error"
 msgstr "Произошла ошибка"
 
-msgid "common.loading"
-msgstr "Загрузка..."
-
-msgid "common.login"
-msgstr "Войти"
-
-msgid "common.logout"
-msgstr "Выйти"
-
-msgid "common.message"
-msgstr "Сообщение"
-
-msgid "common.noImage"
-msgstr "Нет изображения"
-
 msgid "common.save"
 msgstr "Сохранить"
 
@@ -69,14 +54,22 @@ msgstr "Войти через Google"
 msgid "common.signOut"
 msgstr "Выйти"
 
-msgid "gallery.editedDate"
-msgstr "Дата обновления"
+msgid "gallery.addedProgramsMessage"
+msgstr[0] "Добавлена %d программа."
+msgstr[1] "Добавлено %d программы."
+msgstr[2] "Добавлено %d программ."
+
+msgid "gallery.chooseAFile"
+msgstr "Выбрать файл…"
 
 msgid "gallery.emptyLibrary"
 msgstr "Ваша персональная галлерея пуста."
 
-msgid "gallery.examplesGallery"
+msgid "gallery.examples"
 msgstr "Образцы"
+
+msgid "gallery.export"
+msgstr "Экспорт"
 
 msgid "gallery.galleryImage"
 msgstr "Картина в галлерею"
@@ -84,26 +77,32 @@ msgstr "Картина в галлерею"
 msgid "gallery.galleryTitle"
 msgstr "Галлерея"
 
+msgid "gallery.import"
+msgstr "Импорт"
+
+msgid "gallery.importCompletedTitle"
+msgstr "Импорт завершен успешно"
+
+msgid "gallery.importModalTitle"
+msgstr "Импорт программ в библиотеку"
+
+msgid "gallery.library"
+msgstr "Библиотека"
+
 msgid "gallery.noImage"
 msgstr "Нет изображения"
 
 msgid "gallery.notLoggedInText"
 msgstr "Для синхронизации персональной галлереи необходимо залогиниться."
 
-msgid "gallery.personalLibrary"
-msgstr "Персональная библиотека"
+msgid "gallery.shapes"
+msgstr "Фигуры"
 
-msgid "gallery.programHasBeenSaved"
-msgstr "Программа сохранена успешно"
-
-msgid "gallery.syncronizing"
-msgstr "Синхронизация"
+msgid "gallery.wrongFileFormatForImport"
+msgstr "Данный формат файла не поддерживается."
 
 msgid "program.codePanelTitle"
 msgstr "Код программы"
-
-msgid "program.defaultProgramWelcomeComment"
-msgstr "Добро пожаловать на игровую площадку Лого!"
 
 msgid "program.imagePreview"
 msgstr "Скриншот"
@@ -136,7 +135,7 @@ msgid "program.revertChanges"
 msgstr "Отменить изменения"
 
 msgid "program.run"
-msgstr "Выполнить"
+msgstr "Старт"
 
 msgid "program.runDescription"
 msgstr "Запустить программу"
@@ -147,23 +146,20 @@ msgstr "Сохранить"
 msgid "program.saveAs"
 msgstr "Сохранить как ..."
 
-msgid "program.saveToLibrary"
-msgstr "Сохранить в галерее"
+msgid "program.saveToLibraryModalTitle"
+msgstr "Сохранить в библиотеке"
 
-msgid "program.screenShotNotAvailable"
-msgstr "Скриншот невозможен потому что программа еще не была выполнена."
-
-msgid "program.screenshot"
+msgid "program.screenshotModalTitle"
 msgstr "Скриншот"
 
 msgid "program.share"
 msgstr "Опубликовать"
 
-msgid "program.shareYourProgram"
+msgid "program.shareYourProgramModalTitle"
 msgstr "Опубликовать"
 
 msgid "program.stop"
-msgstr "Остановить"
+msgstr "Стоп"
 
 msgid "program.stopDescription"
 msgstr "Остановить выполнение программы"
@@ -174,30 +170,8 @@ msgstr "Сделать скриншот"
 msgid "program.youAreGoingToDeleteProgram"
 msgstr "Вы собираетесь удалить эту программу."
 
-msgid "settings.addedProgramsMessage"
-msgstr[0] "Добавлена %d программа."
-msgstr[1] "Добавлено %d программы."
-msgstr[2] "Добавлено %d программ."
-
-msgid "settings.emptyLibrary"
-msgstr "пусто"
-
-msgid "settings.export"
-msgstr "Экспорт"
-
-msgid "settings.import"
-msgstr "Импорт"
-
-msgid "settings.importCompletedTitle"
-msgstr "Импорт завершен"
-
 msgid "settings.language"
 msgstr "Язык"
-
-msgid "settings.numberOfProgramsInLibrary"
-msgstr[0] "%d программа"
-msgstr[1] "%d программы"
-msgstr[2] "%d программ"
 
 msgid "settings.settingsTitle"
 msgstr "Настройки"
@@ -223,30 +197,29 @@ msgstr "Маленький"
 msgid "settings.turtleSkin"
 msgstr "Вид черепахи"
 
-msgid "settings.turtleSkins.tt10"
-msgstr "Мистер"
-
-msgid "settings.turtleSkins.tt11"
-msgstr "Жорик"
-
-msgid "settings.turtleSkins.tt12"
+msgid "settings.turtleSkins.bob"
 msgstr "Весёлый Боб"
 
-msgid "settings.turtleSkins.tt13"
-msgstr "Ныряльщик"
+msgid "settings.turtleSkins.bright_runner"
+msgstr "Мистер"
 
-msgid "settings.turtleSkins.tt2"
+msgid "settings.turtleSkins.chameleon"
 msgstr "Хамелеон"
 
-msgid "settings.turtleSkins.tt9"
+msgid "settings.turtleSkins.diver"
+msgstr "Ныряльщик"
+
+msgid "settings.turtleSkins.princess"
 msgstr "Принцесса"
+
+msgid "settings.turtleSkins.summer"
+msgstr "Жорик"
 
 msgid "settings.uiTheme"
 msgstr "Тема пользовательского интерфейса"
 
 msgid "settings.userGuestNickName"
 msgstr "Гость"
-
 
 msgid "tutorial.back"
 msgstr "Назад"

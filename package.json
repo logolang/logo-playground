@@ -17,7 +17,7 @@
     "precommit": "lint-staged",
     "tslint": "tslint --project . --format verbose",
     "tslint-fix": "tslint --project . --format verbose --fix",
-    "i18n": "tsc tools/i18n-cli.ts --lib dom,es2017 --target es5 --outDir tmp && node tmp/tools/i18n-cli.js"
+    "i18n": "tsc tools/i18n-cli.ts --lib dom,es2017 --target es5 --skipLibCheck true --outDir tmp && node tmp/tools/i18n-cli.js"
   },
   "dependencies": {
     "classnames": "2.2.6",

@@ -42,21 +42,6 @@ msgstr "Delete"
 msgid "common.error"
 msgstr "Sorry, error has occured"
 
-msgid "common.loading"
-msgstr "Loading..."
-
-msgid "common.login"
-msgstr "Login"
-
-msgid "common.logout"
-msgstr "Logout"
-
-msgid "common.message"
-msgstr "Message"
-
-msgid "common.noImage"
-msgstr "No image"
-
 msgid "common.save"
 msgstr "Save"
 
@@ -69,14 +54,21 @@ msgstr "Sign in with Google"
 msgid "common.signOut"
 msgstr "Sign out"
 
-msgid "gallery.editedDate"
-msgstr "Edited"
+msgid "gallery.addedProgramsMessage"
+msgstr[0] "Added one program"
+msgstr[1] "Added %d programs"
+
+msgid "gallery.chooseAFile"
+msgstr "Choose a file…"
 
 msgid "gallery.emptyLibrary"
 msgstr "You do not have any programs stored in personal library yet."
 
-msgid "gallery.examplesGallery"
-msgstr "Examples gallery"
+msgid "gallery.examples"
+msgstr "Examples"
+
+msgid "gallery.export"
+msgstr "Export"
 
 msgid "gallery.galleryImage"
 msgstr "Gallery image"
@@ -84,26 +76,32 @@ msgstr "Gallery image"
 msgid "gallery.galleryTitle"
 msgstr "Gallery"
 
+msgid "gallery.import"
+msgstr "Import"
+
+msgid "gallery.importCompletedTitle"
+msgstr "Import completed"
+
+msgid "gallery.importModalTitle"
+msgstr "Import programs to library"
+
+msgid "gallery.library"
+msgstr "Library"
+
 msgid "gallery.noImage"
 msgstr "No image"
 
 msgid "gallery.notLoggedInText"
 msgstr "You are not authenticated. Your personal gallery is persisted in your browser local storage. Please sign in if you want to synchronize your gallery."
 
-msgid "gallery.personalLibrary"
-msgstr "Personal library"
+msgid "gallery.shapes"
+msgstr "Shapes"
 
-msgid "gallery.programHasBeenSaved"
-msgstr "Program has been saved in the personal library."
-
-msgid "gallery.syncronizing"
-msgstr "Synchronizing gallery with remote storage"
+msgid "gallery.wrongFileFormatForImport"
+msgstr "Looks like import file is corrupted or this format is not supported."
 
 msgid "program.codePanelTitle"
 msgstr "Program box"
-
-msgid "program.defaultProgramWelcomeComment"
-msgstr "Welcome to LOGO playground!"
 
 msgid "program.imagePreview"
 msgstr "Image preview"
@@ -147,19 +145,16 @@ msgstr "Save"
 msgid "program.saveAs"
 msgstr "Save as..."
 
-msgid "program.saveToLibrary"
+msgid "program.saveToLibraryModalTitle"
 msgstr "Save to personal library"
 
-msgid "program.screenShotNotAvailable"
-msgstr "Screenshot is not available because program has not been executed yet."
-
-msgid "program.screenshot"
+msgid "program.screenshotModalTitle"
 msgstr "Screenshot"
 
 msgid "program.share"
 msgstr "Share"
 
-msgid "program.shareYourProgram"
+msgid "program.shareYourProgramModalTitle"
 msgstr "Share your program"
 
 msgid "program.stop"
@@ -174,28 +169,8 @@ msgstr "Take screenshot"
 msgid "program.youAreGoingToDeleteProgram"
 msgstr "You are going to delete this program."
 
-msgid "settings.addedProgramsMessage"
-msgstr[0] "Added one program"
-msgstr[1] "Added %d programs"
-
-msgid "settings.emptyLibrary"
-msgstr "empty"
-
-msgid "settings.export"
-msgstr "Export"
-
-msgid "settings.import"
-msgstr "Import"
-
-msgid "settings.importCompletedTitle"
-msgstr "Import completed"
-
 msgid "settings.language"
 msgstr "Language"
-
-msgid "settings.numberOfProgramsInLibrary"
-msgstr[0] "1 program"
-msgstr[1] "%d programs"
 
 msgid "settings.settingsTitle"
 msgstr "Settings"
@@ -221,23 +196,23 @@ msgstr "Small"
 msgid "settings.turtleSkin"
 msgstr "Turtle outfit"
 
-msgid "settings.turtleSkins.tt10"
+msgid "settings.turtleSkins.bob"
 msgstr "Chilly Bob"
 
-msgid "settings.turtleSkins.tt11"
-msgstr "Summer"
-
-msgid "settings.turtleSkins.tt12"
+msgid "settings.turtleSkins.bright_runner"
 msgstr "Bright Runner"
 
-msgid "settings.turtleSkins.tt13"
-msgstr "Deep Diver"
-
-msgid "settings.turtleSkins.tt2"
+msgid "settings.turtleSkins.chameleon"
 msgstr "Chameleon"
 
-msgid "settings.turtleSkins.tt9"
+msgid "settings.turtleSkins.diver"
+msgstr "Deep Diver"
+
+msgid "settings.turtleSkins.princess"
 msgstr "Princess"
+
+msgid "settings.turtleSkins.summer"
+msgstr "Summer"
 
 msgid "settings.uiTheme"
 msgstr "User interface theme"
