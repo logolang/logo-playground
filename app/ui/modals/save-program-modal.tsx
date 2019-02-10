@@ -30,7 +30,7 @@ export class SaveProgramModal extends React.Component<Props, State> {
     return (
       <Modal
         show
-        title={$T.program.saveToLibrary}
+        title={$T.program.saveToLibraryModalTitle}
         onConfirm={this.saveProgramAction}
         onCancel={this.props.onClose}
         actionButtonText={$T.common.save}
