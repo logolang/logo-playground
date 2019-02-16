@@ -1,19 +1,13 @@
 {
   "editor.wordBasedSuggestions": false,
-  "typescript.check.tscVersion": false,
   "typescript.tsdk": "./node_modules/typescript/lib",
   "json.schemas": [],
   "search.exclude": {
     "**/node_modules": true,
-    "**/reports": true,
     "**/dist": true,
     "**/lib": true
   },
   "files.exclude": {
-    "**/.git": true,
-    ".atl-cache*": true,
-    "**/node": true,
-    "**/dist": true,
-    "**/reports": true
+    "**/dist": true
   }
 }
