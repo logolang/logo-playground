@@ -34,10 +34,10 @@ export class LogoExecutor extends React.Component<Props, State> {
     };
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     this.graphics = new LogoOutputGraphics("#sandbox", "#turtle");
     if (this.props.isRunning) {
-      this.execute();
+      await this.execute();
     }
   }
 
@@ -45,10 +45,10 @@ export class LogoExecutor extends React.Component<Props, State> {
     this.abort();
   }
 
-  componentDidUpdate() {
+  async componentDidUpdate() {
     if (this.isRunning != this.props.isRunning) {
       if (this.props.isRunning) {
-        this.execute();
+        await this.execute();
       } else {
         this.abort();
       }
@@ -98,7 +98,7 @@ export class LogoExecutor extends React.Component<Props, State> {
     );
 
     // Replace all non-breaking spaces to normal ones because jsLogo does not understand them
-    // This nbsp might occur when typing code on mobile devices
+    // This symbols might occur when typing code on mobile devices
     const code = this.props.code.replace(/\u00A0/g, " ");
 
     this.isRunning = true;

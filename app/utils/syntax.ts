@@ -14,21 +14,6 @@ export function ensure<S>(value: S | undefined): S {
   }
 }
 
-export class Lazy<T> {
-  private _value: T | undefined;
-
-  constructor(private factoryAction: () => T) {}
-
-  get value(): T {
-    if (this._value) {
-      return this._value;
-    }
-    this._value = this.factoryAction();
-    ensure(this._value);
-    return this._value;
-  }
-}
-
 export type DictionaryLike<V> = { [name: string]: V };
 export type ValueType = string | number | boolean | Date | undefined;
 

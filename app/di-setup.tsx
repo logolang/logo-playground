@@ -60,7 +60,7 @@ export class DISetup {
     register(GallerySamplesRepository, samplesRepo);
 
     const localRepo = new PersonalGalleryLocalRepository(user.email);
-    let remoteRepo: PersonalGalleryRemoteRepository | undefined = undefined;
+    let remoteRepo: PersonalGalleryRemoteRepository | undefined;
     switch (user.authProvider) {
       case AuthProvider.google:
         remoteRepo = new PersonalGalleryGoogleDriveRepository(user.name, user.imageUrl, appConfig);

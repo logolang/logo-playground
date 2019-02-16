@@ -8,21 +8,11 @@ export interface Props {
 }
 
 export class ReactGoldenLayoutPanel extends React.Component<Props, {}> {
-  layoutHelper: GoldenLayoutHelper | undefined;
-
-  constructor(props: Props) {
-    super(props);
-  }
-
-  componentDidMount() {
-    //TODO
-  }
+  private layoutHelper?: GoldenLayoutHelper;
 
   componentWillReceiveProps(nextProps: Props) {
-    if (this.props.title != nextProps.title) {
-      if (this.layoutHelper) {
-        this.layoutHelper.setPanelTitle(nextProps.id, nextProps.title);
-      }
+    if (this.props.title != nextProps.title && this.layoutHelper) {
+      this.layoutHelper.setPanelTitle(nextProps.id, nextProps.title);
     }
   }
 

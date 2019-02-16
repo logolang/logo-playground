@@ -23,7 +23,7 @@ interface Props {
 }
 
 export class ReactGoldenLayout extends React.Component<Props, State> {
-  private goldenLayoutContainerRef: HTMLElement | undefined;
+  private goldenLayoutContainerRef?: HTMLElement;
   private layoutHelper = new GoldenLayoutHelper();
   private panelDomContainersByIds: { [index: string]: HTMLElement } = {};
   private oldWindowDimensions = {

@@ -15,7 +15,7 @@ interface State {
 }
 
 export class TileGrid extends React.Component<Props, State> {
-  containerRef: HTMLElement | null = null;
+  containerRef?: HTMLElement;
 
   constructor(props: Props) {
     super(props);
@@ -50,7 +50,7 @@ export class TileGrid extends React.Component<Props, State> {
 
   render() {
     return (
-      <div className="tile-grid-component" ref={ref => (this.containerRef = ref)}>
+      <div className="tile-grid-component" ref={ref => (this.containerRef = ref || undefined)}>
         <div className="tile-grid" style={{ width: this.state.gridWidth }}>
           {this.state.tileWidth > 0 &&
             this.props.tiles.map((tile, index) => (

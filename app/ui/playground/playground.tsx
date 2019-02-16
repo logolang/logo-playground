@@ -56,7 +56,7 @@ export class Playground extends React.Component<Props, State> {
   );
   private layoutLocalStorageKey =
     localStoragePrefix + "playground-layout" + (this.isMobileDevice ? "-mobile" : "-desktop");
-  private logoExecutorRef: LogoExecutor | null = null;
+  private logoExecutorRef?: LogoExecutor;
 
   constructor(props: Props) {
     super(props);
@@ -171,7 +171,7 @@ export class Playground extends React.Component<Props, State> {
             </ReactGoldenLayoutPanel>
             <ReactGoldenLayoutPanel id="output-panel" title={this.buildOutputPanelTitle()}>
               <LogoExecutor
-                ref={ref => (this.logoExecutorRef = ref)}
+                ref={ref => (this.logoExecutorRef = ref || undefined)}
                 isRunning={this.props.isRunning}
                 onFinish={this.handleStopProgram}
                 code={this.props.code}

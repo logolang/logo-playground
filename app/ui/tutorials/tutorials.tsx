@@ -60,7 +60,7 @@ export class TutorialsPage extends React.Component<Props, State> {
   );
   private layoutLocalStorageKey =
     localStoragePrefix + "tutorials-layout" + (this.isMobileDevice ? "-mobile" : "-desktop");
-  private logoExecutorRef: LogoExecutor | null = null;
+  private logoExecutorRef?: LogoExecutor;
 
   constructor(props: Props) {
     super(props);
@@ -157,7 +157,7 @@ export class TutorialsPage extends React.Component<Props, State> {
               }`}
             >
               <LogoExecutor
-                ref={ref => (this.logoExecutorRef = ref)}
+                ref={ref => (this.logoExecutorRef = ref || undefined)}
                 isRunning={this.props.isRunning}
                 onFinish={this.handleStopProgram}
                 code={this.props.code}

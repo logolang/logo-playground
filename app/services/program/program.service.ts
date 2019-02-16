@@ -21,14 +21,12 @@ export class ProgramService {
     programId?: string
   ): Promise<ProgramModel> => {
     if (programId && storageType != ProgramStorageType.playground) {
-      const program = await this.loadProgramFromStorage(storageType, programId);
-      return program;
+      return this.loadProgramFromStorage(storageType, programId);
     }
 
-    const tempCode = this.localTempStorage.getCode();
     const program = createNewProgram({
       storageType: ProgramStorageType.playground,
-      code: tempCode
+      code: this.localTempStorage.getCode()
     });
     return program;
   };

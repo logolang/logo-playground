@@ -2,8 +2,6 @@ import { ProgramModel, ProgramStorageType } from "app/services/program/program.m
 import { SharedProgramsUrlEncoder } from "app/services/infrastructure/shared-programs-url-encoder";
 
 export class SharedProgramsRepository {
-  constructor() {}
-
   private repo = new SharedProgramsUrlEncoder();
 
   async get(id: string): Promise<ProgramModel> {

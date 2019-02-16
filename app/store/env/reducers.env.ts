@@ -3,7 +3,7 @@ import { EnvAction, EnvActionType } from "./actions.env";
 import { anonymousUser } from "app/services/env/auth-service";
 import { $T } from "app/i18n-strings";
 
-let incrementalId: number = 0;
+let incrementalId = 0;
 
 export default function reducers(state: EnvState | undefined, action: EnvAction): EnvState {
   if (!state || !action) {

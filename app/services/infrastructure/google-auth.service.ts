@@ -10,7 +10,7 @@ export class GoogleAuthService {
 
   async init(): Promise<UserInfo | undefined> {
     try {
-      let gapi = (window as any).gapi;
+      const gapi = (window as any).gapi;
       if (!gapi) {
         throw new Error("Google API is not loaded");
       }
