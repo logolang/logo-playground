@@ -5,7 +5,7 @@ import { GoogleAnalyticsTracker } from "./services/infrastructure/google-analyti
 import { UserSettingsService } from "./services/env/user-settings.service";
 import { LocalPlaygroundCodeStorage } from "./services/program/local-playground-code.storage";
 import { LocalizedContentLoader } from "./services/infrastructure/localized-content-loader";
-import { updateStringsObject } from "./utils/i18n";
+import { updateStringsObject } from "./utils/i18n/i18n";
 import { $T } from "./i18n-strings";
 import { TutorialsContentService } from "./services/tutorials/tutorials-content-service";
 import {

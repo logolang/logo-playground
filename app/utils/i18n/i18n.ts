@@ -1,3 +1,4 @@
+/// <reference types="./types" />
 import * as Jed from "jed";
 import * as po2json from "po2json/lib/parse";
 

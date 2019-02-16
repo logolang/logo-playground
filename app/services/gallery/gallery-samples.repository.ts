@@ -21,7 +21,7 @@ export class GallerySamplesRepository {
     }
 
     const html = await result.text();
-    const parser = new ProgramsHtmlSerializer();
+    const parser = new ProgramsHtmlSerializer(window);
     const data = parser.parse(html);
 
     for (const pr of data) {
