@@ -24,19 +24,18 @@ export class LocalizedContentLoader {
     if (fromCache) {
       return fromCache;
     }
-    try {
-      const result = await fetch(`content/${locale}/${relativePath}`, {
-        method: "get",
-        credentials: "same-origin"
-      });
-      if (!result.ok) {
-        throw result;
-      }
-      const content = await result.text();
-      this.cache[resKey] = content;
-      return content;
-    } catch (ex) {
-      throw ex;
+
+    const result = await fetch(`content/${locale}/${relativePath}`, {
+      method: "get",
+      credentials: "same-origin"
+    });
+
+    if (!result.ok) {
+      throw result;
     }
+
+    const content = await result.text();
+    this.cache[resKey] = content;
+    return content;
   }
 }

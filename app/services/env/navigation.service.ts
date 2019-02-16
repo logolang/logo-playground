@@ -1,7 +1,7 @@
 export type NavigationHandler = (route: string) => void;
 
 export class NavigationService {
-  private static navHandler: NavigationHandler | undefined;
+  private static navHandler?: NavigationHandler;
 
   public static setNavigationHandler(navHandler: NavigationHandler) {
     this.navHandler = navHandler;

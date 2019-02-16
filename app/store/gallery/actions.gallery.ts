@@ -47,13 +47,15 @@ export const galleryActionCreator = {
 
 export type GalleryAction = ActionType<typeof galleryActionCreator>;
 
-function loadSectionThunk(section: GallerySection, options?: { forceLoad: boolean }) {
+function loadSectionThunk(section: GallerySection, options?: { forceLoad?: boolean }) {
   return async (dispatch: Dispatch<Action>, getState: GetState) => {
     const state = getState().gallery;
-    if (state.activeSection === section && state.programs.length > 0) {
-      if (!options || !options.forceLoad) {
-        return;
-      }
+    if (
+      state.activeSection === section &&
+      state.programs.length > 0 &&
+      !(options && options.forceLoad)
+    ) {
+      return;
     }
     dispatch(galleryActionCreator.loadSectionStarted(section));
 
@@ -82,10 +84,10 @@ function loadSectionThunk(section: GallerySection, options?: { forceLoad: boolea
           }
           break;
         case GallerySection.PersonalLibrary:
-          const cachedPrograms = await galleryService.getAllLocal();
-          if (cachedPrograms.length > 0) {
-            cachedPrograms.sort(sortingFunction);
-            dispatch(galleryActionCreator.loadSectionCompleted(section, cachedPrograms));
+          const programsFromLocal = galleryService.getAllLocal();
+          if (programsFromLocal.length > 0) {
+            programsFromLocal.sort(sortingFunction);
+            dispatch(galleryActionCreator.loadSectionCompleted(section, programsFromLocal));
           }
 
           const programsFromRemote = await galleryService.getAll();

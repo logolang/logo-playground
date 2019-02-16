@@ -9,7 +9,7 @@ export class AppConfig {
 }
 
 export async function loadConfig(): Promise<AppConfig> {
-  var headers = new Headers();
+  const headers = new Headers();
   headers.append("pragma", "no-cache");
   headers.append("cache-control", "no-cache");
 

@@ -37,7 +37,7 @@ interface Props {
 export class UserProfilePage extends React.Component<Props, State> {
   private eventsTracking = resolve(EventsTrackingService);
   private demoSamplesService = resolve(LogoCodeSamplesService);
-  private logoExecutor: LogoExecutor | null = null;
+  private logoExecutor?: LogoExecutor;
 
   constructor(props: Props) {
     super(props);
@@ -88,7 +88,7 @@ export class UserProfilePage extends React.Component<Props, State> {
                     id="language-selector"
                     selectionChanged={async selectedLocation => {
                       if (selectedLocation) {
-                        await this.props.applyUserSettings(
+                        this.props.applyUserSettings(
                           { localeId: selectedLocation.id },
                           { rebindServices: true }
                         );
@@ -189,10 +189,12 @@ export class UserProfilePage extends React.Component<Props, State> {
               <div className="column">
                 <div className="card" style={{ height: 300 }}>
                   <LogoExecutor
-                    ref={ref => (this.logoExecutor = ref)}
+                    ref={ref => (this.logoExecutor = ref || undefined)}
                     isRunning={true}
                     code={this.state.code}
-                    onFinish={() => {}}
+                    onFinish={() => {
+                      /* Nothing here */
+                    }}
                     isDarkTheme={this.props.userSettings.isDarkTheme}
                     turtleImage={getTurtleImage(this.props.userSettings.turtleId)}
                     turtleSize={this.props.userSettings.turtleSize}

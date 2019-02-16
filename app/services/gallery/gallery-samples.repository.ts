@@ -7,8 +7,6 @@ import { DictionaryLike } from "app/utils/syntax";
 export class GallerySamplesRepository {
   private cached_programs: DictionaryLike<ProgramModel[]> = {};
 
-  constructor() {}
-
   async getAll(libName: string): Promise<ProgramModel[]> {
     if (this.cached_programs[libName]) {
       return this.cached_programs[libName];

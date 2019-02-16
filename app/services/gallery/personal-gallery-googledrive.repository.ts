@@ -19,7 +19,7 @@ interface IStoredData {
 export class PersonalGalleryGoogleDriveRepository implements PersonalGalleryRemoteRepository {
   private googleDriveClient: GoogleDriveClient;
   private serializationService = new ProgramsHtmlSerializer();
-  private cachedData: IStoredData | undefined = undefined;
+  private cachedData?: IStoredData;
 
   constructor(private userName: string, private userImage: string, private appConfig: AppConfig) {
     this.googleDriveClient = new GoogleDriveClient();

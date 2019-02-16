@@ -46,10 +46,8 @@ export class CollapsiblePanel extends React.Component<Props, State> {
 
   componentDidUpdate(prevProps: Props) {
     if (this.props.isCollapsed && !prevProps.isCollapsed) {
-      if (this.props.isCollapsed) {
-        const panelOuterDiv = this.refs["panelBodyOuter"] as HTMLElement;
-        panelOuterDiv.style.height = panelOuterDiv.scrollHeight + "px";
-      }
+      const panelOuterDiv = this.refs["panelBodyOuter"] as HTMLElement;
+      panelOuterDiv.style.height = panelOuterDiv.scrollHeight + "px";
     }
     this.handleResize();
 
