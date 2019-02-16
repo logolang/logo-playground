@@ -1,3 +1,4 @@
+import * as chai from "chai";
 import { RandomHelper } from "./random";
 
 describe("RandomHelper", () => {

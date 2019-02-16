@@ -1,4 +1,4 @@
-import { Template, Plural } from "./utils/i18n";
+import { Template, Plural } from "./utils/i18n/i18n";
 
 export { Template, Plural };
 

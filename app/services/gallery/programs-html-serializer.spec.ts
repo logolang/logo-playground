@@ -1,4 +1,8 @@
-import { ProgramsHtmlSerializer } from "app/services/gallery/programs-html-serializer";
+import * as chai from "chai";
+import { JSDOM } from "jsdom";
+const jsDomWindow = new JSDOM(`<!DOCTYPE html><p>Hello world</p>`).window;
+
+import { ProgramsHtmlSerializer } from "./programs-html-serializer";
 import { ProgramModel, ProgramStorageType } from "app/services/program/program.model";
 import { createCompareFunction } from "app/utils/syntax";
 
@@ -40,7 +44,7 @@ const sortFn = createCompareFunction<ProgramModel>([{ sortBy: x => x.name }]);
 
 describe("Programs HTML serializer service", () => {
   programsSpecialCharacters.sort(sortFn);
-  const service = new ProgramsHtmlSerializer();
+  const service = new ProgramsHtmlSerializer(jsDomWindow);
 
   it("should serialize programs to html string", async () => {
     const serialized = await service.serialize(programsSpecialCharacters, "Olek", "");
@@ -59,10 +63,5 @@ describe("Programs HTML serializer service", () => {
     const serialized = await service.serialize(programs, "Olek", "");
     const deserialized = service.parse(serialized);
     chai.expect(deserialized).to.be.eql(programs);
-  });
-
-  it("should deserialize empty string to empty array", () => {
-    const deserialized = service.parse("");
-    chai.expect(deserialized).to.be.eql([]);
   });
 });

@@ -46,7 +46,7 @@ export class Gallery extends React.Component<Props, State> {
   }
 
   handleExportClick = async () => {
-    const html = await new ProgramsHtmlSerializer().serialize(
+    const html = await new ProgramsHtmlSerializer(window).serialize(
       this.props.programs,
       this.props.user.name,
       this.props.user.imageUrl

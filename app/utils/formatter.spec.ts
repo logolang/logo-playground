@@ -1,3 +1,4 @@
+import * as chai from "chai";
 import { getFileExtension, parseDateFromJson, stringifyDateAsJson } from "./formatter";
 import { NULL } from "app/utils/syntax";
 

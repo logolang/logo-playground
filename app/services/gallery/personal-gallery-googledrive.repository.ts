@@ -18,7 +18,7 @@ interface IStoredData {
 
 export class PersonalGalleryGoogleDriveRepository implements PersonalGalleryRemoteRepository {
   private googleDriveClient: GoogleDriveClient;
-  private serializationService = new ProgramsHtmlSerializer();
+  private serializationService = new ProgramsHtmlSerializer(window);
   private cachedData?: IStoredData;
 
   constructor(private userName: string, private userImage: string, private appConfig: AppConfig) {

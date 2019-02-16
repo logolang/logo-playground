@@ -5,6 +5,8 @@ import { $T } from "app/i18n-strings";
 const userpicImgCache: DictionaryLike<string> = {};
 
 export class ProgramsHtmlSerializer {
+  constructor(private window: Window) {}
+
   public parse(serialized: string): ProgramModel[] {
     const result: ProgramModel[] = [];
     const bodyStartIndex = serialized.indexOf("<body");
@@ -13,7 +15,7 @@ export class ProgramsHtmlSerializer {
       throw new Error($T.gallery.wrongFileFormatForImport);
     }
     const bodyXml = serialized.substring(bodyStartIndex, bodyEndIndex);
-    const parser = new DOMParser();
+    const parser = new (this.window as any).DOMParser();
     const xmlDoc = parser.parseFromString(bodyXml, "application/xml");
 
     const articles = xmlDoc.querySelectorAll(".logo-program");
@@ -79,27 +81,27 @@ export class ProgramsHtmlSerializer {
 </head>
 `;
 
-    const body = document.createElement("body");
-    const header = document.createElement("header");
+    const body = this.window.document.createElement("body");
+    const header = this.window.document.createElement("header");
     body.appendChild(header);
 
-    const header_h1 = document.createElement("h1");
+    const header_h1 = this.window.document.createElement("h1");
     header_h1.innerText = "Logo personal library";
     header.appendChild(header_h1);
 
-    const header_h3 = document.createElement("h3");
+    const header_h3 = this.window.document.createElement("h3");
     header_h3.innerText = username;
     header.appendChild(header_h3);
 
     if (imageData64Url) {
-      const header_img = document.createElement("img");
+      const header_img = this.window.document.createElement("img");
       header_img.setAttribute("src", imageData64Url);
       header.appendChild(header_img);
     }
 
-    const table = document.createElement("table");
+    const table = this.window.document.createElement("table");
     body.appendChild(table);
-    const tbody = document.createElement("tbody");
+    const tbody = this.window.document.createElement("tbody");
     table.appendChild(tbody);
 
     const rows = programsSorted.map(p => this.serializeProgramToHtmlNode(p));
@@ -108,43 +110,46 @@ export class ProgramsHtmlSerializer {
     }
 
     return (
-      "<!DOCTYPE html><html>" + headBlock + new XMLSerializer().serializeToString(body) + "</html>"
+      "<!DOCTYPE html><html>" +
+      headBlock +
+      new (this.window as any).XMLSerializer().serializeToString(body) +
+      "</html>"
     );
   }
 
   private serializeProgramToHtmlNode(program: ProgramModel) {
-    const tr = document.createElement("tr");
+    const tr = this.window.document.createElement("tr");
     tr.className = "logo-program";
     tr.setAttribute("data-program-id", program.id);
     tr.setAttribute("data-program-name", program.name);
     tr.setAttribute("data-program-date-created", program.dateCreated.toUTCString());
     tr.setAttribute("data-program-date-edited", program.dateLastEdited.toUTCString());
 
-    const td1 = document.createElement("td");
+    const td1 = this.window.document.createElement("td");
     tr.appendChild(td1);
-    const programNameElt = document.createElement("strong");
+    const programNameElt = this.window.document.createElement("strong");
     programNameElt.innerText = program.name;
     td1.appendChild(programNameElt);
 
-    td1.appendChild(document.createElement("br"));
+    td1.appendChild(this.window.document.createElement("br"));
 
-    const programDateElt = document.createElement("small");
+    const programDateElt = this.window.document.createElement("small");
     programDateElt.innerText = program.dateLastEdited.toLocaleDateString();
     td1.appendChild(programDateElt);
 
-    td1.appendChild(document.createElement("br"));
-    td1.appendChild(document.createElement("br"));
+    td1.appendChild(this.window.document.createElement("br"));
+    td1.appendChild(this.window.document.createElement("br"));
 
     if (program.screenshot) {
-      const img = document.createElement("img");
+      const img = this.window.document.createElement("img");
       img.setAttribute("src", program.screenshot);
       td1.appendChild(img);
     }
 
-    const td2 = document.createElement("td");
+    const td2 = this.window.document.createElement("td");
     tr.appendChild(td2);
-    const pre = document.createElement("pre");
-    pre.appendChild(document.createTextNode(program.code));
+    const pre = this.window.document.createElement("pre");
+    pre.appendChild(this.window.document.createTextNode(program.code));
     td2.appendChild(pre);
     tr.appendChild(td2);
 
@@ -156,10 +161,10 @@ export class ProgramsHtmlSerializer {
       return "";
     }
     return new Promise<string>((resolve, reject) => {
-      const imgElt = document.createElement("img");
+      const imgElt = this.window.document.createElement("img");
       imgElt.addEventListener("load", () => {
         try {
-          const canvasElt = document.createElement("canvas");
+          const canvasElt = this.window.document.createElement("canvas");
           canvasElt.width = 64;
           canvasElt.height = 64;
           const ctx = canvasElt.getContext("2d");

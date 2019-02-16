@@ -16,7 +16,7 @@ export class PersonalGalleryImportService {
   constructor(private galleryService: PersonalGalleryService) {}
 
   async import(programsHtml: string) {
-    const programs = new ProgramsHtmlSerializer().parse(programsHtml);
+    const programs = new ProgramsHtmlSerializer(window).parse(programsHtml);
     return this.importAll(programs);
   }
 

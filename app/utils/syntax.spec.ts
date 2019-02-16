@@ -1,3 +1,4 @@
+import * as chai from "chai";
 import { createCompareFunction } from "./syntax";
 
 interface Person {
