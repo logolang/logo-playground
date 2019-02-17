@@ -26,7 +26,7 @@ module.exports = function(env) {
     mode: isDevBuild ? "development" : "production",
 
     entry: {
-      app: "./app/app-entry-point.tsx"
+      app: "./src/app.tsx"
     },
 
     optimization: {
@@ -37,7 +37,7 @@ module.exports = function(env) {
 
     resolve: {
       extensions: [".ts", ".tsx", ".js"],
-      modules: [__dirname, "node_modules"]
+      modules: [__dirname, __dirname + "/src", "node_modules"]
     },
 
     output: {
@@ -103,7 +103,7 @@ module.exports = function(env) {
       }),
 
       new HtmlWebpackPlugin({
-        template: "app/app-index-template.ejs",
+        template: "src/index.ejs",
         filename: "index.html",
         inject: false,
         variables: {
