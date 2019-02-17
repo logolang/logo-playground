@@ -6,10 +6,10 @@
   "scripts": {
     "start": "webpack-dev-server",
     "build": "webpack --env.prod",
-    "test": "mocha --require ts-node/register --require tsconfig-paths/register --watch-extensions ts,tsx \"app/**/*.spec.{ts,tsx}\"",
+    "test": "mocha --require ts-node/register --require tsconfig-paths/register --watch-extensions ts,tsx \"src/*/*.spec.{ts,tsx}\"",
     "precommit": "lint-staged",
     "tslint": "tslint --project . --format verbose --fix",
-    "i18n": "ts-node tools/i18n-cli.ts"
+    "i18n": "ts-node --require tsconfig-paths/register tools/i18n-cli.ts"
   },
   "dependencies": {
     "classnames": "2.2.6",

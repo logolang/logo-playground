@@ -4,6 +4,9 @@
     "module": "commonjs",
     "moduleResolution": "node",
     "baseUrl": ".",
+    "paths": {
+      "*": ["src/*"]
+    },
     "sourceMap": true,
     "inlineSourceMap": false,
     "emitDecoratorMetadata": true,
