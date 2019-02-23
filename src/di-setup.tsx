@@ -7,7 +7,7 @@ import { GoogleAnalyticsTracker } from "services/infrastructure/google-analytics
 import { UserSettingsService } from "services/user-settings.service";
 import { LocalPlaygroundCodeStorage } from "services/local-playground-code.storage";
 import { LocalizedContentLoader } from "services/localized-content-loader";
-import { TutorialsContentService } from "services/tutorials-content-service";
+import { TutorialsService } from "services/tutorials-service";
 import {
   ImageUploadImgurService,
   ImageUploadService
@@ -48,7 +48,7 @@ export class DISetup {
     const poFile = await localizedContentLoader.getFileContent("strings.po");
     updateStringsObject($T, poFile);
 
-    register(TutorialsContentService, new TutorialsContentService(localizedContentLoader));
+    register(TutorialsService, new TutorialsService(localizedContentLoader));
 
     const imageUploadService = new ImageUploadImgurService(
       appConfig.services.imgurServiceClientID,

@@ -23,7 +23,7 @@ export interface TutorialStepContent {
 /**
  * Gets access to tutorials content
  */
-export class TutorialsContentService {
+export class TutorialsService {
   private tutorialInfos: TutorialInfo[] = [];
 
   constructor(private contentLoader: LocalizedContentLoader) {}

@@ -1,7 +1,7 @@
 import { connect } from "react-redux";
 import { AppState } from "store/store";
 import { SignInStatus } from "./sign-in-status";
-import { envActionCreator } from "store/env/actions.env";
+import { envThunks } from "store/env/thunks.env";
 
 export const SignInStatusContainer = connect(
   (state: AppState) => ({
@@ -13,6 +13,6 @@ export const SignInStatusContainer = connect(
   }),
   {
     //selectSection: userActionCreator.loadSection
-    onSignIn: envActionCreator.signIn
+    onSignIn: envThunks.signIn
   }
 )(SignInStatus);

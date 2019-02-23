@@ -3,6 +3,7 @@ import { AppState } from "store/store";
 import { playgroundActionCreator } from "store/playground/actions.playground";
 import { Playground } from "./playground";
 import { ProgramStorageType } from "services/program.model";
+import { playgroundThunks } from "store/playground/thunks.playground";
 
 export const PlaygroundContainer = connect(
   (state: AppState, ownProps: { storageType?: ProgramStorageType; programId?: string }) => ({
@@ -18,14 +19,14 @@ export const PlaygroundContainer = connect(
   }),
   {
     /** Actions to props */
-    loadProgram: playgroundActionCreator.loadProgram,
-    codeChanged: playgroundActionCreator.codeChangedThunk,
+    loadProgram: playgroundThunks.loadProgram,
+    codeChanged: playgroundThunks.codeChangedThunk,
     runProgram: playgroundActionCreator.runProgram,
     stopProgram: playgroundActionCreator.stopProgram,
-    saveAsProgram: playgroundActionCreator.saveAsProgram,
-    saveProgram: playgroundActionCreator.saveProgram,
-    deleteProgram: playgroundActionCreator.deleteProgram,
+    saveAsProgram: playgroundThunks.saveAsProgram,
+    saveProgram: playgroundThunks.saveProgram,
+    deleteProgram: playgroundThunks.deleteProgram,
     clearProgram: playgroundActionCreator.clearProgram,
-    revertChanges: playgroundActionCreator.revertChanges
+    revertChanges: playgroundThunks.revertChanges
   }
 )(Playground);

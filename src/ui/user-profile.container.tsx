@@ -1,7 +1,7 @@
 import { connect } from "react-redux";
 import { AppState } from "store/store";
-import { envActionCreator } from "store/env/actions.env";
 import { UserProfilePage } from "./user-profile";
+import { envThunks } from "store/env/thunks.env";
 
 export const UserProfileContainer = connect(
   (state: AppState) => ({
@@ -11,6 +11,6 @@ export const UserProfileContainer = connect(
   }),
   {
     /** Actions to props */
-    applyUserSettings: envActionCreator.applyUserSettings
+    applyUserSettings: envThunks.applyUserSettings
   }
 )(UserProfilePage);

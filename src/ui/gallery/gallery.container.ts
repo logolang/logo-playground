@@ -1,7 +1,8 @@
 import { connect } from "react-redux";
 import { AppState } from "store/store";
-import { galleryActionCreator } from "store/gallery/actions.gallery";
 import { Gallery } from "./gallery";
+import { galleryActionCreator } from "store/gallery/actions.gallery";
+import { galleryThunks } from "store/gallery/thunks.gallery";
 
 export const GalleryContainer = connect(
   (state: AppState) => ({
@@ -11,7 +12,7 @@ export const GalleryContainer = connect(
     user: state.env.user
   }),
   {
-    selectSection: galleryActionCreator.loadSection,
+    selectSection: galleryThunks.loadSection,
     showImportModal: () => galleryActionCreator.toggleImportModal(true)
   }
 )(Gallery);
