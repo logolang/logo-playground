@@ -3,11 +3,7 @@ import { resolve } from "utils/di";
 import { $T } from "i18n-strings";
 
 import { checkIsMobileDevice } from "utils/device";
-import {
-  TutorialInfo,
-  TutorialStepContent,
-  TutorialStepInfo
-} from "services/tutorials-content-service";
+import { TutorialInfo, TutorialStepContent, TutorialStepInfo } from "services/tutorials-service";
 import { UserSettings } from "services/user-settings";
 import {
   EventsTrackingService,

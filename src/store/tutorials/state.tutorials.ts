@@ -1,8 +1,4 @@
-import {
-  TutorialInfo,
-  TutorialStepInfo,
-  TutorialStepContent
-} from "services/tutorials-content-service";
+import { TutorialInfo, TutorialStepInfo, TutorialStepContent } from "services/tutorials-service";
 
 export interface TutorialsState {
   isLoading: boolean;

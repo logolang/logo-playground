@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as cn from "classnames";
-import { TutorialInfo } from "services/tutorials-content-service";
+import { TutorialInfo } from "services/tutorials-service";
 import { $T } from "i18n-strings";
 import { Modal } from "ui/_generic/modal";
 import { CollapsiblePanel } from "ui/_generic/collapsible-panel";

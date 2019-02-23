@@ -2,6 +2,7 @@ import { connect } from "react-redux";
 import { AppState } from "store/store";
 import { MainMenu } from "./main-menu";
 import { envActionCreator } from "store/env/actions.env";
+import { envThunks } from "store/env/thunks.env";
 
 export const MainMenuContainer = connect(
   (state: AppState) => ({
@@ -11,7 +12,7 @@ export const MainMenuContainer = connect(
   }),
   {
     /** Actions to props */
-    onLogout: envActionCreator.signOut,
+    onLogout: envThunks.signOut,
     onError: envActionCreator.handleError
   }
 )(MainMenu);

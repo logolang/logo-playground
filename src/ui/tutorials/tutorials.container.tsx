@@ -1,7 +1,8 @@
 import { connect } from "react-redux";
 import { AppState } from "store/store";
-import { tutorialsActionCreator } from "store/tutorials/actions.tutorials";
 import { TutorialsPage } from "./tutorials";
+import { tutorialsActionCreator } from "store/tutorials/actions.tutorials";
+import { tutorialsThunks } from "store/tutorials/thunks.tutorials";
 
 export const TutorialsContainer = connect(
   (state: AppState) => ({
@@ -20,7 +21,7 @@ export const TutorialsContainer = connect(
   }),
   {
     /** Actions to props */
-    loadStep: tutorialsActionCreator.loadStep,
+    loadStep: tutorialsThunks.loadStep,
     codeChanged: tutorialsActionCreator.codeChanged,
     runProgram: tutorialsActionCreator.runProgram,
     stopProgram: tutorialsActionCreator.stopProgram,

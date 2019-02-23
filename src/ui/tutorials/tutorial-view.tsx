@@ -2,11 +2,7 @@ import * as React from "react";
 
 import { $T } from "i18n-strings";
 import { resolve } from "utils/di";
-import {
-  TutorialInfo,
-  TutorialStepInfo,
-  TutorialStepContent
-} from "services/tutorials-content-service";
+import { TutorialInfo, TutorialStepInfo, TutorialStepContent } from "services/tutorials-service";
 import {
   EventsTrackingService,
   EventAction
