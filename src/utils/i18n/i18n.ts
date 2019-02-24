@@ -51,7 +51,10 @@ export function updateStringsObject(targetObject: any, poFileContent: string): v
     for (const [key, val] of Object.entries(level)) {
       const entryName = parentName ? parentName + "." + key : key;
       if (typeof val === "string") {
-        level[key] = i18n.translate(entryName).fetch();
+        const translation = i18n.translate(entryName).fetch();
+        if (translation !== entryName) {
+          level[key] = translation;
+        }
       } else if (val instanceof Plural) {
         val._messageKey = entryName;
       } else if (val instanceof Template) {

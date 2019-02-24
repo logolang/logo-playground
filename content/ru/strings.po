@@ -49,7 +49,7 @@ msgid "common.signIn"
 msgstr "Войти"
 
 msgid "common.signInWithGoogle"
-msgstr "Войти через Google"
+msgstr "Войти с помощью Google"
 
 msgid "common.signOut"
 msgstr "Выйти"
@@ -63,7 +63,7 @@ msgid "gallery.chooseAFile"
 msgstr "Выбрать файл…"
 
 msgid "gallery.emptyLibrary"
-msgstr "Ваша персональная галлерея пуста."
+msgstr "Ваша персональная библиотека пуста."
 
 msgid "gallery.examples"
 msgstr "Образцы"
@@ -92,14 +92,20 @@ msgstr "Библиотека"
 msgid "gallery.noImage"
 msgstr "Нет изображения"
 
-msgid "gallery.notLoggedInText"
-msgstr "Для синхронизации персональной галлереи необходимо залогиниться."
+msgid "gallery.notLoggedInGalleryMessage"
+msgstr "Для синхронизации персональной библиотеки необходимо войти в свой аккаунт."
 
 msgid "gallery.shapes"
 msgstr "Фигуры"
 
 msgid "gallery.wrongFileFormatForImport"
 msgstr "Данный формат файла не поддерживается."
+
+msgid "login.notLoggedInSignInMessage"
+msgstr "Войдите в свой аккаунт для синхронизации персональной библиотеки."
+
+msgid "login.title"
+msgstr "Войти"
 
 msgid "program.codePanelTitle"
 msgstr "Код программы"
@@ -259,3 +265,24 @@ msgstr "Учебные пособия"
 
 msgid "tutorial.yesFixMyCode"
 msgstr "Да, исправить"
+
+msgid "welcome.galleryLinkDescription"
+msgstr "The gallery provides lots of examples of different levels of complexity. Gain inspiration and unleash power of your creativity."
+
+msgid "welcome.galleryLinkHeader"
+msgstr "Explore the gallery"
+
+msgid "welcome.playgroundLinkDescription"
+msgstr "This is a coding area where you can write and run your LOGO programs interactively."
+
+msgid "welcome.playgroundLinkHeader"
+msgstr "Playground for coding"
+
+msgid "welcome.title"
+msgstr "Welcome"
+
+msgid "welcome.tutorialsLinkDescription"
+msgstr "Tutorials are the best way to learn fast and have fun. If you are new to LOGO programming this section is for you."
+
+msgid "welcome.tutorialsLinkHeader"
+msgstr "Learn the basics with tutorials"

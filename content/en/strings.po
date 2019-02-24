@@ -91,14 +91,20 @@ msgstr "Library"
 msgid "gallery.noImage"
 msgstr "No image"
 
-msgid "gallery.notLoggedInText"
-msgstr "You are not authenticated. Your personal gallery is persisted in your browser local storage. Please sign in if you want to synchronize your gallery."
+msgid "gallery.notLoggedInGalleryMessage"
+msgstr "As you are not signed in, your library is stored in browser's local storage. Please sign in if you want to synchronize your library."
 
 msgid "gallery.shapes"
 msgstr "Shapes"
 
 msgid "gallery.wrongFileFormatForImport"
 msgstr "Looks like import file is corrupted or this format is not supported."
+
+msgid "login.notLoggedInSignInMessage"
+msgstr "Signing in allows to save your program library to your account. So you can synchronize your library across multiple devices and access your data from everywhere."
+
+msgid "login.title"
+msgstr "Sign in"
 
 msgid "program.codePanelTitle"
 msgstr "Program box"
@@ -258,3 +264,24 @@ msgstr "Tutorials"
 
 msgid "tutorial.yesFixMyCode"
 msgstr "Yes, fix my code"
+
+msgid "welcome.galleryLinkDescription"
+msgstr "The gallery provides lots of examples of different levels of complexity. Gain inspiration and unleash power of your creativity."
+
+msgid "welcome.galleryLinkHeader"
+msgstr "Explore the gallery"
+
+msgid "welcome.playgroundLinkDescription"
+msgstr "This is a coding area where you can write and run your LOGO programs interactively."
+
+msgid "welcome.playgroundLinkHeader"
+msgstr "Playground for coding"
+
+msgid "welcome.title"
+msgstr "Welcome"
+
+msgid "welcome.tutorialsLinkDescription"
+msgstr "Tutorials are the best way to learn fast and have fun. If you are new to LOGO programming this section is for you."
+
+msgid "welcome.tutorialsLinkHeader"
+msgstr "Learn the basics with tutorials"
