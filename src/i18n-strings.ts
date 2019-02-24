@@ -49,8 +49,6 @@ export const $T = {
     library: "Library",
     examples: "Examples",
     shapes: "Shapes",
-    notLoggedInText:
-      "You are not authenticated. Your personal gallery is persisted in your browser local storage. Please sign in if you want to synchronize your gallery.",
     emptyLibrary: "You do not have any programs stored in personal library yet.",
     import: "Import",
     export: "Export",
@@ -59,7 +57,9 @@ export const $T = {
     wrongFileFormatForImport:
       "Looks like import file is corrupted or this format is not supported.",
     importModalTitle: "Import programs to library",
-    chooseAFile: "Choose a file…"
+    chooseAFile: "Choose a file…",
+    notLoggedInGalleryMessage:
+      "As you are not signed in, your library is stored in browser's local storage. Please sign in if you want to synchronize your library."
   },
   tutorial: {
     tutorialsTitle: "Tutorials",
@@ -105,5 +105,22 @@ export const $T = {
   },
   cheatSheet: {
     cheatSheetTitle: "Cheat sheet"
+  },
+  login: {
+    title: "Sign in",
+    notLoggedInSignInMessage:
+      "Signing in allows to save your program library to your account. So you can synchronize your library across multiple devices and access your data from everywhere."
+  },
+  welcome: {
+    title: "Welcome",
+    galleryLinkHeader: "Explore the gallery",
+    galleryLinkDescription:
+      "The gallery provides lots of examples of different levels of complexity. Gain inspiration and unleash power of your creativity.",
+    tutorialsLinkHeader: "Learn the basics with tutorials",
+    tutorialsLinkDescription:
+      "Tutorials are the best way to learn fast and have fun. If you are new to LOGO programming this section is for you.",
+    playgroundLinkHeader: "Playground for coding",
+    playgroundLinkDescription:
+      "This is a coding area where you can write and run your LOGO programs interactively."
   }
 };

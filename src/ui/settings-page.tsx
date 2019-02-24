@@ -17,7 +17,6 @@ import { SimpleSelect } from "ui/_generic/simple-select";
 import { PageHeader } from "ui/_generic/page-header";
 import { LogoExecutor } from "ui/_generic/logo-executor/logo-executor";
 import { LogoCodeSamplesService } from "services/logo-code-samples.service";
-import { SignInStatusContainer } from "./sign-in-status.container";
 import { MainMenuContainer } from "./main-menu.container";
 import { UserSettings, locales } from "services/user-settings";
 import { UserData } from "services/infrastructure/auth-service";
@@ -37,7 +36,7 @@ interface Props {
   applyUserSettings(settings: Partial<UserSettings>, options?: { rebindServices: boolean }): void;
 }
 
-export class UserProfilePage extends React.Component<Props, State> {
+export class SettingsPage extends React.Component<Props, State> {
   private eventsTracking = resolve(EventsTrackingService);
   private demoSamplesService = resolve(LogoCodeSamplesService);
   private logoExecutor?: LogoExecutor;
@@ -73,8 +72,6 @@ export class UserProfilePage extends React.Component<Props, State> {
           <div className="container">
             <br />
             <PageHeader title={$T.settings.settingsTitle} />
-
-            <SignInStatusContainer />
             <br />
 
             <div className="field">

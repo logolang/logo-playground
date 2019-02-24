@@ -19,8 +19,9 @@ import { ProgramsHtmlSerializer } from "services/programs-html-serializer";
 import { NoData } from "ui/_generic/no-data";
 import { TileGrid } from "ui/_generic/tile-grid";
 import { Loading } from "ui/_generic/loading";
+import { InfoBox } from "ui/_generic/info-box";
 import { MainMenuContainer } from "ui/main-menu.container";
-import { ImportProgramsContainerContainer } from "ui/modals/import-programs-modal.container";
+import { ImportProgramsModalContainer } from "ui/modals/import-programs-modal.container";
 
 import "./gallery.less";
 
@@ -71,22 +72,43 @@ export class Gallery extends React.Component<Props, State> {
             ) : (
               <>
                 {this.props.activeSection === GallerySection.PersonalLibrary && (
-                  <div className="field is-grouped export-import-buttons-group">
-                    <p className="control">
-                      <button type="button" className="button" onClick={this.props.showImportModal}>
-                        {$T.gallery.import}
-                      </button>
-                    </p>
-                    {this.props.programs.length > 0 && (
+                  <>
+                    <div className="field is-grouped export-import-buttons-group">
                       <p className="control">
-                        <button type="button" className="button" onClick={this.handleExportClick}>
-                          {$T.gallery.export}
+                        <button
+                          type="button"
+                          className="button"
+                          onClick={this.props.showImportModal}
+                        >
+                          {$T.gallery.import}
                         </button>
                       </p>
-                    )}
-                    <ImportProgramsContainerContainer />
-                  </div>
+                      {this.props.programs.length > 0 && (
+                        <p className="control">
+                          <button type="button" className="button" onClick={this.handleExportClick}>
+                            {$T.gallery.export}
+                          </button>
+                        </p>
+                      )}
+                      <ImportProgramsModalContainer />
+                    </div>
+                    <div className="gallery-message-box">
+                      {!this.props.user.isLoggedIn && (
+                        <InfoBox
+                          content={
+                            <article>
+                              <p>{$T.gallery.notLoggedInGalleryMessage}</p>
+                              <p>
+                                <Link to={Routes.loginPage.build({})}>Sign in</Link>
+                              </p>
+                            </article>
+                          }
+                        />
+                      )}
+                    </div>
+                  </>
                 )}
+
                 {this.props.programs.length > 0 ? (
                   <TileGrid
                     tileWidth={250}
