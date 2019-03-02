@@ -10,11 +10,12 @@ import { Provider } from "react-redux";
 import { normalizeError } from "utils/error";
 import { AlertMessage } from "ui/_generic/alert-message";
 import { MainContainer } from "ui/main.container";
-import { store } from "store/store";
+import { createInitialStore } from "store/store";
 import { envThunks } from "store/env/thunks.env";
 
 async function runApp() {
   const appHostDomElement = document.getElementById("app-container") || document.body;
+  const store = createInitialStore();
   store.dispatch(envThunks.initEnv());
   try {
     // Render the app

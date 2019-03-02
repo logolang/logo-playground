@@ -1,6 +1,7 @@
 import { Dispatch } from "react";
 import { Action } from "redux";
 
+import { $T } from "i18n-strings";
 import { createCompareFunction } from "utils/syntax";
 import { normalizeError } from "utils/error";
 import { resolve } from "utils/di";
@@ -12,7 +13,6 @@ import { ProgramModel } from "services/program.model";
 import { GallerySamplesRepository } from "services/gallery-samples.repository";
 import { GalleryService } from "services/gallery.service";
 import { GalleryImportService } from "services/gallery-import.service";
-import { $T } from "i18n-strings";
 import { envThunks } from "store/env/thunks.env";
 import { galleryActionCreator } from "./actions.gallery";
 
@@ -38,13 +38,11 @@ function loadSectionThunk(section: GallerySection, options?: { forceLoad?: boole
       { sortBy: x => x.name }
     ]);
 
-    const samplesRepo = resolve(GallerySamplesRepository);
-    const galleryService = resolve(GalleryService);
-
     try {
       switch (section) {
         case GallerySection.ExamplesAdvanced:
           {
+            const samplesRepo = resolve(GallerySamplesRepository);
             const samples = await samplesRepo.getAll("samples");
             samples.sort(sortingFunction);
             dispatch(galleryActionCreator.loadSectionCompleted(section, samples));
@@ -52,12 +50,14 @@ function loadSectionThunk(section: GallerySection, options?: { forceLoad?: boole
           break;
         case GallerySection.ExamplesBasic:
           {
+            const samplesRepo = resolve(GallerySamplesRepository);
             const samples = await samplesRepo.getAll("shapes");
             samples.sort(sortingFunction);
             dispatch(galleryActionCreator.loadSectionCompleted(section, samples));
           }
           break;
-        case GallerySection.PersonalLibrary:
+        case GallerySection.PersonalLibrary: {
+          const galleryService = resolve(GalleryService);
           const programsFromLocal = galleryService.getAllLocal();
           if (programsFromLocal.length > 0) {
             programsFromLocal.sort(sortingFunction);
@@ -67,6 +67,7 @@ function loadSectionThunk(section: GallerySection, options?: { forceLoad?: boole
           const programsFromRemote = await galleryService.getAll();
           programsFromRemote.sort(sortingFunction);
           dispatch(galleryActionCreator.loadSectionCompleted(section, programsFromRemote));
+        }
       }
     } catch (error) {
       const errDef = await normalizeError(error);

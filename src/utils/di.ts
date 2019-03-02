@@ -1,6 +1,6 @@
 import { DictionaryLike } from "./syntax";
 
-interface Abstract<T> {
+export interface Abstract<T> {
   prototype: T;
   name: string;
 }
