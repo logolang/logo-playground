@@ -6,7 +6,8 @@
   "scripts": {
     "start": "webpack-dev-server",
     "build": "webpack --env.prod",
-    "test": "mocha --require ts-node/register --require tsconfig-paths/register --watch-extensions ts,tsx \"src/*/*.spec.{ts,tsx}\"",
+    "test": "mocha --require ts-node/register --require tsconfig-paths/register --watch-extensions ts,tsx \"src/**/*.spec.{ts,tsx}\"",
+    "test-watch": "mocha --watch --require ts-node/register --require tsconfig-paths/register --watch-extensions ts,tsx \"src/**/*.spec.{ts,tsx}\"",
     "precommit": "lint-staged",
     "tslint": "tslint --project . --format verbose --fix",
     "i18n": "ts-node --require tsconfig-paths/register tools/i18n-cli.ts"
@@ -63,6 +64,8 @@
     "@types/react-router": "4.4.4",
     "@types/react-router-dom": "4.3.1",
     "@types/react-test-renderer": "16.8.1",
+    "@types/redux-mock-store": "1.0.0",
+    "@types/sinon": "7.0.8",
     "chai": "4.2.0",
     "chai-as-promised": "7.1.1",
     "clean-webpack-plugin": "1.0.1",
@@ -83,6 +86,8 @@
     "pofile": "1.0.11",
     "prettier": "1.16.4",
     "raw-loader": "1.0.0",
+    "redux-mock-store": "1.5.3",
+    "sinon": "7.2.5",
     "style-loader": "0.23.1",
     "ts-loader": "5.3.3",
     "ts-node": "8.0.2",

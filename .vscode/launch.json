@@ -20,7 +20,7 @@
         "999999",
         "--colors",
         "--recursive",
-        "${workspaceFolder}/app/**/*.spec.{ts,tsx}"
+        "${workspaceFolder}/src/**/*.spec.{ts,tsx}"
       ],
       "internalConsoleOptions": "openOnSessionStart"
     }
