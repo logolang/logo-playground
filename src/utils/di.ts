@@ -16,6 +16,10 @@ export function register<T>(serviceIdentifier: Abstract<T>, instance: T): void {
   bindings[name] = instance;
 }
 
+export function registerMockService<T>(serviceIdentifier: Abstract<T>, mockInstance: Partial<T>) {
+  register(serviceIdentifier, mockInstance);
+}
+
 export function resolve<T>(serviceIdentifier: Abstract<T>): T {
   const name = serviceIdentifier.name;
   const instance = bindings[name];
