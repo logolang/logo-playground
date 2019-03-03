@@ -3,7 +3,7 @@ import * as sinon from "sinon";
 import configureMockStore from "redux-mock-store";
 import thunk from "redux-thunk";
 
-import { register, Abstract, resetBindings } from "utils/di";
+import { register, Abstract, resetBindings, registerMockService } from "utils/di";
 import { getDefaultState } from "store/store";
 import { galleryThunks } from "./thunks.gallery";
 import { GallerySection } from "./state.gallery";
@@ -13,10 +13,6 @@ import { ProgramModel, ProgramStorageType } from "services/program.model";
 import { GalleryService } from "services/gallery.service";
 
 const mockStore = configureMockStore([thunk]);
-
-function registerMockService<T>(serviceIdentifier: Abstract<T>, mockInstance: Partial<T>) {
-  register(serviceIdentifier, mockInstance);
-}
 
 function fakeProgram(name: string, storageType?: ProgramStorageType): ProgramModel {
   return {
