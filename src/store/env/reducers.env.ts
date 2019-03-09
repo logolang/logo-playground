@@ -2,6 +2,7 @@ import { EnvState, defaultEnvState, NotificationType } from "./state.env";
 import { EnvAction, EnvActionType } from "./actions.env";
 import { anonymousUser } from "services/infrastructure/auth-service";
 import { $T } from "i18n-strings";
+import { findTheme } from "ui/themes/themes-helper";
 
 let incrementalId = 0;
 
@@ -23,12 +24,14 @@ export default function reducers(state: EnvState | undefined, action: EnvAction)
         user: action.payload
       };
     case EnvActionType.APPLY_USER_SETTINGS_COMPLETED:
+      const theme = findTheme(action.payload.themeName || "");
       return {
         ...state,
         userSettings: {
           ...state.userSettings,
           ...action.payload
-        }
+        },
+        appTheme: { ...theme }
       };
     case EnvActionType.ERROR:
       return {

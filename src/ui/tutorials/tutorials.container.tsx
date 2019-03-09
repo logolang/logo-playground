@@ -17,7 +17,8 @@ export const TutorialsContainer = connect(
     currentTutorialInfo: state.tutorials.currentTutorialInfo,
     currentStepInfo: state.tutorials.currentStepInfo,
     currentStepContent: state.tutorials.currentStepContent,
-    userSettings: state.env.userSettings
+    userSettings: state.env.userSettings,
+    appTheme: state.env.appTheme
   }),
   {
     /** Actions to props */

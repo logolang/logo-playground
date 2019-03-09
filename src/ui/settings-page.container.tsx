@@ -7,7 +7,8 @@ export const SettingsPageContainer = connect(
   (state: AppState) => ({
     /** State to props */
     user: state.env.user,
-    userSettings: state.env.userSettings
+    userSettings: state.env.userSettings,
+    appTheme: state.env.appTheme
   }),
   {
     /** Actions to props */

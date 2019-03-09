@@ -5,6 +5,7 @@ import { $T } from "i18n-strings";
 import { checkIsMobileDevice } from "utils/device";
 import { TutorialInfo, TutorialStepContent, TutorialStepInfo } from "services/tutorials-service";
 import { UserSettings } from "services/user-settings";
+import { Theme } from "ui/themes/themes-helper";
 import {
   EventsTrackingService,
   EventAction
@@ -43,6 +44,7 @@ interface Props {
   currentStepInfo?: TutorialStepInfo;
   currentStepContent?: TutorialStepContent;
   userSettings: UserSettings;
+  appTheme: Theme;
   loadStep(tutorialId: string, stepId: string): void;
   fixTheCode(): void;
   runProgram(): void;
@@ -67,7 +69,7 @@ export class TutorialsPage extends React.Component<Props, State> {
   }
 
   async componentDidMount() {
-    this.eventsTracking.sendEvent(EventAction.tutorialsOpen);
+    this.eventsTracking.sendEvent(EventAction.openTutorials);
     this.props.loadStep(this.props.tutorialId, this.props.stepId);
   }
 
@@ -91,15 +93,13 @@ export class TutorialsPage extends React.Component<Props, State> {
     return this.logoExecutorRef ? this.logoExecutorRef.createScreenshotBase64(true) : "";
   };
 
-  handleSaveAs = (newName: string) => {
-    alert("Not implemented yet " + newName);
-  };
-
   handleFixTheCode = () => {
+    this.eventsTracking.sendEvent(EventAction.tutorialsFixTheCode);
     this.props.fixTheCode();
   };
 
   handleNavigationRequest = (tutorialId: string, stepId: string) => {
+    this.eventsTracking.sendEvent(EventAction.tutorialsNavigation);
     this.props.loadStep(tutorialId, stepId);
   };
 
@@ -137,11 +137,10 @@ export class TutorialsPage extends React.Component<Props, State> {
                 onStopProgram={this.handleStopProgram}
                 createScreenShotImageBase64={this.getProgramImage}
                 createSmallScreenShotImageBase64={this.getSmallProgramImage}
-                onSaveAs={this.handleSaveAs}
               />
               <CodeInput
                 className="code-input-container"
-                editorTheme={this.props.userSettings.editorTheme}
+                editorTheme={this.props.appTheme.codeEditorThemeName}
                 code={this.props.code}
                 onChanged={this.handleCodeChanged}
                 hotKeys={["f9"]}
@@ -160,7 +159,7 @@ export class TutorialsPage extends React.Component<Props, State> {
                 isRunning={this.props.isRunning}
                 onFinish={this.handleStopProgram}
                 code={this.props.code}
-                isDarkTheme={this.props.userSettings.isDarkTheme}
+                isDarkTheme={this.props.appTheme.isDark}
                 turtleImage={getTurtleImage(this.props.userSettings.turtleId)}
                 turtleSize={this.props.userSettings.turtleSize}
               />

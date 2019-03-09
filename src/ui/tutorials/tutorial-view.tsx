@@ -3,10 +3,6 @@ import * as React from "react";
 import { $T } from "i18n-strings";
 import { resolve } from "utils/di";
 import { TutorialInfo, TutorialStepInfo, TutorialStepContent } from "services/tutorials-service";
-import {
-  EventsTrackingService,
-  EventAction
-} from "services/infrastructure/events-tracking.service";
 
 import { TutorialSelectModal } from "ui/tutorials/tutorial-select-modal";
 import { Modal } from "ui/_generic/modal";
@@ -28,8 +24,6 @@ interface State {
 }
 
 export class TutorialView extends React.Component<Props, State> {
-  private eventsTracking = resolve(EventsTrackingService);
-
   constructor(props: Props) {
     super(props);
 
@@ -156,7 +150,6 @@ export class TutorialView extends React.Component<Props, State> {
           this.setState({ showSelectionTutorials: false });
         }}
         onSelect={async tutorial => {
-          this.eventsTracking.sendEvent(EventAction.tutorialsStart);
           this.setState({ showSelectionTutorials: false });
           this.props.onNavigationRequest(tutorial.id, tutorial.steps[0].id);
         }}
@@ -194,9 +187,6 @@ export class TutorialView extends React.Component<Props, State> {
 
   navigateToNextStep = (direction: number) => {
     return async () => {
-      this.eventsTracking.sendEvent(
-        direction > 0 ? EventAction.tutorialsNext : EventAction.tutorialsBack
-      );
       const currentStepIndex = this.props.currentTutorialInfo.steps.findIndex(
         x => x.id === this.props.currentStepInfo.id
       );

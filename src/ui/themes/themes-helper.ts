@@ -13,7 +13,7 @@ export function getAllThemes(): Theme[] {
   return themeManager.themes;
 }
 
-function findTheme(themeName: string): Theme {
+export function findTheme(themeName: string): Theme {
   const themes = getAllThemes();
   const selectedTheme = themes.find(t => t.name === themeName);
   if (selectedTheme) {
