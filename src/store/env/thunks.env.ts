@@ -10,6 +10,10 @@ import { AuthProvider, AuthService } from "services/infrastructure/auth-service"
 import { UserSettings } from "services/user-settings";
 import { UserSettingsService } from "services/user-settings.service";
 import { NotificationType } from "./state.env";
+import {
+  EventsTrackingService,
+  EventAction
+} from "services/infrastructure/events-tracking.service";
 
 export const envThunks = {
   initEnv: initEnvThunk,
@@ -35,6 +39,9 @@ function signInThunk(authProvider: AuthProvider) {
     const auth = resolve(AuthService);
     await auth.signIn(authProvider);
     dispatch(envThunks.initEnv());
+
+    const eventsTracker = resolve(EventsTrackingService);
+    eventsTracker.sendEvent(EventAction.userLogin);
   };
 }
 
@@ -43,6 +50,9 @@ function signOutThunk() {
     const auth = resolve(AuthService);
     await auth.signOut();
     dispatch(envThunks.initEnv());
+
+    const eventsTracker = resolve(EventsTrackingService);
+    eventsTracker.sendEvent(EventAction.userLogout);
   };
 }
 

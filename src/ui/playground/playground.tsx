@@ -1,16 +1,12 @@
 import * as React from "react";
 
 import { $T } from "i18n-strings";
-import { resolve } from "utils/di";
 import { ProgramStorageType } from "services/program.model";
-import {
-  EventsTrackingService,
-  EventAction
-} from "services/infrastructure/events-tracking.service";
 import { checkIsMobileDevice } from "utils/device";
 
 import { localStoragePrefix } from "services/constants";
 import { UserSettings } from "services/user-settings";
+import { Theme } from "ui/themes/themes-helper";
 
 import { ReactGoldenLayout } from "ui/_generic/react-golden-layout/react-golden-layout";
 import { ReactGoldenLayoutPanel } from "ui/_generic/react-golden-layout/react-golden-layout-panel";
@@ -36,6 +32,7 @@ interface Props {
   hasModifications: boolean;
   isRunning: boolean;
   userSettings: UserSettings;
+  appTheme: Theme;
   loadProgram(storageType?: ProgramStorageType, programId?: string): void;
   codeChanged(code: string): void;
   runProgram(): void;
@@ -52,7 +49,6 @@ interface State {
 }
 
 export class Playground extends React.Component<Props, State> {
-  private eventsTracker = resolve(EventsTrackingService);
   private isMobileDevice = checkIsMobileDevice();
   private defaultLayoutConfigJSON = JSON.stringify(
     this.isMobileDevice ? playgroundDefaultMobileLayout : playgroundDefaultLayout
@@ -67,7 +63,6 @@ export class Playground extends React.Component<Props, State> {
   }
 
   async componentDidMount() {
-    this.eventsTracker.sendEvent(EventAction.openPlayground);
     this.props.loadProgram(this.props.storageType, this.props.programId);
   }
 
@@ -164,7 +159,7 @@ export class Playground extends React.Component<Props, State> {
               />
               <CodeInput
                 className="code-input-container"
-                editorTheme={this.props.userSettings.editorTheme}
+                editorTheme={this.props.appTheme.codeEditorThemeName}
                 code={this.props.code}
                 onChanged={this.handleCodeChanged}
                 hotKeys={["f9"]}
@@ -178,7 +173,7 @@ export class Playground extends React.Component<Props, State> {
                 isRunning={this.props.isRunning}
                 onFinish={this.handleStopProgram}
                 code={this.props.code}
-                isDarkTheme={this.props.userSettings.isDarkTheme}
+                isDarkTheme={this.props.appTheme.isDark}
                 turtleImage={getTurtleImage(this.props.userSettings.turtleId)}
                 turtleSize={this.props.userSettings.turtleSize}
               />

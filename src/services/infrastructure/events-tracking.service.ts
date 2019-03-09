@@ -1,30 +1,24 @@
 export enum EventAction {
-  userLogin = "user.login",
-  userLogout = "user.logout",
+  userLogin = "actions.login",
+  userLogout = "actions.logout",
 
-  programStart = "program.start",
-  programStop = "program.stop",
-  programResetChanges = "program.resetChanges",
+  tutorialsNavigation = "actions.tutorialsNavigation",
+  tutorialsFixTheCode = "actions.tutorialsFixTheCode",
 
-  tutorialsOpen = "tutorials.open",
-  tutorialsStart = "tutorials.start",
-  tutorialsNext = "tutorials.next",
-  tutorialsBack = "tutorials.back",
-  tutorialsFixTheCode = "tutorials.fixTheCode",
-
-  shareScreenshot = "share.screenshot",
-  shareProgram = "share.program_share",
-  openSharedProgram = "share.program_open",
-
-  openProgramFromPersonalLibrary = "personalLibrary.openProgram",
-  saveProgramToPersonalLibrary = "personalLibrary.saveProgram",
-  deleteProgramFromPersonalLibrary = "personalLibrary.deleteProgram",
+  shareScreenshot = "actions.shareScreenshot",
+  shareProgram = "actions.shareProgram",
+  saveProgramToPersonalLibrary = "actions.saveProgram",
+  revertProgramChanges = "actions.revertProgram",
 
   openPlayground = "navigation.openPlayground",
+  openProgramFromLibrary = "navigation.openProgramFromLibrary",
+  openProgramFromSample = "navigation.openProgramFromSample",
+  openProgramFromShare = "navigation.openProgramFromShare",
   openGallery = "navigation.openGallery",
   openSettings = "navigation.openSettings",
   openAbout = "navigation.openAbout",
-  openCheatsheet = "navigation.openCheatsheet"
+  openCheatsheet = "navigation.openCheatsheet",
+  openTutorials = "navigation.openTutorials"
 }
 
 interface IEventData {

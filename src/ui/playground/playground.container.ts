@@ -15,7 +15,8 @@ export const PlaygroundContainer = connect(
     programName: state.playground.programName,
     hasModifications: state.playground.hasModifications,
     isRunning: state.playground.isRunning,
-    userSettings: state.env.userSettings
+    userSettings: state.env.userSettings,
+    appTheme: state.env.appTheme
   }),
   {
     /** Actions to props */

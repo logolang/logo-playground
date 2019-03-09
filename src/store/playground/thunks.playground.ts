@@ -12,6 +12,10 @@ import { GalleryService } from "services/gallery.service";
 import { NavigationService } from "services/navigation.service";
 import { LocalPlaygroundCodeStorage } from "services/local-playground-code.storage";
 import { playgroundActionCreator } from "./actions.playground";
+import {
+  EventsTrackingService,
+  EventAction
+} from "services/infrastructure/events-tracking.service";
 
 export const playgroundThunks = {
   loadProgram: loadProgramThunk,
@@ -29,6 +33,23 @@ function loadProgramThunk(storageType: ProgramStorageType, programId: string) {
       // No need to load program because it is already loaded
       return;
     }
+
+    const eventsTracker = resolve(EventsTrackingService);
+    switch (storageType) {
+      case ProgramStorageType.playground:
+        eventsTracker.sendEvent(EventAction.openPlayground);
+        break;
+      case ProgramStorageType.gallery:
+        eventsTracker.sendEvent(EventAction.openProgramFromLibrary);
+        break;
+      case ProgramStorageType.samples:
+        eventsTracker.sendEvent(EventAction.openProgramFromSample);
+        break;
+      case ProgramStorageType.shared:
+        eventsTracker.sendEvent(EventAction.openProgramFromShare);
+        break;
+    }
+
     dispatch(playgroundActionCreator.loadProgramStarted(storageType, programId));
 
     try {
@@ -46,6 +67,9 @@ function loadProgramThunk(storageType: ProgramStorageType, programId: string) {
 function saveAsProgramThunk(newName: string, screenShot: string) {
   return async (dispatch: Dispatch<Action>, getState: GetState) => {
     dispatch(playgroundActionCreator.syncProgramStarted());
+
+    const eventsTracker = resolve(EventsTrackingService);
+    eventsTracker.sendEvent(EventAction.saveProgramToPersonalLibrary);
 
     try {
       const state = getState().playground;
@@ -82,6 +106,10 @@ function saveAsProgramThunk(newName: string, screenShot: string) {
 function saveProgramThunk(screenShot: string) {
   return async (dispatch: Dispatch<Action>, getState: GetState) => {
     dispatch(playgroundActionCreator.syncProgramStarted());
+
+    const eventsTracker = resolve(EventsTrackingService);
+    eventsTracker.sendEvent(EventAction.saveProgramToPersonalLibrary);
+
     const state = getState().playground;
     try {
       const programService = resolve(ProgramService);
@@ -132,6 +160,10 @@ function revertChangesThunk() {
     const state = getState().playground;
     const { storageType, programId } = state;
     dispatch(playgroundActionCreator.syncProgramStarted());
+
+    const eventsTracker = resolve(EventsTrackingService);
+    eventsTracker.sendEvent(EventAction.revertProgramChanges);
+
     try {
       const programManagementService = resolve(ProgramService);
       const programModel = await programManagementService.loadProgram(storageType, programId);

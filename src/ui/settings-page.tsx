@@ -33,6 +33,7 @@ interface State {
 interface Props {
   user: UserData;
   userSettings: UserSettings;
+  appTheme: Theme;
   applyUserSettings(settings: Partial<UserSettings>, options?: { rebindServices: boolean }): void;
 }
 
@@ -117,11 +118,7 @@ export class SettingsPage extends React.Component<Props, State> {
                         id="theme-selector"
                         selectionChanged={async selectedTheme => {
                           if (selectedTheme) {
-                            this.props.applyUserSettings({
-                              themeName: selectedTheme.name,
-                              isDarkTheme: selectedTheme.isDark,
-                              editorTheme: selectedTheme.codeEditorThemeName
-                            });
+                            this.props.applyUserSettings({ themeName: selectedTheme.name });
                             setActiveTheme(selectedTheme.name);
                           }
                         }}
@@ -195,7 +192,7 @@ export class SettingsPage extends React.Component<Props, State> {
                     onFinish={() => {
                       /* Nothing here */
                     }}
-                    isDarkTheme={this.props.userSettings.isDarkTheme}
+                    isDarkTheme={this.props.appTheme.isDark}
                     turtleImage={getTurtleImage(this.props.userSettings.turtleId)}
                     turtleSize={this.props.userSettings.turtleSize}
                   />
