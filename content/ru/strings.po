@@ -63,10 +63,10 @@ msgid "gallery.chooseAFile"
 msgstr "Выбрать файл…"
 
 msgid "gallery.emptyLibrary"
-msgstr "Ваша персональная библиотека пуста."
+msgstr "В вашей персональной библиотеке пока нет программ."
 
 msgid "gallery.examples"
-msgstr "Образцы"
+msgstr "Примеры"
 
 msgid "gallery.export"
 msgstr "Экспорт"
@@ -89,9 +89,6 @@ msgstr "Импорт программ в библиотеку"
 msgid "gallery.library"
 msgstr "Библиотека"
 
-msgid "gallery.noImage"
-msgstr "Нет изображения"
-
 msgid "gallery.notLoggedInGalleryMessage"
 msgstr "Для синхронизации персональной библиотеки необходимо войти в свой аккаунт."
 
@@ -102,13 +99,13 @@ msgid "gallery.wrongFileFormatForImport"
 msgstr "Данный формат файла не поддерживается."
 
 msgid "login.notLoggedInSignInMessage"
-msgstr "Войдите в свой аккаунт для синхронизации персональной библиотеки."
+msgstr "Вход в систему позволяет сохранить библиотеку программ в вашей учетной записи. Таким образом, вы можете синхронизировать свою библиотеку на нескольких устройствах и получать доступ к своим данным из любого места."
 
 msgid "login.title"
 msgstr "Войти"
 
 msgid "program.codePanelTitle"
-msgstr "Код программы"
+msgstr "Программа"
 
 msgid "program.imagePreview"
 msgstr "Скриншот"
@@ -117,10 +114,10 @@ msgid "program.imageUrl"
 msgstr "Публичная ссылка"
 
 msgid "program.outputPanelTitle"
-msgstr "Вывод"
+msgstr "Картина"
 
 msgid "program.playgroundTitle"
-msgstr "Игровая площадка"
+msgstr "Мастерская"
 
 msgid "program.pleaseEnterNameForYourProgram"
 msgstr "Введите название своей программы"
@@ -141,7 +138,7 @@ msgid "program.revertChanges"
 msgstr "Отменить изменения"
 
 msgid "program.run"
-msgstr "Старт"
+msgstr "Запуск"
 
 msgid "program.runDescription"
 msgstr "Запустить программу"
@@ -224,17 +221,14 @@ msgstr "Жорик"
 msgid "settings.uiTheme"
 msgstr "Тема пользовательского интерфейса"
 
-msgid "settings.userGuestNickName"
-msgstr "Гость"
-
 msgid "tutorial.back"
 msgstr "Назад"
 
 msgid "tutorial.chooseAnotherTutorial"
-msgstr "Выбрать другой учебник"
+msgstr "Выбрать другой раздел"
 
 msgid "tutorial.chooseTutorial"
-msgstr "Выберите учебник"
+msgstr "Выберите раздел"
 
 msgid "tutorial.fixTheCodeMessage"
 msgstr "Если ваш код не работает, как описано в учебнике, вы можете заменить его рабочей версией."
@@ -252,7 +246,7 @@ msgid "tutorial.noLeaveItAsIs"
 msgstr "Отменить"
 
 msgid "tutorial.start"
-msgstr "Старт"
+msgstr "Вперед"
 
 msgid "tutorial.stepIndicator"
 msgstr "Шаг %1$s из %2$s"
@@ -261,28 +255,28 @@ msgid "tutorial.tutorialPanelTitle"
 msgstr "Учебник"
 
 msgid "tutorial.tutorialsTitle"
-msgstr "Учебные пособия"
+msgstr "Учебники"
 
 msgid "tutorial.yesFixMyCode"
 msgstr "Да, исправить"
 
 msgid "welcome.galleryLinkDescription"
-msgstr "The gallery provides lots of examples of different levels of complexity. Gain inspiration and unleash power of your creativity."
+msgstr "Галерея предоставляет множество примеров разных уровней сложности. Получите вдохновение и раскройте силу своего творчества."
 
 msgid "welcome.galleryLinkHeader"
-msgstr "Explore the gallery"
+msgstr "Галерея"
 
 msgid "welcome.playgroundLinkDescription"
-msgstr "This is a coding area where you can write and run your LOGO programs interactively."
+msgstr "Это мастерская, где вы можете писать и запускать свои программы LOGO в интерактивном режиме."
 
 msgid "welcome.playgroundLinkHeader"
-msgstr "Playground for coding"
+msgstr "Мастерская"
 
 msgid "welcome.title"
-msgstr "Welcome"
+msgstr "Добро пожаловать!"
 
 msgid "welcome.tutorialsLinkDescription"
-msgstr "Tutorials are the best way to learn fast and have fun. If you are new to LOGO programming this section is for you."
+msgstr "Учебники - лучший способ быстро и весело учиться. Если вы новичок в программировании LOGO, этот раздел для вас."
 
 msgid "welcome.tutorialsLinkHeader"
-msgstr "Learn the basics with tutorials"
+msgstr "Учебники"

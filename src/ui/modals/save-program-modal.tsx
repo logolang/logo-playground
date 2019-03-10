@@ -66,13 +66,9 @@ export class SaveProgramModal extends React.Component<Props, State> {
           <label className="label">{$T.gallery.galleryImage}</label>
           <div className="has-text-centered">
             <div className="box is-inline-block">
-              {this.props.screenshot ? (
-                <figure className="has-text-centered">
-                  <img src={this.props.screenshot} />
-                </figure>
-              ) : (
-                <NoData iconClass="fa-picture-o" title={$T.gallery.noImage} />
-              )}
+              <figure className="has-text-centered">
+                <img src={this.props.screenshot} />
+              </figure>
             </div>
           </div>
         </div>

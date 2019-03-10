@@ -177,16 +177,12 @@ export class Gallery extends React.Component<Props, State> {
     return (
       <div className="card program-card">
         <div className="card-image">
-          {p.screenshot ? (
-            <figure className="image is-4by3 gallery-img-container">
-              <Link to={link}>
-                <img src={p.screenshot} />
-                <div className="gallery-img-title">{p.name}</div>
-              </Link>
-            </figure>
-          ) : (
-            <NoData iconClass="fa-picture-o" title={$T.gallery.noImage} />
-          )}
+          <figure className="image is-4by3 gallery-img-container">
+            <Link to={link}>
+              {p.screenshot && <img src={p.screenshot} />}
+              <div className="gallery-img-title">{p.name}</div>
+            </Link>
+          </figure>
         </div>
       </div>
     );

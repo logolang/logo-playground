@@ -45,7 +45,6 @@ export const $T = {
   gallery: {
     galleryTitle: "Gallery",
     galleryImage: "Gallery image",
-    noImage: "No image",
     library: "Library",
     examples: "Examples",
     shapes: "Shapes",
@@ -82,7 +81,6 @@ export const $T = {
   },
   settings: {
     settingsTitle: "Settings",
-    userGuestNickName: "Guest",
     language: "Language",
     uiTheme: "User interface theme",
     turtleSkin: "Turtle outfit",
