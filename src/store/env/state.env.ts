@@ -1,6 +1,6 @@
 import { UserSettings, defaultUserSettings } from "services/user-settings";
 import { anonymousUser, UserData } from "services/infrastructure/auth-service";
-import { Theme, getAllThemes } from "ui/themes/themes-helper";
+import { Theme } from "ui/themes/themes-helper";
 
 export enum NotificationType {
   danger = "danger",
@@ -30,6 +30,6 @@ export const defaultEnvState: EnvState = {
   isLoading: true,
   user: anonymousUser,
   userSettings: defaultUserSettings,
-  appTheme: getAllThemes()[0],
+  appTheme: {} as any,
   notifications: []
 };
