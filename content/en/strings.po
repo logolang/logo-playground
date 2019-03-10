@@ -88,9 +88,6 @@ msgstr "Import programs to library"
 msgid "gallery.library"
 msgstr "Library"
 
-msgid "gallery.noImage"
-msgstr "No image"
-
 msgid "gallery.notLoggedInGalleryMessage"
 msgstr "As you are not signed in, your library is stored in browser's local storage. Please sign in if you want to synchronize your library."
 
@@ -222,9 +219,6 @@ msgstr "Summer"
 
 msgid "settings.uiTheme"
 msgstr "User interface theme"
-
-msgid "settings.userGuestNickName"
-msgstr "Guest"
 
 msgid "tutorial.back"
 msgstr "Back"
