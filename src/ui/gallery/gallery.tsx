@@ -92,29 +92,33 @@ export class Gallery extends React.Component<Props, State> {
                       )}
                       <ImportProgramsModalContainer />
                     </div>
-                    <div className="gallery-message-box">
-                      {!this.props.user.isLoggedIn && (
-                        <InfoBox
-                          content={
-                            <article>
-                              <p>{$T.gallery.notLoggedInGalleryMessage}</p>
-                              <p>
-                                <Link to={Routes.loginPage.build({})}>Sign in</Link>
-                              </p>
-                            </article>
-                          }
-                        />
-                      )}
-                    </div>
                   </>
                 )}
 
                 {this.props.programs.length > 0 ? (
-                  <TileGrid
-                    tileWidth={250}
-                    tileWidthMobile={170}
-                    tiles={this.props.programs.map(pr => this.renderProgramCard(pr))}
-                  />
+                  <>
+                    <TileGrid
+                      tileWidth={250}
+                      tileWidthMobile={170}
+                      tiles={this.props.programs.map(pr => this.renderProgramCard(pr))}
+                    />
+                    <br />
+                    {this.props.activeSection === GallerySection.PersonalLibrary &&
+                      !this.props.user.isLoggedIn && (
+                        <div className="gallery-message-box">
+                          <InfoBox
+                            content={
+                              <article>
+                                <p>{$T.gallery.notLoggedInGalleryMessage}</p>
+                                <p>
+                                  <Link to={Routes.loginPage.build({})}>Sign in</Link>
+                                </p>
+                              </article>
+                            }
+                          />
+                        </div>
+                      )}
+                  </>
                 ) : (
                   this.props.activeSection === GallerySection.PersonalLibrary && (
                     <NoData title="" description={$T.gallery.emptyLibrary} />
