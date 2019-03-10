@@ -16,7 +16,7 @@ export function InfoBox(props: Props) {
         </div>
         <div className="media-content">
           <div className="content">
-            <p>{props.content}</p>
+            {typeof props.content === "string" ? <p>{props.content}</p> : <>{props.content}</>}
           </div>
         </div>
       </div>

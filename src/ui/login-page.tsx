@@ -51,12 +51,12 @@ export class LoginPage extends React.Component<Props, State> {
             <br />
 
             <div className="columns">
-              <div className="column" />
+              <div className="column is-2-tablet is-3-desktop is-4-widescreen" />
               <div className="column">
                 {!this.props.user.isLoggedIn && this.renderLoginForm()}
                 {this.props.user.isLoggedIn && this.renderWelcomeForm()}
               </div>
-              <div className="column" />
+              <div className="column is-2-tablet is-3-desktop is-4-widescreen" />
             </div>
           </div>
         </div>
