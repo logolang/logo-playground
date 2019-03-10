@@ -16,7 +16,6 @@ const appGitVersion = gitRevisionPlugin.version();
 module.exports = function(env) {
   env = env || {};
   const isProduction = !!env.prod;
-  const isUnitTests = !!env.unit_tests;
   const isDevBuild = !isProduction;
   const configFileName = isProduction ? "config.prod.json" : "config.json";
   const appConfig = require("./content/config/" + configFileName);
@@ -26,25 +25,19 @@ module.exports = function(env) {
   const webpackConfig = {
     mode: isDevBuild ? "development" : "production",
 
-    entry: isUnitTests
-      ? {
-          tests: "./tools/tests-entry-point.spec.ts"
-        }
-      : {
-          app: "./app/app-entry-point.tsx"
-        },
+    entry: {
+      app: "./src/app.tsx"
+    },
 
     optimization: {
-      splitChunks: isUnitTests
-        ? false
-        : {
-            chunks: "all"
-          }
+      splitChunks: {
+        chunks: "all"
+      }
     },
 
     resolve: {
       extensions: [".ts", ".tsx", ".js"],
-      modules: [__dirname, "node_modules"]
+      modules: [__dirname, __dirname + "/src", "node_modules"]
     },
 
     output: {
@@ -75,12 +68,15 @@ module.exports = function(env) {
           : { test: /\.css$/, use: [MiniCssExtractPlugin.loader, "css-loader"] },
         isDevBuild
           ? { test: /\.(less|scss)$/, use: ["style-loader", "css-loader", "less-loader"] }
-          : { test: /\.(less|scss)$/, use: [MiniCssExtractPlugin.loader, "css-loader", "less-loader"] }
+          : {
+              test: /\.(less|scss)$/,
+              use: [MiniCssExtractPlugin.loader, "css-loader", "less-loader"]
+            }
       ].filter(x => x)
     },
 
     plugins: [
-      new CleanWebpackPlugin(["dist", "reports"], { verbose: true }),
+      new CleanWebpackPlugin(["dist"], { verbose: true }),
 
       new WatchIgnorePlugin([path.resolve(__dirname, "./dist/")]),
 
@@ -106,26 +102,16 @@ module.exports = function(env) {
         })
       }),
 
-      !isUnitTests &&
-        new HtmlWebpackPlugin({
-          template: "app/app-index-template.ejs",
-          filename: "index.html",
-          inject: false,
-          variables: {
-            packageJson: packageJson,
-            appGitVersion: appGitVersion,
-            appConfig: appConfig
-          }
-        }),
-
-      isUnitTests &&
-        new HtmlWebpackPlugin({
-          template: "tools/tests-index-template.hbs",
-          filename: "index.html",
-          variables: {
-            appGitVersion: appGitVersion
-          }
-        }),
+      new HtmlWebpackPlugin({
+        template: "src/index.ejs",
+        filename: "index.html",
+        inject: false,
+        variables: {
+          packageJson: packageJson,
+          appGitVersion: appGitVersion,
+          appConfig: appConfig
+        }
+      }),
 
       isProduction && new MiniCssExtractPlugin({ filename: "[name].css" }),
 
@@ -138,7 +124,7 @@ module.exports = function(env) {
           analyzerMode: "static",
           // Path to bundle report file that will be generated in `static` mode.
           // Relative to bundles output directory.
-          reportFilename: "../reports/bundle-analyzer-app-report.html",
+          reportFilename: "../dist/bundle-analyzer-app-report.html",
           // Automatically open report in default browser
           openAnalyzer: false,
           // If `true`, Webpack Stats JSON file will be generated in bundles output directory
@@ -146,12 +132,6 @@ module.exports = function(env) {
           // Log level. Can be 'info', 'warn', 'error' or 'silent'.
           logLevel: "info"
         }),
-
-      /**
-       * This is to specify what locales for moment.js we want to include in the bundle
-       * https://github.com/jmblog/how-to-optimize-momentjs-with-webpack/
-       */
-      new webpack.ContextReplacementPlugin(/moment[\/\\]locale$/, /en|ru|nl/),
 
       /**
        * This is to remove a webpack warning and also to reduce bundle size
@@ -167,7 +147,7 @@ module.exports = function(env) {
     performance: { hints: false },
     devServer: {
       contentBase: "dist/",
-      port: isUnitTests ? 8086 : 8085,
+      port: 8085,
       host: "0.0.0.0"
     },
     devtool: isDevBuild ? "source-map" : false // Turn on sourcemaps for dev only

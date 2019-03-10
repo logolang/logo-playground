@@ -1,0 +1,61 @@
+@import "./ux-extensions.less";
+
+html {
+  overflow-y: hidden !important;
+}
+
+/* Bulma extensions */
+.navbar-dropdown.is-right {
+  left: auto;
+  right: 0;
+}
+
+.navbar-mobile-fix {
+  @media screen and (max-width: 1008px) {
+    min-height: inherit;
+  }
+  flex-shrink: 0;
+}
+
+@media screen and (max-width: 1068px) {
+  .container {
+    margin-left: 20px;
+    margin-right: 20px;
+  }
+}
+
+.content.content pre {
+  padding: 0.5em;
+}
+
+/* Application specific styles */
+.dark-navbar .ex-app-logo {
+  background-image: url(../../../content/images/logo-logo-light.svg);
+}
+.ex-app-logo {
+  background-image: url(../../../content/images/logo-logo-dark.svg);
+  background-repeat: no-repeat;
+  background-position: center;
+  width: 120px;
+  height: 40px;
+}
+
+.ex-page-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.ex-page-content {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  flex: auto;
+  padding-left: 20px;
+  padding-right: 20px;
+
+  &.is-fullscreen {
+    padding-left: 0px;
+    padding-right: 0px;
+  }
+}

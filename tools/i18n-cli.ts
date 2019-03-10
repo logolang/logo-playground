@@ -1,7 +1,7 @@
 import * as fs from "fs";
 import * as PO from "pofile";
 
-import { $T, Plural, Template } from "../app/i18n/strings";
+import { $T, Plural, Template } from "../src/i18n-strings";
 const poFilenames = ["content/en/strings.po", "content/ru/strings.po"];
 
 // scan the $T object and prepare records for PO file

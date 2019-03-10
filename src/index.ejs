@@ -1,0 +1,107 @@
+<%
+    const packageJson = require('../package.json');
+    const appConfig = htmlWebpackPlugin.options.variables.appConfig;
+    const googleAnalyticsTrackingId = appConfig.services.googleAnalyticsTrackingId;
+    const appGitVersion = htmlWebpackPlugin.options.variables.appGitVersion;
+    const loadingSvg = require('!raw-loader!content/images/square-logo-light.svg');
+    const themesManagerRawJS = require('!raw-loader!./ui/themes/themes-manager.js');
+%><!DOCTYPE html>
+<html style="overflow: hidden;">
+
+<head>
+    <meta property="og:title" content="Logo playground" />
+    <meta property="og:description" content="Online environment for programming with Logo language" />
+    <meta property="og:image" content="https://logolang.github.io/content/images/square-logo-light-colored-200.png" />
+
+    <title>Logo playground</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <link href="content/favicon.ico" rel="icon" type="image/x-icon" />
+</head>
+
+<body style="margin:0px;">
+    <div id="app-container">
+        <div id="svg-animation-container" style="text-align:center;margin-top:100px;">
+            <%=loadingSvg%>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        function svgLoadingAnimation(currentFrameIndex){
+            var frames = [ 
+                {id: "path4", fillColor:"#bf80ff", nextStepDelay: 200},
+                {id: "path6", fillColor:"#80ffff", nextStepDelay: 200},
+                {id: "path8", fillColor:"#ff8080", nextStepDelay: 200},
+                {id: "path10", fillColor:"#80ff80", nextStepDelay: 200},
+                {id: "path12", fillColor:"#c9c9c9", nextStepDelay: 200},
+                {id: "path4", fillColor:"#8000ff", nextStepDelay: 200},
+                {id: "path6", fillColor:"#00e6e6", nextStepDelay: 200},
+                {id: "path8", fillColor:"#ff0000", nextStepDelay: 200},
+                {id: "path10", fillColor:"#00ff00", nextStepDelay: 200},
+                {id: "path12", fillColor:"#999999", nextStepDelay: 200},
+                {id: "path4", fillColor:"#eeeeee", nextStepDelay: 0},
+                {id: "path6", fillColor:"#eeeeee", nextStepDelay: 0},
+                {id: "path8", fillColor:"#eeeeee", nextStepDelay: 0},
+                {id: "path10", fillColor:"#eeeeee", nextStepDelay: 0},
+                {id: "path12", fillColor:"#eeeeee", nextStepDelay: 200}
+            ];
+            var animationContainer = document.getElementById("svg-animation-container");
+            if (animationContainer){
+                // we have animation still visible, so animate required step
+                if (currentFrameIndex >= frames.length) { // make sure that animation is looped
+                    currentFrameIndex = 0;
+                }
+                var frame = frames[currentFrameIndex];
+                if (frame) {
+                    var svgElement = animationContainer.querySelector("#" + frame.id);
+                    if (svgElement) {
+                        svgElement.setAttribute("style", "fill:" + frame.fillColor);
+                    }
+                    // timeout for next animation frame
+                    setTimeout(function(){
+                        svgLoadingAnimation(currentFrameIndex + 1);
+                    }, frame.nextStepDelay);
+                }
+            }
+        }
+        setTimeout(function(){svgLoadingAnimation(0)}, 200);
+    </script>
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inconsolata:400,700&amp;subset=latin-ext">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+    
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <% if (googleAnalyticsTrackingId) { %>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=<%=googleAnalyticsTrackingId%>"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', '<%=googleAnalyticsTrackingId%>');
+    </script> 
+    <% } %>
+    <script src="https://apis.google.com/js/api.js"></script>
+
+    <link href="content/css/codemirror/codemirror.css" rel="stylesheet">
+    <link href="content/css/golden-layout/goldenlayout-base.css" rel="stylesheet">
+    <div id="theme_styles_should_be_inserted_straight_before_this_element"/>
+
+    <script type="text/javascript">
+      <%=themesManagerRawJS%>
+    </script>
+
+    <% for (var css in htmlWebpackPlugin.files.css) { %>
+    <link href="<%=htmlWebpackPlugin.files.css[css]+'?'+appGitVersion%>" rel="stylesheet">
+    <% } %>
+    <% for (var chunk in htmlWebpackPlugin.files.chunks) { %>
+    <script src="<%=htmlWebpackPlugin.files.chunks[chunk].entry+'?'+appGitVersion%>"></script>
+    <% } %>
+    
+    <script>
+        app.run();
+    </script>
+</body>
+
+</html>

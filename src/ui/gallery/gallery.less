@@ -1,0 +1,43 @@
+.gallery-component {
+  .container {
+    width: 100%;
+  }
+
+  .program-card {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin: 10px;
+
+    .card-image {
+      .gallery-img-container:hover {
+        .gallery-img-title {
+          background: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.8) 100%);
+        }
+      }
+
+      .gallery-img-title {
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        color: white;
+        padding-left: 4px;
+        padding-right: 4px;
+        text-shadow: 0 0.1px 0 black;
+        white-space: nowrap;
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.5) 100%);
+      }
+
+      img3 {
+        filter: grayscale(90%) opacity(10%);
+      }
+    }
+  }
+
+  .export-import-buttons-group.export-import-buttons-group {
+    justify-content: flex-end;
+  }
+
+  .gallery-message-box {
+    padding: 10px;
+  }
+}

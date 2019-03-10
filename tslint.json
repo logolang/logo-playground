@@ -1,7 +1,6 @@
 {
   "extends": ["tslint-sonarts"],
   "rules": {
-    "no-unused-variable": true,
     "class-name": true,
     "curly": true,
     "no-internal-module": true,
@@ -46,6 +45,7 @@
 
     // Disable some annoying SonarQube rules
     "no-duplicate-string": false,
-    "prefer-immediate-return": false
+    "prefer-immediate-return": false,
+    "no-small-switch": false
   }
 }

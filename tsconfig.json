@@ -1,9 +1,12 @@
 ﻿{
   "compilerOptions": {
     "target": "es5",
-    "module": "es2015",
+    "module": "commonjs",
     "moduleResolution": "node",
     "baseUrl": ".",
+    "paths": {
+      "*": ["src/*"]
+    },
     "sourceMap": true,
     "inlineSourceMap": false,
     "emitDecoratorMetadata": true,
@@ -19,7 +22,8 @@
     "pretty": true,
     "jsx": "react",
     "importHelpers": true,
-    "lib": ["dom", "es2017"]
+    "lib": ["dom", "es2017"],
+    "skipLibCheck": true
   },
   "exclude": ["node_modules", "content", "dist", "reports"]
 }

@@ -1,0 +1,49 @@
+@keyframes progress-fx {
+  50% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.ex-animated-dot {
+  width: 10px;
+  height: 10px;
+  border: 2px solid gray;
+  border-radius: 50%;
+  float: left;
+  margin: 0 5px;
+  transform: scale(0);
+  animation: progress-fx 1000ms ease infinite 0ms;
+}
+
+.ex-animated-dot:nth-child(2) {
+  animation: progress-fx 1000ms ease infinite 300ms;
+}
+
+.ex-animated-dot:nth-child(3) {
+  animation: progress-fx 1000ms ease infinite 600ms;
+}
+
+.ex-loading-indicator-fullpage {
+  position: absolute;
+  right: 0;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 100;
+  padding-top: 200px;
+  background-color: white;
+  opacity: 0.5;
+}
+
+.ex-loading-indicator {
+  width: 120px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 30px;
+  padding-top: 50px;
+  padding-bottom: 50px;
+}
