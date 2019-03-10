@@ -7,7 +7,8 @@ export interface Theme {
   styleLinks: string[];
 }
 
-const themeManager: any = (window as any).themeManager;
+// Theme Manager is injected on index.html from 'themes-manager.js'
+declare const themeManager: any;
 
 export function getAllThemes(): Theme[] {
   return themeManager.themes;
