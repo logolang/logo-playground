@@ -86,10 +86,15 @@
 
     <link href="content/css/codemirror/codemirror.css" rel="stylesheet">
     <link href="content/css/golden-layout/goldenlayout-base.css" rel="stylesheet">
-    <div id="theme_styles_should_be_inserted_straight_before_this_element"/>
+    
+    <div id="THEME_CSS_CONTAINER"> </div>
 
     <script type="text/javascript">
-      <%=themesManagerRawJS%>
+      <%=themesManagerRawJS%>;
+
+      var themesManager = new ThemesManager('<%=appGitVersion%>');
+      var theme = themesManager.getCurrentTheme();
+      themesManager.setTheme(theme, true);
     </script>
 
     <% for (var css in htmlWebpackPlugin.files.css) { %>

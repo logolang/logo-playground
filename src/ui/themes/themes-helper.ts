@@ -8,29 +8,21 @@ export interface Theme {
 }
 
 // Theme Manager is injected on index.html from 'themes-manager.js'
-declare const themeManager: any;
+declare const themesManager: {
+  themes: Theme[];
+  setTheme(theme: Theme, isFirstTime: boolean): void;
+  getCurrentTheme(): Theme;
+  getThemeByName(themeName: string): Theme;
+};
 
 export function getAllThemes(): Theme[] {
-  return themeManager.themes;
+  return themesManager.themes;
 }
 
 export function findTheme(themeName: string): Theme {
-  const themes = getAllThemes();
-  const selectedTheme = themes.find(t => t.name === themeName);
-  if (selectedTheme) {
-    return selectedTheme;
-  }
-  return themes[0];
+  return themesManager.getThemeByName(themeName);
 }
 
-export function setActiveTheme(themeName: string) {
-  const activeTheme = getActiveTheme();
-  if (activeTheme && activeTheme.name === themeName) {
-    return;
-  }
-  themeManager.activateTheme(findTheme(themeName), false);
-}
-
-export function getActiveTheme(): Theme {
-  return themeManager.getActiveTheme();
+export function setTheme(themeName: string) {
+  themesManager.setTheme(findTheme(themeName), false);
 }

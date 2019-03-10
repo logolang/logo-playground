@@ -8,7 +8,7 @@ import {
   getTurtleSizes,
   getTurtleImage
 } from "ui/turtles/turtles";
-import { Theme, getAllThemes, getActiveTheme, setActiveTheme } from "ui/themes/themes-helper";
+import { Theme, getAllThemes, setTheme } from "ui/themes/themes-helper";
 import {
   EventsTrackingService,
   EventAction
@@ -112,14 +112,14 @@ export class SettingsPage extends React.Component<Props, State> {
                     <div className="select is-fullwidth">
                       <ThemeSelector
                         items={getAllThemes()}
-                        selectedItem={getActiveTheme()}
+                        selectedItem={this.props.appTheme}
                         getItemIdentifier={x => x.name}
                         renderItem={x => `${x.name} - ${x.description}`}
                         id="theme-selector"
                         selectionChanged={async selectedTheme => {
                           if (selectedTheme) {
                             this.props.applyUserSettings({ themeName: selectedTheme.name });
-                            setActiveTheme(selectedTheme.name);
+                            setTheme(selectedTheme.name);
                           }
                         }}
                       />
