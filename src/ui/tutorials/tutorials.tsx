@@ -5,7 +5,7 @@ import { $T } from "i18n-strings";
 import { checkIsMobileDevice } from "utils/device";
 import { TutorialInfo, TutorialStepContent, TutorialStepInfo } from "services/tutorials-service";
 import { UserSettings } from "services/user-settings";
-import { Theme } from "ui/themes/themes-helper";
+import { Theme } from "ui/themes-helper";
 import {
   EventsTrackingService,
   EventAction

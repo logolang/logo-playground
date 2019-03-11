@@ -8,7 +8,7 @@ import {
   getTurtleSizes,
   getTurtleImage
 } from "ui/turtles/turtles";
-import { Theme, getAllThemes, setTheme } from "ui/themes/themes-helper";
+import { Theme, themesManager } from "ui/themes-helper";
 import {
   EventsTrackingService,
   EventAction
@@ -111,7 +111,7 @@ export class SettingsPage extends React.Component<Props, State> {
                   <div className="control is-expanded">
                     <div className="select is-fullwidth">
                       <ThemeSelector
-                        items={getAllThemes()}
+                        items={themesManager.themes}
                         selectedItem={this.props.appTheme}
                         getItemIdentifier={x => x.name}
                         renderItem={x => `${x.name} - ${x.description}`}
@@ -119,7 +119,7 @@ export class SettingsPage extends React.Component<Props, State> {
                         selectionChanged={async selectedTheme => {
                           if (selectedTheme) {
                             this.props.applyUserSettings({ themeName: selectedTheme.name });
-                            setTheme(selectedTheme.name);
+                            themesManager.setTheme(selectedTheme);
                           }
                         }}
                       />

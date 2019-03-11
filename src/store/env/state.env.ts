@@ -1,6 +1,6 @@
 import { UserSettings, defaultUserSettings } from "services/user-settings";
 import { anonymousUser, UserData } from "services/infrastructure/auth-service";
-import { Theme } from "ui/themes/themes-helper";
+import { Theme } from "ui/themes-helper";
 
 export enum NotificationType {
   danger = "danger",

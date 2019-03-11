@@ -165,17 +165,16 @@ function ThemesManager(gitVersion) {
     return this.getThemeByName(themeName);
   };
 
-  this.setTheme = function(theme, isFirstTime) {
+  this.setTheme = function(theme) {
     window.localStorage.setItem(appThemeNameLocalStorageKey, theme.name);
     document.body.className = theme.bodyClass;
     injectCssLinks(theme.styleLinks, theme.name, function() {
-      if (!isFirstTime) {
-        // remove old theme files
-        var themeLinks = document.querySelectorAll("[data-theme-name]");
-        for (var i = 0; i < themeLinks.length; ++i) {
-          if (themeLinks[i].getAttribute("data-theme-name") !== theme.name) {
-            themeLinks[i].remove();
-          }
+      // remove old theme files
+      var themeContainer = document.getElementById("THEME_CSS_CONTAINER");
+      var themeLinks = themeContainer.querySelectorAll("[data-theme-name]");
+      for (var i = 0; i < themeLinks.length; ++i) {
+        if (themeLinks[i].getAttribute("data-theme-name") !== theme.name) {
+          themeLinks[i].remove();
         }
       }
     });
@@ -200,4 +199,7 @@ function ThemesManager(gitVersion) {
       themeContainer.appendChild(link);
     }
   }
+
+  // Initialize theme
+  this.setTheme(this.getCurrentTheme());
 }

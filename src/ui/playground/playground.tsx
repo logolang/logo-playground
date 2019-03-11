@@ -6,7 +6,7 @@ import { checkIsMobileDevice } from "utils/device";
 
 import { localStoragePrefix } from "services/constants";
 import { UserSettings } from "services/user-settings";
-import { Theme } from "ui/themes/themes-helper";
+import { Theme } from "ui/themes-helper";
 
 import { ReactGoldenLayout } from "ui/_generic/react-golden-layout/react-golden-layout";
 import { ReactGoldenLayoutPanel } from "ui/_generic/react-golden-layout/react-golden-layout-panel";

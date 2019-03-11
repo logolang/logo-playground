@@ -4,7 +4,6 @@
     const googleAnalyticsTrackingId = appConfig.services.googleAnalyticsTrackingId;
     const appGitVersion = htmlWebpackPlugin.options.variables.appGitVersion;
     const loadingSvg = require('!raw-loader!content/images/square-logo-light.svg');
-    const themesManagerRawJS = require('!raw-loader!./ui/themes/themes-manager.js');
 %><!DOCTYPE html>
 <html style="overflow: hidden;">
 
@@ -88,13 +87,9 @@
     <link href="content/css/golden-layout/goldenlayout-base.css" rel="stylesheet">
     
     <div id="THEME_CSS_CONTAINER"> </div>
-
-    <script type="text/javascript">
-      <%=themesManagerRawJS%>;
-
-      var themesManager = new ThemesManager('<%=appGitVersion%>');
-      var theme = themesManager.getCurrentTheme();
-      themesManager.setTheme(theme, true);
+    <script src="content/css/themes-manager.js"></script>
+    <script>
+      var themesManagerGlobalInstance = new ThemesManager('<%=appGitVersion%>');
     </script>
 
     <% for (var css in htmlWebpackPlugin.files.css) { %>
