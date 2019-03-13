@@ -9,11 +9,10 @@ export class LogoOutputConsole {
     return window.prompt(s ? s : "");
   }
 
-  write() {
+  write(...args: []) {
     const div = $(this.overlaySelector);
-    for (let i = 0; i < arguments.length; ) {
-      i++;
-      div.innerHTML += arguments[i];
+    for (const arg of args) {
+      div.innerHTML += arg;
     }
     div.scrollTop = div.scrollHeight;
   }

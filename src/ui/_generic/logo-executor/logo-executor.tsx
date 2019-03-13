@@ -84,8 +84,8 @@ export class LogoExecutor extends React.Component<Props, State> {
       errorMessage: ""
     });
 
-    const lightThemeInit = `setbg 7 setpencolor 0 cs`;
-    const darkThemeInit = `setbg 0 setpencolor 7 cs`;
+    const lightThemeInit = `setbg 7 setpencolor 0 cs cleartext`;
+    const darkThemeInit = `setbg 0 setpencolor 7 cs cleartext`;
     const initCode = this.props.isDarkTheme ? darkThemeInit : lightThemeInit;
 
     this.resizeCanvas();
@@ -104,13 +104,13 @@ export class LogoExecutor extends React.Component<Props, State> {
     this.isRunning = true;
     try {
       await this.logo.run(polyfills + "\r\n" + initCode + "\r\n" + code);
-      this.props.onFinish();
     } catch (ex) {
       console.error("error", ex);
       this.setState({
         errorMessage: ex.message || ex.toString()
       });
     }
+    this.props.onFinish();
     this.isRunning = false;
   };
 
