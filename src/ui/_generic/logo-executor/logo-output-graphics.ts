@@ -70,13 +70,16 @@ export class LogoOutputGraphics {
       width: 200,
       height: 150
     };
-    const clipRect = {
-      width: Math.min(400, canvas.width),
-      height: Math.min(300, canvas.width)
-    };
+    let clipRectWidth = Math.min(400, canvas.width);
+    let clipRectHeight = (clipRectWidth * 3) / 4;
+    if (clipRectHeight > canvas.height) {
+      clipRectHeight = canvas.height;
+      clipRectWidth = (clipRectHeight * 4) / 3;
+    }
+
     const sourceOffset = {
-      x: (canvas.width - clipRect.width) / 2,
-      y: (canvas.height - clipRect.height) / 2
+      x: (canvas.width - clipRectWidth) / 2,
+      y: (canvas.height - clipRectHeight) / 2
     };
 
     // create an in-memory canvas
@@ -93,8 +96,8 @@ export class LogoOutputGraphics {
       canvas,
       sourceOffset.x,
       sourceOffset.y,
-      clipRect.width,
-      clipRect.height,
+      clipRectWidth,
+      clipRectHeight,
       0,
       0,
       targetRect.width,

@@ -4,6 +4,7 @@ const polyfills = require("app/../lib/logojs/polyfills.logo.txt");
 
 import { LogoOutputGraphics } from "./logo-output-graphics";
 import { LogoOutputConsole } from "./logo-output-console";
+import { checkIsMobileDevice } from "utils/device";
 import { AlertMessage } from "ui/_generic/alert-message";
 
 import "./logo-executor.less";
@@ -84,9 +85,10 @@ export class LogoExecutor extends React.Component<Props, State> {
       errorMessage: ""
     });
 
-    const lightThemeInit = `setbg 7 setpencolor 0 cs cleartext`;
-    const darkThemeInit = `setbg 0 setpencolor 7 cs cleartext`;
-    const initCode = this.props.isDarkTheme ? darkThemeInit : lightThemeInit;
+    const alwaysInit = "cs cleartext ";
+    const deviceInit = checkIsMobileDevice() ? "setscrunch 0.7 0.7 " : " ";
+    const themeInit = this.props.isDarkTheme ? "setbg 0 setpencolor 7 " : "setbg 7 setpencolor 0 ";
+    const initCode = alwaysInit + deviceInit + themeInit;
 
     this.resizeCanvas();
 
