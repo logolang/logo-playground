@@ -13,6 +13,11 @@ export class GalleryLocalRepository {
 
   getAll(): ProgramModel[] {
     const stored = this.localStorage.getValue();
+    // Reconstruct dates from JSON
+    for (const p of stored) {
+      p.dateCreated = new Date(p.dateCreated);
+      p.dateLastEdited = new Date(p.dateLastEdited);
+    }
     return stored;
   }
 
