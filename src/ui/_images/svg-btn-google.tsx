@@ -3,7 +3,7 @@ import * as React from "react";
 export function SvgBtnGoogle() {
   return (
     <svg width="18" height="18" xmlns="http://www.w3.org/2000/svg">
-      <g fill="none" fill-rule="evenodd">
+      <g fill="none" fillRule="evenodd">
         <path
           d="M17.6 9.2l-.1-1.8H9v3.4h4.8C13.6 12 13 13 12 13.6v2.2h3a8.8 8.8 0 0 0 2.6-6.6z"
           fill="#4285F4"
