@@ -21,13 +21,14 @@ export const PlaygroundContainer = connect(
   {
     /** Actions to props */
     loadProgram: playgroundThunks.loadProgram,
-    codeChanged: playgroundThunks.codeChangedThunk,
+    codeChanged: playgroundThunks.codeChanged,
     runProgram: playgroundActionCreator.runProgram,
     stopProgram: playgroundActionCreator.stopProgram,
     saveAsProgram: playgroundThunks.saveAsProgram,
     saveProgram: playgroundThunks.saveProgram,
     deleteProgram: playgroundThunks.deleteProgram,
     clearProgram: playgroundActionCreator.clearProgram,
-    revertChanges: playgroundThunks.revertChanges
+    revertChanges: playgroundThunks.revertChanges,
+    formatCode: playgroundThunks.formatCode
   }
 )(Playground);

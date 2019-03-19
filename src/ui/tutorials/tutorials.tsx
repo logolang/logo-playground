@@ -50,6 +50,7 @@ interface Props {
   runProgram(): void;
   stopProgram(): void;
   codeChanged(code: string): void;
+  formatCode(): void;
 }
 
 export class TutorialsPage extends React.Component<Props, State> {
@@ -103,6 +104,10 @@ export class TutorialsPage extends React.Component<Props, State> {
     this.props.loadStep(tutorialId, stepId);
   };
 
+  handleFormatDocument = () => {
+    this.props.formatCode();
+  };
+
   render(): JSX.Element {
     return (
       <div className="ex-page-container">
@@ -137,6 +142,7 @@ export class TutorialsPage extends React.Component<Props, State> {
                 onStopProgram={this.handleStopProgram}
                 createScreenShotImageBase64={this.getProgramImage}
                 createSmallScreenShotImageBase64={this.getSmallProgramImage}
+                onFormatDocument={this.handleFormatDocument}
               />
               <CodeInput
                 className="code-input-container"

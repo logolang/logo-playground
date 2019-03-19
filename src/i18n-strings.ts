@@ -40,7 +40,8 @@ export const $T = {
     youAreGoingToDeleteProgram: "You are going to delete this program.",
     imagePreview: "Image preview",
     imageUrl: "Image url",
-    pleaseEnterNameForYourProgram: "Please enter the name for your program"
+    pleaseEnterNameForYourProgram: "Please enter the name for your program",
+    formatDocument: "Format code"
   },
   gallery: {
     galleryTitle: "Gallery",

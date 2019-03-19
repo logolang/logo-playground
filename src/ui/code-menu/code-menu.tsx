@@ -33,6 +33,7 @@ interface Props {
   isSaveEnabled?: boolean;
   onSave?(): void;
   onSaveAs?(newName: string): void;
+  onFormatDocument(): void;
 }
 
 export class CodeMenu extends React.Component<Props, State> {
@@ -85,6 +86,17 @@ export class CodeMenu extends React.Component<Props, State> {
           </div>
           <div className="dropdown-menu" id="dropdown-menu6" role="menu">
             <div className="dropdown-content">
+              <a
+                className="dropdown-item"
+                onClick={() => {
+                  this.setState({ menuIsActive: false });
+                  this.props.onFormatDocument();
+                }}
+              >
+                <i className="fas fa-align-left icon-fixed-width" aria-hidden="true" />
+                {$T.program.formatDocument}
+              </a>
+
               {this.props.isSaveEnabled && (
                 <a
                   className="dropdown-item"

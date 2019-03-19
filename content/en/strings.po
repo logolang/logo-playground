@@ -106,6 +106,9 @@ msgstr "Sign in"
 msgid "program.codePanelTitle"
 msgstr "Program box"
 
+msgid "program.formatDocument"
+msgstr "Format code"
+
 msgid "program.imagePreview"
 msgstr "Image preview"
 
