@@ -26,6 +26,7 @@ export const TutorialsContainer = connect(
     codeChanged: tutorialsActionCreator.codeChanged,
     runProgram: tutorialsActionCreator.runProgram,
     stopProgram: tutorialsActionCreator.stopProgram,
-    fixTheCode: tutorialsActionCreator.fixTheCode
+    fixTheCode: tutorialsActionCreator.fixTheCode,
+    formatCode: tutorialsThunks.formatCode
   }
 )(TutorialsPage);

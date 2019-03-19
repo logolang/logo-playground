@@ -8,9 +8,11 @@ import { GetState } from "store/store";
 import { envActionCreator } from "store/env/actions.env";
 import { TutorialsService } from "services/tutorials-service";
 import { tutorialsActionCreator } from "./actions.tutorials";
+import { formatLogoProgram } from "services/logo-formatter";
 
 export const tutorialsThunks = {
-  loadStep: loadStepThunk
+  loadStep: loadStepThunk,
+  formatCode: formatCodeThunk
 };
 
 function loadStepThunk(tutorialId: string, stepId: string) {
@@ -55,5 +57,13 @@ function loadStepThunk(tutorialId: string, stepId: string) {
       const errDef = await normalizeError(error);
       dispatch(envActionCreator.handleError(errDef));
     }
+  };
+}
+
+function formatCodeThunk() {
+  return async (dispatch: Dispatch<any>, getState: GetState) => {
+    const code = getState().tutorials.code;
+    const formatted = formatLogoProgram(code);
+    dispatch(tutorialsActionCreator.codeChanged(formatted));
   };
 }

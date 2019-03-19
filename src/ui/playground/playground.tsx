@@ -42,6 +42,7 @@ interface Props {
   saveProgram(screenShot: string): void;
   clearProgram(): void;
   revertChanges(): void;
+  formatCode(): void;
 }
 
 interface State {
@@ -115,6 +116,10 @@ export class Playground extends React.Component<Props, State> {
     this.props.saveAsProgram(newName, this.getSmallProgramImage());
   };
 
+  handleFormatDocument = () => {
+    this.props.formatCode();
+  };
+
   render(): JSX.Element {
     return (
       <div className="ex-page-container">
@@ -156,6 +161,7 @@ export class Playground extends React.Component<Props, State> {
                 isSaveEnabled={this.props.storageType === ProgramStorageType.gallery}
                 onSave={this.handleSave}
                 onSaveAs={this.handleSaveAs}
+                onFormatDocument={this.handleFormatDocument}
               />
               <CodeInput
                 className="code-input-container"

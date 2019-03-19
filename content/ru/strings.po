@@ -107,6 +107,9 @@ msgstr "Войти"
 msgid "program.codePanelTitle"
 msgstr "Программа"
 
+msgid "program.formatDocument"
+msgstr "Выровнять код"
+
 msgid "program.imagePreview"
 msgstr "Скриншот"
 

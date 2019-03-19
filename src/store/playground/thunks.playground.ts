@@ -16,14 +16,16 @@ import {
   EventsTrackingService,
   EventAction
 } from "services/infrastructure/events-tracking.service";
+import { formatLogoProgram } from "services/logo-formatter";
 
 export const playgroundThunks = {
   loadProgram: loadProgramThunk,
-  codeChangedThunk: codeChangedThunk,
+  codeChanged: codeChangedThunk,
   saveProgram: saveProgramThunk,
   saveAsProgram: saveAsProgramThunk,
   deleteProgram: deleteProgramThunk,
-  revertChanges: revertChangesThunk
+  revertChanges: revertChangesThunk,
+  formatCode: formatCodeThunk
 };
 
 function loadProgramThunk(storageType: ProgramStorageType, programId: string) {
@@ -173,5 +175,13 @@ function revertChangesThunk() {
       dispatch(envActionCreator.handleError(errDef));
       dispatch(playgroundActionCreator.syncProgramFailed());
     }
+  };
+}
+
+function formatCodeThunk() {
+  return async (dispatch: Dispatch<any>, getState: GetState) => {
+    const code = getState().playground.code;
+    const formatted = formatLogoProgram(code);
+    dispatch(playgroundThunks.codeChanged(formatted));
   };
 }
