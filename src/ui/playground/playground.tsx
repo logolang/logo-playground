@@ -1,11 +1,13 @@
 import * as React from "react";
 
 import { $T } from "i18n-strings";
-import { ProgramStorageType } from "services/program.model";
+import { resolve } from "utils/di";
 import { checkIsMobileDevice } from "utils/device";
 
 import { localStoragePrefix } from "services/constants";
+import { ProgramStorageType } from "services/program.model";
 import { UserSettings } from "services/user-settings";
+import { LogoImportsResolverService } from "services/logo-imports-resolver.service";
 import { Theme } from "ui/themes-helper";
 
 import { ReactGoldenLayout } from "ui/_generic/react-golden-layout/react-golden-layout";
@@ -57,6 +59,7 @@ export class Playground extends React.Component<Props, State> {
   private layoutLocalStorageKey =
     localStoragePrefix + "playground-layout" + (this.isMobileDevice ? "-mobile" : "-desktop");
   private logoExecutorRef?: LogoExecutor;
+  private importsResolver = resolve(LogoImportsResolverService);
 
   constructor(props: Props) {
     super(props);
@@ -64,6 +67,7 @@ export class Playground extends React.Component<Props, State> {
   }
 
   async componentDidMount() {
+    this.importsResolver.reset();
     this.props.loadProgram(this.props.storageType, this.props.programId);
   }
 
@@ -72,6 +76,7 @@ export class Playground extends React.Component<Props, State> {
       oldProps.storageType != this.props.storageType ||
       oldProps.programId != this.props.programId
     ) {
+      this.importsResolver.reset();
       this.props.loadProgram(this.props.storageType, this.props.programId);
     }
   }
@@ -182,6 +187,7 @@ export class Playground extends React.Component<Props, State> {
                 isDarkTheme={this.props.appTheme.isDark}
                 turtleImage={getTurtleImage(this.props.userSettings.turtleId)}
                 turtleSize={this.props.userSettings.turtleSize}
+                importsResolver={this.importsResolver}
               />
             </ReactGoldenLayoutPanel>
           </ReactGoldenLayout>

@@ -8,7 +8,7 @@ import { GetState } from "store/store";
 import { envActionCreator } from "store/env/actions.env";
 import { TutorialsService } from "services/tutorials-service";
 import { tutorialsActionCreator } from "./actions.tutorials";
-import { formatLogoProgram } from "services/logo-formatter";
+import { formatLogoProgram } from "ui/_generic/logo-executor/logo-formatter";
 
 export const tutorialsThunks = {
   loadStep: loadStepThunk,

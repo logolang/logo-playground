@@ -16,7 +16,7 @@ import {
   EventsTrackingService,
   EventAction
 } from "services/infrastructure/events-tracking.service";
-import { formatLogoProgram } from "services/logo-formatter";
+import { formatLogoProgram } from "ui/_generic/logo-executor/logo-formatter";
 
 export const playgroundThunks = {
   loadProgram: loadProgramThunk,
