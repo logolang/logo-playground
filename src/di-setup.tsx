@@ -22,6 +22,7 @@ import { SharedProgramsRepository } from "services/programs-shared.repository";
 import { LogoCodeSamplesService } from "services/logo-code-samples.service";
 import { AuthProvider, AuthService } from "services/infrastructure/auth-service";
 import { GalleryImportService } from "services/gallery-import.service";
+import { LogoImportsResolverService } from "services/logo-imports-resolver.service";
 
 export class DISetup {
   public static async setup(options: { appConfig: AppConfig }) {
@@ -84,6 +85,8 @@ export class DISetup {
     register(LogoCodeSamplesService, new LogoCodeSamplesService());
 
     register(GalleryImportService, new GalleryImportService(galleryService));
+
+    register(LogoImportsResolverService, new LogoImportsResolverService(localRepo, samplesRepo));
 
     return {
       user,

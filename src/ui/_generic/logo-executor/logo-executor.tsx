@@ -6,11 +6,16 @@ import { LogoOutputGraphics } from "./logo-output-graphics";
 import { LogoOutputConsole } from "./logo-output-console";
 import { checkIsMobileDevice } from "utils/device";
 import { AlertMessage } from "ui/_generic/alert-message";
+import { processImports } from "./process-imports";
 
 import "./logo-executor.less";
 
 interface State {
   errorMessage: string;
+}
+
+interface ImportsResolver {
+  resolve(module: string): Promise<string>;
 }
 
 export interface Props {
@@ -19,6 +24,7 @@ export interface Props {
   isDarkTheme: boolean;
   turtleImage?: HTMLImageElement;
   turtleSize?: number;
+  importsResolver?: ImportsResolver;
   onFinish(): void;
 }
 
@@ -81,6 +87,8 @@ export class LogoExecutor extends React.Component<Props, State> {
   }
 
   private execute = async (): Promise<void> => {
+    this.isRunning = true;
+
     this.setState({
       errorMessage: ""
     });
@@ -101,9 +109,15 @@ export class LogoExecutor extends React.Component<Props, State> {
 
     // Replace all non-breaking spaces to normal ones because jsLogo does not understand them
     // This symbols might occur when typing code on mobile devices
-    const code = this.props.code.replace(/\u00A0/g, " ");
+    let code = this.props.code.replace(/\u00A0/g, " ");
 
-    this.isRunning = true;
+    // Resolve imports
+    if (this.props.importsResolver) {
+      code = await processImports(code, async module => {
+        return this.props.importsResolver ? this.props.importsResolver.resolve(module) : "";
+      });
+    }
+
     try {
       await this.logo.run(polyfills + "\r\n" + initCode + "\r\n" + code);
     } catch (ex) {
