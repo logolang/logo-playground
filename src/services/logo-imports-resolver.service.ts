@@ -26,9 +26,8 @@ export class LogoImportsResolverService {
   }
 
   private async loadPrograms() {
-    const shapes = await this.examplesRepository.getAll("shapes");
-    this.programs.push(...shapes);
-    this.programs.push(...(await this.examplesRepository.getAll("samples")));
     this.programs.push(...this.localProgramsRepository.getAll());
+    this.programs.push(...(await this.examplesRepository.getAll("shapes")));
+    this.programs.push(...(await this.examplesRepository.getAll("samples")));
   }
 }
