@@ -59,7 +59,9 @@ export class LogoOutputGraphics {
   createScreenshot(isThumbnail: boolean): string {
     const canvasElt = $(this.sandBoxSelector) as HTMLCanvasElement;
     if (canvasElt) {
-      return isThumbnail ? this.prepareThumbnail(canvasElt) : canvasElt.toDataURL();
+      return isThumbnail
+        ? this.prepareThumbnail(canvasElt)
+        : canvasElt.toDataURL("image/jpeg", 1.0);
     }
     return "";
   }
@@ -104,6 +106,6 @@ export class LogoOutputGraphics {
       targetRect.height
     );
     // now call the callback with the dataURL of our buffer canvas
-    return buffer.toDataURL();
+    return buffer.toDataURL("image/jpeg", 1.0);
   }
 }
