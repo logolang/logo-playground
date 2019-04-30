@@ -55,8 +55,8 @@ export default function reducers(
       if (state.currentStepContent) {
         return {
           ...state,
-          isRunning: false,
-          code: state.currentStepContent.resultCode
+          code: state.currentStepContent.solutionCode,
+          isRunning: true
         };
       }
       return state;

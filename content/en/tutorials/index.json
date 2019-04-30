@@ -7,12 +7,12 @@
       "level": "beginner",
       "steps": [
         {
-          "name": "Logo's turtle",
-          "id": "01-intro"
+          "name": "Welcome",
+          "id": "01-welcome"
         },
         {
-          "name": "The Turtle can Turn",
-          "id": "02-turtle-can-turn"
+          "name": "Basic movement commands",
+          "id": "02-movement"
         },
         {
           "name": "Turning back",

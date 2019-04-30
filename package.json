@@ -7,7 +7,7 @@
     "start": "webpack-dev-server",
     "build": "webpack --env.prod",
     "test": "mocha",
-    "test-watch": "mocha --watch",
+    "test-watch": "mocha --watch --watch-extensions ts",
     "tslint": "tslint --project . --format verbose --fix",
     "i18n": "ts-node --require tsconfig-paths/register tools/i18n-cli.ts"
   },
@@ -116,7 +116,7 @@
       "**/*.min.css"
     ],
     "linters": {
-      "*.{ts,tsx,js,json,css,less}": [
+      "*.{ts,tsx,js,json,css,less,md}": [
         "prettier --write",
         "git add"
       ]

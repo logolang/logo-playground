@@ -19,5 +19,5 @@ export const defaultTutorialsState: TutorialsState = {
   code: "",
   isRunning: false,
   tutorialId: "01-basics",
-  stepId: "01-intro"
+  stepId: "01-welcome"
 };

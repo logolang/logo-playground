@@ -1,5 +1,9 @@
 import * as markdown from "markdown-it";
-import { LocalizedContentLoader } from "services/localized-content-loader";
+
+export interface ContentLoader {
+  getFileContent(relativePath: string): Promise<string>;
+  resolveRelativeUrl(relativePath: string): string;
+}
 
 export interface TutorialInfo {
   id: string;
@@ -16,8 +20,7 @@ export interface TutorialStepInfo {
 
 export interface TutorialStepContent {
   content: string;
-  initialCode: string;
-  resultCode: string;
+  solutionCode: string;
 }
 
 /**
@@ -26,7 +29,7 @@ export interface TutorialStepContent {
 export class TutorialsService {
   private tutorialInfos: TutorialInfo[] = [];
 
-  constructor(private contentLoader: LocalizedContentLoader) {}
+  constructor(private contentLoader: ContentLoader) {}
 
   async getTutorialsList(): Promise<TutorialInfo[]> {
     if (this.tutorialInfos.length == 0) {
@@ -44,26 +47,30 @@ export class TutorialsService {
     const md = new markdown({
       html: true // Enable HTML tags in source;
     });
-    const resultCodeRegex = /```result[\s\S]*```/g;
-    let matches = stepContent.match(resultCodeRegex);
-    let resultCode = "";
+    const solutionCodeRegex = /<!--solution-->[\s\S]*```[\s\S]*```/g;
+    const matches = stepContent.match(solutionCodeRegex);
+    let solutionCode = "";
     if (matches && matches.length > 0) {
-      resultCode = matches[0].replace(/```result|```/g, "").trim() + "\r\n";
-      stepContent = stepContent.replace(resultCodeRegex, "");
+      solutionCode = matches[0].replace(/<!--solution-->|```/g, "").trim() + "\r\n";
+      stepContent = stepContent.replace(solutionCodeRegex, "");
     }
 
-    const initCodeRegex = /```init[\s\S]*```/g;
-    matches = stepContent.match(initCodeRegex);
-    let initCode = "";
-    if (matches && matches.length > 0) {
-      initCode = matches[0].replace(/```init|```/g, "");
-      stepContent = stepContent.replace(initCodeRegex, "");
-    }
+    let html = md.render(stepContent).trim();
+
+    // find and fix all relative image urls
+    html = html.replace(/src="[\s\S]*?"/g, match => {
+      let src = match.substr(5);
+      src = src.substr(0, src.length - 1);
+      if (src.startsWith(".")) {
+        src = src.substring(1);
+        src = this.contentLoader.resolveRelativeUrl("tutorials/" + tutorialId + src);
+      }
+      return 'src="' + src + '"';
+    });
 
     const tutorialStep: TutorialStepContent = {
-      content: md.render(stepContent),
-      initialCode: initCode.trim(),
-      resultCode: resultCode.trim()
+      content: html,
+      solutionCode: solutionCode.trim()
     };
     return tutorialStep;
   }

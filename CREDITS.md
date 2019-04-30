@@ -17,5 +17,5 @@ Graphics:
 
 - Favicon from [favicon.cc](http://www.favicon.cc/?action=icon&file_id=520733) by [Kristy](http://www.favicon.cc/?action=icon_list&user_id=158085)
 - Icon from [thenounproject.com](https://thenounproject.com/term/turtle/119022/) by [IsabelFoo](http://www.isabelfoo.com/)
-- Images from from [flaticon.com](http://www.flaticon.com/free-icons/turtles_189930) by [Freepik](http://www.flaticon.com/authors/freepik)
+- Icons made by [Freepik](https://www.freepik.com/) from [www.flaticon.com](https://www.flaticon.com/) is licensed by [CC 3.0 BY](http://creativecommons.org/licenses/by/3.0/)
 - Website icons from [fontawesome.io](http://fontawesome.io/icons/)

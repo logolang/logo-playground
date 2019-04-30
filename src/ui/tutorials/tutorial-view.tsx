@@ -14,7 +14,7 @@ export interface Props {
   currentTutorialInfo: TutorialInfo;
   currentStepInfo: TutorialStepInfo;
   currentStepContent: TutorialStepContent;
-  onFixTheCode(newCode: string): void;
+  onFixTheCode(): void;
   onNavigationRequest(tutorialId: string, stepId: string): void;
 }
 
@@ -88,7 +88,7 @@ export class TutorialView extends React.Component<Props, State> {
               </button>
             )}
 
-            {this.props.currentStepContent.resultCode && (
+            {this.props.currentStepContent.solutionCode && (
               <button
                 type="button"
                 className="button is-warning"
@@ -161,7 +161,6 @@ export class TutorialView extends React.Component<Props, State> {
     if (!this.state.showFixTheCode) {
       return;
     }
-    const currentStep = this.props.currentStepContent;
     return (
       <Modal
         show
@@ -170,7 +169,7 @@ export class TutorialView extends React.Component<Props, State> {
         cancelButtonText={$T.tutorial.noLeaveItAsIs}
         onConfirm={async () => {
           this.setState({ showFixTheCode: false });
-          this.props.onFixTheCode(currentStep.resultCode);
+          this.props.onFixTheCode();
         }}
         onCancel={() => {
           this.setState({ showFixTheCode: false });
