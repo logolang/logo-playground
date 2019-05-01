@@ -15,12 +15,12 @@
           "id": "02-movement"
         },
         {
-          "name": "Turning back",
-          "id": "03-turning-back"
+          "name": "Controlling the pen",
+          "id": "03-pen"
         },
         {
-          "name": "The inverted letter L",
-          "id": "04-inverted-L"
+          "name": "Adding the colors",
+          "id": "04-colors"
         },
         {
           "name": "Combining commands",
