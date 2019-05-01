@@ -1,6 +1,4 @@
 import { Dispatch } from "react";
-import { Action } from "redux";
-import { ActionType } from "typesafe-actions";
 
 import { resolve } from "utils/di";
 import { normalizeError } from "utils/error";
@@ -17,11 +15,12 @@ export const tutorialsThunks = {
 
 function loadStepThunk(tutorialId: string, stepId: string) {
   return async (dispatch: Dispatch<any>, getState: GetState) => {
+    const tutorialsLoader = resolve(TutorialsService);
     let tutorials = getState().tutorials.tutorials;
+
     if (!tutorials) {
       dispatch(tutorialsActionCreator.loadTutorialsStarted());
       try {
-        const tutorialsLoader = resolve(TutorialsService);
         tutorials = await tutorialsLoader.getTutorialsList();
         dispatch(tutorialsActionCreator.loadTutorialsCompleted(tutorials));
       } catch (error) {
@@ -31,18 +30,22 @@ function loadStepThunk(tutorialId: string, stepId: string) {
       }
     }
 
+    if (!tutorialId || !stepId) {
+      const lastStep = tutorialsLoader.getLastStep();
+      tutorialId = lastStep.tutorialId;
+      stepId = lastStep.stepId;
+    }
+
     dispatch(tutorialsActionCreator.loadStepStarted(tutorialId, stepId));
     try {
-      const tutorialsLoader = resolve(TutorialsService);
-      const stepContent = await tutorialsLoader.getStep(tutorialId, stepId);
       const tutorialInfo = tutorials.find(t => t.id === tutorialId);
-      if (!tutorialInfo) {
-        throw new Error("Tutorial is not found: " + tutorialId);
+      const stepInfo = tutorialInfo && tutorialInfo.steps.find(s => s.id === stepId);
+      if (!tutorialInfo || !stepInfo) {
+        tutorialsLoader.setLastStep(tutorialsLoader.defaultStep);
+        throw new Error("Tutorial is not found, please refresh the page to load the default one.");
       }
-      const stepInfo = tutorialInfo.steps.find(s => s.id === stepId);
-      if (!stepInfo) {
-        throw new Error("Step is not found: " + stepId);
-      }
+
+      const stepContent = await tutorialsLoader.getStep(tutorialId, stepId);
 
       dispatch(
         tutorialsActionCreator.loadStepCompleted(

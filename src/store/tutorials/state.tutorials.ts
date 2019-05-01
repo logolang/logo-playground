@@ -18,6 +18,6 @@ export const defaultTutorialsState: TutorialsState = {
   isStepLoading: true,
   code: "",
   isRunning: false,
-  tutorialId: "01-basics",
-  stepId: "01-welcome"
+  tutorialId: "",
+  stepId: ""
 };

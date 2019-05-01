@@ -1,4 +1,6 @@
 import * as markdown from "markdown-it";
+import { localStoragePrefix } from "./constants";
+import { LocalStorage } from "./local-storage";
 
 export interface ContentLoader {
   getFileContent(relativePath: string): Promise<string>;
@@ -18,6 +20,10 @@ export interface TutorialStepInfo {
   name: string;
 }
 
+export interface TutorialStepId {
+  tutorialId: string;
+  stepId: string;
+}
 export interface TutorialStepContent {
   content: string;
   solutionCode: string;
@@ -28,6 +34,14 @@ export interface TutorialStepContent {
  */
 export class TutorialsService {
   private tutorialInfos: TutorialInfo[] = [];
+  readonly defaultStep: TutorialStepId = {
+    tutorialId: "01-basics",
+    stepId: "01-welcome"
+  };
+  private lastStepLocalStorage = new LocalStorage<TutorialStepId>(
+    localStoragePrefix + "tutorials.step",
+    this.defaultStep
+  );
 
   constructor(private contentLoader: ContentLoader) {}
 
@@ -72,6 +86,15 @@ export class TutorialsService {
       content: html,
       solutionCode: solutionCode.trim()
     };
+    this.setLastStep({ tutorialId, stepId });
     return tutorialStep;
+  }
+
+  getLastStep(): TutorialStepId {
+    return this.lastStepLocalStorage.getValue();
+  }
+
+  setLastStep(step: TutorialStepId) {
+    this.lastStepLocalStorage.setValue(step);
   }
 }
