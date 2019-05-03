@@ -4,7 +4,7 @@
       "id": "01-basics",
       "label": "Turtle Basics",
       "description": "Introduction and LOGO language basics",
-      "level": "beginner",
+      "level": "Beginner",
       "steps": [
         {
           "name": "Welcome",
@@ -23,32 +23,32 @@
           "id": "04-colors"
         },
         {
-          "name": "Combining commands",
-          "id": "05-combining"
+          "name": "Hiding the turtle",
+          "id": "05-hide"
         },
         {
-          "name": "Shortcuts",
+          "name": "Short commands",
           "id": "06-shortcuts"
         },
         {
-          "name": "Good job!",
+          "name": "Tutorial is completed",
           "id": "07-finish"
         }
       ]
     },
     {
-      "id": "02-controlling",
-      "label": "Controlling the Turtle and Pen",
-      "description": "Basic turtle commands, working with graphics",
-      "level": "beginner",
+      "id": "02-graphics",
+      "label": "Graphic primitives",
+      "description": "Working with various graphic commands",
+      "level": "Beginner",
       "steps": [
         {
-          "name": "What is the pen?",
-          "id": "step-01"
+          "name": "Working with labels",
+          "id": "01-label"
         },
         {
-          "name": "Lifting the pen",
-          "id": "step-02"
+          "name": "Circles and segments",
+          "id": "02-arc"
         },
         {
           "name": "Putting the pen back down",
@@ -81,42 +81,6 @@
         {
           "name": "Cogratulations!",
           "id": "step-10"
-        }
-      ]
-    },
-    {
-      "id": "03-labels",
-      "label": "Cool Labels",
-      "description": "Printing nice labels using turtle graphics",
-      "level": "advanced",
-      "steps": [
-        {
-          "name": "The label command",
-          "id": "step-01"
-        },
-        {
-          "name": "Bigger font",
-          "id": "step-02"
-        },
-        {
-          "name": "Label direction",
-          "id": "step-03"
-        },
-        {
-          "name": "Use colors",
-          "id": "step-04"
-        },
-        {
-          "name": "Do it wherever you want",
-          "id": "step-05"
-        },
-        {
-          "name": "Using whitespace in your text",
-          "id": "step-06"
-        },
-        {
-          "name": "Summary",
-          "id": "step-07"
         }
       ]
     }

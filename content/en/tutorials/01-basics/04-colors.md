@@ -1,3 +1,5 @@
+Just using the black color is a little bit boring, so we are going to learn how to make our graphics to be more colorful.
+
 The command for changing the pen's color is `setcolor` followed by the color's number. For example: `setcolor 11`
 
 The turtle can draw in different 16 colors listed in this table:

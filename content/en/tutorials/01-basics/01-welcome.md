@@ -13,12 +13,12 @@ So, let's try this out. First, you need to type the simplest program in the prog
 forward 50
 ```
 
-Then to execute this program you need to press green **Run** button in the top right corner.
+To execute this program you need to press green <span style="border: 1px solid lightgray; padding: 4px; margin: 4px;">Run</span> button in the top right corner of program box.
 If you have done it right then the turtle moved forward 50 steps and drew a line behind.
 
-If you can't make it working you can press the **Help – it's not working!** button. It will put the correct code into the program box.
+If you can't make it working you can press the <span style="border: 1px solid lightgray; padding: 4px; margin: 4px;">Help – it's not working!</span> button. It will put the correct code into the program box.
 
-After you complete this step you can press **Continue** button to navigate to next step. See you there!
+After you complete this step you can press <span style="border: 1px solid lightgray; padding: 4px; margin: 4px;">Continue</span> button to navigate to next step. See you there!
 
 <!--solution-->
 

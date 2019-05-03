@@ -42,6 +42,11 @@ export function getTurtles(): TurtleInfo[] {
       id: "diver",
       name: $T.settings.turtleSkins.diver,
       imageData: require("./diver.svg") as string
+    },
+    {
+      id: "navigator-aqua",
+      name: "Navigator Aqua",
+      imageData: require("./navigator-aqua.svg") as string
     }
   ];
 }
