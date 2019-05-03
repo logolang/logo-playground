@@ -47,6 +47,11 @@ export function getTurtles(): TurtleInfo[] {
       id: "navigator-aqua",
       name: "Navigator Aqua",
       imageData: require("./navigator-aqua.svg") as string
+    },
+    {
+      id: "navigator-stealth",
+      name: "Navigator Stealth",
+      imageData: require("./navigator-stealth.svg") as string
     }
   ];
 }

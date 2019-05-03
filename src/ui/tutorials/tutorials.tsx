@@ -190,6 +190,8 @@ export class TutorialsPage extends React.Component<Props, State> {
                     currentStepContent={this.props.currentStepContent}
                     onNavigationRequest={this.handleNavigationRequest}
                     onFixTheCode={this.handleFixTheCode}
+                    appTheme={this.props.appTheme}
+                    userSettings={this.props.userSettings}
                   />
                 )}
             </ReactGoldenLayoutPanel>

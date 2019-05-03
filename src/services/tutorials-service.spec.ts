@@ -20,6 +20,28 @@ const testStep3 = `
 ![Some image](./image.svg)
 `;
 
+const testStep4_Solution_And_Embedded = `
+# Step 4
+<!--solution-->
+\`\`\`
+forward 100
+\`\`\`
+
+Example 1:
+
+<!--logo {"width":"200px","height":"150px"}-->
+\`\`\`
+arc 360 100 
+\`\`\`
+
+Example 2:
+
+<!--logo {"width":"200px","height":"50px"}-->
+\`\`\`
+arc 360 25 
+\`\`\`
+`;
+
 describe("Tutorials service", () => {
   async function getResult(testMarkdown: string): Promise<TutorialStepContent> {
     const service = new TutorialsService({
@@ -49,5 +71,31 @@ right 90`;
     const expectedMarkup = `<h1>Step 3</h1>
 <p><img src="content/tutorials/tutorialId/image.svg" alt="Some image"></p>`;
     chai.expect(result.content).to.be.eql(expectedMarkup);
+  });
+
+  it("extracts solution code and logo inlined from markdown", async () => {
+    const result = await getResult(testStep4_Solution_And_Embedded);
+
+    const expectedCode = `forward 100`;
+    chai.expect(result.solutionCode).to.be.eql(expectedCode);
+    const expectedInlines = {
+      logo1: {
+        code: "arc 360 100",
+        params: { width: "200px", height: "150px" }
+      },
+      logo2: {
+        code: "arc 360 25",
+        params: { width: "200px", height: "50px" }
+      }
+    };
+    chai.expect(result.inlinedCode).to.eql(expectedInlines);
+
+    const expectedMarkup = `<h1>Step 4</h1>
+<p>Example 1:</p>
+<div id="logo1" class="logo-inline-container" style="width:200px;height:150px"></div>
+<p>Example 2:</p>
+<div id="logo2" class="logo-inline-container" style="width:200px;height:50px"></div>`;
+
+    chai.expect(result.content).to.eql(expectedMarkup);
   });
 });

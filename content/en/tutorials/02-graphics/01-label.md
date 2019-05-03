@@ -4,6 +4,8 @@ The label command is `label` followed by text. In order to define the text it is
 
 This example should print a hello message:
 
+<!--logo {"width":"200px", "height":"150px", "code":true}-->
+
 ```
 label "hello
 ```
@@ -20,7 +22,22 @@ setlabelheight 40
 
 Text is printed using the pen color, so if you want to change the color of the text you can use `setcolor` command
 
-Now you need to use all this commands together to print big "Hello" text in horizontal direction with size of 100 and color of 5.
+Another interesting fact is when you need to print several words you want to usually put some white space between. But the LOGO language can interpret that space as start of next command.
+In order to prevent this whitespace should be prefixed with `\` (backslash) symbol. This allows the LOGO to understand that next word is a continuation of your text to print.
+
+Example:
+
+<!--logo {"width":"300px", "height":"150px", "code": true}-->
+
+```
+pu rt 90 bk 120 pd
+setcolor 4
+lt 10
+setlabelheight 25
+label "Welcome\ to\ LOGO
+```
+
+Now you are ready to use all this commands together to print big "Hello" text in horizontal direction with size of 100 and color of 5.
 
 <!--solution-->
 

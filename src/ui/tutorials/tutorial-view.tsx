@@ -1,11 +1,16 @@
 import * as React from "react";
+import * as ReactDOM from "react-dom";
 
 import { $T } from "i18n-strings";
-import { resolve } from "utils/di";
+import { getTurtleImage } from "ui/turtles/turtles";
+import { UserSettings } from "services/user-settings";
+import { Theme } from "ui/themes-helper";
+
 import { TutorialInfo, TutorialStepInfo, TutorialStepContent } from "services/tutorials-service";
 
 import { TutorialSelectModal } from "ui/tutorials/tutorial-select-modal";
 import { Modal } from "ui/_generic/modal";
+import { LogoExecutor } from "ui/_generic/logo-executor/logo-executor";
 
 import "./tutorial-view.less";
 
@@ -14,6 +19,8 @@ export interface Props {
   currentTutorialInfo: TutorialInfo;
   currentStepInfo: TutorialStepInfo;
   currentStepContent: TutorialStepContent;
+  userSettings: UserSettings;
+  appTheme: Theme;
   onFixTheCode(): void;
   onNavigationRequest(tutorialId: string, stepId: string): void;
 }
@@ -21,6 +28,7 @@ export interface Props {
 interface State {
   showSelectionTutorials: boolean;
   showFixTheCode: boolean;
+  inlinedLogoComponents: JSX.Element[];
 }
 
 export class TutorialView extends React.Component<Props, State> {
@@ -29,8 +37,37 @@ export class TutorialView extends React.Component<Props, State> {
 
     this.state = {
       showSelectionTutorials: false,
-      showFixTheCode: false
+      showFixTheCode: false,
+      inlinedLogoComponents: []
     };
+  }
+
+  componentDidMount() {
+    // Now it is time to inject inline logo components
+    const inlinedLogoComponents = [];
+    for (const [objId, value] of Object.entries(this.props.currentStepContent.inlinedCode)) {
+      const container = document.getElementById(objId);
+      if (container) {
+        container.setAttribute("data-code", value.code);
+        const logoComponent = (
+          <LogoExecutor
+            isRunning={true}
+            code={value.code}
+            onFinish={() => {
+              /* Nothing here */
+            }}
+            isDarkTheme={this.props.appTheme.isDark}
+            turtleImage={getTurtleImage(this.props.userSettings.turtleId)}
+            turtleSize={this.props.userSettings.turtleSize}
+          />
+        );
+        const portal = ReactDOM.createPortal(logoComponent, container);
+        inlinedLogoComponents.push(portal);
+      }
+    }
+    if (inlinedLogoComponents.length > 0) {
+      this.setState({ inlinedLogoComponents });
+    }
   }
 
   render(): JSX.Element {
@@ -76,6 +113,7 @@ export class TutorialView extends React.Component<Props, State> {
               __html: this.props.currentStepContent.content
             }}
           />
+          {this.state.inlinedLogoComponents}
           <br />
           <br />
           <div className="tutorials-bottom-nav-buttons-container">

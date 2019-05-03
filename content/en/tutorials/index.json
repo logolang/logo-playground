@@ -51,36 +51,24 @@
           "id": "02-arc"
         },
         {
-          "name": "Putting the pen back down",
-          "id": "step-03"
+          "name": "Fill command",
+          "id": "03-fill"
         },
         {
-          "name": "Hiding the turtle",
-          "id": "step-04"
+          "name": "Filled command",
+          "id": "04-filled"
         },
         {
-          "name": "Drawing with the hidden turtle",
-          "id": "step-05"
+          "name": "Set background color",
+          "id": "05-setbackground"
         },
         {
-          "name": "The turtle reappears",
-          "id": "step-06"
+          "name": "Assignment",
+          "id": "06-assignment"
         },
         {
-          "name": "The Width of the Pen",
-          "id": "step-07"
-        },
-        {
-          "name": "Wider line",
-          "id": "step-08"
-        },
-        {
-          "name": "The Color of the Pen",
-          "id": "step-09"
-        },
-        {
-          "name": "Cogratulations!",
-          "id": "step-10"
+          "name": "Summary",
+          "id": "07-done"
         }
       ]
     }
