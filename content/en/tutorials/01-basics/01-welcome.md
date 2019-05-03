@@ -2,7 +2,13 @@ Hi, welcome to the **logo playground tutorials**. Here you can learn how to use 
 
 First of all let's have a look around.
 
-The screen section with a turtle ![](./turtle-small.svg) in it is called **Drawing box**.
+The screen section with a turtle in it is called **Drawing box**.
+
+<!--logo {"width":"200px", "height":"150px"}-->
+
+```
+;just a turtle
+```
 
 Here you can see the results of execution of your program.
 Another part of screen currently blank is called **Program box**. This is a place where you write your program code.

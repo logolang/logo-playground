@@ -18,7 +18,20 @@ You can also use another technique to make your programs be more compact.
 It's to have several commands in a sigle line of code. You dont need to use any special symbols, just separate your commands with whitespace. So the previous zig-zag example can be rewritten using short commands in a single line like this:
 
 ```
+setwidth 5
+setcolor 5
 rt 45 fd 50 rt 90 fd 50 lt 90 fd 50
+ht
+```
+
+<!--logo {"width":"200px", "height":"150px"}-->
+
+```
+pu setx -50 pd
+setwidth 5
+setcolor 5
+rt 45 fd 50 rt 90 fd 50 lt 90 fd 50
+ht
 ```
 
 Now you can do your own experiments with short commands.

@@ -11,7 +11,20 @@ Now you can discover the new commands allowing to manipulate the pen.
 To try out new commands you can modify zig-zag excercise from previous step.
 You need to set the line width to 5 and also skip drawing the line during the middle section of the figure.
 
-![](./zig-zag-skip.svg)
+<!--logo {"width":"200px", "height":"150px"}-->
+
+```
+pu setx -50 pd
+setpensize 5
+right 45
+forward 50
+penup
+right 90
+forward 50
+left 90
+pendown
+forward 50
+```
 
 <!--solution-->
 

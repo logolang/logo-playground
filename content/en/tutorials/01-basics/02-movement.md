@@ -22,7 +22,26 @@ So, the turning commands are working the same way as the moving commands – you
 
 Now you can try these new instructions, please make the turtle to draw a zig-zag pattern like this:
 
-![](./zig-zag.svg)
+<!--logo {"width":"200px", "height":"150px"}-->
+
+```
+pu setx -50 pd
+right 45
+forward 50
+right 90
+forward 50
+left 90
+forward 50
+```
+
+You can try these steps:
+
+1. rotate right by 45 degrees
+2. move forward by 50
+3. rotate right by 90 degrees
+4. move forward by 50
+5. rotate **left** by 90
+6. move forward by 50
 
 <!--solution-->
 

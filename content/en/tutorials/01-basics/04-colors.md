@@ -15,7 +15,22 @@ The turtle can draw in different 16 colors listed in this table:
 
 Now you can add some colors to your drawing, like this:
 
-![](./zig-zag-colors.svg)
+<!--logo {"width":"200px", "height":"150px"}-->
+
+```
+pu setx -50 pd
+setpensize 5
+setcolor 4
+right 45
+forward 50
+penup
+right 90
+forward 50
+left 90
+pendown
+setcolor 2
+forward 50
+```
 
 <!--solution-->
 
