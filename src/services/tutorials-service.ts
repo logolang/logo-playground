@@ -87,8 +87,14 @@ export class TutorialsService {
 
       // Include the code optionally
       if (params.code) {
-        result = "\n```\n" + code + "\n```\n" + result;
+        result = "\n```" + code + "```\n" + result;
       }
+
+      // If we have `solution` flag then we need to use it for solutionCode
+      if (params.solution) {
+        solutionCode = code;
+      }
+
       return result;
     });
 

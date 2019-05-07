@@ -4,7 +4,7 @@ This is going to be a composition of several simple figures and a label.
 
 Please draw a picture similar to this example:
 
-<!--logo {"width":"200px", "height":"150px"}-->
+<!--logo {"width":"300px", "height":"200px", "solution": true}-->
 
 ```
 filled 4 [
@@ -44,32 +44,3 @@ As a hint this is a list of steps:
 7. Draw a label
 
 Good luck!
-
-<!--solution-->
-
-```
-filled 4 [
-  fd 50 rt 90
-  fd 50 rt 90
-  fd 50 rt 90
-  fd 50 rt 90
-]
-
-pu lt 90 fd 10 pd
-
-filled 1 [
-  arc 360 25
-]
-
-pu fd 10 pd
-
-filled 14 [
-  fd 50 rt 120
-  fd 50 rt 120
-  fd 50 rt 120
-]
-
-pu lt 90 fd 50 lt 90 bk 70 pd
-setlabelheight 20
-label "LOGO\ is\ awesome
-```

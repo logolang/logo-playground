@@ -71,6 +71,34 @@
           "id": "07-done"
         }
       ]
+    },
+    {
+      "id": "03-control-flow",
+      "label": "Control flow",
+      "description": "Loops, conditions, procedures - ways to write more powerful programs",
+      "level": "Medium",
+      "steps": [
+        {
+          "name": "Loop",
+          "id": "01-loop"
+        },
+        {
+          "name": "Nested loop",
+          "id": "02-nested-loop"
+        },
+        {
+          "name": "Procedure",
+          "id": "03-procedure"
+        },
+        {
+          "name": "Procedure with parameters",
+          "id": "04-procedure-with-params"
+        },
+        {
+          "name": "Variables",
+          "id": "05-variables"
+        }
+      ]
     }
   ]
 }

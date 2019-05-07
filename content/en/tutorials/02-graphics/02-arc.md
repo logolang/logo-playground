@@ -34,20 +34,7 @@ To change width and color of the line it is possible to use the same `setwidth` 
 So, are you ready for a new challenge?
 Please draw a 3-color "rainbow" of red, yellow and lime colors:
 
-<!--logo {"width":"200px", "height":"150px"}-->
-
-```
-left 90
-setwidth 10
-setcolor 2
-arc 180 50
-setcolor 6
-arc 180 60
-setcolor 4
-arc 180 70
-```
-
-<!--solution-->
+<!--logo {"width":"300px", "height":"200px", "solution":true}-->
 
 ```
 left 90
