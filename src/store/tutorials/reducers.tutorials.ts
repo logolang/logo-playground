@@ -20,13 +20,17 @@ export default function reducers(
         isLoading: false,
         tutorials: action.payload.tutorials
       };
-    case TutorialsActionType.LOAD_STEP_STARTED:
+    case TutorialsActionType.LOAD_STEP_STARTED: {
+      // clear the code if we load another tutorial
+      const newCode = action.payload.tutorialId !== state.tutorialId ? "" : state.code;
       return {
         ...state,
         isStepLoading: true,
         tutorialId: action.payload.tutorialId,
-        stepId: action.payload.stepId
+        stepId: action.payload.stepId,
+        code: newCode
       };
+    }
     case TutorialsActionType.LOAD_STEP_COMPLETED:
       return {
         ...state,
