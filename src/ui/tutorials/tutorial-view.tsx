@@ -2,7 +2,7 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 
 import { $T } from "i18n-strings";
-import { getTurtleImage } from "ui/turtles/turtles";
+import { getTurtleById } from "ui/turtles/turtles";
 import { UserSettings } from "services/user-settings";
 import { Theme } from "ui/themes-helper";
 
@@ -57,7 +57,7 @@ export class TutorialView extends React.Component<Props, State> {
               /* Nothing here */
             }}
             isDarkTheme={this.props.appTheme.isDark}
-            turtleImage={getTurtleImage(this.props.userSettings.turtleId)}
+            turtleImageSrc={getTurtleById(this.props.userSettings.turtleId).imageSrc}
             turtleSize={this.props.userSettings.turtleSize}
           />
         );

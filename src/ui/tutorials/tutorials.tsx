@@ -24,7 +24,7 @@ import { CodeMenu } from "ui/code-menu/code-menu";
 import { CodeInput } from "ui/_generic/code-input/code-input";
 import { LogoExecutor } from "ui/_generic/logo-executor/logo-executor";
 import { MainMenuContainer } from "ui/main-menu.container";
-import { getTurtleImage } from "ui/turtles/turtles";
+import { getTurtleById } from "ui/turtles/turtles";
 
 import "./tutorials.less";
 
@@ -166,7 +166,7 @@ export class TutorialsPage extends React.Component<Props, State> {
                 onFinish={this.handleStopProgram}
                 code={this.props.code}
                 isDarkTheme={this.props.appTheme.isDark}
-                turtleImage={getTurtleImage(this.props.userSettings.turtleId)}
+                turtleImageSrc={getTurtleById(this.props.userSettings.turtleId).imageSrc}
                 turtleSize={this.props.userSettings.turtleSize}
               />
             </ReactGoldenLayoutPanel>

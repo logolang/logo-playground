@@ -22,8 +22,8 @@ export interface Props {
   isRunning: boolean;
   code: string;
   isDarkTheme: boolean;
-  turtleImage?: HTMLImageElement;
-  turtleSize?: number;
+  turtleImageSrc: string;
+  turtleSize: number;
   importsResolver?: ImportsResolver;
   onFinish(): void;
 }
@@ -80,7 +80,7 @@ export class LogoExecutor extends React.Component<Props, State> {
     return (
       <div id={`logo-executor-container${this.id}`} className="logo-executor-container">
         <canvas id={`sandbox${this.id}`} className="sandbox" height="100" />
-        <canvas id={`turtle${this.id}`} className="turtle" height="100" />
+        <img id={`turtle${this.id}`} className="turtle-img" src={this.props.turtleImageSrc} />
         <div id={`console-output${this.id}`} className="console-output" />
         <div id={`error-messages-container${this.id}`} className="error-messages-container">
           {this.state.errorMessage && <AlertMessage message={this.state.errorMessage} />}
@@ -106,7 +106,7 @@ export class LogoExecutor extends React.Component<Props, State> {
     const LogoInterpreter: any = (window as any)["LogoInterpreter"];
 
     this.logo = new LogoInterpreter(
-      this.graphics.initTurtle(this.props.turtleImage, this.props.turtleSize),
+      this.graphics.init(this.props.turtleSize),
       new LogoOutputConsole("#console-output" + this.id)
     );
 
