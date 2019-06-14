@@ -59,4 +59,4 @@ repeat 6 [
 ]
 ```
 
-Now you can change the value of the `radius` variable to 30 or 50 and see how the whole picture is scaled accordingly.
+If you change the value of the `radius` variable to 30 or 50 the whole picture would be scaled accordingly.

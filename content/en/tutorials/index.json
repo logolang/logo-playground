@@ -63,8 +63,8 @@
           "id": "05-setbackground"
         },
         {
-          "name": "Assignment",
-          "id": "06-assignment"
+          "name": "Lab",
+          "id": "06-lab"
         },
         {
           "name": "Summary",
@@ -73,9 +73,9 @@
       ]
     },
     {
-      "id": "03-control-flow",
-      "label": "Control flow",
-      "description": "Loops, conditions, procedures - ways to write more powerful programs",
+      "id": "03-loops-and-variables",
+      "label": "Loops and Variables",
+      "description": "Loops, procedures and variables - ways to write more powerful programs",
       "level": "Medium",
       "steps": [
         {
@@ -97,6 +97,14 @@
         {
           "name": "Variables",
           "id": "05-variables"
+        },
+        {
+          "name": "Changing the value of a variable",
+          "id": "06-change-variables"
+        },
+        {
+          "name": "Tutorial completion",
+          "id": "07-finish"
         }
       ]
     }

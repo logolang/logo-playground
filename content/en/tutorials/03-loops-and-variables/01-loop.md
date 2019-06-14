@@ -20,10 +20,9 @@ repeat 4 [
 ]
 ```
 
-The whole usage of repeat command in general is called a loop. Loops are used in programming to repeat a specific block of code.
-Here we have used the "repeat" loop to execute our commands specified number of times.
+The whole usage of `repeat` command in general is called a loop. Loops are used in programming to repeat a specific block of code.
 
-Now you can use the repeat loop to draw hexagon:
+Please write the repeat loop to draw a hexagon:
 
 <!--logo {"width":"300px", "height":"200px", "solution": true}-->
 
