@@ -7,27 +7,45 @@ interface Props {
   fullPage?: boolean;
 }
 
-export function Loading(props: Props) {
-  if (!props.isLoading) {
-    return <></>;
+export class Loading extends React.Component<Props> {
+  private loadingContainer?: HTMLElement;
+
+  componentDidMount() {
+    this.startAnimation();
   }
 
-  if (props.fullPage) {
-    return (
-      <div className="ex-loading-indicator-fullpage">
-        <div className="ex-loading-indicator">
-          <div className="ex-animated-dot" />
-          <div className="ex-animated-dot" />
-          <div className="ex-animated-dot" />
+  componentDidUpdate(prevProps: Props) {
+    if (prevProps.isLoading != this.props.isLoading) {
+      this.startAnimation();
+    }
+  }
+
+  startAnimation() {
+    if (this.props.isLoading) {
+      (window as any).showLogoAnimation(this.loadingContainer);
+    }
+  }
+
+  render() {
+    if (!this.props.isLoading) {
+      return <></>;
+    }
+
+    if (this.props.fullPage) {
+      return (
+        <div className="ex-loading-indicator-fullpage">
+          <div
+            ref={ref => (this.loadingContainer = ref || undefined)}
+            className="ex-loading-indicator"
+          ></div>
         </div>
-      </div>
+      );
+    }
+    return (
+      <div
+        ref={ref => (this.loadingContainer = ref || undefined)}
+        className="ex-loading-indicator"
+      ></div>
     );
   }
-  return (
-    <div className="ex-loading-indicator">
-      <div className="ex-animated-dot" />
-      <div className="ex-animated-dot" />
-      <div className="ex-animated-dot" />
-    </div>
-  );
 }

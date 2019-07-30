@@ -1,10 +1,12 @@
+<!DOCTYPE html>
 <%
     const packageJson = require('../package.json');
     const appConfig = htmlWebpackPlugin.options.variables.appConfig;
     const googleAnalyticsTrackingId = appConfig.services.googleAnalyticsTrackingId;
     const appGitVersion = htmlWebpackPlugin.options.variables.appGitVersion;
     const loadingSvg = require('!raw-loader!content/images/square-logo-light.svg').default;
-%><!DOCTYPE html>
+    const logoAnimationJS = require('!raw-loader!./logo-animation.js').default;
+%>
 <html style="overflow: hidden;">
 
 <head>
@@ -21,51 +23,23 @@
 </head>
 
 <body style="margin:0px;">
-    <div id="app-container">
-        <div id="svg-animation-container" style="text-align:center;margin-top:100px;">
-            <%=loadingSvg%>
-        </div>
-    </div>
+    <noscript>
+      Your browser does not support JavaScript! 
+      This web application is written fully in JavaScript, 
+      please enable it if you want to run it.
+    </noscript>
 
-    <script type="text/javascript">
-        function svgLoadingAnimation(currentFrameIndex){
-            var frames = [ 
-                {id: "path4", fillColor:"#bf80ff", nextStepDelay: 200},
-                {id: "path6", fillColor:"#80ffff", nextStepDelay: 200},
-                {id: "path8", fillColor:"#ff8080", nextStepDelay: 200},
-                {id: "path10", fillColor:"#80ff80", nextStepDelay: 200},
-                {id: "path12", fillColor:"#c9c9c9", nextStepDelay: 200},
-                {id: "path4", fillColor:"#8000ff", nextStepDelay: 200},
-                {id: "path6", fillColor:"#00e6e6", nextStepDelay: 200},
-                {id: "path8", fillColor:"#ff0000", nextStepDelay: 200},
-                {id: "path10", fillColor:"#00ff00", nextStepDelay: 200},
-                {id: "path12", fillColor:"#999999", nextStepDelay: 200},
-                {id: "path4", fillColor:"#eeeeee", nextStepDelay: 0},
-                {id: "path6", fillColor:"#eeeeee", nextStepDelay: 0},
-                {id: "path8", fillColor:"#eeeeee", nextStepDelay: 0},
-                {id: "path10", fillColor:"#eeeeee", nextStepDelay: 0},
-                {id: "path12", fillColor:"#eeeeee", nextStepDelay: 200}
-            ];
-            var animationContainer = document.getElementById("svg-animation-container");
-            if (animationContainer){
-                // we have animation still visible, so animate required step
-                if (currentFrameIndex >= frames.length) { // make sure that animation is looped
-                    currentFrameIndex = 0;
-                }
-                var frame = frames[currentFrameIndex];
-                if (frame) {
-                    var svgElement = animationContainer.querySelector("#" + frame.id);
-                    if (svgElement) {
-                        svgElement.setAttribute("style", "fill:" + frame.fillColor);
-                    }
-                    // timeout for next animation frame
-                    setTimeout(function(){
-                        svgLoadingAnimation(currentFrameIndex + 1);
-                    }, frame.nextStepDelay);
-                }
-            }
-        }
-        setTimeout(function(){svgLoadingAnimation(0)}, 200);
+    <div id="app-container">
+    </div>
+   
+    <script type="text/plain" id="logo-animation-svg-template">
+      <%=loadingSvg%>
+    </script>
+
+    <script>
+      <%=logoAnimationJS%>
+
+      showLogoAnimation(document.getElementById('app-container'));
     </script>
 
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inconsolata:400,700&amp;subset=latin-ext">
@@ -100,7 +74,10 @@
     <% } %>
     
     <script>
+      setTimeout(function(){
         app.run();
+      }, 2000)
+        // 
     </script>
 </body>
 
