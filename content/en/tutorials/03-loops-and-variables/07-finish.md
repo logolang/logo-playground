@@ -7,7 +7,7 @@ You have achieved wonderful results and now you can write more powerful programs
 - Procedures (with parameters)
 - Variables
 
-Please continue your exploration and experimentation with LOGO programming.
+Please continue your experiments and exploration with LOGO programming.
 
 <!--logo {"width":"300px", "height":"200px"}-->
 

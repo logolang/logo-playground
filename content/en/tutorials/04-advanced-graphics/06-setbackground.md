@@ -5,7 +5,7 @@ There is a command for that:
 clearscreen
 ```
 
-Another way to clear the screen but with specified color:
+Another way to clear the screen but with a specified color:
 
 <!--logo {"width":"200px", "height":"150px", "code":true}-->
 

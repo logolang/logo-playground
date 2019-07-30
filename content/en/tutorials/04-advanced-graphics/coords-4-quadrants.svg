@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Copyright 2017 mathsisfun.com -->
+<svg xmlns="http://www.w3.org/2000/svg" width="338.7" height="249" version="1.1" style="font-size:28px; stroke-width:1px;">
+<defs>
+	<marker id="id1" style="overflow:visible;" orient="auto">
+		<path transform="matrix(-0.8,0,0,-0.8,-10,0)" style="stroke:black; stroke-width:1pt;" d="M 0,0 5,-5 -12.5,0 5,5 Z"/>
+	</marker>
+</defs>
+<rect x="0" y="0" width="338.7" height="249" style="color:black; overflow:visible; fill:white; stroke-width:5.3;"/>
+<g transform="matrix(0.194259,0,0,0.194259,50.9744,-16.6191)">
+	<path style="fill:none; stroke:black; stroke-width:3;" d="m 603.6,683.7 v 73.1"/>
+	<path style="fill:none; stroke:#0000ff;" d="m 679.7,683.7 v 73.1"/>
+	<path style="fill:none; stroke:#0000ff;" d="m 755.9,683.7 v 73.1"/>
+	<path style="fill:none; stroke:#0000ff;" d="m 832,683.7 v 73.1"/>
+	<path style="fill:none; stroke:#0000ff;" d="m 908.2,683.7 v 73.1"/>
+	<path style="fill:none; stroke:#0000ff;" d="m 984.3,683.7 v 73.1"/>
+	<path style="fill:none; stroke:#0000ff;" d="m 1060.5,683.7 v 73.1"/>
+	<path style="fill:none; stroke:#0000ff;" d="m 1136.6,683.7 v 73.1"/>
+	<path style="fill:none; stroke:#0000ff;" d="m 1212.8,683.7 v 73.1"/>
+	<path style="fill:none; stroke:#0000ff;" d="m 1288.9,683.7 v 73.1"/>
+	<path style="fill:none; stroke:#0000ff;" d="m 1365.1,683.7 v 73.1"/>
+	<path style="marker-end:url(#id1); fill:#0000ff; fill-opacity:0.75; stroke:#0000ff; stroke-width:3.8;" d="m 601.4,724.8 h 862.7"/>
+</g>
+<g transform="matrix(-0.194259,0,0,0.194259,285.193,-16.732)">
+	<path style="fill:none; stroke:black; stroke-width:3;" d="m 603.6,683.7 v 73.1"/>
+	<path style="fill:none; stroke:#0000ff;" d="m 679.7,683.7 v 73.1"/>
+	<path style="fill:none; stroke:#0000ff;" d="m 755.9,683.7 v 73.1"/>
+	<path style="fill:none; stroke:#0000ff;" d="m 832,683.7 v 73.1"/>
+	<path style="fill:none; stroke:#0000ff;" d="m 908.2,683.7 v 73.1"/>
+	<path style="fill:none; stroke:#0000ff;" d="m 984.3,683.7 v 73.1"/>
+	<path style="fill:none; stroke:#0000ff;" d="m 1060.5,683.7 v 73.1"/>
+	<path style="fill:none; stroke:#0000ff;" d="m 1136.6,683.7 v 73.1"/>
+	<path style="fill:none; stroke:#0000ff;" d="m 1212.8,683.7 v 73.1"/>
+	<path style="fill:none; stroke:#0000ff;" d="m 1288.9,683.7 v 73.1"/>
+	<path style="fill:none; stroke:#0000ff;" d="m 1365.1,683.7 v 73.1"/>
+	<path style="marker-end:url(#id1); fill:#0000ff; fill-opacity:0.75; stroke:#0000ff; stroke-width:3.8;" d="m 601.4,724.8 h 862.7"/>
+</g>
+<g transform="matrix(0.194259,0,0,0.194259,-100.402,40.7528)">
+	<path style="fill:none; stroke:#0000ff;" d="m 1423.3,429 h -73.1"/>
+	<path style="fill:none; stroke:#0000ff;" d="m 1423.3,505.1 h -73.1"/>
+	<path style="fill:none; stroke:#0000ff;" d="m 1423.3,581.3 h -73.1"/>
+	<path style="fill:none; stroke:#0000ff;" d="m 1423.3,657.4 h -73.1"/>
+	<path style="fill:none; stroke:#0000ff;" d="m 1423.3,733.6 h -73.1"/>
+	<path style="fill:none; stroke:#0000ff;" d="m 1423.3,809.7 h -73.1"/>
+	<path style="fill:none; stroke:#0000ff;" d="m 1423.3,885.9 h -73.1"/>
+	<path style="fill:none; stroke:#0000ff;" d="m 1423.3,962 h -73.1"/>
+	<path style="marker-end:url(#id1); fill:#0000ff; fill-opacity:0.75; stroke:#0000ff; stroke-width:3.8;" d="M 1382.2,429.4 V 1061"/>
+</g>
+<g transform="matrix(0.194259,0,0,-0.194259,-100.56,207.552)">
+	<path style="fill:none; stroke:#0000ff;" d="m 1423.3,429 h -73.1"/>
+	<path style="fill:none; stroke:#0000ff;" d="m 1423.3,505.1 h -73.1"/>
+	<path style="fill:none; stroke:#0000ff;" d="m 1423.3,581.3 h -73.1"/>
+	<path style="fill:none; stroke:#0000ff;" d="m 1423.3,657.4 h -73.1"/>
+	<path style="fill:none; stroke:#0000ff;" d="m 1423.3,733.6 h -73.1"/>
+	<path style="fill:none; stroke:#0000ff;" d="m 1423.3,809.7 h -73.1"/>
+	<path style="fill:none; stroke:#0000ff;" d="m 1423.3,885.9 h -73.1"/>
+	<path style="fill:none; stroke:#0000ff;" d="m 1423.3,962 h -73.1"/>
+	<path style="marker-end:url(#id1); fill:#0000ff; fill-opacity:0.75; stroke:#0000ff; stroke-width:3.8;" d="M 1382.2,429.4 V 1061"/>
+</g>
+<text x="142.6" y="14.8" style="font-family:Arial; overflow:visible; fill:#0000ff; stroke-width:0.56px;">y</text>
+<text x="135.5" y="239.9" style="font-family:Arial; overflow:visible; fill:#0000ff; stroke-width:0.56px;">-y</text>
+<text x="316.2" y="148.8" style="font-family:Arial; overflow:visible; fill:#0000ff; stroke-width:0.56px;">x</text>
+<text x="6.9" y="150.5" style="font-family:Arial; overflow:visible; fill:#0000ff; stroke-width:0.56px;">-x</text>
+<rect x="78.8" y="65.3" width="177.2" height="118" style="color:black; overflow:visible; fill:none; stroke:black; stroke-width:0.55; stroke-dasharray:4.4, 2.2;"/>
+<text x="259.9" y="60.6" style="font-family:Arial; font-size:23.2px; color:black; overflow:visible; fill:black; stroke-width:0.56px;">(6,4)</text>
+<text x="259.4" y="201.6" style="font-family:Arial; font-size:23.2px; color:black; overflow:visible; fill:black; stroke-width:0.56px;">(6,-4)</text>
+<text x="13.5" y="203.9" style="font-family:Arial; font-size:23.2px; color:black; overflow:visible; fill:black; stroke-width:0.56px;">(-6,-4)</text>
+<text x="18" y="61.8" style="font-family:Arial; font-size:23.2px; color:black; overflow:visible; fill:black; stroke-width:0.56px;">(-6,4)</text>
+<path style="color:black; overflow:visible; fill:#ff9900; stroke-width:1.46;" d="m 260,65.6 a 3.9,3.9 0 1 1 0,-0.1"/>
+<path style="color:black; overflow:visible; fill:#ff9900; stroke-width:1.46;" d="m 260,182.9 a 3.9,3.9 0 1 1 0,-0.1"/>
+<path style="color:black; overflow:visible; fill:#ff9900; stroke-width:1.46;" d="m 83.4,182.9 a 3.9,3.9 0 1 1 0,-0.1"/>
+<path style="color:black; overflow:visible; fill:#ff9900; stroke-width:1.46;" d="m 83.4,64.5 a 3.9,3.9 0 1 1 0,-0.1"/>
+</svg>

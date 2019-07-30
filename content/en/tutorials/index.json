@@ -2,7 +2,7 @@
   "tutorials": [
     {
       "id": "01-basics",
-      "label": "Turtle Basics",
+      "label": "Turtle basics",
       "description": "Introduction and LOGO language basics",
       "level": "Beginner",
       "steps": [
@@ -59,24 +59,20 @@
           "id": "04-filled"
         },
         {
-          "name": "Clearing the screen with background color",
-          "id": "05-setbackground"
-        },
-        {
           "name": "Lab",
-          "id": "06-lab"
+          "id": "05-lab"
         },
         {
           "name": "Summary",
-          "id": "07-done"
+          "id": "06-done"
         }
       ]
     },
     {
       "id": "03-loops-and-variables",
-      "label": "Loops and Variables",
+      "label": "Loops and variables",
       "description": "Loops, procedures and variables - ways to write more powerful programs",
-      "level": "Medium",
+      "level": "Advanced",
       "steps": [
         {
           "name": "Loop",
@@ -105,6 +101,86 @@
         {
           "name": "Tutorial completion",
           "id": "07-finish"
+        }
+      ]
+    },
+    {
+      "id": "04-advanced-graphics",
+      "label": "More graphic functions",
+      "description": "Coordinates, screen modes, advanced commands",
+      "level": "Advanced",
+      "steps": [
+        {
+          "name": "Coordinates",
+          "id": "01-coordinates"
+        },
+        {
+          "name": "Turtle's heading",
+          "id": "02-heading"
+        },
+        {
+          "name": "Home command",
+          "id": "03-home"
+        },
+        {
+          "name": "Drawing mode",
+          "id": "04-turtle-mode"
+        },
+        {
+          "name": "Changing the scale",
+          "id": "05-scrunch"
+        },
+        {
+          "name": "Clear the screen with background",
+          "id": "06-setbackground"
+        },
+        {
+          "name": "Tutorial completion",
+          "id": "07-finish"
+        }
+      ]
+    },
+    {
+      "id": "05-cool-stuff",
+      "label": "Powerful utilities",
+      "description": "Various useful functions including random, working with user input, lists, conditions and recursion",
+      "level": "Advanced",
+      "steps": [
+        {
+          "name": "Randomization",
+          "id": "01-random"
+        },
+        {
+          "name": "Wait",
+          "id": "02-wait"
+        },
+        {
+          "name": "Printing and reading",
+          "id": "03-print-and-read"
+        },
+        {
+          "name": "Lists",
+          "id": "04-lists"
+        },
+        {
+          "name": "Desition making",
+          "id": "05-conditions"
+        },
+        {
+          "name": "More loops",
+          "id": "06-various-loops"
+        },
+        {
+          "name": "Arithmetics and math",
+          "id": "07-math"
+        },
+        {
+          "name": "Recursion",
+          "id": "08-recursion"
+        },
+        {
+          "name": "Finish",
+          "id": "09-finish"
         }
       ]
     }
