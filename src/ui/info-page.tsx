@@ -10,25 +10,26 @@ import {
 
 import { MainMenuContainer } from "./main-menu.container";
 
+import creditsMarkdownContent from "CREDITS.md";
+
 interface State {}
 
 interface Props {}
 
 export class InfoPage extends React.Component<Props, State> {
   private eventsTracking = resolve(EventsTrackingService);
-  private thirdPartyCreditsMd: string;
+  private thirdPartyCreditsHTML: string;
 
   constructor(props: Props) {
     super(props);
     this.state = {};
     this.eventsTracking.sendEvent(EventAction.openAbout);
 
-    const contentMd = require("CREDITS.md") as string;
     const md = new markdown({
       html: true // Enable HTML tags in source;
     });
 
-    this.thirdPartyCreditsMd = md.render(contentMd);
+    this.thirdPartyCreditsHTML = md.render(creditsMarkdownContent);
   }
 
   render(): JSX.Element {
@@ -63,7 +64,7 @@ export class InfoPage extends React.Component<Props, State> {
               <div className="card-content">
                 <h2 className="subtitle">Third-party assets</h2>
                 <div className="content">
-                  <div dangerouslySetInnerHTML={{ __html: this.thirdPartyCreditsMd }} />
+                  <div dangerouslySetInnerHTML={{ __html: this.thirdPartyCreditsHTML }} />
                 </div>
               </div>
             </div>
