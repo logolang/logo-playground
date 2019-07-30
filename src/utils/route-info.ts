@@ -1,4 +1,4 @@
-export class RouteInfo<TParams> {
+export class RouteInfo<TParams extends Object> {
   private _path: string;
 
   constructor(path: string) {

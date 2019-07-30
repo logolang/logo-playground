@@ -2,7 +2,7 @@ const path = require("path");
 const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
-const CleanWebpackPlugin = require("clean-webpack-plugin");
+const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const GitRevisionPlugin = require("git-revision-webpack-plugin");
 const BundleAnalyzerPlugin = require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
@@ -76,7 +76,7 @@ module.exports = function(env) {
     },
 
     plugins: [
-      new CleanWebpackPlugin(["dist"], { verbose: true }),
+      new CleanWebpackPlugin({ verbose: true }),
 
       new WatchIgnorePlugin([path.resolve(__dirname, "./dist/")]),
 

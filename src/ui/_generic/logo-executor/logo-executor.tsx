@@ -1,6 +1,6 @@
 import * as React from "react";
 import "app/../lib/logojs/logo.js";
-const polyfills = require("app/../lib/logojs/polyfills.logo.txt");
+import polyfills from "app/../lib/logojs/polyfills.logo.txt";
 
 import { LogoOutputGraphics } from "./logo-output-graphics";
 import { LogoOutputConsole } from "./logo-output-console";
