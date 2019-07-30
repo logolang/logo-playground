@@ -3,7 +3,7 @@
     const appConfig = htmlWebpackPlugin.options.variables.appConfig;
     const googleAnalyticsTrackingId = appConfig.services.googleAnalyticsTrackingId;
     const appGitVersion = htmlWebpackPlugin.options.variables.appGitVersion;
-    const loadingSvg = require('!raw-loader!content/images/square-logo-light.svg');
+    const loadingSvg = require('!raw-loader!content/images/square-logo-light.svg').default;
 %><!DOCTYPE html>
 <html style="overflow: hidden;">
 
