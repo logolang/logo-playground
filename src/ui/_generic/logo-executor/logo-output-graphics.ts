@@ -12,28 +12,18 @@ export class LogoOutputGraphics {
 
   constructor(private sandBoxSelector: string, private turtleSelector: string) {}
 
-  initTurtle(turtleCustomImage?: HTMLImageElement, turtleSize?: number) {
+  init(turtleSize: number) {
     const CanvasTurtle: any = (window as any)["CanvasTurtle"];
     const canvas_element = $(this.sandBoxSelector) as HTMLCanvasElement;
     const canvas_ctx = canvas_element.getContext("2d");
-    const turtle_element = $(this.turtleSelector) as HTMLCanvasElement;
-    const turtle_ctx = turtle_element.getContext("2d");
+    const turtleElement = $(this.turtleSelector) as HTMLImageElement;
     this.width = canvas_element.width;
     this.height = canvas_element.height;
 
-    const turtleOptions = {
-      customTurtleGraphics: turtleCustomImage,
-      customTurtleSize: turtleSize
-    };
-
-    this.turtle = new CanvasTurtle(
-      canvas_ctx,
-      turtle_ctx,
-      this.width,
-      this.height,
-      undefined,
-      turtleOptions
-    );
+    this.turtle = new CanvasTurtle(canvas_ctx, this.width, this.height, undefined, {
+      turtleElement: turtleElement,
+      turtleSize: turtleSize
+    });
     return this.turtle;
   }
 
@@ -49,11 +39,8 @@ export class LogoOutputGraphics {
     this.width = width;
     this.height = height;
     const sandbox = $(this.sandBoxSelector) as HTMLCanvasElement;
-    const turtle = $(this.turtleSelector) as HTMLCanvasElement;
     sandbox.width = width;
     sandbox.height = height;
-    turtle.width = width;
-    turtle.height = height;
   }
 
   createScreenshot(isThumbnail: boolean): string {

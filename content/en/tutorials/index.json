@@ -2,121 +2,185 @@
   "tutorials": [
     {
       "id": "01-basics",
-      "label": "Turtle Basics",
+      "label": "Turtle basics",
       "description": "Introduction and LOGO language basics",
-      "level": "beginner",
+      "level": "Beginner",
       "steps": [
         {
-          "name": "Logo's turtle",
-          "id": "01-intro"
+          "name": "Welcome",
+          "id": "01-welcome"
         },
         {
-          "name": "The Turtle can Turn",
-          "id": "02-turtle-can-turn"
+          "name": "Basic movement commands",
+          "id": "02-movement"
         },
         {
-          "name": "Turning back",
-          "id": "03-turning-back"
+          "name": "Controlling the pen",
+          "id": "03-pen"
         },
         {
-          "name": "The inverted letter L",
-          "id": "04-inverted-L"
+          "name": "Adding the colors",
+          "id": "04-colors"
         },
         {
-          "name": "Combining commands",
-          "id": "05-combining"
+          "name": "Hiding the turtle",
+          "id": "05-hide"
         },
         {
-          "name": "Shortcuts",
+          "name": "Short commands",
           "id": "06-shortcuts"
         },
         {
-          "name": "Good job!",
+          "name": "Tutorial is completed",
           "id": "07-finish"
         }
       ]
     },
     {
-      "id": "02-controlling",
-      "label": "Controlling the Turtle and Pen",
-      "description": "Basic turtle commands, working with graphics",
-      "level": "beginner",
+      "id": "02-graphics",
+      "label": "Graphic primitives",
+      "description": "Working with various graphic commands",
+      "level": "Beginner",
       "steps": [
         {
-          "name": "What is the pen?",
-          "id": "step-01"
+          "name": "Working with labels",
+          "id": "01-label"
         },
         {
-          "name": "Lifting the pen",
-          "id": "step-02"
+          "name": "Circles and segments",
+          "id": "02-arc"
         },
         {
-          "name": "Putting the pen back down",
-          "id": "step-03"
+          "name": "Fill command",
+          "id": "03-fill"
         },
         {
-          "name": "Hiding the turtle",
-          "id": "step-04"
+          "name": "Filled command",
+          "id": "04-filled"
         },
         {
-          "name": "Drawing with the hidden turtle",
-          "id": "step-05"
+          "name": "Lab",
+          "id": "05-lab"
         },
         {
-          "name": "The turtle reappears",
-          "id": "step-06"
-        },
-        {
-          "name": "The Width of the Pen",
-          "id": "step-07"
-        },
-        {
-          "name": "Wider line",
-          "id": "step-08"
-        },
-        {
-          "name": "The Color of the Pen",
-          "id": "step-09"
-        },
-        {
-          "name": "Cogratulations!",
-          "id": "step-10"
+          "name": "Summary",
+          "id": "06-done"
         }
       ]
     },
     {
-      "id": "03-labels",
-      "label": "Cool Labels",
-      "description": "Printing nice labels using turtle graphics",
-      "level": "advanced",
+      "id": "03-loops-and-variables",
+      "label": "Loops and variables",
+      "description": "Loops, procedures and variables - ways to write more powerful programs",
+      "level": "Advanced",
       "steps": [
         {
-          "name": "The label command",
-          "id": "step-01"
+          "name": "Loop",
+          "id": "01-loop"
         },
         {
-          "name": "Bigger font",
-          "id": "step-02"
+          "name": "Nested loop",
+          "id": "02-nested-loop"
         },
         {
-          "name": "Label direction",
-          "id": "step-03"
+          "name": "Procedure",
+          "id": "03-procedure"
         },
         {
-          "name": "Use colors",
-          "id": "step-04"
+          "name": "Procedure with parameters",
+          "id": "04-procedure-with-params"
         },
         {
-          "name": "Do it wherever you want",
-          "id": "step-05"
+          "name": "Variables",
+          "id": "05-variables"
         },
         {
-          "name": "Using whitespace in your text",
-          "id": "step-06"
+          "name": "Changing the value of a variable",
+          "id": "06-change-variables"
         },
         {
-          "name": "Summary",
-          "id": "step-07"
+          "name": "Tutorial completion",
+          "id": "07-finish"
+        }
+      ]
+    },
+    {
+      "id": "04-advanced-graphics",
+      "label": "More graphic functions",
+      "description": "Coordinates, screen modes, advanced commands",
+      "level": "Advanced",
+      "steps": [
+        {
+          "name": "Coordinates",
+          "id": "01-coordinates"
+        },
+        {
+          "name": "Turtle's heading",
+          "id": "02-heading"
+        },
+        {
+          "name": "Home command",
+          "id": "03-home"
+        },
+        {
+          "name": "Drawing mode",
+          "id": "04-turtle-mode"
+        },
+        {
+          "name": "Changing the scale",
+          "id": "05-scrunch"
+        },
+        {
+          "name": "Clear the screen with background",
+          "id": "06-setbackground"
+        },
+        {
+          "name": "Tutorial completion",
+          "id": "07-finish"
+        }
+      ]
+    },
+    {
+      "id": "05-cool-stuff",
+      "label": "Powerful utilities",
+      "description": "Various useful functions including random, working with user input, lists, conditions and recursion",
+      "level": "Advanced",
+      "steps": [
+        {
+          "name": "Randomization",
+          "id": "01-random"
+        },
+        {
+          "name": "Wait",
+          "id": "02-wait"
+        },
+        {
+          "name": "Printing and reading",
+          "id": "03-print-and-read"
+        },
+        {
+          "name": "Lists",
+          "id": "04-lists"
+        },
+        {
+          "name": "Desition making",
+          "id": "05-conditions"
+        },
+        {
+          "name": "More loops",
+          "id": "06-various-loops"
+        },
+        {
+          "name": "Arithmetics and math",
+          "id": "07-math"
+        },
+        {
+          "name": "Recursion",
+          "id": "08-recursion"
+        },
+        {
+          "name": "Finish",
+          "id": "09-finish"
         }
       ]
     }

@@ -1,5 +1,12 @@
 import * as markdown from "markdown-it";
-import { LocalizedContentLoader } from "services/localized-content-loader";
+import { localStoragePrefix } from "./constants";
+import { LocalStorage } from "./local-storage";
+import { DictionaryLike } from "utils/syntax";
+
+export interface ContentLoader {
+  getFileContent(relativePath: string): Promise<string>;
+  resolveRelativeUrl(relativePath: string): string;
+}
 
 export interface TutorialInfo {
   id: string;
@@ -14,10 +21,14 @@ export interface TutorialStepInfo {
   name: string;
 }
 
+export interface TutorialStepId {
+  tutorialId: string;
+  stepId: string;
+}
 export interface TutorialStepContent {
   content: string;
-  initialCode: string;
-  resultCode: string;
+  solutionCode: string;
+  inlinedCode: DictionaryLike<{ code: string; params: any }>;
 }
 
 /**
@@ -25,8 +36,16 @@ export interface TutorialStepContent {
  */
 export class TutorialsService {
   private tutorialInfos: TutorialInfo[] = [];
+  readonly defaultStep: TutorialStepId = {
+    tutorialId: "01-basics",
+    stepId: "01-welcome"
+  };
+  private lastStepLocalStorage = new LocalStorage<TutorialStepId>(
+    localStoragePrefix + "tutorials.step",
+    this.defaultStep
+  );
 
-  constructor(private contentLoader: LocalizedContentLoader) {}
+  constructor(private contentLoader: ContentLoader) {}
 
   async getTutorialsList(): Promise<TutorialInfo[]> {
     if (this.tutorialInfos.length == 0) {
@@ -41,30 +60,89 @@ export class TutorialsService {
     let stepContent = await this.contentLoader.getFileContent(
       `tutorials/${tutorialId}/${stepId}.md`
     );
+
+    let solutionCode = "";
+    stepContent = this.findAndReplaceCodeChunks(stepContent, "solution", code => {
+      solutionCode = code;
+      return "";
+    });
+
+    const inlined: DictionaryLike<{ code: string; params: any }> = {};
+    let inlinedId = 1;
+    stepContent = this.findAndReplaceCodeChunks(stepContent, "logo", (code, params) => {
+      if (!params.width) {
+        throw new Error("width is required parameter to logo inline block");
+      }
+      if (!params.height) {
+        throw new Error("height is required parameter to logo inline block");
+      }
+      const id = "logo" + inlinedId++;
+      inlined[id] = {
+        code: code ? code.trim() : "",
+        params
+      };
+      let result = `<div id="${id}" class="logo-inline-container" style="width:${
+        params.width
+      };height:${params.height}"></div>`;
+
+      // Include the code optionally
+      if (params.code) {
+        result = "\n```" + code + "```\n" + result;
+      }
+
+      // If we have `solution` flag then we need to use it for solutionCode
+      if (params.solution) {
+        solutionCode = code;
+      }
+
+      return result;
+    });
+
     const md = new markdown({
       html: true // Enable HTML tags in source;
     });
-    const resultCodeRegex = /```result[\s\S]*```/g;
-    let matches = stepContent.match(resultCodeRegex);
-    let resultCode = "";
-    if (matches && matches.length > 0) {
-      resultCode = matches[0].replace(/```result|```/g, "").trim() + "\r\n";
-      stepContent = stepContent.replace(resultCodeRegex, "");
-    }
+    let html = md.render(stepContent).trim();
 
-    const initCodeRegex = /```init[\s\S]*```/g;
-    matches = stepContent.match(initCodeRegex);
-    let initCode = "";
-    if (matches && matches.length > 0) {
-      initCode = matches[0].replace(/```init|```/g, "");
-      stepContent = stepContent.replace(initCodeRegex, "");
-    }
+    // find and fix all relative image urls
+    html = html.replace(/src="[\s\S]*?"/g, match => {
+      let src = match.substr(5);
+      src = src.substr(0, src.length - 1);
+      if (src.startsWith(".")) {
+        src = src.substring(1);
+        src = this.contentLoader.resolveRelativeUrl("tutorials/" + tutorialId + src);
+      }
+      return 'src="' + src + '"';
+    });
 
     const tutorialStep: TutorialStepContent = {
-      content: md.render(stepContent),
-      initialCode: initCode.trim(),
-      resultCode: resultCode.trim()
+      content: html,
+      solutionCode: solutionCode.trim(),
+      inlinedCode: inlined
     };
+    this.setLastStep({ tutorialId, stepId });
     return tutorialStep;
+  }
+
+  getLastStep(): TutorialStepId {
+    return this.lastStepLocalStorage.getValue();
+  }
+
+  setLastStep(step: TutorialStepId) {
+    this.lastStepLocalStorage.setValue(step);
+  }
+
+  findAndReplaceCodeChunks(
+    md: string,
+    type: string,
+    replacer: (code: string, params: any) => string
+  ): string {
+    const chunkRegex = new RegExp(
+      "<!--" + type + "([\\s\\S]*?)-->[\\s\\S]*?```([\\s\\S]*?)```",
+      "g"
+    );
+    return md.replace(chunkRegex, (match, params, code) => {
+      const paramsObj = params ? JSON.parse(params) : {};
+      return replacer(code, paramsObj);
+    });
   }
 }

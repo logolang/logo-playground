@@ -18,14 +18,22 @@ export class LocalizedContentLoader {
     }
   }
 
-  private async getContentByLocale(locale: string, relativePath: string): Promise<string> {
-    const resKey = `${this.localeId}:${relativePath}`;
+  resolveRelativeUrl(relativePath: string): string {
+    return this.resolveRelativeUrlInt(this.localeId, relativePath);
+  }
+
+  private resolveRelativeUrlInt(localeId: string, relativePath: string): string {
+    return `content/${localeId}/${relativePath}`;
+  }
+
+  private async getContentByLocale(localeId: string, relativePath: string): Promise<string> {
+    const resKey = `${localeId}:${relativePath}`;
     const fromCache = this.cache[resKey];
     if (fromCache) {
       return fromCache;
     }
 
-    const result = await fetch(`content/${locale}/${relativePath}`, {
+    const result = await fetch(this.resolveRelativeUrlInt(localeId, relativePath), {
       method: "get",
       credentials: "same-origin"
     });

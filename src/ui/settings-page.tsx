@@ -6,7 +6,7 @@ import {
   TurtleSize,
   getTurtles,
   getTurtleSizes,
-  getTurtleImage
+  getTurtleById
 } from "ui/turtles/turtles";
 import { Theme, themesManager } from "ui/themes-helper";
 import {
@@ -193,7 +193,7 @@ export class SettingsPage extends React.Component<Props, State> {
                       /* Nothing here */
                     }}
                     isDarkTheme={this.props.appTheme.isDark}
-                    turtleImage={getTurtleImage(this.props.userSettings.turtleId)}
+                    turtleImageSrc={getTurtleById(this.props.userSettings.turtleId).imageSrc}
                     turtleSize={this.props.userSettings.turtleSize}
                   />
                 </div>

@@ -3,7 +3,7 @@ import { $T } from "i18n-strings";
 export interface TurtleInfo {
   id: string;
   name: string;
-  imageData: string;
+  imageSrc: string;
 }
 
 export interface TurtleSize {
@@ -16,32 +16,42 @@ export function getTurtles(): TurtleInfo[] {
     {
       id: "bright_runner",
       name: $T.settings.turtleSkins.bright_runner,
-      imageData: require("./bright_runner.svg") as string
+      imageSrc: "./content/images/turtles/bright_runner.svg"
     },
     {
       id: "chameleon",
       name: $T.settings.turtleSkins.chameleon,
-      imageData: require("./chameleon.svg") as string
+      imageSrc: "./content/images/turtles/chameleon.svg"
     },
     {
       id: "princess",
       name: $T.settings.turtleSkins.princess,
-      imageData: require("./princess.svg") as string
+      imageSrc: "./content/images/turtles/princess.svg"
     },
     {
       id: "bob",
       name: $T.settings.turtleSkins.bob,
-      imageData: require("./bob.svg") as string
+      imageSrc: "./content/images/turtles/bob.svg"
     },
     {
       id: "summer",
       name: $T.settings.turtleSkins.summer,
-      imageData: require("./summer.svg") as string
+      imageSrc: "./content/images/turtles/summer.svg"
     },
     {
       id: "diver",
       name: $T.settings.turtleSkins.diver,
-      imageData: require("./diver.svg") as string
+      imageSrc: "./content/images/turtles/diver.svg"
+    },
+    {
+      id: "navigator-aqua",
+      name: "Navigator Aqua",
+      imageSrc: "./content/images/turtles/navigator-aqua.svg"
+    },
+    {
+      id: "navigator-stealth",
+      name: "Navigator Stealth",
+      imageSrc: "./content/images/turtles/navigator-stealth.svg"
     }
   ];
 }
@@ -63,13 +73,4 @@ export function getTurtleById(turtleId: string): TurtleInfo {
     turtleData = allTurtles[0];
   }
   return turtleData;
-}
-
-export function getTurtleImage(turtleId: string): HTMLImageElement {
-  const turtleInfo = getTurtleById(turtleId);
-  const img = new Image();
-  img.width = 512;
-  img.height = 512;
-  img.src = turtleInfo.imageData;
-  return img;
 }

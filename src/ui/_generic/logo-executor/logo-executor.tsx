@@ -22,16 +22,19 @@ export interface Props {
   isRunning: boolean;
   code: string;
   isDarkTheme: boolean;
-  turtleImage?: HTMLImageElement;
-  turtleSize?: number;
+  turtleImageSrc: string;
+  turtleSize: number;
   importsResolver?: ImportsResolver;
   onFinish(): void;
 }
+
+let idIncrement = 0;
 
 export class LogoExecutor extends React.Component<Props, State> {
   private logo: any;
   private graphics: LogoOutputGraphics;
   private isRunning: boolean;
+  private id = idIncrement++;
 
   constructor(props: Props) {
     super(props);
@@ -42,7 +45,7 @@ export class LogoExecutor extends React.Component<Props, State> {
   }
 
   async componentDidMount() {
-    this.graphics = new LogoOutputGraphics("#sandbox", "#turtle");
+    this.graphics = new LogoOutputGraphics("#sandbox" + this.id, "#turtle" + this.id);
     if (this.props.isRunning) {
       await this.execute();
     }
@@ -75,11 +78,11 @@ export class LogoExecutor extends React.Component<Props, State> {
 
   render(): JSX.Element {
     return (
-      <div className="logo-executor-container">
-        <canvas id="sandbox" height="100" />
-        <canvas id="turtle" height="100" />
-        <div id="console-output" />
-        <div id="error-messages-container">
+      <div id={`logo-executor-container${this.id}`} className="logo-executor-container">
+        <canvas id={`sandbox${this.id}`} className="sandbox" height="100" />
+        <img id={`turtle${this.id}`} className="turtle-img" src={this.props.turtleImageSrc} />
+        <div id={`console-output${this.id}`} className="console-output" />
+        <div id={`error-messages-container${this.id}`} className="error-messages-container">
           {this.state.errorMessage && <AlertMessage message={this.state.errorMessage} />}
         </div>
       </div>
@@ -103,8 +106,8 @@ export class LogoExecutor extends React.Component<Props, State> {
     const LogoInterpreter: any = (window as any)["LogoInterpreter"];
 
     this.logo = new LogoInterpreter(
-      this.graphics.initTurtle(this.props.turtleImage, this.props.turtleSize),
-      new LogoOutputConsole("#console-output")
+      this.graphics.init(this.props.turtleSize),
+      new LogoOutputConsole("#console-output" + this.id)
     );
 
     // Replace all non-breaking spaces to normal ones because jsLogo does not understand them
@@ -141,7 +144,7 @@ export class LogoExecutor extends React.Component<Props, State> {
     if (!this.graphics) {
       return;
     }
-    const container = document.querySelector(".logo-executor-container");
+    const container = document.getElementById("logo-executor-container" + this.id);
     if (!container) {
       return;
     }
@@ -151,17 +154,19 @@ export class LogoExecutor extends React.Component<Props, State> {
       this.graphics.resizeCanvas(width, height);
     } else {
       // go up in the DOM tree to find parent with size and use it
-      let currentElement = container;
+      let currentElement: HTMLElement | null = container;
       while (
         currentElement &&
         !(currentElement.clientWidth > 0 && currentElement.clientHeight > 0)
       ) {
-        currentElement = currentElement.parentElement as Element;
+        currentElement = currentElement.parentElement;
       }
-      this.graphics.resizeCanvas(
-        currentElement.clientWidth || 400,
-        currentElement.clientHeight || 300
-      );
+      if (currentElement) {
+        this.graphics.resizeCanvas(
+          currentElement.clientWidth || 400,
+          currentElement.clientHeight || 300
+        );
+      }
     }
   }
 }
