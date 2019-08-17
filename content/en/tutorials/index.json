@@ -141,46 +141,62 @@
       ]
     },
     {
-      "id": "05-cool-stuff",
-      "label": "Powerful utilities",
-      "description": "Various useful functions including random, working with user input, lists, conditions and recursion",
+      "id": "05-utilities",
+      "label": "Utilities",
+      "description": "Various useful functions including random, working with user input and other cool stuff",
       "level": "Advanced",
       "steps": [
         {
-          "name": "Randomization",
-          "id": "01-random"
+          "name": "Comments",
+          "id": "01-comments"
         },
         {
-          "name": "Wait",
-          "id": "02-wait"
+          "name": "Randomization",
+          "id": "02-random"
         },
         {
           "name": "Printing and reading",
           "id": "03-print-and-read"
         },
         {
-          "name": "Lists",
-          "id": "04-lists"
+          "name": "Wait",
+          "id": "04-wait"
         },
         {
-          "name": "Desition making",
-          "id": "05-conditions"
-        },
-        {
-          "name": "More loops",
-          "id": "06-various-loops"
-        },
-        {
-          "name": "Arithmetics and math",
-          "id": "07-math"
-        },
-        {
-          "name": "Recursion",
-          "id": "08-recursion"
+          "name": "Math",
+          "id": "05-math"
         },
         {
           "name": "Finish",
-          "id": "09-finish"
+          "id": "06-finish"
+        }
+      ]
+    },
+    {
+      "id": "06-guru",
+      "label": "Guru",
+      "description": "For those who really wants to dive into deep programming. Advanced stuff including conditions, recursion, lists and more.",
+      "level": "Advanced",
+      "steps": [
+        {
+          "name": "Conditions",
+          "id": "01-conditions"
+        },
+        {
+          "name": "Various loops",
+          "id": "02-various-loops"
+        },
+        {
+          "name": "Lists",
+          "id": "03-lists"
+        },
+        {
+          "name": "Recursion",
+          "id": "04-recursion"
+        },
+        {
+          "name": "Finish",
+          "id": "05-finish"
         }
       ]
     }

@@ -1,4 +1,4 @@
-Congratulations on completing the **Cool stuff** lab!
+Congratulations on completing the **Utilities** lab!
 
 You have achieved wonderful results and now you can write even more powerful programs!
 
