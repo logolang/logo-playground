@@ -151,10 +151,10 @@ end
 setpencolor 7
 fill
 setpencolor 0
-jump -50 -110
+jump -50 20
 make "v 1 + random 6
 dice :v
-jump 0 110
+jump 0 -140
 make "v 1 + random 6
 dice :v
 ```
