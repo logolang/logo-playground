@@ -27,7 +27,7 @@ label :greeting
 ```
 
 In this very simple example we have created a variable with name `greeting` and the value `Hello` stored in it.
-Then we succesfully used that value as input for `label` command.
+Then we successfully used that value as input for `label` command.
 
 For another example are going to create a variable named `fillcolor` and will use it several times:
 

@@ -29,7 +29,22 @@ if <expr> [
 ```
 
 Here the `if` is a LOGO's syntax keyword which allows to execute some statements based on a provided logical expression.
-Now we can write our program with turtle's random jumping and drawing like this:
+
+Another useful LOGO keyword is `ifelse`:
+
+```
+ifelse <expr> [
+  statements ...
+] [
+  statements ...
+]
+```
+
+It executes first set of statements if the expression is true, otherwise executes the second set.
+
+### Example program
+
+We can write our program with turtle's random jumping and drawing like this:
 
 <!--logo {"width":"220px", "height":"220px", "code": true}-->
 
@@ -67,7 +82,7 @@ repeat 10000 [
 
 ### Exercise
 
-Please write a "Dice Roller" program which randomly generates a random number from 1 to 6 and then draws a dice of that number.
+Please write a "Dice Roller" program which generates a random number from 1 to 6 and then draws a dice of that number.
 
 <!--logo {"width":"300px", "height":"200px", "solution": true}-->
 
@@ -75,75 +90,61 @@ Please write a "Dice Roller" program which randomly generates a random number fr
 to jump :fw :side
   penup
   forward :fw
-  rt 90 forward :side lt 90
+  rt 90
+  forward :side
+  lt 90
   pendown
+end
+
+to drawdot
+  filled 0 [ arc 360 10 ]
 end
 
 to dice :value
   repeat 4 [ fd 100 rt 90 ]
+
   if :value = 1 [
-    jump 50 50
-    filled 0 [ arc 360 10 ]
+    jump 50 50 drawdot
     jump -50 -50
   ]
 
   if :value = 2 [
-    jump 30 30
-    filled 0 [ arc 360 10 ]
-    jump 40 40
-    filled 0 [ arc 360 10 ]
+    jump 30 30 drawdot
+    jump 40 40 drawdot
     jump -70 -70
   ]
 
   if :value = 3 [
-    jump 25 25
-    filled 0 [ arc 360 10 ]
-    jump 25 25
-    filled 0 [ arc 360 10 ]
-    jump 25 25
-    filled 0 [ arc 360 10 ]
+    jump 25 25 drawdot
+    jump 25 25 drawdot
+    jump 25 25 drawdot
     jump -75 -75
   ]
 
   if :value = 4 [
-    jump 30 30
-    filled 0 [ arc 360 10 ]
-    jump 0 40
-    filled 0 [ arc 360 10 ]
-    jump 40 0
-    filled 0 [ arc 360 10 ]
-    jump 0 -40
-    filled 0 [ arc 360 10 ]
+    jump 30 30 drawdot
+    jump 0 40 drawdot
+    jump 40 0 drawdot
+    jump 0 -40 drawdot
     jump -70 -30
   ]
 
   if :value = 5 [
-    jump 25 25
-    filled 0 [ arc 360 10 ]
-    jump 0 50
-    filled 0 [ arc 360 10 ]
-    jump 50 0
-    filled 0 [ arc 360 10 ]
-    jump 0 -50
-    filled 0 [ arc 360 10 ]
-    jump -25 25
-    filled 0 [ arc 360 10 ]
+    jump 25 25 drawdot
+    jump 0 50 drawdot
+    jump 50 0 drawdot
+    jump 0 -50 drawdot
+    jump -25 25 drawdot
     jump -50 -50
   ]
 
   if :value = 6 [
-    jump 30 25
-    filled 0 [ arc 360 10 ]
-    jump 0 25
-    filled 0 [ arc 360 10 ]
-    jump 0 25
-    filled 0 [ arc 360 10 ]
-    jump 40 0
-    filled 0 [ arc 360 10 ]
-    jump 0 -25
-    filled 0 [ arc 360 10 ]
-    jump 0 -25
-    filled 0 [ arc 360 10 ]
+    jump 30 25 drawdot
+    jump 0 25 drawdot
+    jump 0 25 drawdot
+    jump 40 0 drawdot
+    jump 0 -25 drawdot
+    jump 0 -25 drawdot
     jump -70 -25
   ]
 end
@@ -151,10 +152,10 @@ end
 setpencolor 7
 fill
 setpencolor 0
+make "v1 1 + random 6
 jump -50 20
-make "v 1 + random 6
-dice :v
+dice :v1
+make "v2 1 + random 6
 jump 0 -140
-make "v 1 + random 6
-dice :v
+dice :v2
 ```

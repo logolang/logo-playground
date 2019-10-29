@@ -15,7 +15,7 @@ repeat 5 [
 ]
 ```
 
-Here the variable `x` is declared again in each iteration of repeat loop. And the value to assign to new `x` variable is a result of evaluated expresion which is a simple calculation of adding `1` to the old value of `x`. This allows as to increment value at the end of each loop iteration.
+Here the variable `x` is declared again in each iteration of repeat loop. And the value to assign to new `x` variable is a result of evaluated expression which is a simple calculation of adding `1` to the old value of `x`. This allows as to increment value at the end of each loop iteration.
 
 We can easily change this example in order to print only odd numbers. Just update this line:
 
