@@ -23,6 +23,7 @@ import { LogoCodeSamplesService } from "services/logo-code-samples.service";
 import { AuthProvider, AuthService } from "services/infrastructure/auth-service";
 import { GalleryImportService } from "services/gallery-import.service";
 import { LogoImportsResolverService } from "services/logo-imports-resolver.service";
+import { themesManager } from "ui/themes-helper";
 
 export class DISetup {
   public static async setup(options: { appConfig: AppConfig }) {
@@ -42,6 +43,8 @@ export class DISetup {
     const userSettingsService = new UserSettingsService(user.email);
     register(UserSettingsService, userSettingsService);
     const userSettings = await userSettingsService.get();
+
+    themesManager.setTheme(themesManager.getThemeByName(userSettings.themeName));
 
     const localizedContentLoader = new LocalizedContentLoader(userSettings.localeId);
     register(LocalizedContentLoader, localizedContentLoader);
