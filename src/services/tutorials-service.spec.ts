@@ -45,8 +45,8 @@ arc 360 25
 describe("Tutorials service", () => {
   async function getResult(testMarkdown: string): Promise<TutorialStepContent> {
     const service = new TutorialsService({
-      getFileContent: async () => testMarkdown,
-      resolveRelativeUrl: x => "content/" + x
+      loadFile: async () => testMarkdown,
+      getCurrentLocaleId: () => "en"
     });
     return service.getStep("tutorialId", "stepId");
   }

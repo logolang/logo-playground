@@ -2,21 +2,36 @@
   "tutorials": [
     {
       "id": "01-basics",
-      "label": "Turtle basics",
-      "description": "Introduction and LOGO language basics",
-      "level": "Beginner",
+      "label": {
+        "en": "Turtle basics",
+        "ru": "Введение и основы"
+      },
+      "description": {
+        "en": "Introduction and LOGO language basics",
+        "ru": "Введение и основы языка LOGO. Встреча с черепахой."
+      },
+      "level": 0,
       "steps": [
         {
-          "name": "Welcome",
-          "id": "01-welcome"
+          "id": "01-welcome",
+          "name": {
+            "en": "Welcome",
+            "ru": "Черепаха Лого"
+          }
         },
         {
-          "name": "Basic movement commands",
-          "id": "02-movement"
+          "id": "02-movement",
+          "name": {
+            "en": "Basic movement commands",
+            "ru": "Основные команды движения"
+          }
         },
         {
-          "name": "Controlling the pen",
-          "id": "03-pen"
+          "id": "03-pen",
+          "name": {
+            "en": "Controlling the pen",
+            "ru": "Управление ручкой"
+          }
         },
         {
           "name": "Adding the colors",
@@ -40,7 +55,7 @@
       "id": "02-graphics",
       "label": "Graphic primitives",
       "description": "Working with various graphic commands",
-      "level": "Beginner",
+      "level": 0,
       "steps": [
         {
           "name": "Working with labels",
@@ -72,7 +87,7 @@
       "id": "03-loops-and-variables",
       "label": "Loops and variables",
       "description": "Loops, procedures and variables - ways to write more powerful programs",
-      "level": "Advanced",
+      "level": 1,
       "steps": [
         {
           "name": "Loop",
@@ -108,7 +123,7 @@
       "id": "04-advanced-graphics",
       "label": "More graphic functions",
       "description": "Coordinates, screen modes, advanced commands",
-      "level": "Advanced",
+      "level": 1,
       "steps": [
         {
           "name": "Coordinates",
@@ -144,7 +159,7 @@
       "id": "05-utilities",
       "label": "Utilities",
       "description": "Various useful functions including random, working with user input and other cool stuff",
-      "level": "Advanced",
+      "level": 1,
       "steps": [
         {
           "name": "Comments",
@@ -176,7 +191,7 @@
       "id": "06-guru",
       "label": "Guru",
       "description": "For those who really wants to dive into deep programming. Advanced stuff including conditions, recursion, lists and more.",
-      "level": "Advanced",
+      "level": 1,
       "steps": [
         {
           "name": "Conditions",

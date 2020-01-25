@@ -8,32 +8,33 @@ export class LocalizedContentLoader {
 
   constructor(private localeId: string) {}
 
-  async getFileContent(relativePath: string): Promise<string> {
+  async loadFile(url: string): Promise<string> {
     try {
-      const content = await this.getContentByLocale(this.localeId, relativePath);
+      const content = await this.loadContentByLocale(url, this.localeId);
       return content;
     } catch (ex) {
       console.log("Failed to load localized version, falling back to English");
-      return this.getContentByLocale("en", relativePath);
+      return this.loadContentByLocale(url, "en");
     }
   }
 
-  resolveRelativeUrl(relativePath: string): string {
-    return this.resolveRelativeUrlInt(this.localeId, relativePath);
+  getCurrentLocaleId() {
+    return this.localeId;
   }
 
-  private resolveRelativeUrlInt(localeId: string, relativePath: string): string {
-    return `content/${localeId}/${relativePath}`;
-  }
+  private async loadContentByLocale(url: string, localeId: string): Promise<string> {
+    if (localeId && localeId !== "en") {
+      const parts = url.split(".");
+      parts.splice(parts.length - 1, 0, localeId);
+      url = parts.join(".");
+    }
 
-  private async getContentByLocale(localeId: string, relativePath: string): Promise<string> {
-    const resKey = `${localeId}:${relativePath}`;
-    const fromCache = this.cache[resKey];
+    const fromCache = this.cache[url];
     if (fromCache) {
       return fromCache;
     }
 
-    const result = await fetch(this.resolveRelativeUrlInt(localeId, relativePath), {
+    const result = await fetch(url, {
       method: "get",
       credentials: "same-origin"
     });
@@ -43,7 +44,7 @@ export class LocalizedContentLoader {
     }
 
     const content = await result.text();
-    this.cache[resKey] = content;
+    this.cache[url] = content;
     return content;
   }
 }

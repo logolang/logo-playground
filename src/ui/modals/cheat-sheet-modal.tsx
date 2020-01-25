@@ -45,7 +45,7 @@ export class CheatSheetModal extends React.Component<Props, State> {
 
   private async loadData() {
     const contentMd = await callActionSafe(this.props.onError, async () =>
-      this.contentLoader.getFileContent("cheat-sheet.md")
+      this.contentLoader.loadFile("content/cheat-sheet.md")
     );
     if (contentMd) {
       const md = new markdown({
