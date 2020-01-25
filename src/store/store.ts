@@ -28,7 +28,7 @@ export function createInitialStore() {
       tutorials: tutorialsReducers,
       env: envReducers
     }),
-    {},
+    {} as any,
     composeWithDevTools(applyMiddleware(reduxThunk))
   );
 }

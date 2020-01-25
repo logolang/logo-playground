@@ -10,9 +10,9 @@ export interface Props {
 export class ReactGoldenLayoutPanel extends React.Component<Props, {}> {
   private layoutHelper?: GoldenLayoutHelper;
 
-  componentWillReceiveProps(nextProps: Props) {
-    if (this.props.title != nextProps.title && this.layoutHelper) {
-      this.layoutHelper.setPanelTitle(nextProps.id, nextProps.title);
+  componentDidUpdate(prevProps: Props) {
+    if (this.props.title != prevProps.title && this.layoutHelper) {
+      this.layoutHelper.setPanelTitle(this.props.id, this.props.title);
     }
   }
 

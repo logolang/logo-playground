@@ -27,6 +27,11 @@ export interface Props {
 
 export class CodeInput extends React.Component<Props, State> {
   cm: codemirror.EditorFromTextArea;
+
+  /*
+  Store current code text in a variable allows to avoid 
+  unnecessary coremirror text updates and cursor jumps
+  */
   currentCode: string;
 
   constructor(props: Props) {
@@ -34,17 +39,13 @@ export class CodeInput extends React.Component<Props, State> {
     this.state = {};
   }
 
-  shouldComponentUpdate() {
-    return false;
-  }
-
-  componentWillReceiveProps(nextProps: Props) {
+  componentDidUpdate(prevProps: Props) {
     if (this.cm) {
-      if (nextProps.code != this.currentCode) {
-        this.currentCode = nextProps.code;
-        this.cm.setValue(nextProps.code);
+      if (this.currentCode != this.props.code) {
+        this.currentCode = this.props.code;
+        this.cm.setValue(this.currentCode);
       }
-      if (nextProps.resizeIncrement != this.props.resizeIncrement) {
+      if (prevProps.resizeIncrement != this.props.resizeIncrement) {
         this.cm.refresh();
       }
     }
@@ -65,7 +66,7 @@ export class CodeInput extends React.Component<Props, State> {
     } as any);
     this.cm.setSize("100%", "100%");
     this.currentCode = this.props.code;
-    this.cm.setValue(this.props.code);
+    this.cm.setValue(this.currentCode);
     this.cm.on("change", () => {
       const newVal = this.cm.getValue();
       if (this.currentCode != newVal) {

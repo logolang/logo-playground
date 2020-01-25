@@ -25,10 +25,6 @@ export class MainMenu extends React.Component<Props, State> {
     this.state = {};
   }
 
-  handleMenuLogOutClick = async () => {
-    this.props.onLogout();
-  };
-
   render(): JSX.Element {
     return (
       <>
@@ -70,9 +66,12 @@ export class MainMenu extends React.Component<Props, State> {
                 {$T.tutorial.tutorialsTitle}
               </NavLink>
               <a
-                href="javascript:void(0)"
+                href="#"
                 className="navbar-item"
-                onClick={() => this.setState({ isCheatSheetOpen: true })}
+                onClick={e => {
+                  e.preventDefault();
+                  this.setState({ isCheatSheetOpen: true });
+                }}
               >
                 {$T.cheatSheet.cheatSheetTitle}
               </a>
@@ -125,9 +124,12 @@ export class MainMenu extends React.Component<Props, State> {
                   )}
                   {this.props.isLoggedIn && (
                     <a
-                      href="javascript:void(0)"
+                      href="#"
                       className="navbar-item"
-                      onClick={this.handleMenuLogOutClick}
+                      onClick={e => {
+                        e.preventDefault();
+                        this.props.onLogout();
+                      }}
                     >
                       <i className="fas fa-sign-out-alt icon-fixed-width" aria-hidden="true" />
                       {$T.common.signOut}
