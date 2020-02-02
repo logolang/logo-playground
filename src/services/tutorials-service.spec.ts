@@ -1,5 +1,6 @@
 import * as chai from "chai";
 import { TutorialsService, TutorialStepContent } from "./tutorials-service";
+import { DEFAULT_LOCALE_ID } from "./constants";
 
 const testStep1 = `
 # Step 1
@@ -46,7 +47,7 @@ describe("Tutorials service", () => {
   async function getResult(testMarkdown: string): Promise<TutorialStepContent> {
     const service = new TutorialsService({
       loadFile: async () => testMarkdown,
-      getCurrentLocaleId: () => "en"
+      getCurrentLocaleId: () => DEFAULT_LOCALE_ID
     });
     return service.getStep("tutorialId", "stepId");
   }

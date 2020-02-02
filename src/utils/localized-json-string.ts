@@ -1,3 +1,5 @@
+import { DEFAULT_LOCALE_ID } from "services/constants";
+
 export type LocalizedJsonString =
   | string
   | {
@@ -13,10 +15,11 @@ export function setLocalizedString(localizedString: LocalizedJsonString, localeI
     return localizedString;
   }
   if (typeof localizedString === "object") {
-    const value = localizedString[localeId] || localizedString["en"];
+    const value = localizedString[localeId] || localizedString[DEFAULT_LOCALE_ID];
     if (!value) {
       throw getErr(localizedString);
     }
+    return value;
   }
   throw getErr(localizedString);
 }

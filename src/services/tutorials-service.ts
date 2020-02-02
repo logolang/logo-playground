@@ -5,7 +5,7 @@ import { DictionaryLike } from "utils/syntax";
 import { LocalizedJsonString, setLocalizedString } from "utils/localized-json-string";
 
 export interface ContentLoader {
-  loadFile(url: string): Promise<string>;
+  loadFile(url: string, options: { useLocale: boolean }): Promise<string>;
   getCurrentLocaleId(): string;
 }
 
@@ -50,7 +50,9 @@ export class TutorialsService {
 
   async getTutorialsList(): Promise<TutorialInfo[]> {
     if (this.tutorialInfos.length == 0) {
-      const result = await this.contentLoader.loadFile("content/tutorials/index.json");
+      const result = await this.contentLoader.loadFile("content/tutorials/index.json", {
+        useLocale: false
+      });
       const data = JSON.parse(result);
       this.tutorialInfos = data.tutorials;
 
@@ -69,7 +71,8 @@ export class TutorialsService {
 
   async getStep(tutorialId: string, stepId: string): Promise<TutorialStepContent> {
     let stepContent = await this.contentLoader.loadFile(
-      `content/tutorials/${tutorialId}/${stepId}.md`
+      `content/tutorials/${tutorialId}/${stepId}.md`,
+      { useLocale: true }
     );
 
     let solutionCode = "";

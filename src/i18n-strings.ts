@@ -75,7 +75,9 @@ export const $T = {
     fixTheCodeWarning: "This will overwrite your code entirely.",
     fixTheCodeTitle: "Fix the code?",
     yesFixMyCode: "Yes, fix my code",
-    noLeaveItAsIs: "No, leave it as is"
+    noLeaveItAsIs: "No, leave it as is",
+    tutorialsLevel0: "Beginner",
+    tutorialsLevel1: "Advanced"
   },
   about: {
     aboutTitle: "About"

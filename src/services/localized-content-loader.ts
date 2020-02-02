@@ -1,4 +1,5 @@
 import { DictionaryLike } from "utils/syntax";
+import { DEFAULT_LOCALE_ID } from "./constants";
 
 /**
  * Loads requested files by ajax from content directory using provided locale
@@ -8,13 +9,16 @@ export class LocalizedContentLoader {
 
   constructor(private localeId: string) {}
 
-  async loadFile(url: string): Promise<string> {
+  async loadFile(url: string, options: { useLocale: boolean }): Promise<string> {
     try {
-      const content = await this.loadContentByLocale(url, this.localeId);
+      const content = await this.loadContentByLocale(
+        url,
+        options.useLocale ? this.localeId : DEFAULT_LOCALE_ID
+      );
       return content;
     } catch (ex) {
       console.log("Failed to load localized version, falling back to English");
-      return this.loadContentByLocale(url, "en");
+      return this.loadContentByLocale(url, DEFAULT_LOCALE_ID);
     }
   }
 
@@ -23,7 +27,7 @@ export class LocalizedContentLoader {
   }
 
   private async loadContentByLocale(url: string, localeId: string): Promise<string> {
-    if (localeId && localeId !== "en") {
+    if (localeId && localeId !== DEFAULT_LOCALE_ID) {
       const parts = url.split(".");
       parts.splice(parts.length - 1, 0, localeId);
       url = parts.join(".");

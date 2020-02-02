@@ -257,6 +257,12 @@ msgstr "Шаг %1$s из %2$s"
 msgid "tutorial.tutorialPanelTitle"
 msgstr "Учебник"
 
+msgid "tutorial.tutorialsLevel0"
+msgstr "Начальный уровень"
+
+msgid "tutorial.tutorialsLevel1"
+msgstr "Продвинутый уровень"
+
 msgid "tutorial.tutorialsTitle"
 msgstr "Учебники"
 

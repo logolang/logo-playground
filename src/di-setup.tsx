@@ -49,7 +49,7 @@ export class DISetup {
     const localizedContentLoader = new LocalizedContentLoader(userSettings.localeId);
     register(LocalizedContentLoader, localizedContentLoader);
 
-    const poFile = await localizedContentLoader.loadFile("content/strings.po");
+    const poFile = await localizedContentLoader.loadFile("content/strings.po", { useLocale: true });
     updateStringsObject($T, poFile);
 
     register(TutorialsService, new TutorialsService(localizedContentLoader));
