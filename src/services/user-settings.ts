@@ -1,3 +1,5 @@
+import { DEFAULT_LOCALE_ID } from "./constants";
+
 export interface UserSettings {
   turtleId: string;
   turtleSize: number;
@@ -9,7 +11,10 @@ export const defaultUserSettings: UserSettings = {
   turtleId: "",
   turtleSize: 40,
   themeName: "",
-  localeId: "en"
+  localeId: DEFAULT_LOCALE_ID
 };
 
-export const locales = [{ name: "English", id: "en" }, { name: "Русский", id: "ru" }];
+export const locales = [
+  { name: "English", id: DEFAULT_LOCALE_ID },
+  { name: "Русский", id: "ru" }
+];

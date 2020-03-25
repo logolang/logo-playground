@@ -48,7 +48,10 @@ export class TutorialSelectModal extends React.Component<Props, State> {
 
   render(): JSX.Element | null {
     const groups: DictionaryLike<TutorialInfo[]> = {};
-    this.props.tutorials.forEach(t => (groups[t.level] = [...(groups[t.level] || []), t]));
+    for (const t of this.props.tutorials) {
+      const level = t.level.toString();
+      groups[level] = [...(groups[level] || []), t];
+    }
 
     return (
       <Modal
@@ -68,8 +71,8 @@ export class TutorialSelectModal extends React.Component<Props, State> {
       >
         <div className="tutorial-select-modal-component tutorial-pick-menu-container">
           <aside className="menu">
-            {Object.entries(groups).map(([groupName, tutorials]) =>
-              this.renderTutorialsGroup(groupName, tutorials)
+            {Object.entries(groups).map(([groupLevel, tutorials]) =>
+              this.renderTutorialsGroup(groupLevel, tutorials)
             )}
           </aside>
         </div>
@@ -77,8 +80,19 @@ export class TutorialSelectModal extends React.Component<Props, State> {
     );
   }
 
-  renderTutorialsGroup(groupName: string, tutorials: TutorialInfo[]) {
+  getGroupName(level: string) {
+    switch (level) {
+      case "0":
+        return $T.tutorial.tutorialsLevel0;
+      case "1":
+        return $T.tutorial.tutorialsLevel1;
+    }
+    return "UNKNOWN LEVEL";
+  }
+
+  renderTutorialsGroup(groupLevel: string, tutorials: TutorialInfo[]) {
     const selectedTutorial = this.state.currentSelectedTutorial;
+    const groupName = this.getGroupName(groupLevel);
     return (
       <React.Fragment key={groupName}>
         <p className="menu-label">{groupName}</p>

@@ -42,7 +42,7 @@ Concatenate two (or more) words into one word
 setcolor X
 ```
 
-Will set the turtle color accroding to the following table
+Will set the turtle color according to the following table
 
 |     |                                                                 |                          |     |                                                                   |
 | --- | --------------------------------------------------------------- | ------------------------ | --- | ----------------------------------------------------------------- |
@@ -59,7 +59,7 @@ Will set the turtle color accroding to the following table
 setcolor [R,G,B]
 ```
 
-Will set the turtle color accroding to the amount of red, green and blue for example `setcolor [50 100 50]`
+Will set the turtle color according to the amount of red, green and blue for example `setcolor [50 100 50]`
 
 ```
 fill
@@ -72,7 +72,7 @@ filled fillcolor [ statements ... ]
 ```
 
 Execute statements without drawing but keeping track of turtle movements.
-When complete, fill the region traced by the turtle with fillcolor and outline the region with the current pen style
+When complete, fill the region traced by the turtle with fill color and outline the region with the current pen style
 
 #
 
@@ -194,7 +194,7 @@ Outputs the current iteration number of the current repeat or forever
 for controllist [ statements ...]
 ```
 
-Typical for loop. The controllist specifies three or four members: the local varname, start value, limit value, and optional step size
+Typical for loop. The `controllist` specifies three or four members: the local variable name, start value, limit value, and optional step size
 
 ```
 to PROCNAME inputs
@@ -273,13 +273,13 @@ Outputs the last item from the list
 butlast listname
 ```
 
-Outputs all the items of listname except for the last item
+Outputs all the items of the list except for the last item
 
 ```
 item index list
 ```
 
-Outputs the indexlist item of the list or array
+Outputs the item at specified index of the list or array
 
 ```
 pick listname

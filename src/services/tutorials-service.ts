@@ -2,10 +2,11 @@ import * as markdown from "markdown-it";
 import { localStoragePrefix } from "./constants";
 import { LocalStorage } from "./local-storage";
 import { DictionaryLike } from "utils/syntax";
+import { LocalizedJsonString, setLocalizedString } from "utils/localized-json-string";
 
 export interface ContentLoader {
-  getFileContent(relativePath: string): Promise<string>;
-  resolveRelativeUrl(relativePath: string): string;
+  loadFile(url: string, options: { useLocale: boolean }): Promise<string>;
+  getCurrentLocaleId(): string;
 }
 
 export interface TutorialInfo {
@@ -13,7 +14,7 @@ export interface TutorialInfo {
   label: string;
   steps: TutorialStepInfo[];
   description: string;
-  level: string;
+  level: number;
 }
 
 export interface TutorialStepInfo {
@@ -49,16 +50,29 @@ export class TutorialsService {
 
   async getTutorialsList(): Promise<TutorialInfo[]> {
     if (this.tutorialInfos.length == 0) {
-      const result = await this.contentLoader.getFileContent("tutorials/index.json");
+      const result = await this.contentLoader.loadFile("content/tutorials/index.json", {
+        useLocale: false
+      });
       const data = JSON.parse(result);
       this.tutorialInfos = data.tutorials;
+
+      // Process tutorials to resolve localized strings
+      const localeId = this.contentLoader.getCurrentLocaleId();
+      for (const tutorial of this.tutorialInfos) {
+        tutorial.description = setLocalizedString(tutorial.description, localeId);
+        tutorial.label = setLocalizedString(tutorial.label, localeId);
+        for (const step of tutorial.steps) {
+          step.name = setLocalizedString(step.name, localeId);
+        }
+      }
     }
     return this.tutorialInfos;
   }
 
   async getStep(tutorialId: string, stepId: string): Promise<TutorialStepContent> {
-    let stepContent = await this.contentLoader.getFileContent(
-      `tutorials/${tutorialId}/${stepId}.md`
+    let stepContent = await this.contentLoader.loadFile(
+      `content/tutorials/${tutorialId}/${stepId}.md`,
+      { useLocale: true }
     );
 
     let solutionCode = "";
@@ -81,9 +95,7 @@ export class TutorialsService {
         code: code ? code.trim() : "",
         params
       };
-      let result = `<div id="${id}" class="logo-inline-container" style="width:${
-        params.width
-      };height:${params.height}"></div>`;
+      let result = `<div id="${id}" class="logo-inline-container" style="width:${params.width};height:${params.height}"></div>`;
 
       // Include the code optionally
       if (params.code) {
@@ -109,7 +121,7 @@ export class TutorialsService {
       src = src.substr(0, src.length - 1);
       if (src.startsWith(".")) {
         src = src.substring(1);
-        src = this.contentLoader.resolveRelativeUrl("tutorials/" + tutorialId + src);
+        src = "content/tutorials/" + tutorialId + src;
       }
       return 'src="' + src + '"';
     });

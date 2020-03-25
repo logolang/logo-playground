@@ -65,17 +65,14 @@ msgstr "Выбрать файл…"
 msgid "gallery.emptyLibrary"
 msgstr "В вашей персональной библиотеке пока нет программ."
 
-msgid "gallery.examples"
-msgstr "Примеры"
-
 msgid "gallery.export"
 msgstr "Экспорт"
 
 msgid "gallery.galleryImage"
-msgstr "Картина в галлерею"
+msgstr "Картина в галерею"
 
 msgid "gallery.galleryTitle"
-msgstr "Галлерея"
+msgstr "Галерея"
 
 msgid "gallery.import"
 msgstr "Импорт"
@@ -86,14 +83,17 @@ msgstr "Импорт завершен успешно"
 msgid "gallery.importModalTitle"
 msgstr "Импорт программ в библиотеку"
 
-msgid "gallery.library"
-msgstr "Библиотека"
-
 msgid "gallery.notLoggedInGalleryMessage"
 msgstr "Для синхронизации персональной библиотеки необходимо войти в свой аккаунт."
 
-msgid "gallery.shapes"
-msgstr "Фигуры"
+msgid "gallery.personalLibrary"
+msgstr "Мои программы"
+
+msgid "gallery.samplesElements"
+msgstr "Элементы"
+
+msgid "gallery.samplesGallery"
+msgstr "Галерея"
 
 msgid "gallery.wrongFileFormatForImport"
 msgstr "Данный формат файла не поддерживается."
@@ -117,10 +117,10 @@ msgid "program.imageUrl"
 msgstr "Публичная ссылка"
 
 msgid "program.outputPanelTitle"
-msgstr "Картина"
+msgstr "Графика"
 
 msgid "program.playgroundTitle"
-msgstr "Мастерская"
+msgstr "Песочница"
 
 msgid "program.pleaseEnterNameForYourProgram"
 msgstr "Введите название своей программы"
@@ -153,7 +153,7 @@ msgid "program.saveAs"
 msgstr "Сохранить как ..."
 
 msgid "program.saveToLibraryModalTitle"
-msgstr "Сохранить в библиотеке"
+msgstr "Сохранить"
 
 msgid "program.screenshotModalTitle"
 msgstr "Скриншот"
@@ -255,7 +255,13 @@ msgid "tutorial.stepIndicator"
 msgstr "Шаг %1$s из %2$s"
 
 msgid "tutorial.tutorialPanelTitle"
-msgstr "Учебник"
+msgstr "Урок"
+
+msgid "tutorial.tutorialsLevel0"
+msgstr "Начальный уровень"
+
+msgid "tutorial.tutorialsLevel1"
+msgstr "Продвинутый уровень"
 
 msgid "tutorial.tutorialsTitle"
 msgstr "Учебники"
@@ -270,10 +276,10 @@ msgid "welcome.galleryLinkHeader"
 msgstr "Галерея"
 
 msgid "welcome.playgroundLinkDescription"
-msgstr "Это мастерская, где вы можете писать и запускать свои программы LOGO в интерактивном режиме."
+msgstr "Здесь вы можете писать и запускать свои программы LOGO в интерактивном режиме."
 
 msgid "welcome.playgroundLinkHeader"
-msgstr "Мастерская"
+msgstr "Песочница"
 
 msgid "welcome.title"
 msgstr "Добро пожаловать!"

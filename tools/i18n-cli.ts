@@ -2,7 +2,7 @@ import * as fs from "fs";
 import * as PO from "pofile";
 
 import { $T, Plural, Template } from "../src/i18n-strings";
-const poFilenames = ["content/en/strings.po", "content/ru/strings.po"];
+const poFilenames = ["content/strings.po", "content/strings.ru.po"];
 
 // scan the $T object and prepare records for PO file
 const newEntries: { [name: string]: PO.Item } = {};
