@@ -62,10 +62,7 @@ msgid "gallery.chooseAFile"
 msgstr "Choose a file…"
 
 msgid "gallery.emptyLibrary"
-msgstr "You do not have any programs stored in personal library yet."
-
-msgid "gallery.examples"
-msgstr "Examples"
+msgstr "You do not have any programs stored in your personal library yet."
 
 msgid "gallery.export"
 msgstr "Export"
@@ -85,14 +82,17 @@ msgstr "Import completed"
 msgid "gallery.importModalTitle"
 msgstr "Import programs to library"
 
-msgid "gallery.library"
-msgstr "Library"
-
 msgid "gallery.notLoggedInGalleryMessage"
-msgstr "As you are not signed in, your library is stored in browser's local storage. Please sign in if you want to synchronize your library."
+msgstr "As you are not signed in, your personal library is stored in your browser's local storage. Please sign in if you want to synchronize your library."
 
-msgid "gallery.shapes"
-msgstr "Shapes"
+msgid "gallery.personalLibrary"
+msgstr "Personal"
+
+msgid "gallery.samplesElements"
+msgstr "Elements"
+
+msgid "gallery.samplesGallery"
+msgstr "Gallery"
 
 msgid "gallery.wrongFileFormatForImport"
 msgstr "Looks like import file is corrupted or this format is not supported."

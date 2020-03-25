@@ -43,7 +43,7 @@ function loadSectionThunk(section: GallerySection, options?: { forceLoad?: boole
         case GallerySection.ExamplesAdvanced:
           {
             const samplesRepo = resolve(GallerySamplesRepository);
-            const samples = await samplesRepo.getAll("samples");
+            const samples = await samplesRepo.getAll("gallery");
             samples.sort(sortingFunction);
             dispatch(galleryActionCreator.loadSectionCompleted(section, samples));
           }
@@ -51,7 +51,7 @@ function loadSectionThunk(section: GallerySection, options?: { forceLoad?: boole
         case GallerySection.ExamplesBasic:
           {
             const samplesRepo = resolve(GallerySamplesRepository);
-            const samples = await samplesRepo.getAll("shapes");
+            const samples = await samplesRepo.getAll("elements");
             samples.sort(sortingFunction);
             dispatch(galleryActionCreator.loadSectionCompleted(section, samples));
           }

@@ -71,8 +71,36 @@ export class Gallery extends React.Component<Props, State> {
               <Loading fullPage isLoading />
             ) : (
               <>
-                {this.props.activeSection === GallerySection.PersonalLibrary && (
+                {this.props.activeSection === GallerySection.PersonalLibrary &&
+                  !this.props.user.isLoggedIn && (
+                    <div className="gallery-message-box">
+                      <InfoBox
+                        content={
+                          <article>
+                            <p>{$T.gallery.notLoggedInGalleryMessage}</p>
+                            <Link to={Routes.loginPage.build({})}>{$T.login.title}</Link>
+                          </article>
+                        }
+                      />
+                    </div>
+                  )}
+
+                {this.props.programs.length > 0 ? (
                   <>
+                    <TileGrid
+                      tileWidth={250}
+                      tileWidthMobile={170}
+                      tiles={this.props.programs.map(pr => this.renderProgramCard(pr))}
+                    />
+                  </>
+                ) : (
+                  this.props.activeSection === GallerySection.PersonalLibrary && (
+                    <NoData title="" description={$T.gallery.emptyLibrary} />
+                  )
+                )}
+
+                {this.props.activeSection === GallerySection.PersonalLibrary && (
+                  <div className="import-export-buttons">
                     <div className="field is-grouped export-import-buttons-group">
                       <p className="control">
                         <button
@@ -92,37 +120,7 @@ export class Gallery extends React.Component<Props, State> {
                       )}
                       <ImportProgramsModalContainer />
                     </div>
-                  </>
-                )}
-
-                {this.props.programs.length > 0 ? (
-                  <>
-                    <TileGrid
-                      tileWidth={250}
-                      tileWidthMobile={170}
-                      tiles={this.props.programs.map(pr => this.renderProgramCard(pr))}
-                    />
-                    <br />
-                    {this.props.activeSection === GallerySection.PersonalLibrary &&
-                      !this.props.user.isLoggedIn && (
-                        <div className="gallery-message-box">
-                          <InfoBox
-                            content={
-                              <article>
-                                <p>{$T.gallery.notLoggedInGalleryMessage}</p>
-                                <p>
-                                  <Link to={Routes.loginPage.build({})}>Sign in</Link>
-                                </p>
-                              </article>
-                            }
-                          />
-                        </div>
-                      )}
-                  </>
-                ) : (
-                  this.props.activeSection === GallerySection.PersonalLibrary && (
-                    <NoData title="" description={$T.gallery.emptyLibrary} />
-                  )
+                  </div>
                 )}
               </>
             )}
@@ -142,8 +140,8 @@ export class Gallery extends React.Component<Props, State> {
             })}
           >
             <a onClick={() => this.props.selectSection(GallerySection.ExamplesAdvanced)}>
-              <i className="fas fa-flask" />
-              &nbsp;<span>{$T.gallery.examples}</span>
+              <i className="fas fa-images" />
+              &nbsp;<span>{$T.gallery.samplesGallery}</span>
             </a>
           </li>
           <li
@@ -153,7 +151,7 @@ export class Gallery extends React.Component<Props, State> {
           >
             <a onClick={() => this.props.selectSection(GallerySection.ExamplesBasic)}>
               <i className="fa fa-puzzle-piece" />
-              &nbsp;<span>{$T.gallery.shapes}</span>
+              &nbsp;<span>{$T.gallery.samplesElements}</span>
             </a>
           </li>
           <li
@@ -162,9 +160,9 @@ export class Gallery extends React.Component<Props, State> {
             })}
           >
             <a onClick={() => this.props.selectSection(GallerySection.PersonalLibrary)}>
-              <i className="fas fa-images" />
+              <i className="fas fa-flask" />
               &nbsp;
-              <span>{$T.gallery.library}</span>
+              <span>{$T.gallery.personalLibrary}</span>
             </a>
           </li>
         </ul>

@@ -46,10 +46,10 @@ export const $T = {
   gallery: {
     galleryTitle: "Gallery",
     galleryImage: "Gallery image",
-    library: "Library",
-    examples: "Examples",
-    shapes: "Shapes",
-    emptyLibrary: "You do not have any programs stored in personal library yet.",
+    personalLibrary: "Personal",
+    samplesGallery: "Gallery",
+    samplesElements: "Elements",
+    emptyLibrary: "You do not have any programs stored in your personal library yet.",
     import: "Import",
     export: "Export",
     importCompletedTitle: "Import completed",
@@ -59,7 +59,7 @@ export const $T = {
     importModalTitle: "Import programs to library",
     chooseAFile: "Choose a file…",
     notLoggedInGalleryMessage:
-      "As you are not signed in, your library is stored in browser's local storage. Please sign in if you want to synchronize your library."
+      "As you are not signed in, your personal library is stored in your browser's local storage. Please sign in if you want to synchronize your library."
   },
   tutorial: {
     tutorialsTitle: "Tutorials",
