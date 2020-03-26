@@ -13,7 +13,7 @@ const gitRevisionPlugin = new GitRevisionPlugin();
 const packageJson = require("./package.json");
 const appGitVersion = gitRevisionPlugin.version();
 
-module.exports = function(env) {
+module.exports = function (env) {
   env = env || {};
   const isProduction = !!env.prod;
   const isDevBuild = !isProduction;
@@ -103,9 +103,8 @@ module.exports = function(env) {
       }),
 
       new HtmlWebpackPlugin({
-        template: "src/index.ejs",
         filename: "index.html",
-        inject: false,
+        template: "src/index.ejs",
         variables: {
           packageJson: packageJson,
           appGitVersion: appGitVersion,
