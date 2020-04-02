@@ -6,9 +6,6 @@ Online environment for LOGO language programming and learning.
 
 ## Website
 
-Application is automatically deployed to these locations:
+[![Build Status](https://travis-ci.org/logolang/logo-playground.svg?branch=master)](https://travis-ci.org/logolang/logo-playground)
 
-| Branch name   | Url                                                          | Build status                                                                                                                        |
-| ------------- | ------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------- |
-| master (main) | [https://logolang.github.io](https://logolang.github.io)     | [![Build Status](https://travis-ci.org/logolang/logo-playground.svg?branch=master)](https://travis-ci.org/logolang/logo-playground) |
-| stage         | [https://logolang.netlify.com](https://logolang.netlify.com) | [![Build Status](https://travis-ci.org/logolang/logo-playground.svg?branch=stage)](https://travis-ci.org/logolang/logo-playground)  |
+Application is automatically deployed to [https://logolang.github.io](https://logolang.github.io).

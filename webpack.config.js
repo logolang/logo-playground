@@ -108,6 +108,7 @@ module.exports = function (env) {
           appGitVersion: appGitVersion,
           appConfig: appConfig
         },
+        inject: false,
         excludeChunks: ["logo-animation"]
       }),
 

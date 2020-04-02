@@ -34,7 +34,7 @@
     <script src="logo-animation.js"></script>
 
     <div id="app-container">
-      <logo-animation />
+      <logo-animation></logo-animation>
     </div>
 
     <link
@@ -75,19 +75,16 @@
     </script>
 
     <!--Styles-->
-    <% for (var css in htmlWebpackPlugin.files.css) { %>
-    <link href="<%=htmlWebpackPlugin.files.css[css]+'?'+appGitVersion%>" rel="stylesheet" />
+    <% for (const css of htmlWebpackPlugin.files.css) { %>
+    <link href="<%=css+'?'+appGitVersion%>" rel="stylesheet" />
     <% } %>
     <!--Scripts-->
-    <% for (var chunk in htmlWebpackPlugin.files.chunks) { %>
-    <script src="<%=htmlWebpackPlugin.files.chunks[chunk].entry+'?'+appGitVersion%>"></script>
+    <% for (const chunk of htmlWebpackPlugin.files.js) { %>
+    <script src="<%=chunk+'?'+appGitVersion%>"></script>
     <% } %>
 
     <script>
-      setTimeout(function () {
-        app.run();
-      }, 2000);
-      //
+      app.run();
     </script>
   </body>
 </html>
