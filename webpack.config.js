@@ -26,7 +26,8 @@ module.exports = function (env) {
     mode: isDevBuild ? "development" : "production",
 
     entry: {
-      app: "./src/app.tsx"
+      app: "./src/app.tsx",
+      "logo-animation": "./src/web-components/logo-animation"
     },
 
     optimization: {
@@ -53,10 +54,7 @@ module.exports = function (env) {
           test: /\.tsx?$/,
           loader: "ts-loader",
           options: {
-            transpileOnly: true,
-            compilerOptions: {
-              target: isProduction ? "es5" : "ES2017"
-            }
+            transpileOnly: true
           }
         },
         { test: /\.(png|jpg|jpeg|gif|svg)$/, loader: "url-loader", options: { limit: 200000 } },
@@ -109,7 +107,8 @@ module.exports = function (env) {
           packageJson: packageJson,
           appGitVersion: appGitVersion,
           appConfig: appConfig
-        }
+        },
+        excludeChunks: ["logo-animation"]
       }),
 
       isProduction && new MiniCssExtractPlugin({ filename: "[name].css" }),

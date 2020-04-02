@@ -7,45 +7,25 @@ interface Props {
   fullPage?: boolean;
 }
 
-export class Loading extends React.Component<Props> {
-  private loadingContainer?: HTMLElement;
-
-  componentDidMount() {
-    this.startAnimation();
+export function Loading(props: Props) {
+  if (!props.isLoading) {
+    return <></>;
   }
 
-  componentDidUpdate(prevProps: Props) {
-    if (prevProps.isLoading != this.props.isLoading) {
-      this.startAnimation();
-    }
-  }
-
-  startAnimation() {
-    if (this.props.isLoading) {
-      (window as any).showLogoAnimation(this.loadingContainer);
-    }
-  }
-
-  render() {
-    if (!this.props.isLoading) {
-      return <></>;
-    }
-
-    if (this.props.fullPage) {
-      return (
-        <div className="ex-loading-indicator-fullpage">
-          <div
-            ref={ref => (this.loadingContainer = ref || undefined)}
-            className="ex-loading-indicator"
-          ></div>
-        </div>
-      );
-    }
+  if (props.fullPage) {
     return (
-      <div
-        ref={ref => (this.loadingContainer = ref || undefined)}
-        className="ex-loading-indicator"
-      ></div>
+      <div className="ex-loading-indicator-fullpage">
+        <div
+          className="ex-loading-indicator"
+          dangerouslySetInnerHTML={{ __html: "<logo-animation />" }}
+        ></div>
+      </div>
     );
   }
+  return (
+    <div
+      className="ex-loading-indicator"
+      dangerouslySetInnerHTML={{ __html: "<logo-animation />" }}
+    ></div>
+  );
 }

@@ -1,6 +1,3 @@
-// Include polyfills to work in IE11
-import "core-js";
-
 import "ui/_styles/app.less";
 
 import * as React from "react";
