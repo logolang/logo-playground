@@ -12,20 +12,12 @@ export function Loading(props: Props) {
     return <></>;
   }
 
-  if (props.fullPage) {
-    return (
-      <div className="ex-loading-indicator-fullpage">
-        <div
-          className="ex-loading-indicator"
-          dangerouslySetInnerHTML={{ __html: "<logo-animation />" }}
-        ></div>
-      </div>
-    );
-  }
-  return (
-    <div
-      className="ex-loading-indicator"
-      dangerouslySetInnerHTML={{ __html: "<logo-animation />" }}
-    ></div>
+  const renderLoader = () => (
+    <div className="ex-loading-indicator">{React.createElement("logo-animation")}</div>
   );
+
+  if (props.fullPage) {
+    return <div className="ex-loading-indicator-fullpage">{renderLoader()}</div>;
+  }
+  return renderLoader();
 }
