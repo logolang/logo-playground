@@ -134,6 +134,9 @@ msgstr "У вас есть изменения в программе."
 msgid "program.programName"
 msgstr "Название программы"
 
+msgid "program.programSavedToLibrarySuccess"
+msgstr "Программа сохранена успешно"
+
 msgid "program.publicUrl"
 msgstr "Публичная ссылка"
 

@@ -41,7 +41,8 @@ export const $T = {
     imagePreview: "Image preview",
     imageUrl: "Image url",
     pleaseEnterNameForYourProgram: "Please enter the name for your program",
-    formatDocument: "Format code"
+    formatDocument: "Format code",
+    programSavedToLibrarySuccess: "Your program was saved to personal library successfully"
   },
   gallery: {
     galleryTitle: "Gallery",

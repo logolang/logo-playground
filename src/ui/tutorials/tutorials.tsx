@@ -51,6 +51,7 @@ interface Props {
   stopProgram(): void;
   codeChanged(code: string): void;
   formatCode(): void;
+  saveAsProgram(newName: string, screenShot: string): void;
 }
 
 export class TutorialsPage extends React.Component<Props, State> {
@@ -108,6 +109,10 @@ export class TutorialsPage extends React.Component<Props, State> {
     this.props.formatCode();
   };
 
+  handleSaveAs = (newName: string) => {
+    this.props.saveAsProgram(newName, this.getSmallProgramImage());
+  };
+
   render(): JSX.Element {
     return (
       <div className="ex-page-container">
@@ -143,6 +148,7 @@ export class TutorialsPage extends React.Component<Props, State> {
                 createScreenShotImageBase64={this.getProgramImage}
                 createSmallScreenShotImageBase64={this.getSmallProgramImage}
                 onFormatDocument={this.handleFormatDocument}
+                onSaveAs={this.handleSaveAs}
               />
               <CodeInput
                 className="code-input-container"
@@ -156,9 +162,7 @@ export class TutorialsPage extends React.Component<Props, State> {
             </ReactGoldenLayoutPanel>
             <ReactGoldenLayoutPanel
               id="output-panel"
-              title={`<i class="fas fa-desktop" aria-hidden="true"></i> ${
-                $T.program.outputPanelTitle
-              }`}
+              title={`<i class="fas fa-desktop" aria-hidden="true"></i> ${$T.program.outputPanelTitle}`}
             >
               <LogoExecutor
                 ref={ref => (this.logoExecutorRef = ref || undefined)}
@@ -172,9 +176,7 @@ export class TutorialsPage extends React.Component<Props, State> {
             </ReactGoldenLayoutPanel>
             <ReactGoldenLayoutPanel
               id="tutorial-panel"
-              title={`<i class="fa fa-graduation-cap" aria-hidden="true"></i> ${
-                $T.tutorial.tutorialPanelTitle
-              }`}
+              title={`<i class="fa fa-graduation-cap" aria-hidden="true"></i> ${$T.tutorial.tutorialPanelTitle}`}
             >
               <Loading isLoading={this.props.isStepLoading && !this.props.isLoading} />
 

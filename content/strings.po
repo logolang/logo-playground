@@ -133,6 +133,9 @@ msgstr "This program has changes"
 msgid "program.programName"
 msgstr "Program name"
 
+msgid "program.programSavedToLibrarySuccess"
+msgstr "Your program was saved to personal library successfully"
+
 msgid "program.publicUrl"
 msgstr "Public url"
 
