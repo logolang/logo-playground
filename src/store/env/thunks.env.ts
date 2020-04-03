@@ -3,7 +3,7 @@ import { Action } from "redux";
 import { GetState } from "store/store";
 
 import { envActionCreator } from "./actions.env";
-import { loadConfig } from "services/app-config";
+import { getConfig as getAppConfig } from "services/app-config";
 import { DISetup } from "di-setup";
 import { resolve } from "utils/di";
 import { AuthProvider, AuthService } from "services/infrastructure/auth-service";
@@ -26,7 +26,7 @@ export const envThunks = {
 function initEnvThunk() {
   return async (dispatch: Dispatch<Action>, getState: GetState) => {
     dispatch(envActionCreator.initEnvStarted());
-    const appConfig = await loadConfig();
+    const appConfig = getAppConfig();
     const initInfo = await DISetup.setup({ appConfig });
 
     dispatch(envActionCreator.applyUserSettingsCompleted(initInfo.userSettings));

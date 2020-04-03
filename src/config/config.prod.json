@@ -1,5 +1,4 @@
 {
-  "type": "prod",
   "services": {
     "appApiUrl": "",
     "imgurServiceUrl": "https://api.imgur.com/3/image",

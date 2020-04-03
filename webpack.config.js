@@ -7,7 +7,6 @@ const GitRevisionPlugin = require("git-revision-webpack-plugin");
 const BundleAnalyzerPlugin = require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const WatchIgnorePlugin = webpack.WatchIgnorePlugin;
-const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
 const gitRevisionPlugin = new GitRevisionPlugin();
 
 const packageJson = require("./package.json");
@@ -17,8 +16,8 @@ module.exports = function (env) {
   env = env || {};
   const isProduction = !!env.prod;
   const isDevBuild = !isProduction;
-  const configFileName = isProduction ? "config.prod.json" : "config.json";
-  const appConfig = require("./content/config/" + configFileName);
+  const configFileName = isProduction ? "config.prod.json" : "config.dev.json";
+  const appConfig = require("./src/config/" + configFileName);
 
   console.log(`building app bundle with webpack. production mode:${isProduction}`);
 
@@ -50,13 +49,7 @@ module.exports = function (env) {
 
     module: {
       rules: [
-        {
-          test: /\.tsx?$/,
-          loader: "ts-loader",
-          options: {
-            transpileOnly: true
-          }
-        },
+        { test: /\.tsx?$/, loader: "ts-loader" },
         { test: /\.(png|jpg|jpeg|gif|svg)$/, loader: "url-loader", options: { limit: 200000 } },
         { test: /\.hbs$/, loader: "handlebars-loader" },
         { test: /\.(txt|html|md|po)$/, loader: "raw-loader" },
@@ -78,15 +71,7 @@ module.exports = function (env) {
 
       new WatchIgnorePlugin([path.resolve(__dirname, "./dist/")]),
 
-      new ForkTsCheckerWebpackPlugin(),
-
-      new CopyWebpackPlugin([
-        { from: "content", to: "content", ignore: ["**/config.json", "**/config.prod.json"] },
-        {
-          from: "content/config/" + configFileName,
-          to: "content/config/config.json"
-        }
-      ]),
+      new CopyWebpackPlugin([{ from: "content", to: "content" }]),
 
       new webpack.DefinePlugin({
         // Custom object injected to application and contains build version and package info
@@ -97,7 +82,9 @@ module.exports = function (env) {
           description: packageJson.description,
           version: packageJson.version,
           builtOn: new Date().toLocaleDateString() + " " + new Date().toLocaleTimeString()
-        })
+        }),
+        // App config also is injected in order to avoid ajax call to load it later
+        APP_CONFIG: JSON.stringify(appConfig)
       }),
 
       new HtmlWebpackPlugin({
@@ -106,6 +93,7 @@ module.exports = function (env) {
         inject: false,
         excludeChunks: ["logo-animation"],
         minify: false,
+        // Custom variables used in html template
         __gaId: appConfig.services.googleAnalyticsTrackingId,
         __version: appGitVersion
       }),
