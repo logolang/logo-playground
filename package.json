@@ -76,6 +76,8 @@
     "file-loader": "6.0.0",
     "fork-ts-checker-webpack-plugin": "4.1.1",
     "git-revision-webpack-plugin": "3.0.4",
+    "handlebars": "4.7.5",
+    "handlebars-loader": "1.7.1",
     "html-webpack-plugin": "4.0.1",
     "husky": "4.2.3",
     "ignore-styles": "5.0.1",

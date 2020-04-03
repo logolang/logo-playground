@@ -148,7 +148,7 @@ function ThemesManager(gitVersion) {
     }
   ];
 
-  this.getThemeByName = function(themeName) {
+  this.getThemeByName = function (themeName) {
     var theme = null;
     for (var i = 0; i < this.themes.length; ++i) {
       if (this.themes[i].name == themeName) {
@@ -160,15 +160,15 @@ function ThemesManager(gitVersion) {
     return theme;
   };
 
-  this.getCurrentTheme = function() {
+  this.getCurrentTheme = function () {
     var themeName = window.localStorage.getItem(appThemeNameLocalStorageKey);
     return this.getThemeByName(themeName);
   };
 
-  this.setTheme = function(theme) {
+  this.setTheme = function (theme) {
     window.localStorage.setItem(appThemeNameLocalStorageKey, theme.name);
     document.body.className = theme.bodyClass;
-    injectCssLinks(theme.styleLinks, theme.name, function() {
+    injectCssLinks(theme.styleLinks, theme.name, function () {
       // remove old theme files
       var themeContainer = document.getElementById("THEME_CSS_CONTAINER");
       var themeLinks = themeContainer.querySelectorAll("[data-theme-name]");
@@ -189,7 +189,7 @@ function ThemesManager(gitVersion) {
       link.setAttribute("rel", "stylesheet");
       link.setAttribute("type", "text/css");
       link.setAttribute("href", linkUrl + "?v=" + gitVersion);
-      link.addEventListener("load", function() {
+      link.addEventListener("load", function () {
         --linksToWait;
         if (linksToWait == 0) {
           allLoadedCallback();
@@ -199,7 +199,4 @@ function ThemesManager(gitVersion) {
       themeContainer.appendChild(link);
     }
   }
-
-  // Initialize theme
-  this.setTheme(this.getCurrentTheme());
 }

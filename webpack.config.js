@@ -102,14 +102,12 @@ module.exports = function (env) {
 
       new HtmlWebpackPlugin({
         filename: "index.html",
-        template: "src/index.ejs",
-        variables: {
-          packageJson: packageJson,
-          appGitVersion: appGitVersion,
-          appConfig: appConfig
-        },
+        template: "src/index.hbs",
         inject: false,
-        excludeChunks: ["logo-animation"]
+        excludeChunks: ["logo-animation"],
+        minify: false,
+        __gaId: appConfig.services.googleAnalyticsTrackingId,
+        __version: appGitVersion
       }),
 
       isProduction && new MiniCssExtractPlugin({ filename: "[name].css" }),

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html style="overflow: hidden;">
+
+<head>
+  <meta property="og:title" content="Logo playground" />
+  <meta property="og:description" content="Online environment for programming with Logo language" />
+  <meta property="og:image" content="https://logolang.github.io/content/images/square-logo-light-colored-200.png" />
+
+  <title>Logo playground</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+  <link href="content/favicon.ico" rel="icon" type="image/x-icon" />
+  <script src="logo-animation.js?{{htmlWebpackPlugin.options.__version}}"></script>
+</head>
+
+<body style="margin: 0px;">
+  <noscript>
+    Your browser does not support JavaScript! This web application is written fully in JavaScript,
+    please enable it if you want to run the application.
+  </noscript>
+
+  <div id="app-container">
+    <logo-animation></logo-animation>
+  </div>
+
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inconsolata:400,700&amp;subset=latin-ext" />
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
+    integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous" />
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id={{htmlWebpackPlugin.options.__gaId}}"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+    gtag("js", new Date());
+    gtag("config", "{{htmlWebpackPlugin.options.__gaId}}");
+  </script>
+
+  <script src="https://apis.google.com/js/api.js"></script>
+
+  <link href="content/css/codemirror/codemirror.css" rel="stylesheet" />
+  <link href="content/css/golden-layout/goldenlayout-base.css" rel="stylesheet" />
+
+  <div id="THEME_CSS_CONTAINER"></div>
+  <script src="content/css/themes-manager.js?{{htmlWebpackPlugin.options.__version}}"></script>
+  <script>
+    const themesManagerGlobalInstance = new ThemesManager("{{htmlWebpackPlugin.options.__version}}");
+    themesManagerGlobalInstance.setTheme(themesManagerGlobalInstance.getCurrentTheme());
+  </script>
+
+  <!--styles-->
+  {{#each htmlWebpackPlugin.files.css}}
+  <link href="{{this}}?{{../htmlWebpackPlugin.options.__version}}" rel="stylesheet" />
+  {{/each}}
+
+  <!--scripts-->
+  {{#each htmlWebpackPlugin.files.js}}
+  <script src="{{this}}?{{../htmlWebpackPlugin.options.__version}}"></script>
+  {{/each}}
+
+  <script>
+    app.run();
+  </script>
+</body>
+
+</html>
