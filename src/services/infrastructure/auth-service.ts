@@ -48,13 +48,14 @@ export class AuthService {
     const loginStatus = this.localStorage.getValue();
     if (loginStatus.isLoggedIn) {
       switch (loginStatus.authProvider) {
-        case AuthProvider.google:
+        case AuthProvider.google: {
           const ga = new GoogleAuthService(this.config.services.googleClientId);
           const user = await ga.init();
           if (user) {
             return this.getUserData(user);
           }
           break;
+        }
       }
     }
     return anonymousUser;
@@ -77,10 +78,11 @@ export class AuthService {
     const loginStatus = this.localStorage.getValue();
     if (loginStatus.isLoggedIn) {
       switch (loginStatus.authProvider) {
-        case AuthProvider.google:
+        case AuthProvider.google: {
           const ga = new GoogleAuthService(this.config.services.googleClientId);
           await ga.signOut();
           break;
+        }
       }
     }
     this.localStorage.setValue({ isLoggedIn: false, authProvider: AuthProvider.none });

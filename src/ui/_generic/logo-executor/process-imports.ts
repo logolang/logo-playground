@@ -1,9 +1,22 @@
-export async function processImports(
-  code: string,
-  resolver: (moduleName: string) => Promise<string>
-): Promise<string> {
-  const resultLines = await processImportsRecursive(code, resolver, true);
-  return resultLines.join("\n");
+function keepOnlyFunctions(codelines: string[]): string[] {
+  const resultLines: string[] = [];
+  let isInFunction = false;
+  for (const line of codelines) {
+    const linetocheck = line.trim().toLowerCase();
+    if (linetocheck.startsWith("to ")) {
+      isInFunction = true;
+    }
+
+    if (isInFunction) {
+      resultLines.push(line);
+    }
+
+    if (linetocheck.endsWith("end")) {
+      isInFunction = false;
+    }
+  }
+
+  return resultLines;
 }
 
 async function processImportsRecursive(
@@ -33,23 +46,10 @@ async function processImportsRecursive(
   return resultLines;
 }
 
-function keepOnlyFunctions(codelines: string[]): string[] {
-  const resultLines: string[] = [];
-  let isInFunction = false;
-  for (const line of codelines) {
-    const linetocheck = line.trim().toLowerCase();
-    if (linetocheck.startsWith("to ")) {
-      isInFunction = true;
-    }
-
-    if (isInFunction) {
-      resultLines.push(line);
-    }
-
-    if (linetocheck.endsWith("end")) {
-      isInFunction = false;
-    }
-  }
-
-  return resultLines;
+export async function processImports(
+  code: string,
+  resolver: (moduleName: string) => Promise<string>
+): Promise<string> {
+  const resultLines = await processImportsRecursive(code, resolver, true);
+  return resultLines.join("\n");
 }

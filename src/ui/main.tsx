@@ -22,9 +22,10 @@ export class Main extends React.Component<Props, State> {
         />
         <Loading isLoading={this.props.isLoading} fullPage />
         <HashRouter
-          ref={(router: any) => {
+          ref={router => {
             NavigationService.setNavigationHandler(route => {
-              router && router.history.push(route);
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              router && (router as any).history.push(route);
             });
           }}
         >

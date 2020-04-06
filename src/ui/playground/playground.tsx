@@ -67,7 +67,7 @@ export class Playground extends React.Component<Props, State> {
   }
 
   async componentDidMount() {
-    this.importsResolver.reset();
+    await this.importsResolver.reset();
     this.props.loadProgram(this.props.storageType, this.props.programId);
   }
 
@@ -76,7 +76,7 @@ export class Playground extends React.Component<Props, State> {
       oldProps.storageType != this.props.storageType ||
       oldProps.programId != this.props.programId
     ) {
-      this.importsResolver.reset();
+      await this.importsResolver.reset();
       this.props.loadProgram(this.props.storageType, this.props.programId);
     }
   }
@@ -203,9 +203,7 @@ export class Playground extends React.Component<Props, State> {
     } else {
       title += `${$T.program.program}: <strong>${this.props.programName}</strong>`;
       if (this.props.hasModifications) {
-        title += ` <i class="fa fa-asterisk icon-sm" aria-hidden="true" title="${
-          $T.program.programHasChanges
-        }"></i>`;
+        title += ` <i class="fa fa-asterisk icon-sm" aria-hidden="true" title="${$T.program.programHasChanges}"></i>`;
       }
     }
     return title;

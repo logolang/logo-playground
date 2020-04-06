@@ -16,7 +16,7 @@ export class GalleryImportService {
   constructor(private galleryService: GalleryService) {}
 
   async import(programsHtml: string) {
-    const programs = new ProgramsHtmlSerializer(window).parse(programsHtml);
+    const programs = new ProgramsHtmlSerializer(window.document).parse(programsHtml);
     return this.importAll(programs);
   }
 

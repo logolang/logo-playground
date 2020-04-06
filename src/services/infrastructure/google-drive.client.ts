@@ -1,37 +1,40 @@
 import { RandomHelper } from "utils/random";
 
-export interface IGoogleFileInfo {
+export interface GoogleFileInfo {
   name: string;
   id: string;
   md5Checksum: string;
   trashed: boolean;
 }
 
-export interface IGoogleFilesListResponse {
-  files: IGoogleFileInfo[];
+export interface GoogleFilesListResponse {
+  files: GoogleFileInfo[];
 }
 
+// Google API global variable
+declare const gapi: unknown;
+
 export class GoogleDriveClient {
-  private get gapi(): any {
-    const globalGapi = (window as any).gapi;
-    if (!globalGapi) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private getGapi(): any {
+    if (!gapi) {
       throw new Error("Google api is not detected");
     }
-    return globalGapi;
+    return gapi;
   }
 
-  public async listFiles(query: string): Promise<IGoogleFilesListResponse> {
-    const response = await this.gapi.client.drive.files.list({
+  public async listFiles(query: string): Promise<GoogleFilesListResponse> {
+    const response = await this.getGapi().client.drive.files.list({
       fields: "nextPageToken, files(id, name, md5Checksum, trashed)",
       pageSize: 100,
       q: query
     });
-    const result: IGoogleFilesListResponse = response.result;
+    const result: GoogleFilesListResponse = response.result;
     return result;
   }
 
   public async downloadFileContent(fileId: string): Promise<string> {
-    const authToken = this.gapi.client.getToken();
+    const authToken = this.getGapi().client.getToken();
     const url = `https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`;
     const result = await fetch(url, {
       method: "GET",
@@ -50,7 +53,7 @@ export class GoogleDriveClient {
     fileContent: string,
     fileContentType: string
   ): Promise<void> {
-    const authToken = this.gapi.client.getToken();
+    const authToken = this.getGapi().client.getToken();
     const formBoundary = "__" + RandomHelper.getRandomObjectId(32) + "__";
     const requestBody = this.createFileUploadBody(
       formBoundary,
@@ -59,14 +62,14 @@ export class GoogleDriveClient {
       fileContentType
     );
     const url = "https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart";
+    const headers = new Headers();
+    headers.append("Authorization", authToken.token_type + " " + authToken.access_token);
+    headers.append("Accept", "application/json");
+    headers.append("Content-Type", "multipart/related; boundary=" + formBoundary);
+    headers.append("Content-Length", requestBody.length.toString());
     await fetch(url, {
       method: "POST",
-      headers: new Headers({
-        Authorization: authToken.token_type + " " + authToken.access_token,
-        Accept: "application/json",
-        "Content-Type": "multipart/related; boundary=" + formBoundary,
-        "Content-Length": requestBody.length
-      } as any),
+      headers,
       body: requestBody
     });
   }
@@ -77,7 +80,7 @@ export class GoogleDriveClient {
     fileContent: string,
     fileContentType: string
   ): Promise<void> {
-    const authToken = this.gapi.client.getToken();
+    const authToken = this.getGapi().client.getToken();
     const formBoundary = "__" + RandomHelper.getRandomObjectId(32) + "__";
     const requestBody = this.createFileUploadBody(
       formBoundary,
@@ -86,14 +89,14 @@ export class GoogleDriveClient {
       fileContentType
     );
     const url = `https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=multipart`;
+    const headers = new Headers();
+    headers.append("Authorization", authToken.token_type + " " + authToken.access_token);
+    headers.append("Accept", "application/json");
+    headers.append("Content-Type", "multipart/related; boundary=" + formBoundary);
+    headers.append("Content-Length", requestBody.length.toString());
     await fetch(url, {
       method: "PATCH",
-      headers: new Headers({
-        Authorization: authToken.token_type + " " + authToken.access_token,
-        Accept: "application/json",
-        "Content-Type": "multipart/related; boundary=" + formBoundary,
-        "Content-Length": requestBody.length
-      } as any),
+      headers,
       body: requestBody
     });
   }

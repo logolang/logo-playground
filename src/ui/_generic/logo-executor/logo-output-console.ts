@@ -1,12 +1,16 @@
-function $(s: any) {
-  return document.querySelector(s);
+function $(selector: string) {
+  const elt = document.querySelector(selector);
+  if (!elt) {
+    throw new Error("Cant find element in dom: " + selector);
+  }
+  return elt as HTMLElement;
 }
 
 export class LogoOutputConsole {
   constructor(private overlaySelector: string) {}
 
-  read(s: any) {
-    return window.prompt(s ? s : "");
+  read(s?: string) {
+    return window.prompt(s || "");
   }
 
   write(...args: []) {

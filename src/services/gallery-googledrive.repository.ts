@@ -1,13 +1,13 @@
 import { RandomHelper } from "utils/random";
 import { AppConfig } from "services/app-config";
 import { ProgramModel, ProgramStorageType } from "services/program.model";
-import { GoogleDriveClient, IGoogleFileInfo } from "services/infrastructure/google-drive.client";
+import { GoogleDriveClient, GoogleFileInfo } from "services/infrastructure/google-drive.client";
 import { GalleryRemoteRepository } from "./gallery-remote.repository";
 import { ProgramsHtmlSerializer } from "./programs-html-serializer";
 
 const storageFileContentType = "text/html; charset=UTF-8";
 
-interface IStoredData {
+interface StoredData {
   fileId: string;
   fileHash: string;
   programs: ProgramModel[];
@@ -15,8 +15,8 @@ interface IStoredData {
 
 export class GalleryGoogleDriveRepository implements GalleryRemoteRepository {
   private googleDriveClient: GoogleDriveClient;
-  private serializationService = new ProgramsHtmlSerializer(window);
-  private cachedData?: IStoredData;
+  private serializationService = new ProgramsHtmlSerializer(window.document);
+  private cachedData?: StoredData;
 
   constructor(private userName: string, private userImage: string, private appConfig: AppConfig) {
     this.googleDriveClient = new GoogleDriveClient();
@@ -101,7 +101,7 @@ export class GalleryGoogleDriveRepository implements GalleryRemoteRepository {
     }
   }
 
-  private async getStoredData(): Promise<IStoredData | undefined> {
+  private async getStoredData(): Promise<StoredData | undefined> {
     const storageFileInfo = await this.getStorageFileInfo();
     if (!storageFileInfo) {
       return undefined;
@@ -125,7 +125,7 @@ export class GalleryGoogleDriveRepository implements GalleryRemoteRepository {
     return data;
   }
 
-  private async getStorageFileInfo(): Promise<IGoogleFileInfo | undefined> {
+  private async getStorageFileInfo(): Promise<GoogleFileInfo | undefined> {
     const storageFileName = this.appConfig.services.googleDriveGalleryFilename;
     const files = await this.googleDriveClient.listFiles(
       "name = '" + storageFileName + "' and trashed = false"

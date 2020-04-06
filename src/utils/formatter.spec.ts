@@ -10,8 +10,8 @@ describe("FormatterHelper", () => {
     chai.expect(getFileExtension("model...")).to.be.eql("");
     chai.expect(getFileExtension("model")).to.be.eql("");
     chai.expect(getFileExtension("")).to.be.eql("");
-    chai.expect(getFileExtension(NULL as any)).to.be.eql("");
-    chai.expect(getFileExtension(undefined as any)).to.be.eql("");
+    chai.expect(getFileExtension(NULL)).to.be.eql("");
+    chai.expect(getFileExtension(undefined)).to.be.eql("");
   });
 
   it("stringifyDateAsJson works properly", () => {

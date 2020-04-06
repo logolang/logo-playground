@@ -39,6 +39,7 @@ export class GoldenLayoutHelper {
     if (!root) {
       return undefined;
     }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     if ((root.config as any).componentName === componentName) {
       return root;
     }

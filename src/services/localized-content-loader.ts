@@ -18,7 +18,7 @@ export class LocalizedContentLoader {
       return content;
     } catch (ex) {
       console.log("Failed to load localized version, falling back to English");
-      return this.loadContentByLocale(url, DEFAULT_LOCALE_ID);
+      return await this.loadContentByLocale(url, DEFAULT_LOCALE_ID);
     }
   }
 

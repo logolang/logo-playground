@@ -1,6 +1,7 @@
 import * as React from "react";
 import * as cn from "classnames";
 import * as codemirror from "codemirror";
+import { EditorConfiguration } from "codemirror";
 import * as keymaster from "keymaster";
 import { debounce } from "utils/debounce";
 
@@ -22,11 +23,12 @@ export interface Props {
   editorTheme: string;
   hotKeys?: string[];
   onHotkey?(hotkey: string): void;
-  resizeIncrement?: any;
+  resizeIncrement?: number;
 }
 
 export class CodeInput extends React.Component<Props, State> {
   cm: codemirror.EditorFromTextArea;
+  textAreaRef: HTMLTextAreaElement | null;
 
   /*
   Store current code text in a variable allows to avoid 
@@ -52,18 +54,23 @@ export class CodeInput extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const textArea = this.refs["text-area"] as HTMLTextAreaElement;
+    if (!this.textAreaRef) {
+      throw new Error("Failed to get ref to text area");
+    }
 
     const BRACKETS = "()[]{}";
-    this.cm = codemirror.fromTextArea(textArea, {
+    const editorConfig: EditorConfiguration = {
       mode: "logo",
-      autoCloseBrackets: { pairs: BRACKETS, explode: BRACKETS },
-      matchBrackets: true,
-      lineComment: ";",
       lineNumbers: true,
       lineWrapping: true,
       theme: this.props.editorTheme
-    } as any);
+    };
+    // Assign properties not reflected in typing definitions
+    Object.assign(editorConfig, {
+      autoCloseBrackets: { pairs: BRACKETS, explode: BRACKETS },
+      matchBrackets: true
+    });
+    this.cm = codemirror.fromTextArea(this.textAreaRef, editorConfig);
     this.cm.setSize("100%", "100%");
     this.currentCode = this.props.code;
     this.cm.setValue(this.currentCode);
@@ -114,7 +121,7 @@ export class CodeInput extends React.Component<Props, State> {
   render(): JSX.Element {
     return (
       <div className={cn("code-input-component", this.props.className)}>
-        <textarea ref="text-area" />
+        <textarea ref={ref => (this.textAreaRef = ref)} />
       </div>
     );
   }

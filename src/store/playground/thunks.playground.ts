@@ -4,7 +4,7 @@ import { Action } from "redux";
 import { resolve } from "utils/di";
 import { normalizeError } from "utils/error";
 import { Routes } from "ui/routes";
-import { GetState } from "store/store";
+import { GetState, TDispatch } from "store/store";
 import { envActionCreator } from "store/env/actions.env";
 import { ProgramStorageType } from "services/program.model";
 import { ProgramService } from "services/program.service";
@@ -17,16 +17,6 @@ import {
   EventAction
 } from "services/infrastructure/events-tracking.service";
 import { formatLogoProgram } from "ui/_generic/logo-executor/logo-formatter";
-
-export const playgroundThunks = {
-  loadProgram: loadProgramThunk,
-  codeChanged: codeChangedThunk,
-  saveProgram: saveProgramThunk,
-  saveAsProgram: saveAsProgramThunk,
-  deleteProgram: deleteProgramThunk,
-  revertChanges: revertChangesThunk,
-  formatCode: formatCodeThunk
-};
 
 function loadProgramThunk(storageType: ProgramStorageType, programId: string) {
   return async (dispatch: Dispatch<Action>, getState: GetState) => {
@@ -149,7 +139,7 @@ function deleteProgramThunk() {
 }
 
 function codeChangedThunk(newCode: string) {
-  return async (dispatch: Dispatch<Action>, getState: GetState) => {
+  return async (dispatch: Dispatch<Action>) => {
     dispatch(playgroundActionCreator.codeChangedAction(newCode));
 
     const localStorage = resolve(LocalPlaygroundCodeStorage);
@@ -179,9 +169,19 @@ function revertChangesThunk() {
 }
 
 function formatCodeThunk() {
-  return async (dispatch: Dispatch<any>, getState: GetState) => {
+  return async (dispatch: TDispatch, getState: GetState) => {
     const code = getState().playground.code;
     const formatted = formatLogoProgram(code);
-    dispatch(playgroundThunks.codeChanged(formatted));
+    await dispatch(codeChangedThunk(formatted));
   };
 }
+
+export const playgroundThunks = {
+  loadProgram: loadProgramThunk,
+  codeChanged: codeChangedThunk,
+  saveProgram: saveProgramThunk,
+  saveAsProgram: saveAsProgramThunk,
+  deleteProgram: deleteProgramThunk,
+  revertChanges: revertChangesThunk,
+  formatCode: formatCodeThunk
+};

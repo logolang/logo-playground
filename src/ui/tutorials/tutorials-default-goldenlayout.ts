@@ -49,7 +49,6 @@ export const tutorialsDefaultMobileLayout: GoldenLayoutConfig = {
           type: "stack",
           width: 100,
           height: 55,
-          activeItemIndex: 0,
           content: [
             {
               isClosable: false,
@@ -68,7 +67,6 @@ export const tutorialsDefaultMobileLayout: GoldenLayoutConfig = {
         {
           type: "stack",
           height: 45,
-          activeItemIndex: 0,
           content: [
             {
               isClosable: false,
@@ -77,7 +75,7 @@ export const tutorialsDefaultMobileLayout: GoldenLayoutConfig = {
               componentName: "output-panel"
             }
           ]
-        } as any
+        }
       ]
     }
   ]

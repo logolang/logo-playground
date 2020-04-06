@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/camelcase */
 import * as chai from "chai";
 import { createCompareFunction } from "./syntax";
 

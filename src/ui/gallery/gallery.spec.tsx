@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as chai from "chai";
 import * as sinon from "sinon";
-import { shallow, mount, render } from "enzyme";
+import { shallow } from "enzyme";
 
 import { resetBindings, registerMockService } from "utils/di";
 import { Gallery } from "./gallery";

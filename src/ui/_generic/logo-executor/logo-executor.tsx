@@ -10,6 +10,15 @@ import { processImports } from "./process-imports";
 
 import "./logo-executor.less";
 
+type LogoInterpreterInstance = {
+  run(code: string): Promise<void>;
+  bye(): void;
+};
+declare const LogoInterpreter: new (
+  turtle: unknown,
+  console: LogoOutputConsole
+) => LogoInterpreterInstance;
+
 interface State {
   errorMessage: string;
 }
@@ -31,7 +40,7 @@ export interface Props {
 let idIncrement = 0;
 
 export class LogoExecutor extends React.Component<Props, State> {
-  private logo: any;
+  private logo: LogoInterpreterInstance;
   private graphics: LogoOutputGraphics;
   private isRunning: boolean;
   private id = idIncrement++;
@@ -102,8 +111,6 @@ export class LogoExecutor extends React.Component<Props, State> {
     const initCode = alwaysInit + deviceInit + themeInit;
 
     this.resizeCanvas();
-
-    const LogoInterpreter: any = (window as any)["LogoInterpreter"];
 
     this.logo = new LogoInterpreter(
       this.graphics.init(this.props.turtleSize),

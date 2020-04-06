@@ -5,22 +5,32 @@ function $(s: string) {
   return document.querySelector(s);
 }
 
+declare const CanvasTurtle: new (
+  canvasContext: CanvasRenderingContext2D | null,
+  width: number,
+  height: number,
+  events: unknown,
+  options: {
+    turtleElement: HTMLImageElement;
+    turtleSize: number;
+  }
+) => unknown;
+
 export class LogoOutputGraphics {
-  turtle: any;
+  turtle: unknown;
   width: number;
   height: number;
 
   constructor(private sandBoxSelector: string, private turtleSelector: string) {}
 
   init(turtleSize: number) {
-    const CanvasTurtle: any = (window as any)["CanvasTurtle"];
-    const canvas_element = $(this.sandBoxSelector) as HTMLCanvasElement;
-    const canvas_ctx = canvas_element.getContext("2d");
+    const canvasElement = $(this.sandBoxSelector) as HTMLCanvasElement;
+    const canvasCtx = canvasElement.getContext("2d");
     const turtleElement = $(this.turtleSelector) as HTMLImageElement;
-    this.width = canvas_element.width;
-    this.height = canvas_element.height;
+    this.width = canvasElement.width;
+    this.height = canvasElement.height;
 
-    this.turtle = new CanvasTurtle(canvas_ctx, this.width, this.height, undefined, {
+    this.turtle = new CanvasTurtle(canvasCtx, this.width, this.height, undefined, {
       turtleElement: turtleElement,
       turtleSize: turtleSize
     });
@@ -73,15 +83,15 @@ export class LogoOutputGraphics {
 
     // create an in-memory canvas
     const buffer = document.createElement("canvas");
-    const b_ctx = buffer.getContext("2d");
-    if (!b_ctx) {
+    const bCtx = buffer.getContext("2d");
+    if (!bCtx) {
       return "";
     }
     // set its width/height to the required ones
     buffer.width = targetRect.width;
     buffer.height = targetRect.height;
     // draw the main canvas on our buffer one
-    b_ctx.drawImage(
+    bCtx.drawImage(
       canvas,
       sourceOffset.x,
       sourceOffset.y,

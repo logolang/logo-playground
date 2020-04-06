@@ -1,13 +1,21 @@
-interface IEventData {
+interface EventData {
   category: string;
   action: string;
   data?: string;
 }
 
+// Google analytics global variable
+declare const ga:
+  | {
+      getAll(): {
+        send(event: string, options: { [key: string]: string | undefined }): void;
+      }[];
+    }
+  | undefined;
+
 export class GoogleAnalyticsTracker {
-  trackEvent = (event: IEventData): void => {
+  trackEvent = (event: EventData): void => {
     setTimeout(() => {
-      const ga = (window as any).ga;
       if (ga) {
         const tracker = ga.getAll()[0];
         tracker.send("event", {

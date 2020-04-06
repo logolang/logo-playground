@@ -21,13 +21,13 @@ export enum EventAction {
   openTutorials = "navigation.openTutorials"
 }
 
-interface IEventData {
+interface EventData {
   category: string;
   action: string;
   data?: string;
 }
 
-type EventHandler = (eventData: IEventData) => void;
+type EventHandler = (eventData: EventData) => void;
 
 export class EventsTrackingService {
   private trackers: EventHandler[] = [];
@@ -42,7 +42,7 @@ export class EventsTrackingService {
     }
   }
 
-  addTracker(trackFn: (eventData: IEventData) => void): void {
+  addTracker(trackFn: (eventData: EventData) => void): void {
     this.trackers.push(trackFn);
   }
 }

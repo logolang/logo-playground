@@ -45,14 +45,14 @@ export class TutorialView extends React.Component<Props, State> {
   componentDidMount() {
     // Now it is time to inject inline logo components
     const inlinedLogoComponents = [];
-    for (const [objId, value] of Object.entries(this.props.currentStepContent.inlinedCode)) {
-      const container = document.getElementById(objId);
+    for (const codeBlock of this.props.currentStepContent.inlinedCode) {
+      const container = document.getElementById(codeBlock.id);
       if (container) {
-        container.setAttribute("data-code", value.code);
+        container.setAttribute("data-code", codeBlock.code);
         const logoComponent = (
           <LogoExecutor
             isRunning={true}
-            code={value.code}
+            code={codeBlock.code}
             onFinish={() => {
               /* Nothing here */
             }}

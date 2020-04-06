@@ -61,7 +61,9 @@ export class Modal extends React.Component<Props, State> {
         });
       },
       async () => {
-        await this.props.onConfirm!();
+        if (this.props.onConfirm) {
+          await this.props.onConfirm();
+        }
         return true;
       }
     );

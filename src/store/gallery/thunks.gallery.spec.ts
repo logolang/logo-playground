@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import * as chai from "chai";
 import * as sinon from "sinon";
 import configureMockStore from "redux-mock-store";
 import thunk from "redux-thunk";
 
-import { register, Abstract, resetBindings, registerMockService } from "utils/di";
+import { resetBindings, registerMockService } from "utils/di";
 import { getDefaultState } from "store/store";
 import { galleryThunks } from "./thunks.gallery";
 import { GallerySection } from "./state.gallery";

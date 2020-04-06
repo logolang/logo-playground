@@ -20,7 +20,7 @@ const animationFrames = [
 
 class LogoLoading extends HTMLElement {
   private svgEl: SVGElement | null;
-  private timerHandle: any;
+  private timerHandle: NodeJS.Timeout | null;
   private currentFrame = 0;
 
   constructor() {
@@ -57,9 +57,9 @@ class LogoLoading extends HTMLElement {
         // make sure that animation is looped
         this.currentFrame = 0;
       }
-      var frame = animationFrames[this.currentFrame];
+      const frame = animationFrames[this.currentFrame];
       if (frame) {
-        var animationElt = this.svgEl.querySelector("#" + frame.id);
+        const animationElt = this.svgEl.querySelector("#" + frame.id);
         if (animationElt) {
           animationElt.setAttribute("style", "fill:" + frame.fillColor);
         }

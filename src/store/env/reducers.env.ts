@@ -23,7 +23,7 @@ export default function reducers(state: EnvState | undefined, action: EnvAction)
         isLoading: false,
         user: action.payload
       };
-    case EnvActionType.APPLY_USER_SETTINGS_COMPLETED:
+    case EnvActionType.APPLY_USER_SETTINGS_COMPLETED: {
       const theme = themesManager.getThemeByName(action.payload.themeName);
       return {
         ...state,
@@ -33,6 +33,7 @@ export default function reducers(state: EnvState | undefined, action: EnvAction)
         },
         appTheme: { ...theme }
       };
+    }
     case EnvActionType.ERROR:
       return {
         ...state,

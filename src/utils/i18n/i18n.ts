@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /// <reference types="./types" />
 import * as Jed from "jed";
 import * as po2json from "po2json/lib/parse";
@@ -14,10 +15,7 @@ export class Plural {
 
   public val(count: number): string {
     if (i18n) {
-      return i18n
-        .translate(this._messageKey)
-        .ifPlural(count, "")
-        .fetch(count);
+      return i18n.translate(this._messageKey).ifPlural(count, "").fetch(count);
     }
     throw new Error("Locale data is not initialized yet");
   }

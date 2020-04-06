@@ -85,13 +85,14 @@ export class ReactGoldenLayout extends React.Component<Props, State> {
       }
       const layout = new goldenLayout(goldenLayoutConfig, this.goldenLayoutContainerRef);
       this.layoutHelper.setGoldenLayout(layout);
-      this.panelDomContainersByIds = {};
-      const $this = this;
-      const registerComponentCallback = function(
+      const panelDomContainersByIds: { [key: string]: HTMLElement } = {};
+      this.panelDomContainersByIds = panelDomContainersByIds;
+
+      const registerComponentCallback = function (
         container: goldenLayout.Container,
         options: { componentName: string }
       ) {
-        $this.panelDomContainersByIds[options.componentName] = container.getElement().get(0);
+        panelDomContainersByIds[options.componentName] = container.getElement().get(0);
       };
 
       const componentNames: string[] = [];
@@ -158,7 +159,7 @@ export class ReactGoldenLayout extends React.Component<Props, State> {
               if (hostElement) {
                 return ReactDOM.createPortal(child, hostElement);
               }
-              return;
+              return undefined;
             })}
           </ReactGoldenLayoutHelperContext.Provider>
         )}

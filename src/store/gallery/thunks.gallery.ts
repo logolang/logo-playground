@@ -6,7 +6,7 @@ import { createCompareFunction } from "utils/syntax";
 import { normalizeError } from "utils/error";
 import { resolve } from "utils/di";
 import { GallerySection } from "./state.gallery";
-import { GetState } from "store/store";
+import { GetState, TDispatch } from "store/store";
 import { envActionCreator } from "store/env/actions.env";
 import { NotificationType } from "store/env/state.env";
 import { ProgramModel } from "services/program.model";
@@ -15,11 +15,6 @@ import { GalleryService } from "services/gallery.service";
 import { GalleryImportService } from "services/gallery-import.service";
 import { envThunks } from "store/env/thunks.env";
 import { galleryActionCreator } from "./actions.gallery";
-
-export const galleryThunks = {
-  loadSection: loadSectionThunk,
-  import: importThunk
-};
 
 function loadSectionThunk(section: GallerySection, options?: { forceLoad?: boolean }) {
   return async (dispatch: Dispatch<Action>, getState: GetState) => {
@@ -78,23 +73,28 @@ function loadSectionThunk(section: GallerySection, options?: { forceLoad?: boole
 }
 
 function importThunk(programsHtml: string) {
-  return async (dispatch: Dispatch<any>, getState: GetState) => {
+  return async (dispatch: TDispatch) => {
     dispatch(galleryActionCreator.importStarted());
     try {
       const importService = resolve(GalleryImportService);
       const count = await importService.import(programsHtml);
       dispatch(galleryActionCreator.importCompleted(true));
-      dispatch(
+      await dispatch(
         envThunks.showNotificationAutoClose(
           NotificationType.info,
           $T.gallery.importCompletedTitle,
           $T.gallery.addedProgramsMessage.val(count)
         )
       );
-      dispatch(galleryThunks.loadSection(GallerySection.PersonalLibrary, { forceLoad: true }));
+      await dispatch(loadSectionThunk(GallerySection.PersonalLibrary, { forceLoad: true }));
     } catch (e) {
       const ex = await normalizeError(e);
       dispatch(galleryActionCreator.importCompleted(false, ex.message));
     }
   };
 }
+
+export const galleryThunks = {
+  loadSection: loadSectionThunk,
+  import: importThunk
+};

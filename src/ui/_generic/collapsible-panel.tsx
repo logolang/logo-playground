@@ -16,6 +16,8 @@ export interface Props {
  */
 export class CollapsiblePanel extends React.Component<Props, State> {
   readonly animationDuration = 300;
+  private panelBodyInnerRef: HTMLDivElement | null;
+  private panelBodyOuterRef: HTMLDivElement | null;
 
   constructor(props: Props) {
     super(props);
@@ -37,17 +39,21 @@ export class CollapsiblePanel extends React.Component<Props, State> {
   }, 500);
 
   handleResize = () => {
-    const panelInnerDiv = this.refs["panelBodyInner"] as HTMLElement;
-    const panelHeight = this.props.isCollapsed ? "0px" : panelInnerDiv.scrollHeight + "px";
+    if (!this.panelBodyInnerRef) {
+      throw new Error("Failed to get panelBodyInnerRef ref");
+    }
+    const panelHeight = this.props.isCollapsed ? "0px" : this.panelBodyInnerRef.scrollHeight + "px";
     if (this.state.panelHeight != panelHeight) {
       this.setState({ panelHeight });
     }
   };
 
   componentDidUpdate(prevProps: Props) {
+    if (!this.panelBodyOuterRef) {
+      throw new Error("Failed to get panelBodyInnerRef ref");
+    }
     if (this.props.isCollapsed && !prevProps.isCollapsed) {
-      const panelOuterDiv = this.refs["panelBodyOuter"] as HTMLElement;
-      panelOuterDiv.style.height = panelOuterDiv.scrollHeight + "px";
+      this.panelBodyOuterRef.style.height = this.panelBodyOuterRef.scrollHeight + "px";
     }
     this.handleResize();
 
@@ -63,14 +69,14 @@ export class CollapsiblePanel extends React.Component<Props, State> {
     return (
       <div
         className={cn("collapsible-panel-component", this.props.className)}
-        ref="panelBodyOuter"
+        ref={ref => (this.panelBodyOuterRef = ref)}
         style={{
           height: this.state.panelHeight,
           transition: "height " + this.animationDuration / 1000 + "s",
           overflow: "hidden"
         }}
       >
-        <div className="collapsible-panel-inner" ref="panelBodyInner">
+        <div className="collapsible-panel-inner" ref={ref => (this.panelBodyInnerRef = ref)}>
           {this.props.children}
         </div>
       </div>

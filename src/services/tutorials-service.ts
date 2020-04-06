@@ -1,8 +1,7 @@
 import * as markdown from "markdown-it";
 import { localStoragePrefix } from "./constants";
 import { LocalStorage } from "./local-storage";
-import { DictionaryLike } from "utils/syntax";
-import { LocalizedJsonString, setLocalizedString } from "utils/localized-json-string";
+import { setLocalizedString } from "utils/localized-json-string";
 
 export interface ContentLoader {
   loadFile(url: string, options: { useLocale: boolean }): Promise<string>;
@@ -26,10 +25,24 @@ export interface TutorialStepId {
   tutorialId: string;
   stepId: string;
 }
+
+interface CodeBlockParams {
+  width?: string;
+  height?: string;
+  code?: boolean;
+  solution?: boolean;
+}
+
+interface CodeBlock {
+  id: string;
+  code: string;
+  params: CodeBlockParams;
+}
+
 export interface TutorialStepContent {
   content: string;
   solutionCode: string;
-  inlinedCode: DictionaryLike<{ code: string; params: any }>;
+  inlinedCode: CodeBlock[];
 }
 
 /**
@@ -81,7 +94,7 @@ export class TutorialsService {
       return "";
     });
 
-    const inlined: DictionaryLike<{ code: string; params: any }> = {};
+    const inlined: CodeBlock[] = [];
     let inlinedId = 1;
     stepContent = this.findAndReplaceCodeChunks(stepContent, "logo", (code, params) => {
       if (!params.width) {
@@ -91,10 +104,11 @@ export class TutorialsService {
         throw new Error("height is required parameter to logo inline block");
       }
       const id = "logo" + inlinedId++;
-      inlined[id] = {
+      inlined.push({
+        id,
         code: code ? code.trim() : "",
         params
-      };
+      });
       let result = `<div id="${id}" class="logo-inline-container" style="width:${params.width};height:${params.height}"></div>`;
 
       // Include the code optionally
@@ -146,7 +160,7 @@ export class TutorialsService {
   findAndReplaceCodeChunks(
     md: string,
     type: string,
-    replacer: (code: string, params: any) => string
+    replacer: (code: string, params: CodeBlockParams) => string
   ): string {
     const chunkRegex = new RegExp(
       "<!--" + type + "([\\s\\S]*?)-->[\\s\\S]*?```([\\s\\S]*?)```",

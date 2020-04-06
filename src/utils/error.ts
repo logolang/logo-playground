@@ -18,7 +18,7 @@ function buildResponseError(name: string, status: number, message: string): Erro
 /**
  * This function is to transform error coming from fetch API to normal error
  */
-export async function normalizeError(ex: any): Promise<ErrorDef> {
+export async function normalizeError(ex: unknown): Promise<ErrorDef> {
   if (!ex) {
     return new Error();
   }

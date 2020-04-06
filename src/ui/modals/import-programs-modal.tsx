@@ -35,11 +35,10 @@ export class ImportProgramsModal extends React.Component<Props, State> {
         if (file) {
           const reader = new FileReader();
           reader.onload = async evt => {
-            const fileBody = (evt.target as any).result as string | undefined;
-            if (fileBody) {
+            if (evt.target && evt.target.result) {
               this.setState({
                 fileName: file.name,
-                fileContent: fileBody
+                fileContent: evt.target.result as string
               });
             }
           };

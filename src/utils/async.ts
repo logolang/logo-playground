@@ -1,6 +1,6 @@
 export async function stay(milliseconds: number): Promise<void> {
   return new Promise<void>(resolve => {
-    setTimeout(function() {
+    setTimeout(function () {
       resolve();
     }, milliseconds);
   });

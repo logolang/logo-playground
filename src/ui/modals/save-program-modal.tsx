@@ -3,7 +3,6 @@ import * as React from "react";
 import { $T } from "i18n-strings";
 
 import { Modal } from "ui/_generic/modal";
-import { NoData } from "ui/_generic/no-data";
 
 interface State {
   programName: string;

@@ -1,12 +1,11 @@
-import { DictionaryLike } from "./syntax";
-
 export interface Abstract<T> {
   prototype: T;
   name: string;
 }
 
 interface Binding {
-  key: any;
+  key: {};
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   value: any;
 }
 

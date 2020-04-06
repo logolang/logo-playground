@@ -17,7 +17,6 @@ export function ensure<S>(value: S | undefined): S {
 export type DictionaryLike<V> = { [name: string]: V };
 export type ValueType = string | number | boolean | Date | undefined;
 
-// tslint:disable-next-line:no-null-keyword
 export const NULL = null;
 
 export interface SortingOptions<T> {
@@ -30,9 +29,9 @@ export interface SortingOptions<T> {
  * comparison for strings
  * @param criterions
  */
-// tslint:disable-next-line:cognitive-complexity
 export function createCompareFunction<T>(criterions: SortingOptions<T>[]) {
-  return function(itemA: T, itemB: T) {
+  // eslint-disable-next-line sonarjs/cognitive-complexity
+  return function (itemA: T, itemB: T) {
     for (const options of criterions) {
       let valA = options.sortBy(itemA);
       valA = valA === undefined || valA === null ? "" : valA;

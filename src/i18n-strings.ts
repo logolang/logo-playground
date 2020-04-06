@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/camelcase */
 import { Template, Plural } from "utils/i18n/i18n";
 
 export { Template, Plural };

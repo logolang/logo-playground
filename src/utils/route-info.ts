@@ -1,4 +1,4 @@
-export class RouteInfo<TParams extends Object> {
+export class RouteInfo<TParams extends { [key: string]: string | number | boolean }> {
   private _path: string;
 
   constructor(path: string) {
@@ -12,9 +12,7 @@ export class RouteInfo<TParams extends Object> {
   build(params: TParams): string {
     let result = this._path;
     for (const key in params) {
-      if (params.hasOwnProperty(key)) {
-        result = result.replace(":" + key, encodeURIComponent((params as any)[key]));
-      }
+      result = result.replace(":" + key, encodeURIComponent(params[key]));
     }
     return result;
   }

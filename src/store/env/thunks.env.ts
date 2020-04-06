@@ -1,6 +1,4 @@
-import { Dispatch } from "react";
-import { Action } from "redux";
-import { GetState } from "store/store";
+import { GetState, TDispatch } from "store/store";
 
 import { envActionCreator } from "./actions.env";
 import { getConfig as getAppConfig } from "services/app-config";
@@ -15,16 +13,8 @@ import {
   EventAction
 } from "services/infrastructure/events-tracking.service";
 
-export const envThunks = {
-  initEnv: initEnvThunk,
-  signIn: signInThunk,
-  signOut: signOutThunk,
-  applyUserSettings: applyUserSettingsThunk,
-  showNotificationAutoClose: showNotificationAutoCloseThunk
-};
-
 function initEnvThunk() {
-  return async (dispatch: Dispatch<Action>, getState: GetState) => {
+  return async (dispatch: TDispatch) => {
     dispatch(envActionCreator.initEnvStarted());
     const appConfig = getAppConfig();
     const initInfo = await DISetup.setup({ appConfig });
@@ -35,10 +25,10 @@ function initEnvThunk() {
 }
 
 function signInThunk(authProvider: AuthProvider) {
-  return async (dispatch: Dispatch<any>, getState: GetState) => {
+  return async (dispatch: TDispatch) => {
     const auth = resolve(AuthService);
     await auth.signIn(authProvider);
-    dispatch(envThunks.initEnv());
+    await dispatch(initEnvThunk());
 
     const eventsTracker = resolve(EventsTrackingService);
     eventsTracker.sendEvent(EventAction.userLogin);
@@ -46,10 +36,10 @@ function signInThunk(authProvider: AuthProvider) {
 }
 
 function signOutThunk() {
-  return async (dispatch: Dispatch<any>, getState: GetState) => {
+  return async (dispatch: TDispatch) => {
     const auth = resolve(AuthService);
     await auth.signOut();
-    dispatch(envThunks.initEnv());
+    await dispatch(initEnvThunk());
 
     const eventsTracker = resolve(EventsTrackingService);
     eventsTracker.sendEvent(EventAction.userLogout);
@@ -60,11 +50,11 @@ function applyUserSettingsThunk(
   settings: Partial<UserSettings>,
   options?: { rebindServices: boolean }
 ) {
-  return async (dispatch: Dispatch<any>, getState: GetState) => {
+  return async (dispatch: TDispatch) => {
     const settingsService = resolve(UserSettingsService);
     await settingsService.update(settings);
     if (options && options.rebindServices) {
-      dispatch(envThunks.initEnv());
+      await dispatch(initEnvThunk());
     } else {
       const newSettings = await settingsService.get();
       dispatch(envActionCreator.applyUserSettingsCompleted(newSettings));
@@ -73,7 +63,7 @@ function applyUserSettingsThunk(
 }
 
 function showNotificationAutoCloseThunk(type: NotificationType, title: string, message: string) {
-  return async (dispatch: Dispatch<Action>, getState: GetState) => {
+  return async (dispatch: TDispatch, getState: GetState) => {
     dispatch(envActionCreator.showNotification(type, title, message));
     const lastmessageId = getState().env.notifications[0].id;
     setTimeout(() => {
@@ -81,3 +71,11 @@ function showNotificationAutoCloseThunk(type: NotificationType, title: string, m
     }, 3000);
   };
 }
+
+export const envThunks = {
+  initEnv: initEnvThunk,
+  signIn: signInThunk,
+  signOut: signOutThunk,
+  applyUserSettings: applyUserSettingsThunk,
+  showNotificationAutoClose: showNotificationAutoCloseThunk
+};

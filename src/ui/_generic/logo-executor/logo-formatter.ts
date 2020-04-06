@@ -16,7 +16,6 @@ function deleteExtraSpaces(code: string) {
  * Formats the program by automatically applying indentation and whitespaces around operators
  * @param code Logo program source code
  */
-// tslint:disable-next-line:cognitive-complexity
 export function formatLogoProgram(code: string) {
   const wrapped = wrapSpecialCommandsWithSpaces(code);
   const arrayOfLines = wrapped.match(/[^\r\n]+/g) || [];

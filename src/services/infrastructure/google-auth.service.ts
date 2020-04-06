@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export interface UserInfo {
   email: string;
   imageUrl: string;
@@ -5,12 +6,22 @@ export interface UserInfo {
   id: string;
 }
 
+// Google API global variable
+declare const gapi:
+  | {
+      auth2?: {
+        getAuthInstance(): any;
+      };
+      client: any;
+      load(api: string, options: any): void;
+    }
+  | undefined;
+
 export class GoogleAuthService {
   constructor(private googleClientId: string) {}
 
   async init(): Promise<UserInfo | undefined> {
     try {
-      const gapi = (window as any).gapi;
       if (!gapi) {
         throw new Error("Google API is not loaded");
       }
@@ -26,6 +37,10 @@ export class GoogleAuthService {
         });
       }
 
+      if (!gapi.auth2) {
+        throw new Error("Failed to initialize google API");
+      }
+
       const auth = gapi.auth2.getAuthInstance();
 
       // Get current user
@@ -37,8 +52,11 @@ export class GoogleAuthService {
   }
 
   private async loadGApiAuth(): Promise<void> {
-    const gapi = (window as any).gapi;
     return new Promise((resolve, reject) => {
+      if (!gapi) {
+        throw new Error("Failed to init auth: Google API is not loaded");
+      }
+
       gapi.load("client:auth2", {
         callback: () => {
           resolve();
@@ -72,14 +90,18 @@ export class GoogleAuthService {
   };
 
   async signOut(): Promise<void> {
-    const gapi = (window as any).gapi;
+    if (!gapi || !gapi.auth2) {
+      throw new Error("Failed to sign out: Google API is not loaded");
+    }
     const auth = gapi.auth2.getAuthInstance();
     await auth.signOut();
   }
 
   async signIn(): Promise<UserInfo | undefined> {
-    const gapi = (window as any).gapi;
     await this.init();
+    if (!gapi || !gapi.auth2) {
+      throw new Error("Failed to sign in: Google API is not loaded");
+    }
     const auth = gapi.auth2.getAuthInstance();
     await auth.signIn();
     const googleUser = auth.currentUser.get();

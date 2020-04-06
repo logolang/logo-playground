@@ -32,7 +32,7 @@ export function formatId(name: string, checkIfIdIsBusy: (id: string) => boolean)
  * Returns file extension in lowercase without dot
  * If extension is not there return empty string
  */
-export function getFileExtension(fileName: string): string {
+export function getFileExtension(fileName: string | null | undefined): string {
   if (!fileName) {
     return "";
   }
@@ -48,27 +48,6 @@ export function getFileExtension(fileName: string): string {
  */
 export function stringifyDateAsJson(dateValue: Date): string {
   return JSON.parse(JSON.stringify({ d: dateValue })).d;
-}
-
-/**
- * Use to convert Date serialized in JSON objects as a second argument to JSON.parse
- * Example:
- * ```
- * JSON.parse(json, jsonDateReviver);
- * ```
- */
-export function jsonDateReviver(key: string, value: any) {
-  // first, just make sure the property is a string:
-  if (typeof value === "string") {
-    // then, use regex to see if it's an ISO-formatted string
-    const a = jsonStringifiedDate.exec(value);
-    if (a) {
-      // if so, Date() can parse it:
-      return new Date(value);
-    }
-  }
-  // important: you need to return any values you're not parsing, or they die...
-  return value;
 }
 
 export function parseDateFromJson(dateStr: string, defaultValue?: Date): Date {

@@ -44,7 +44,7 @@ const sortFn = createCompareFunction<ProgramModel>([{ sortBy: x => x.name }]);
 
 describe("Programs HTML serializer service", () => {
   programsSpecialCharacters.sort(sortFn);
-  const service = new ProgramsHtmlSerializer(jsDomWindow as any);
+  const service = new ProgramsHtmlSerializer(jsDomWindow.document);
 
   it("should serialize programs to html string", async () => {
     const serialized = await service.serialize(programsSpecialCharacters, "Olek", "");

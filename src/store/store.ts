@@ -1,6 +1,7 @@
-import { createStore, combineReducers, applyMiddleware } from "redux";
+import { createStore, combineReducers, applyMiddleware, AnyAction } from "redux";
 import { composeWithDevTools } from "redux-devtools-extension/developmentOnly";
 import reduxThunk from "redux-thunk";
+import { ThunkDispatch } from "redux-thunk";
 
 import { GalleryState, defaultGalleryState } from "./gallery/state.gallery";
 import galleryReducers from "./gallery/reducers.gallery";
@@ -20,15 +21,17 @@ export interface AppState {
 
 export type GetState = () => AppState;
 
+export type TDispatch = ThunkDispatch<AppState, {}, AnyAction>;
+
 export function createInitialStore() {
-  return createStore<AppState, any, {}, {}>(
+  return createStore(
     combineReducers({
       gallery: galleryReducers,
       playground: playgroundReducers,
       tutorials: tutorialsReducers,
       env: envReducers
     }),
-    {} as any,
+    {},
     composeWithDevTools(applyMiddleware(reduxThunk))
   );
 }

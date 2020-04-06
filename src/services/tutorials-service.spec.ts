@@ -21,7 +21,7 @@ const testStep3 = `
 ![Some image](./image.svg)
 `;
 
-const testStep4_Solution_And_Embedded = `
+const testStep4SolutionAndEmbedded = `
 # Step 4
 <!--solution-->
 \`\`\`
@@ -75,7 +75,7 @@ right 90`;
   });
 
   it("extracts solution code and logo inlined from markdown", async () => {
-    const result = await getResult(testStep4_Solution_And_Embedded);
+    const result = await getResult(testStep4SolutionAndEmbedded);
 
     const expectedCode = `forward 100`;
     chai.expect(result.solutionCode).to.be.eql(expectedCode);
